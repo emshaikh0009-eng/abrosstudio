@@ -56,37 +56,28 @@ export default function TestimonialSlider() {
   };
 
   return (
-    <div className="testimonials-slider">
-      <div className="slider-wrapper">
+    <div className="testimonials-wrapper">
+      <div className="testimonials-slider-container">
         <div
           className="testimonials-track"
-          style={{ transform: `translateX(-${currentIndex * 100}%)`, transition: 'transform 0.5s ease-in-out' }}
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {testimonials.map((t, idx) => (
             <div key={idx} className="testimonial-slide">
-              <div className="stars-row">
-                {Array.from({ length: t.rating }).map((_, i) => (
-                  <svg
-                    key={i}
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="star-icon"
-                  >
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                ))}
+              <div className="quote-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
               </div>
               <p className="testimonial-quote">&ldquo;{t.quote}&rdquo;</p>
-              <div className="client-author">
-                <img src={t.avatar} alt={t.name} className="client-avatar" />
-                <div className="client-meta">
-                  <h4 className="client-name">{t.name}</h4>
-                  <span
-                    className="client-role"
-                    dangerouslySetInnerHTML={{ __html: t.role }}
-                  />
+              <div className="testimonial-author-row">
+                <div className="testimonial-avatar">
+                  <img src={t.avatar} alt={t.name} />
+                </div>
+                <div className="testimonial-author-meta">
+                  <span className="author-name">{t.name}</span>
+                  <span className="author-business" dangerouslySetInnerHTML={{ __html: t.role }} />
+                  <span className="author-location">Surat, Gujarat</span>
                 </div>
               </div>
             </div>
@@ -95,34 +86,36 @@ export default function TestimonialSlider() {
       </div>
 
       <div className="slider-controls">
-        <button
-          className="slider-prev"
-          onClick={handlePrev}
-          aria-label="Previous review"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
         <div className="slider-dots">
           {testimonials.map((_, idx) => (
             <button
               key={idx}
               className={`dot ${idx === currentIndex ? 'active' : ''}`}
               onClick={() => setCurrentIndex(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
+              aria-label={`Go to review ${idx + 1}`}
             />
           ))}
         </div>
-        <button
-          className="slider-next"
-          onClick={handleNext}
-          aria-label="Next review"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </button>
+        <div className="slider-arrows">
+          <button
+            className="slider-arrow-btn slider-prev"
+            onClick={handlePrev}
+            aria-label="Previous review"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button
+            className="slider-arrow-btn slider-next"
+            onClick={handleNext}
+            aria-label="Next review"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );

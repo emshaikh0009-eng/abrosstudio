@@ -182,9 +182,15 @@ export default function PortfolioGallery({ initialCategory = 'all' }: { initialC
 
       {/* Interactive Project Detail Modal */}
       {selectedProject && (
-        <div className="portfolio-modal active" onClick={() => setSelectedProject(null)}>
+        <div
+          className="modal-backdrop active"
+          onClick={() => setSelectedProject(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modalProjectTitle"
+        >
           <div
-            className="modal-content-card"
+            className="modal-card"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -195,29 +201,28 @@ export default function PortfolioGallery({ initialCategory = 'all' }: { initialC
               &times;
             </button>
 
-            <div className="modal-header-img">
+            <div className="modal-visual-frame">
               <img src={selectedProject.image} alt={selectedProject.title} />
-              <div className="modal-tag-overlay">{selectedProject.badge}</div>
             </div>
 
             <div className="modal-content-body">
-              <span className="kicker">Studio Concept Deep-Dive</span>
-              <h2 className="modal-heading">{selectedProject.title}</h2>
-              <p className="lead">{selectedProject.subtitle}</p>
+              <div className="modal-tag">{selectedProject.badge}</div>
+              <h3 className="modal-title" id="modalProjectTitle">{selectedProject.title}</h3>
+              <p className="modal-desc">{selectedProject.subtitle}</p>
 
               <div className="modal-meta-grid">
-                <div>
-                  <h4 className="meta-subhead">Client Challenge</h4>
+                <div className="modal-meta-box">
+                  <h5>Client Challenge</h5>
                   <p>{selectedProject.challenge}</p>
                 </div>
-                <div>
-                  <h4 className="meta-subhead">Strategic Solution</h4>
+                <div className="modal-meta-box">
+                  <h5>Strategic Solution</h5>
                   <p>{selectedProject.solution}</p>
                 </div>
               </div>
 
               <div className="modal-deliverables">
-                <h4 className="meta-subhead">Key Deliverables</h4>
+                <h5>Key Deliverables</h5>
                 <ul>
                   {selectedProject.deliverables.map((item, idx) => (
                     <li key={idx}>
@@ -227,16 +232,31 @@ export default function PortfolioGallery({ initialCategory = 'all' }: { initialC
                 </ul>
               </div>
 
-              <div className="modal-tech-stack">
-                <h4 className="meta-subhead">Execution Capabilities</h4>
-                <div className="tech-tags">
+              <div className="modal-tech-stack" style={{ marginTop: '24px' }}>
+                <h5 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-gold)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+                  Execution Capabilities
+                </h5>
+                <div className="tech-tags" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {selectedProject.tech.map((tag, idx) => (
-                    <span key={idx} className="tech-tag">{tag}</span>
+                    <span
+                      key={idx}
+                      className="tech-tag"
+                      style={{
+                        padding: '4px 12px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-pill)',
+                        fontSize: '0.8rem',
+                        color: 'var(--color-text-muted)',
+                      }}
+                    >
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </div>
 
-              <div className="modal-actions-bar">
+              <div className="modal-actions-bar" style={{ marginTop: '28px' }}>
                 <a
                   href="https://wa.me/919998441519?text=Hi%20AbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99m%20interested%20in%20a%20concept%20similar%20to%20your%20showcase."
                   className="btn btn-primary btn-block"

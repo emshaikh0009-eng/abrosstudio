@@ -174,6 +174,72 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Strategic Edge: Why Digital Credibility Matters */}
+      <section className="section" style={{ background: 'var(--bg-secondary)' }}>
+        <div className="container">
+          <div className="section-header text-center fade-in-up">
+            <span className="kicker">Strategic Edge</span>
+            <h2>Why Digital Credibility Matters For Local Businesses</h2>
+            <p className="section-subtitle">
+              Consumers judge your business within seconds of searching online. A high-grade digital presence converts casual searches into footfall and calls.
+            </p>
+          </div>
+
+          <div className="why-grid">
+            <div className="why-card fade-in-up">
+              <div className="why-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <h4 className="why-title">First 50 Milliseconds</h4>
+              <p className="why-desc">
+                Potential clients form 75% of their opinion on your establishment’s credibility based on website aesthetics alone.
+              </p>
+            </div>
+
+            <div className="why-card fade-in-up">
+              <div className="why-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                  <line x1="12" y1="18" x2="12.01" y2="18" />
+                </svg>
+              </div>
+              <h4 className="why-title">Frictionless Mobile Flow</h4>
+              <p className="why-desc">
+                Over 80% of local searches happen on smartphones. We build interfaces where calling or messaging takes just one tap.
+              </p>
+            </div>
+
+            <div className="why-card fade-in-up">
+              <div className="why-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+              </div>
+              <h4 className="why-title">Eliminating Ad Waste</h4>
+              <p className="why-desc">
+                We target buyers physically present in your local vicinity, turning marketing expenditure into real customer footfall.
+              </p>
+            </div>
+
+            <div className="why-card fade-in-up">
+              <div className="why-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </div>
+              <h4 className="why-title">Modern Memorability</h4>
+              <p className="why-desc">
+                Paper cards get lost in drawers. Our digital business cards ensure you stay stored permanently in contacts with your portfolio.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Smart Contactless Networking: Dual NFC + 3D Interactive Card */}
       <section className="section card-feature-section" id="digitalCardFeature">
         <div className="container">
