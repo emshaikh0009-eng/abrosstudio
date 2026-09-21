@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selected Work &amp; Concept Portfolio — AbrosStudio</title>
+  <meta name="description" content="Explore 8 realistic demo and concept projects engineered by AbrosStudio across restaurants, salons, clinics, real estate, gyms, fashion, consulting, and local services.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/jpeg" href="assets/abros-logo.jpg">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="AbrosStudio Home">
+        <img src="assets/abros-logo-transparent.png" alt="AbrosStudio — Crafted With Purpose" class="brand-logo-img">
+      </a>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="work.html" class="nav-link active">Work</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <!-- Strictly NO "Book a Demo" CTA button on Work page per rule -->
+      <div class="header-cta-group">
+        <a href="contact.html" class="btn btn-secondary btn-sm">
+          <span>Inquire Now</span>
+        </a>
+      </div>
+
+      <!-- Mobile Toggle -->
+      <button class="mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" aria-label="Mobile Navigation">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="services.html" class="nav-link">Services</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="work.html" class="nav-link active">Work</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+      <div style="padding-top: 10px;">
+        <a href="contact.html" class="btn btn-secondary" style="width: 100%;">
+          <span>Inquire Now</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Page Header -->
+    <section class="hero" style="padding-bottom: 40px;">
+      <div class="container">
+        <div class="section-header text-center fade-in-up">
+          <span class="kicker">Demo Showcase</span>
+          <h1>Purposeful Design for Real-World Local Businesses</h1>
+          <p class="lead" style="max-width: 740px; margin: 0 auto 20px;">
+            Explore 8 realistic demo and concept projects engineered across high-growth local business sectors. Each project demonstrates our approach to layout hierarchy, speed, and lead conversion.
+          </p>
+          <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--color-gold); background: rgba(251, 191, 2, 0.08); border: 1px solid rgba(251, 191, 2, 0.2); padding: 6px 18px; border-radius: var(--radius-pill);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Clearly designated concept case studies demonstrating studio craftsmanship</span>
+          </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="work-filter-bar fade-in-up">
+          <button class="filter-btn active" data-filter="all">All Concepts (8)</button>
+          <button class="filter-btn" data-filter="websites">Websites</button>
+          <button class="filter-btn" data-filter="ads">Digital Ads</button>
+          <button class="filter-btn" data-filter="cards">Digital Cards</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio Grid of 8 Projects -->
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        <div class="portfolio-grid">
+          <!-- 1. Restaurant -->
+          <div class="project-card fade-in-up" data-category="websites">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-restaurant.jpg" alt="Zaika Gourmet Restaurant Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Restaurant &amp; Dining</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Web Design</span>
+                  <span class="project-service-pill">Digital Menu</span>
+                </div>
+              </div>
+              <h3 class="project-title">Zaika Gourmet — Contemporary Indian Dining</h3>
+              <p class="project-desc">
+                Atmospheric culinary showcase with interactive menu viewing and instant table reservations over WhatsApp.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="restaurant">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Salon -->
+          <div class="project-card fade-in-up" data-category="ads">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-salon.jpg" alt="Aura Hair & Skin Luxury Salon Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Salon &amp; Wellness</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Web Design</span>
+                  <span class="project-service-pill">Meta Ads</span>
+                </div>
+              </div>
+              <h3 class="project-title">Aura Hair &amp; Skin — Luxury Wellness Studio</h3>
+              <p class="project-desc">
+                Editorial bridal lookbook and stylized service packages backed by local radius Instagram ad funnels.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="salon">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Real Estate -->
+          <div class="project-card fade-in-up" data-category="websites">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-estate.jpg" alt="PrimeHabitat Developments Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Real Estate Developments</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Web Design</span>
+                  <span class="project-service-pill">Lead Funnel</span>
+                </div>
+              </div>
+              <h3 class="project-title">PrimeHabitat Developments — Luxury Residences</h3>
+              <p class="project-desc">
+                Architectural presentation website with floorplan viewers and friction-free brochure download pipelines.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="estate">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Dental Clinic -->
+          <div class="project-card fade-in-up" data-category="websites">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-clinic.jpg" alt="Dr. Mehta Dental Care Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Healthcare &amp; Clinic</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Web Design</span>
+                  <span class="project-service-pill">Local SEO</span>
+                </div>
+              </div>
+              <h3 class="project-title">Dr. Mehta Dental Care — Multi-Specialty Clinic</h3>
+              <p class="project-desc">
+                Clean clinical platform emphasizing hygiene protocols, patient guides, and instant emergency appointment routing.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="clinic">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Gym -->
+          <div class="project-card fade-in-up" data-category="ads">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-gym.jpg" alt="IronForge Studio Fitness Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Fitness &amp; Athletics</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Web Design</span>
+                  <span class="project-service-pill">Trial Funnel</span>
+                </div>
+              </div>
+              <h3 class="project-title">IronForge Studio — Premium Fitness &amp; Training</h3>
+              <p class="project-desc">
+                High-contrast athletic aesthetic featuring trainer qualifications, workout timetables, and a 3-day trial pass funnel.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="gym">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Fashion -->
+          <div class="project-card fade-in-up" data-category="cards">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-fashion.jpg" alt="Zari Thread & Couture Fashion Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Bespoke Ethnic Couture</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Lookbook</span>
+                  <span class="project-service-pill">Digital Card</span>
+                </div>
+              </div>
+              <h3 class="project-title">Zari Thread &amp; Couture — Designer Ethnic Wear</h3>
+              <p class="project-desc">
+                Minimalist luxury lookbook showcasing intricate hand-embroidery textures with private bridal appointment booking.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="fashion">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Consultant -->
+          <div class="project-card fade-in-up" data-category="cards">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-consultant.jpg" alt="Apex Financial Advisory Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Corporate &amp; CA Consulting</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Web Design</span>
+                  <span class="project-service-pill">Digital Card</span>
+                </div>
+              </div>
+              <h3 class="project-title">Apex Financial Advisory — CA &amp; Corporate Advisory</h3>
+              <p class="project-desc">
+                Authoritative typographic website highlighting tax compliance services, corporate advisory, and partner digital cards.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="consultant">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. Local Service / Cleaning -->
+          <div class="project-card fade-in-up" data-category="websites">
+            <div class="project-image-wrapper">
+              <span class="project-concept-tag">Demo Concept</span>
+              <img src="assets/project-cleaning.jpg" alt="SparkClean Solutions Concept">
+            </div>
+            <div class="project-body">
+              <div class="project-meta-row">
+                <span class="project-category">Local Facility Services</span>
+                <div class="project-services-tags">
+                  <span class="project-service-pill">Web Design</span>
+                  <span class="project-service-pill">Search Ads</span>
+                </div>
+              </div>
+              <h3 class="project-title">SparkClean Solutions — Professional Facility Services</h3>
+              <p class="project-desc">
+                Transparent service layout with rapid quotation forms, commercial checklists, and direct WhatsApp dispatch.
+              </p>
+              <div class="project-footer">
+                <button class="btn-open-modal" data-open-modal="cleaning">
+                  <span>View Concept Details</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Project Inquiry Banner (Strictly NO Book a Demo button here) -->
+    <section class="section" style="border-top: 1px solid var(--border-subtle); background: var(--bg-secondary);">
+      <div class="container">
+        <div class="final-cta-card fade-in-up">
+          <span class="kicker">Custom Architecture</span>
+          <h2 class="final-cta-title">Want A Tailored Concept For Your Business?</h2>
+          <p class="final-cta-desc">
+            We review your industry landscape and develop a bespoke digital architecture designed to position your brand as the definitive leader in your market.
+          </p>
+          <div class="final-cta-btn-group">
+            <a href="contact.html" class="btn btn-primary btn-lg">
+              <span>Start A Discussion</span>
+            </a>
+            <a href="services.html" class="btn btn-secondary btn-lg">
+              <span>Review Services</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Interactive Project Details Modal -->
+  <div class="modal-backdrop" id="projectModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close-btn" aria-label="Close modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="modal-visual-frame">
+        <img id="modalImage" src="" alt="Project Visual Preview">
+      </div>
+      <div class="modal-content-body">
+        <span class="modal-tag" id="modalTag">Category</span>
+        <h3 class="modal-title" id="modalTitle">Project Title</h3>
+        
+        <div class="modal-meta-grid">
+          <div class="modal-meta-box">
+            <h5>The Business Challenge</h5>
+            <p id="modalChallenge">Challenge description...</p>
+          </div>
+          <div class="modal-meta-box">
+            <h5>Strategic Design Solution</h5>
+            <p id="modalSolution">Solution description...</p>
+          </div>
+        </div>
+
+        <div class="modal-deliverables">
+          <h5>Core Deliverables &amp; Features</h5>
+          <ul id="modalDeliverablesList"></ul>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;">
+          <span style="font-size: 0.85rem; color: var(--color-gold);">Services: <span id="modalServices" style="color: var(--color-text-muted);"></span></span>
+          <a href="contact.html" class="btn btn-secondary btn-sm">Discuss Similar Project</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Universal Studio Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div class="footer-brand-col">
+          <a href="index.html" class="brand-logo" aria-label="AbrosStudio Home">
+            <img src="assets/abros-logo-transparent.png" alt="AbrosStudio — Crafted With Purpose" class="brand-logo-img" style="height: 44px; margin-bottom: 12px;">
+          </a>
+          <p class="footer-brand-desc">
+            A boutique digital agency founded by Anas Shaikh, helping ambitious local businesses look professional and win customers online.
+          </p>
+          <div class="social-links-bar" style="border: none; padding-top: 0; margin-top: 0;">
+            <a href="https://www.instagram.com/ambros.studio" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="AbrosStudio on Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://www.facebook.com/share/p/1HrAAE5Yjf/" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="AbrosStudio on Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            </a>
+            <a href="https://x.com/AnasSha84485493" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="AbrosStudio on X">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Studio Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html" class="footer-link">Home</a></li>
+            <li><a href="services.html" class="footer-link">Services</a></li>
+            <li><a href="about.html" class="footer-link">About Founder</a></li>
+            <li><a href="work.html" class="footer-link">Selected Work</a></li>
+            <li><a href="contact.html" class="footer-link">Contact Studio</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Services</h4>
+          <ul class="footer-links-list">
+            <li><a href="services.html#webDesign" class="footer-link">Website Design &amp; Dev</a></li>
+            <li><a href="services.html#digitalAds" class="footer-link">Local Targeted Ads</a></li>
+            <li><a href="services.html#digitalCards" class="footer-link">Digital Business Cards</a></li>
+            <li><a href="services.html#standards" class="footer-link">Performance Standards</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Studio Office</h4>
+          <div class="footer-contact-items">
+            <div class="footer-contact-line">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017</span>
+            </div>
+            <div class="footer-contact-line">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <a href="tel:+919998441519">+91 99984 41519</a>
+            </div>
+            <div class="footer-contact-line">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <a href="mailto:ambrosstudio.z@gmail.com">ambrosstudio.z@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>&copy; 2026 AbrosStudio. All rights reserved. Founded by <span>Anas Shaikh</span>.</div>
+        <div>Surat, Gujarat, India &bull; Crafted With Purpose</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
