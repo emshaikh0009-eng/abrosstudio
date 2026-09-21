@@ -2330,17 +2330,17 @@ p {
 .fade-in-up {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
-/* Progressive enhancement: when JS client observer is active, prepare unrevealed elements */
-html.js-loaded .fade-in-up:not(.visible) {
+/* Progressive scroll reveal: only applies to below-fold elements actively queued by observer */
+.fade-in-up[data-scroll-reveal="pending"] {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translateY(24px);
 }
 
-/* Revealed state */
+.fade-in-up[data-scroll-reveal="pending"].visible,
 .fade-in-up.visible {
   opacity: 1 !important;
   transform: translateY(0) !important;
@@ -2349,7 +2349,7 @@ html.js-loaded .fade-in-up:not(.visible) {
 /* Accessibility: respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .fade-in-up,
-  html.js-loaded .fade-in-up:not(.visible) {
+  .fade-in-up[data-scroll-reveal="pending"] {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;

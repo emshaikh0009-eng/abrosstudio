@@ -34,13 +34,16 @@ export default function ScrollObserver() {
 
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
 
-    // 3. Immediately reveal any elements already in or above the viewport
+    // 3. Elements already in or near viewport are immediately visible
     const pendingElements: HTMLElement[] = [];
     revealElements.forEach((el) => {
       const rect = el.getBoundingClientRect();
       if (rect.top <= windowHeight * 0.92 && rect.bottom >= 0) {
         el.classList.add('visible');
+        el.removeAttribute('data-scroll-reveal');
       } else {
+        // Only elements well below the fold are primed for scroll-in animation
+        el.setAttribute('data-scroll-reveal', 'pending');
         pendingElements.push(el);
       }
     });
@@ -50,8 +53,10 @@ export default function ScrollObserver() {
       (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            obs.unobserve(entry.target);
+            const target = entry.target as HTMLElement;
+            target.classList.add('visible');
+            target.removeAttribute('data-scroll-reveal');
+            obs.unobserve(target);
           }
         });
       },
@@ -63,12 +68,13 @@ export default function ScrollObserver() {
 
     pendingElements.forEach((el) => observer.observe(el));
 
-    // 5. Fail-safe timer: after 1.5s, reveal all remaining elements
+    // 5. Fail-safe timer: after 1s, reveal all remaining elements and clean up pending state
     const safetyTimer = setTimeout(() => {
-      document.querySelectorAll<HTMLElement>('.fade-in-up:not(.visible)').forEach((el) => {
+      document.querySelectorAll<HTMLElement>('.fade-in-up').forEach((el) => {
         el.classList.add('visible');
+        el.removeAttribute('data-scroll-reveal');
       });
-    }, 1500);
+    }, 1000);
 
     return () => {
       clearTimeout(safetyTimer);
