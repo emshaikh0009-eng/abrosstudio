@@ -13,25 +13,25 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   {
     quote:
-      'AbrosStudio completely transformed how our restaurant looks online. We used to struggle getting reservations on weekdays; now our WhatsApp booking button is pinging every evening. Anas understood our vision from day one.',
+      'AbrosStudio delivered a clean, premium website that made table booking seamless for our guests. Weekday dinner inquiries through our WhatsApp integration increased noticeably within the first two weeks.',
     name: 'Rajesh Patel',
-    role: 'Owner, Zaika Gourmet Dining &bull; Surat',
+    role: 'Founder, Zaika Gourmet Dining &bull; Surat',
     avatar: '/assets/avatar-rajesh.jpg',
     rating: 5,
   },
   {
     quote:
-      'Our new brand identity and digital cards make us look like an international luxury salon. When clients tap our metal card on their phone at events, their immediate reaction is pure awe. Worth every rupee.',
+      'The branding and digital visiting cards elevated our client touchpoints immediately. Our clientele frequently comments on how sophisticated our presentation is, from initial booking to the studio visit.',
     name: 'Priya Sharma',
-    role: 'Founder, Aura Salon & Studio &bull; Surat',
+    role: 'Creative Director, Aura Salon & Studio &bull; Surat',
     avatar: '/assets/avatar-priya.jpg',
     rating: 5,
   },
   {
     quote:
-      'Fast turnaround, zero fluff, and pristine attention to design aesthetics. Anas delivered our luxury property portfolio site within 10 days. The WhatsApp inquiry integration has given us our highest lead conversion to date.',
+      'Professional execution, punctual delivery, and sharp aesthetic clarity. The property portfolio website allows prospective buyers to review projects and connect with our sales team without friction.',
     name: 'Vikram Desai',
-    role: 'MD, PrimeHabitat Residences &bull; Gujarat',
+    role: 'Director, PrimeHabitat Residences &bull; Gujarat',
     avatar: '/assets/avatar-vikram.jpg',
     rating: 5,
   },

@@ -71,9 +71,9 @@ export default function Footer() {
           <div>
             <h4 className="footer-heading">Core Capabilities</h4>
             <ul className="footer-links-list">
-              <li><Link href="/services#webDesign" className="footer-link">Custom Business Websites</Link></li>
+              <li><Link href="/services#webDesign" className="footer-link">Professional Website Designing</Link></li>
               <li><Link href="/services#leadGen" className="footer-link">Targeted Meta Ad Campaigns</Link></li>
-              <li><Link href="/services#digitalCards" className="footer-link">Digital + Metal NFC Cards</Link></li>
+              <li><Link href="/services#digitalCards" className="footer-link">Digital Visiting Card</Link></li>
               <li><Link href="/services" className="footer-link">Local SEO &amp; Maps</Link></li>
               <li><Link href="/services" className="footer-link">Brand Identity Systems</Link></li>
             </ul>

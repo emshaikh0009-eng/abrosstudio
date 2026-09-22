@@ -27,13 +27,13 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Service 01: Custom Websites */}
+      {/* Service 01: Website Designing */}
       <section className="section" id="webDesign" style={{ paddingTop: '20px' }}>
         <div className="container">
           <div className="hero-grid">
             <div className="hero-content fade-in-up">
-              <span className="kicker">01 / High-Converting Digital Presence</span>
-              <h2>Custom Business Websites</h2>
+              <span className="kicker">High-Converting Digital Presence</span>
+              <h2>Professional Website Designing</h2>
               <p className="hero-desc">
                 Your website is the single most critical asset for winning high-ticket clients. We design bespoke, lightning-fast websites that communicate prestige from the first second of arrival.
               </p>
@@ -94,7 +94,7 @@ export default function ServicesPage() {
         <div className="container">
           <div className="hero-grid" style={{ direction: 'rtl' }}>
             <div className="hero-content fade-in-up" style={{ direction: 'ltr' }}>
-              <span className="kicker">02 / Predictable Customer Acquisition</span>
+              <span className="kicker">Predictable Customer Acquisition</span>
               <h2>Targeted Meta Ad Campaigns</h2>
               <p className="hero-desc">
                 Stop wasting budget on boosting posts with zero accountability. We architect laser-targeted Instagram and Facebook advertising systems that direct qualified local buyers straight to your phone.
@@ -151,13 +151,13 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Service 03: Digital + Metal NFC Cards */}
+      {/* Service 03: Digital Visiting Card */}
       <section className="section" id="digitalCards">
         <div className="container">
           <div className="hero-grid">
             <div className="hero-content fade-in-up">
-              <span className="kicker">03 / Modern Contactless Networking</span>
-              <h2>Digital + Metal NFC Business Cards</h2>
+              <span className="kicker">Modern Contactless Networking</span>
+              <h2>Digital Visiting Card</h2>
               <p className="hero-desc">
                 AbrosStudio provides two complementary solutions: luxury physical metal NFC cards for high-impact in-person networking, and a universal digital web profile you can share anywhere.
               </p>
@@ -193,7 +193,7 @@ export default function ServicesPage() {
               </div>
 
               <Link href="/contact" className="btn btn-secondary">
-                <span>Inquire About Metal NFC Cards</span>
+                <span>Inquire About Digital Visiting Cards</span>
               </Link>
             </div>
 
@@ -229,28 +229,24 @@ export default function ServicesPage() {
 
           <div className="values-grid">
             <div className="value-card">
-              <div className="value-icon">01</div>
               <h3 className="value-title">Visual Distinction</h3>
               <p className="value-text">
                 Your business should look instantly recognizable and noticeably superior to competitors in your city.
               </p>
             </div>
             <div className="value-card">
-              <div className="value-icon">02</div>
               <h3 className="value-title">Velocity &amp; Precision</h3>
               <p className="value-text">
                 We deliver complete custom websites in 7 to 14 days without endless revision cycles or missed deadlines.
               </p>
             </div>
             <div className="value-card">
-              <div className="value-icon">03</div>
               <h3 className="value-title">Conversion Focus</h3>
               <p className="value-text">
                 Every layout is purposefully designed to drive visitors directly to WhatsApp, phone calls, or scheduled meetings.
               </p>
             </div>
             <div className="value-card">
-              <div className="value-icon">04</div>
               <h3 className="value-title">Direct Accountability</h3>
               <p className="value-text">
                 You communicate directly with founder Anas Shaikh throughout the entire engagement, not junior interns.

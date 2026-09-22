@@ -7,7 +7,7 @@ export default function ContactForm() {
     name: '',
     phone: '',
     email: '',
-    service: 'Custom Business Website',
+    service: 'Professional Website Designing',
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -122,9 +122,9 @@ export default function ContactForm() {
                 value={formData.service}
                 onChange={(e) => setFormData({ ...formData, service: e.target.value })}
               >
-                <option value="Custom Business Website">Custom Business Website</option>
+                <option value="Professional Website Designing">Professional Website Designing</option>
                 <option value="Targeted Meta Ad Campaigns">Targeted Meta Ad Campaigns</option>
-                <option value="Digital + Metal NFC Business Cards">Digital + Metal NFC Business Cards</option>
+                <option value="Digital Visiting Card">Digital Visiting Card</option>
                 <option value="Complete Brand Identity Suite">Complete Brand Identity Suite</option>
               </select>
             </div>

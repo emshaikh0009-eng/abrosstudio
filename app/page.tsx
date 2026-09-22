@@ -14,7 +14,7 @@ export default function HomePage() {
       <section className="hero">
         <div className="container">
           <div className="hero-grid">
-            <div className="hero-content fade-in-up">
+            <div className="hero-content">
               <div className="badge-wrapper">
                 <span className="badge-pill">
                   <span className="badge-pulse" />
@@ -56,16 +56,12 @@ export default function HomePage() {
                 </div>
                 <div className="trust-item">
                   <span className="trust-icon">&#10003;</span>
-                  <span>Direct Founder Access</span>
-                </div>
-                <div className="trust-item">
-                  <span className="trust-icon">&#10003;</span>
                   <span>Zero Bloatware</span>
                 </div>
               </div>
             </div>
 
-            <div className="hero-visual fade-in-up">
+            <div className="hero-visual">
               <div className="hero-showcase-frame">
                 <div className="frame-header">
                   <div className="frame-dots">
@@ -90,14 +86,6 @@ export default function HomePage() {
                   <span className="chip-sub">Score 99/100</span>
                 </div>
               </div>
-
-              <div className="floating-chip chip-2">
-                <div className="chip-icon">💎</div>
-                <div className="chip-text">
-                  <span className="chip-title">Emerald Prestige</span>
-                  <span className="chip-sub">Bespoke Aesthetic</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -116,7 +104,6 @@ export default function HomePage() {
 
           <div className="services-grid">
             <div className="service-card">
-              <span className="service-number">01</span>
               <div className="service-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="2" y="3" width="20" height="14" rx="2" />
@@ -124,7 +111,7 @@ export default function HomePage() {
                   <line x1="12" y1="17" x2="12" y2="21" />
                 </svg>
               </div>
-              <h3 className="service-title">Custom Business Websites</h3>
+              <h3 className="service-title">Professional Website Designing</h3>
               <p className="service-text">
                 Bespoke websites hand-crafted to establish instant authority. Ultra-fast page speeds, mobile-first responsiveness, and direct WhatsApp lead capture funnels.
               </p>
@@ -134,7 +121,6 @@ export default function HomePage() {
             </div>
 
             <div className="service-card">
-              <span className="service-number">02</span>
               <div className="service-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
@@ -154,7 +140,6 @@ export default function HomePage() {
             </div>
 
             <div className="service-card highlight-card">
-              <span className="service-number">03</span>
               <div className="service-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="4" width="18" height="16" rx="2" />
@@ -162,7 +147,7 @@ export default function HomePage() {
                   <line x1="7" y1="12" x2="13" y2="12" />
                 </svg>
               </div>
-              <h3 className="service-title">Metal NFC &amp; Digital Cards</h3>
+              <h3 className="service-title">Digital Visiting Card</h3>
               <p className="service-text">
                 Leave traditional paper cards in the past. Luxury engraved metal NFC cards paired with dynamic digital web profiles to share your contact with one tap.
               </p>
@@ -281,7 +266,7 @@ export default function HomePage() {
           </div>
 
           <div className="portfolio-grid">
-            <div className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card fade-in-up">
               <div className="portfolio-img-wrap">
                 <img src="/assets/project-restaurant.jpg" alt="Zaika Gourmet Dining" />
                 <div className="portfolio-badge-pill">Hospitality &amp; Dining</div>
@@ -290,13 +275,13 @@ export default function HomePage() {
                 <span className="portfolio-cat">Custom Website &bull; Concept</span>
                 <h3 className="portfolio-title">Zaika Gourmet Dining</h3>
                 <p className="portfolio-desc">Fine dining contemporary Indian cuisine website with interactive menu &amp; instant WhatsApp table reservations.</p>
-                <Link href="/work" className="portfolio-view-link">
+                <div className="portfolio-view-link">
                   <span>View Concept Project &rarr;</span>
-                </Link>
+                </div>
               </div>
-            </div>
+            </Link>
 
-            <div className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card fade-in-up">
               <div className="portfolio-img-wrap">
                 <img src="/assets/project-salon.jpg" alt="Aura Hair & Skin Studio" />
                 <div className="portfolio-badge-pill">Luxury Aesthetics</div>
@@ -305,13 +290,13 @@ export default function HomePage() {
                 <span className="portfolio-cat">Brand Identity &bull; Concept</span>
                 <h3 className="portfolio-title">Aura Hair &amp; Skin Studio</h3>
                 <p className="portfolio-desc">High-end salon visual branding, service menu architecture, and digital booking touchpoints in gold &amp; emerald.</p>
-                <Link href="/work" className="portfolio-view-link">
+                <div className="portfolio-view-link">
                   <span>View Concept Project &rarr;</span>
-                </Link>
+                </div>
               </div>
-            </div>
+            </Link>
 
-            <div className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card fade-in-up">
               <div className="portfolio-img-wrap">
                 <img src="/assets/project-estate.jpg" alt="PrimeHabitat Residences" />
                 <div className="portfolio-badge-pill">Real Estate &bull; Gujarat</div>
@@ -320,13 +305,13 @@ export default function HomePage() {
                 <span className="portfolio-cat">Web Portal &bull; Concept</span>
                 <h3 className="portfolio-title">PrimeHabitat Residences</h3>
                 <p className="portfolio-desc">Architectural residential development showcase with brochure downloads and direct sales desk routing.</p>
-                <Link href="/work" className="portfolio-view-link">
+                <div className="portfolio-view-link">
                   <span>View Concept Project &rarr;</span>
-                </Link>
+                </div>
               </div>
-            </div>
+            </Link>
 
-            <div className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card fade-in-up">
               <div className="portfolio-img-wrap">
                 <img src="/assets/project-gym.jpg" alt="IronForge Fitness Studio" />
                 <div className="portfolio-badge-pill">Metal NFC System</div>
@@ -335,11 +320,11 @@ export default function HomePage() {
                 <span className="portfolio-cat">Smart Networking &bull; Concept</span>
                 <h3 className="portfolio-title">IronForge Fitness Studio</h3>
                 <p className="portfolio-desc">Laser-engraved matte metal NFC cards connecting clients directly to personal trainer profiles and class bookings.</p>
-                <Link href="/work" className="portfolio-view-link">
+                <div className="portfolio-view-link">
                   <span>View Concept Project &rarr;</span>
-                </Link>
+                </div>
               </div>
-            </div>
+            </Link>
           </div>
 
           <div style={{ textAlign: 'center', marginTop: '48px' }}>
@@ -363,7 +348,6 @@ export default function HomePage() {
 
           <div className="process-grid">
             <div className="process-card">
-              <div className="process-step-num">Phase 01</div>
               <h3 className="process-title">Discovery &amp; Strategy</h3>
               <p className="process-text">
                 We analyze your business model, target clientele, competitors in your market, and the exact conversion action you want visitors to take.
@@ -371,7 +355,6 @@ export default function HomePage() {
             </div>
 
             <div className="process-card">
-              <div className="process-step-num">Phase 02</div>
               <h3 className="process-title">Bespoke Design</h3>
               <p className="process-text">
                 We craft custom visual layouts using our curated Emerald Prestige aesthetic. Zero templates, zero off-the-shelf themes.
@@ -379,7 +362,6 @@ export default function HomePage() {
             </div>
 
             <div className="process-card">
-              <div className="process-step-num">Phase 03</div>
               <h3 className="process-title">High-Performance Build</h3>
               <p className="process-text">
                 We develop clean, production-ready code with responsive precision, rapid page load optimization, and seamless WhatsApp integration.
@@ -387,7 +369,6 @@ export default function HomePage() {
             </div>
 
             <div className="process-card">
-              <div className="process-step-num">Phase 04</div>
               <h3 className="process-title">Launch &amp; Scale</h3>
               <p className="process-text">
                 We deploy your digital assets, configure domain DNS, launch targeted Meta ad campaigns, and deliver your custom metal NFC cards.

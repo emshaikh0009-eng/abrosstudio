@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import FounderPortrait from '@/components/FounderPortrait';
 
 export const metadata: Metadata = {
   title: 'About Founder | Anas Shaikh — AbrosStudio Surat',
@@ -30,16 +31,7 @@ export default function AboutPage() {
       <section className="section" style={{ paddingTop: '20px' }}>
         <div className="container">
           <div className="founder-grid">
-            <div className="founder-portrait-frame fade-in-up">
-              <img
-                src="/assets/anas-shaikh.jpg"
-                alt="Anas Shaikh — Founder &amp; Lead Designer of AbrosStudio"
-                className="founder-portrait-img"
-              />
-              <div className="founder-caption-pill">
-                <strong>Anas Shaikh</strong> &bull; Founder &amp; Lead Designer
-              </div>
-            </div>
+            <FounderPortrait />
 
             <div className="founder-bio fade-in-up">
               <span className="kicker">Meet the Founder</span>
@@ -68,16 +60,6 @@ export default function AboutPage() {
                   <div className="stat-label">Locally rooted &bull; Global standard</div>
                 </div>
               </div>
-
-              <div>
-                <Link href="/contact" className="btn btn-primary">
-                  <span>Start a Conversation With Anas</span>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -96,28 +78,24 @@ export default function AboutPage() {
 
           <div className="values-grid">
             <div className="value-card">
-              <div className="value-icon">01</div>
               <h3 className="value-title">Craft Over Volume</h3>
               <p className="value-text">
                 We purposefully limit the number of active clients we take on simultaneously to ensure every project receives full creative focus.
               </p>
             </div>
             <div className="value-card">
-              <div className="value-icon">02</div>
               <h3 className="value-title">Direct Founder Partnership</h3>
               <p className="value-text">
                 No middle management or communication breakdown. You collaborate directly with Anas Shaikh from strategy to deployment.
               </p>
             </div>
             <div className="value-card">
-              <div className="value-icon">03</div>
               <h3 className="value-title">Local Commerce Specialization</h3>
               <p className="value-text">
                 We understand how Indian buyers discover and trust local brands: WhatsApp responsiveness, visual credibility, and mobile ease.
               </p>
             </div>
             <div className="value-card">
-              <div className="value-icon">04</div>
               <h3 className="value-title">Speed as a Feature</h3>
               <p className="value-text">
                 Business moves fast. We build quickly and launch decisively so you can start converting new customers in weeks, not quarters.
