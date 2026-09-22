@@ -38,7 +38,7 @@ export default function ServicesPage() {
                 Your website is the single most critical asset for winning high-ticket clients. We design bespoke, lightning-fast websites that communicate prestige from the first second of arrival.
               </p>
 
-              <div className="process-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '16px', margin: '24px 0 32px' }}>
+              <div className="service-features-grid">
                 <div className="service-card" style={{ padding: '20px' }}>
                   <h4 style={{ color: 'var(--color-gold)', marginBottom: '8px', fontSize: '1rem' }}>Mobile-First Precision</h4>
                   <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
@@ -100,7 +100,7 @@ export default function ServicesPage() {
                 Stop wasting budget on boosting posts with zero accountability. We architect laser-targeted Instagram and Facebook advertising systems that direct qualified local buyers straight to your phone.
               </p>
 
-              <div className="process-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '16px', margin: '24px 0 32px' }}>
+              <div className="service-features-grid">
                 <div className="service-card" style={{ padding: '20px' }}>
                   <h4 style={{ color: 'var(--color-gold)', marginBottom: '8px', fontSize: '1rem' }}>Hyper-Local Geo Targeting</h4>
                   <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
@@ -165,7 +165,7 @@ export default function ServicesPage() {
               {/* Dual Pathways Component */}
               <NfcDualTrack />
 
-              <div className="process-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '16px', margin: '24px 0 32px' }}>
+              <div className="service-features-grid">
                 <div className="service-card" style={{ padding: '20px' }}>
                   <h4 style={{ color: 'var(--color-gold)', marginBottom: '8px', fontSize: '1rem' }}>Engraved Matte Metal</h4>
                   <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
