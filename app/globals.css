@@ -397,8 +397,11 @@ p {
 .mobile-nav-card {
   position: fixed;
   top: 14px;
-  left: max(14px, calc((100vw - 440px) / 2));
-  width: min(calc(100vw - 28px), 440px);
+  left: 14px;
+  right: 14px;
+  margin: 0 auto;
+  width: auto;
+  max-width: 440px;
   box-sizing: border-box;
   max-height: calc(100dvh - 28px);
   overflow-y: auto;
@@ -532,53 +535,87 @@ p {
    Global Floating WhatsApp Button
    ========================================================================== */
 
-.wa-floating-btn {
+.wa-fixed-wrapper {
   position: fixed;
-  bottom: 24px;
-  right: 20px;
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  background: #25D366;
-  color: #ffffff;
-  display: flex;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  right: 16px;
+  z-index: 990;
+  pointer-events: none;
+}
+
+.wa-floating-btn {
+  pointer-events: auto;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4), 0 4px 14px rgba(0, 0, 0, 0.35);
-  z-index: 998;
-  cursor: pointer;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  gap: 10px;
+  padding: 10px 18px 10px 14px;
+  background: rgba(13, 40, 30, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(251, 191, 2, 0.45);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(37, 211, 102, 0.25);
+  color: #ffffff;
   text-decoration: none;
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: all var(--transition-fast);
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  position: relative;
 }
 
 .wa-floating-btn:hover {
-  transform: scale(1.08) translateY(-3px);
-  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.55), 0 6px 18px rgba(0, 0, 0, 0.45);
-  color: #ffffff;
+  background: rgba(20, 60, 45, 0.98);
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7), 0 0 24px rgba(251, 191, 2, 0.4);
+}
+
+.wa-floating-btn .wa-icon {
+  color: #25D366;
+  flex-shrink: 0;
+}
+
+.wa-cta-label {
+  white-space: nowrap;
 }
 
 .wa-pulse-ring {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid rgba(37, 211, 102, 0.7);
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: var(--radius-pill);
+  border: 2px solid rgba(37, 211, 102, 0.6);
   animation: wa-pulse 2.4s cubic-bezier(0.24, 0, 0.38, 1) infinite;
   pointer-events: none;
 }
 
 @keyframes wa-pulse {
   0% {
-    transform: scale(0.95);
+    transform: scale(0.98);
     opacity: 0.85;
   }
   50% {
-    transform: scale(1.35);
+    transform: scale(1.08);
     opacity: 0;
   }
   100% {
-    transform: scale(1.35);
+    transform: scale(1.08);
     opacity: 0;
+  }
+}
+
+/* WhatsApp CTA: strictly hidden on desktop (1024px and above) */
+@media (min-width: 1024px) {
+  .wa-fixed-wrapper,
+  .wa-floating-btn {
+    display: none !important;
   }
 }
 
@@ -698,7 +735,8 @@ p {
   align-items: flex-start;
 }
 
-.hero-badge-kicker {
+.hero-badge-kicker,
+.badge-pill {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -710,17 +748,20 @@ p {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-gold) !important;
   margin-bottom: 24px;
 }
 
-.hero-badge-kicker .pulse-dot {
+.hero-badge-kicker .pulse-dot,
+.badge-pulse {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--color-gold);
   box-shadow: 0 0 0 0 rgba(251, 191, 2, 0.7);
   animation: pulse 2s infinite;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 @keyframes pulse {
@@ -1313,8 +1354,8 @@ p {
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.2, 0.85, 0.35, 1.2);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(251, 191, 2, 0.25);
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .card-scene.flipped .card-3d {
@@ -1328,16 +1369,24 @@ p {
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 1px 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.95),
+    inset -1px 0 1px rgba(0, 0, 0, 0.8);
 }
 
-/* Front Face: Matte Metal Aesthetic */
+/* Front Face: Realistic Matte Black Stainless Steel Finish */
 .card-front {
-  background: linear-gradient(135deg, #0d2c21 0%, #061711 100%);
-  border: 1px solid rgba(251, 191, 2, 0.35);
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0.03) 60%, rgba(0, 0, 0, 0.45) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 3px),
+    linear-gradient(145deg, #181a1f 0%, #0d0e12 55%, #14151a 100%);
   padding: 26px 30px;
   justify-content: space-between;
   transform: rotateY(0deg);
@@ -1348,11 +1397,11 @@ p {
 .card-front::after {
   content: '';
   position: absolute;
-  top: -60px;
+  top: -80px;
   right: -60px;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle, rgba(251, 191, 2, 0.16) 0%, rgba(0, 0, 0, 0) 70%);
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1370,10 +1419,60 @@ p {
   align-items: center;
 }
 
-.card-front-logo {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
+/* Realistic Metal Smart Chip (EMV / Contact Module) */
+.metal-smart-chip {
+  width: 44px;
+  height: 34px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #e3ba56 0%, #aa8024 45%, #ffd470 55%, #926d18 100%);
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metal-smart-chip::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(70, 48, 5, 0.4);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.chip-trace {
+  position: absolute;
+  background: rgba(60, 40, 5, 0.45);
+}
+
+.chip-trace-1 {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.chip-trace-2 {
+  height: 100%;
+  width: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.chip-core {
+  width: 16px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(70, 48, 5, 0.45);
+  background: linear-gradient(135deg, #caa038 0%, #fae188 60%, #b88f28 100%);
+  position: relative;
+  z-index: 2;
 }
 
 .card-nfc-badge {
@@ -1382,12 +1481,12 @@ p {
   gap: 6px;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  background: rgba(251, 191, 2, 0.1);
-  border: 1px solid rgba(251, 191, 2, 0.3);
-  color: var(--color-gold);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #d6b460;
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -1402,16 +1501,17 @@ p {
   font-size: 1.65rem;
   font-weight: 800;
   color: #fff;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
   line-height: 1.1;
   margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .card-holder-title {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: var(--color-gold);
-  letter-spacing: 0.06em;
+  color: #d6b460;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -1419,7 +1519,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 12px;
   position: relative;
   z-index: 2;
@@ -1427,24 +1527,27 @@ p {
 
 .card-tagline-text {
   font-family: var(--font-heading);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   letter-spacing: 0.18em;
   font-weight: 700;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .card-metal-tag {
-  font-size: 0.72rem;
-  color: var(--color-gold);
+  font-size: 0.68rem;
+  color: #d6b460;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 /* Back Face: Clear Information + Sharp High-Contrast Scannable QR */
 .card-back {
-  background: linear-gradient(135deg, #091f17 0%, #05130e 100%);
-  border: 1px solid rgba(251, 191, 2, 0.4);
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0.02) 65%, rgba(0, 0, 0, 0.5) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 3px),
+    linear-gradient(145deg, #16181d 0%, #0c0d11 60%, #121317 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   padding: 22px 24px;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
@@ -2112,6 +2215,7 @@ p {
   padding: 70px 60px;
   text-align: center;
   position: relative;
+  overflow: hidden;
   box-shadow: var(--shadow-lg);
 }
 
@@ -2619,6 +2723,18 @@ p {
   margin-bottom: 16px;
 }
 
+.contact-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.faq-card {
+  padding: 28px;
+}
+
 /* ==========================================================================
    Universal Studio Footer
    ========================================================================== */
@@ -2784,17 +2900,21 @@ p {
     max-width: 165px;
   }
 
-  .nav-links {
-    gap: 16px;
+  .nav-links,
+  .header-cta-group {
+    display: none !important;
   }
 
-  .nav-link {
-    font-size: 0.88rem;
+  .mobile-toggle {
+    display: flex !important;
+    width: 44px;
+    height: 44px;
   }
 
-  .header-cta-group .btn {
-    padding: 8px 14px;
-    font-size: 0.84rem;
+  .chip-1 {
+    top: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
   }
 
   .hero-grid > *,
@@ -2933,15 +3053,19 @@ p {
   }
 
   .section {
-    padding: 54px 0;
+    padding: 42px 0;
   }
 
   .section-sm {
-    padding: 40px 0;
+    padding: 30px 0;
   }
 
   .section-header {
-    margin-bottom: 36px;
+    margin-bottom: 28px;
+  }
+
+  .desktop-only-copy {
+    display: none !important;
   }
 
   /* Typography Hierarchy for Mobile */
@@ -2961,19 +3085,19 @@ p {
   }
 
   p {
-    font-size: 0.96rem;
-    line-height: 1.6;
+    font-size: 0.94rem;
+    line-height: 1.55;
   }
 
   .lead {
-    font-size: 1.05rem;
-    line-height: 1.58;
+    font-size: 1.02rem;
+    line-height: 1.55;
   }
 
   .kicker {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     letter-spacing: 0.12em;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   /* Header & Mobile Toggle */
@@ -2995,13 +3119,13 @@ p {
 
   /* Hero Section Mobile */
   .hero {
-    padding-top: calc(var(--header-height) + 24px);
-    padding-bottom: 48px;
+    padding-top: calc(var(--header-height) + 16px);
+    padding-bottom: 40px;
   }
 
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
 
   .hero-content {
@@ -3010,9 +3134,9 @@ p {
   }
 
   .hero-desc {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 24px;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    margin-bottom: 20px;
   }
 
   .hero-actions {
@@ -3024,143 +3148,199 @@ p {
 
   .hero-actions .btn {
     width: 100%;
-    min-height: 50px;
-    font-size: 0.98rem;
+    min-height: 48px;
+    font-size: 0.96rem;
     font-weight: 700;
   }
 
   .hero-trust-bar {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px 18px;
-    margin-top: 10px;
+    gap: 8px 16px;
+    margin-top: 8px;
   }
 
   .hero-trust-bar .trust-item {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
   }
 
   .hero-visual {
     width: 100%;
-    max-width: 440px;
+    max-width: 380px;
     margin: 0 auto;
   }
 
   .hero-showcase-frame {
     border-radius: 14px;
+    max-height: 220px;
+    overflow: hidden;
   }
 
-  .floating-chip {
-    padding: 8px 12px;
-    font-size: 0.8rem;
+  .hero-showcase-frame img {
+    max-height: 185px;
+    object-fit: cover;
+    width: 100%;
   }
 
-  .chip-1 {
-    top: 8px;
-    right: 8px;
-  }
-
-  .chip-2 {
-    bottom: 8px;
-    left: 8px;
-  }
-
-  /* Cards Rhythm (Reference Screenshot 2: Generous 24px Padding) */
+  /* Services Grid Mobile */
   .services-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 16px;
     max-width: 100%;
   }
 
   .service-card {
-    padding: 26px 22px;
-    border-radius: 16px;
+    padding: 22px 18px;
+    border-radius: 14px;
   }
 
+  /* 2-Column Mobile Layout for Service Feature Boxes */
   .service-features-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    margin: 20px 0 26px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 16px 0 20px;
   }
 
   .service-features-grid .service-card {
-    padding: 20px 18px;
+    padding: 14px 12px;
+    border-radius: 12px;
   }
 
+  .service-features-grid .service-card h4 {
+    font-size: 0.88rem !important;
+    margin-bottom: 4px !important;
+    line-height: 1.25;
+  }
+
+  .service-features-grid .service-card p {
+    font-size: 0.76rem !important;
+    line-height: 1.38;
+  }
+
+  /* 2-Column Mobile Layout for Why Cards */
   .why-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .why-card {
-    padding: 24px 20px;
-    border-radius: 16px;
+    padding: 16px 12px;
+    border-radius: 14px;
   }
 
+  .why-icon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 8px;
+  }
+
+  .why-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .why-title {
+    font-size: 0.92rem;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+
+  .why-desc {
+    font-size: 0.76rem;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+  }
+
+  /* 2-Column Mobile Layout for Process Steps */
   .process-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .process-card {
-    padding: 24px 20px;
-    border-radius: 16px;
+    padding: 16px 12px;
+    border-radius: 14px;
   }
 
+  .process-title {
+    font-size: 0.92rem;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+
+  .process-text {
+    font-size: 0.76rem;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+  }
+
+  /* 2-Column Mobile Layout for Studio Principles */
   .values-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .value-card {
-    padding: 24px 20px;
-    border-radius: 16px;
+    padding: 16px 12px;
+    border-radius: 14px;
+  }
+
+  .value-title {
+    font-size: 0.92rem;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+
+  .value-text {
+    font-size: 0.76rem;
+    line-height: 1.4;
+    color: var(--color-text-muted);
   }
 
   /* Portfolio / Selected Work Mobile */
   .portfolio-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
   }
 
   .portfolio-card {
-    border-radius: 16px;
+    border-radius: 14px;
   }
 
   .portfolio-img-wrap {
-    height: 220px;
+    height: 175px;
   }
 
   .portfolio-info {
-    padding: 22px 20px;
+    padding: 18px 16px;
   }
 
   .portfolio-title {
-    font-size: 1.25rem;
-    margin-bottom: 8px;
+    font-size: 1.15rem;
+    margin-bottom: 6px;
   }
 
   .portfolio-desc {
-    font-size: 0.9rem;
-    line-height: 1.55;
-    margin-bottom: 18px;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    margin-bottom: 14px;
   }
 
   .work-filter-bar {
     gap: 8px;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
   }
 
   .filter-btn {
-    padding: 8px 18px;
-    font-size: 0.85rem;
-    min-height: 40px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    min-height: 36px;
   }
 
-  /* 3D Digital Card Scene on Mobile */
+  /* 3D Digital Metal Card Scene on Mobile */
   .card-showcase-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 28px;
     text-align: center;
   }
 
@@ -3170,7 +3350,7 @@ p {
 
   .nfc-dual-grid {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -3178,40 +3358,45 @@ p {
   }
 
   .nfc-track-card {
-    padding: 20px 18px;
-    border-radius: 14px;
+    padding: 16px 14px;
+    border-radius: 12px;
   }
 
   .card-scene {
-    max-width: 100%;
-    height: 280px;
+    max-width: 330px;
+    height: 215px;
     margin: 0 auto;
   }
 
   .card-front {
-    padding: 20px 20px;
-  }
-
-  .card-back {
     padding: 18px 18px;
   }
 
+  .card-back {
+    padding: 16px 16px;
+  }
+
   .card-holder-name {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
+  }
+
+  .metal-smart-chip {
+    width: 38px;
+    height: 30px;
   }
 
   .card-back-grid {
-    grid-template-columns: 1fr 90px;
-    gap: 10px;
+    grid-template-columns: 1fr 78px;
+    gap: 8px;
   }
 
   .card-back-name {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 
   .qr-code-box {
-    width: 82px;
-    height: 82px;
+    width: 72px;
+    height: 72px;
   }
 
   /* Testimonials Slider Mobile */
@@ -3331,11 +3516,29 @@ p {
     border-radius: 14px;
   }
 
+  .contact-faq-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .faq-card {
+    padding: 22px 18px;
+    border-radius: 14px;
+  }
+
   /* Final CTA Card Mobile */
   .final-cta-card {
     padding: 38px 20px;
     border-radius: 20px;
     text-align: center;
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .final-cta-card::before {
+    max-width: 100%;
+    width: 100%;
   }
 
   .final-cta-card h2 {
@@ -3408,15 +3611,16 @@ p {
 
   /* Floating WhatsApp Button Mobile Safe Inset */
   .wa-floating-btn {
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-    right: 18px;
-    width: 54px;
-    height: 54px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    width: auto;
+    height: auto;
+    min-height: 44px;
   }
 
   .wa-floating-btn .wa-icon {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -3438,7 +3642,8 @@ p {
   }
 
   .card-scene {
-    height: 290px;
+    max-width: 320px;
+    height: 210px;
   }
 
   .card-back-grid {
@@ -3470,5 +3675,130 @@ p {
 
   .contact-form-card {
     padding: 22px 16px;
+  }
+
+  .contact-method-card {
+    padding: 14px 12px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.65rem, 6.8vw, 2rem);
+    word-break: break-word;
+  }
+
+  .btn {
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: 0.92rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Ultra-Compact Mobile (320px to 360px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 360px) {
+  .container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero-title {
+    font-size: 1.55rem;
+    line-height: 1.2;
+  }
+
+  .hero-desc {
+    font-size: 0.88rem;
+  }
+
+  .btn {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 0.85rem;
+  }
+
+  .hero-trust-bar {
+    gap: 8px 12px;
+  }
+
+  .hero-trust-bar .trust-item {
+    font-size: 0.8rem;
+  }
+
+  .why-grid,
+  .service-features-grid,
+  .process-grid,
+  .values-grid {
+    gap: 8px;
+  }
+
+  .why-card,
+  .service-features-grid .service-card,
+  .process-card,
+  .value-card {
+    padding: 12px 10px;
+    border-radius: 12px;
+  }
+
+  .why-title,
+  .process-title,
+  .value-title {
+    font-size: 0.84rem;
+  }
+
+  .why-desc,
+  .process-text,
+  .value-text {
+    font-size: 0.72rem;
+  }
+
+  .card-scene {
+    max-width: 292px;
+    height: 195px;
+  }
+
+  .card-front {
+    padding: 14px 14px;
+  }
+
+  .card-back {
+    padding: 14px 14px;
+  }
+
+  .card-holder-name {
+    font-size: 1.1rem;
+  }
+
+  .card-holder-title {
+    font-size: 0.68rem;
+  }
+
+  .card-back-grid {
+    grid-template-columns: 1fr 68px;
+    gap: 6px;
+  }
+
+  .qr-code-box {
+    width: 64px;
+    height: 64px;
+  }
+
+  .contact-method-card {
+    padding: 12px 10px;
+  }
+
+  .wa-floating-btn {
+    padding: 8px 12px 8px 10px;
+    font-size: 0.82rem;
+    gap: 6px;
+  }
+
+  .wa-floating-btn .wa-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .faq-card {
+    padding: 16px 12px;
   }
 }

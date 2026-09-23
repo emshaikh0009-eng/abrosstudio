@@ -18,17 +18,17 @@ export default function HomePage() {
               <div className="badge-wrapper">
                 <span className="badge-pill">
                   <span className="badge-pulse" />
-                  Premium Digital Agency &bull; Surat, Gujarat
+                  Premium Digital Agency
                 </span>
               </div>
 
               <h1 className="hero-title">
-                Crafted With Purpose.{' '}
-                <span className="text-gradient">Built to Win Customers.</span>
+                Build Your Professional{' '}
+                <span className="text-gradient">Website Now</span>
               </h1>
 
               <p className="hero-desc">
-                We craft bespoke, high-converting websites, targeted Meta ad campaigns, and luxury metal NFC business cards for ambitious Indian businesses that refuse to look average.
+                We craft bespoke, high-converting websites, targeted Meta ad campaigns, and luxury metal NFC business cards<span className="desktop-only-copy"> for ambitious Indian businesses that refuse to look average</span>.
               </p>
 
               <div className="hero-actions">
@@ -76,14 +76,6 @@ export default function HomePage() {
                     src="/assets/project-restaurant.jpg"
                     alt="Zaika Gourmet Dining Concept by AbrosStudio"
                   />
-                </div>
-              </div>
-
-              <div className="floating-chip chip-1">
-                <div className="chip-icon">⚡</div>
-                <div className="chip-text">
-                  <span className="chip-title">Ultra-Fast Load</span>
-                  <span className="chip-sub">Score 99/100</span>
                 </div>
               </div>
             </div>

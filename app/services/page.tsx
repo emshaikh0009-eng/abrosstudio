@@ -4,7 +4,7 @@ import Link from 'next/link';
 import NfcDualTrack from '@/components/NfcDualTrack';
 
 export const metadata: Metadata = {
-  title: 'Services | Custom Websites, Meta Ads & Metal NFC Cards — AbrosStudio',
+  title: 'Services | Custom Websites, Meta Ads & Metal NFC Cards | AbrosStudio',
   description:
     'Explore AbrosStudio’s core capabilities: custom high-performance business websites, targeted Meta ad campaigns, and luxury metal NFC business cards in Surat, Gujarat.',
 };
@@ -12,23 +12,8 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <>
-      {/* Services Hero Header */}
-      <section className="hero" style={{ paddingBottom: '40px' }}>
-        <div className="container">
-          <div className="section-header" style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <span className="kicker">Full-Service Digital Suite</span>
-            <h1 className="hero-title">
-              Precision Services for Ambitious Businesses
-            </h1>
-            <p className="hero-desc" style={{ maxWidth: '700px', margin: '0 auto' }}>
-              We don’t offer generic service menus. We deliver three specialized digital offerings engineered to establish undeniable authority and generate paying inquiries for local brands.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Service 01: Website Designing */}
-      <section className="section" id="webDesign" style={{ paddingTop: '20px' }}>
+      <section className="section" id="webDesign" style={{ paddingTop: '40px' }}>
         <div className="container">
           <div className="hero-grid">
             <div className="hero-content fade-in-up">
@@ -78,7 +63,6 @@ export default function ServicesPage() {
                     <span className="dot yellow" />
                     <span className="dot green" />
                   </div>
-                  <div className="frame-url">abrosstudio.com/websites</div>
                 </div>
                 <div className="frame-body">
                   <img src="/assets/project-restaurant.jpg" alt="Custom Website Deliverable" />
@@ -140,7 +124,6 @@ export default function ServicesPage() {
                     <span className="dot yellow" />
                     <span className="dot green" />
                   </div>
-                  <div className="frame-url">abrosstudio.com/meta-ads</div>
                 </div>
                 <div className="frame-body">
                   <img src="/assets/project-salon.jpg" alt="Meta Ads Creative Deliverable" />
@@ -205,7 +188,6 @@ export default function ServicesPage() {
                     <span className="dot yellow" />
                     <span className="dot green" />
                   </div>
-                  <div className="frame-url">abrosstudio.com/nfc-cards</div>
                 </div>
                 <div className="frame-body">
                   <img src="/assets/project-gym.jpg" alt="Metal NFC Card Showcase" />

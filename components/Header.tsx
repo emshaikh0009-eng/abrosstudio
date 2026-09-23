@@ -64,7 +64,7 @@ export default function Header() {
           <Link href="/" className="brand-logo" aria-label="AbrosStudio Home">
             <img
               src="/assets/abros-logo-transparent.png"
-              alt="AbrosStudio — Crafted With Purpose"
+              alt="AbrosStudio"
               className="brand-logo-img"
             />
           </Link>

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import FounderPortrait from '@/components/FounderPortrait';
 
 export const metadata: Metadata = {
-  title: 'About Founder | Anas Shaikh — AbrosStudio Surat',
+  title: 'About Founder | Anas Shaikh | AbrosStudio Surat',
   description:
     'Learn about Anas Shaikh, founder of AbrosStudio in Surat, Gujarat. Discover our boutique agency philosophy, commitment to craft, and local business focus.',
 };
@@ -37,13 +37,10 @@ export default function AboutPage() {
               <span className="kicker">Meet the Founder</span>
               <h2>&ldquo;Great digital design is not an expense. It is your business&rsquo;s most valuable asset.&rdquo;</h2>
               <p className="lead">
-                I founded AbrosStudio in Surat to solve a persistent frustration I observed across Indian retail, hospitality, luxury, and professional service businesses.
+                I founded AbrosStudio to give ambitious local businesses a high-touch alternative to bloated agencies and generic templates.
               </p>
               <p>
-                Too many ambitious local business owners were settling for generic, cookie-cutter WordPress themes, bloated agencies with junior account managers, or amateur social media agencies that deliver zero measurable revenue.
-              </p>
-              <p>
-                AbrosStudio is structured intentionally as a high-touch boutique agency. When you work with us, you work directly with me. Every layout, every line of code, every Meta ad campaign, and every laser-engraved metal NFC card is inspected and crafted with deliberate purpose.
+                When you partner with us, you collaborate directly with me. Every custom website, targeted Meta ad campaign, and metal NFC card is crafted with deliberate purpose and uncompromising quality.
               </p>
 
               <div className="founder-stats-grid" style={{ margin: '32px 0' }}>

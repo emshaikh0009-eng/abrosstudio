@@ -7,7 +7,7 @@ import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://abrosstudio.com'),
-  title: 'AbrosStudio | Digital Agency Surat — Crafted With Purpose',
+  title: 'AbrosStudio | Digital Agency Surat',
   description:
     'Premium digital studio founded by Anas Shaikh in Surat, Gujarat. We build custom high-converting websites, targeted Meta ads, and digital + metal NFC business cards.',
   keywords: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     icon: '/assets/abros-logo-transparent.png',
   },
   openGraph: {
-    title: 'AbrosStudio | Digital Agency Surat — Crafted With Purpose',
+    title: 'AbrosStudio | Digital Agency Surat',
     description:
       'We help ambitious local businesses look professional and win customers online with custom websites, targeted Meta ads, and metal NFC business cards.',
     url: 'https://abrosstudio.com',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
         url: '/assets/abros-logo-transparent.png',
         width: 765,
         height: 195,
-        alt: 'AbrosStudio — Crafted With Purpose',
+        alt: 'AbrosStudio Logo',
       },
     ],
     locale: 'en_IN',

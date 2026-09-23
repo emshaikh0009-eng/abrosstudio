@@ -55,15 +55,15 @@ export default function DigitalCard() {
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
         }}
       >
-        {/* Front Face: Matte Metal Aesthetic */}
+        {/* Front Face: Matte Black Metal Aesthetic */}
         <div className="card-face card-front">
           <div className="card-front-top">
             <div className="card-chip-brand">
-              <img
-                src="/assets/abros-logo-transparent.png"
-                alt="AbrosStudio"
-                className="card-front-logo"
-              />
+              <div className="metal-smart-chip" aria-label="Smart NFC Contact Chip">
+                <div className="chip-trace chip-trace-1" />
+                <div className="chip-trace chip-trace-2" />
+                <div className="chip-core" />
+              </div>
             </div>
             <div className="card-nfc-badge">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -77,12 +77,12 @@ export default function DigitalCard() {
 
           <div className="card-front-center">
             <h3 className="card-holder-name">Anas Shaikh</h3>
-            <span className="card-holder-title">Founder &amp; Lead Designer</span>
+            <span className="card-holder-title">Founder</span>
           </div>
 
           <div className="card-front-bottom">
-            <span className="card-tagline-text">CRAFTED WITH PURPOSE</span>
-            <span className="card-metal-tag">Metal NFC &bull; Surat</span>
+            <span className="card-tagline-text">MATTE BLACK EDITION</span>
+            <span className="card-metal-tag">NFC &bull; Solid Stainless Steel</span>
           </div>
         </div>
 
@@ -92,7 +92,7 @@ export default function DigitalCard() {
             <div className="card-back-info">
               <div className="card-back-person">
                 <h4 className="card-back-name">Anas Shaikh</h4>
-                <span className="card-back-role">Founder &amp; Lead Designer</span>
+                <span className="card-back-role">Founder</span>
               </div>
 
               <div className="card-contact-lines">
@@ -107,7 +107,7 @@ export default function DigitalCard() {
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
                   </svg>
-                  <span>ambrosstudio.z@gmail.com</span>
+                  <span>anas.shaikh@contactvip.in</span>
                 </div>
                 <div className="card-contact-line">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

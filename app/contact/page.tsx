@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import ContactForm from '@/components/ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contact Studio | Book a Demo — AbrosStudio Surat',
+  title: 'Contact Studio | Book a Demo | AbrosStudio Surat',
   description:
     'Get in touch with Anas Shaikh at AbrosStudio in Surat, Gujarat. Discuss custom web design, Meta ad campaigns, or digital metal NFC business cards.',
 };
@@ -42,21 +42,21 @@ export default function ContactPage() {
               </p>
 
               <div className="contact-cards-stack">
-                <div className="service-card" style={{ padding: '22px' }}>
+                <div className="service-card contact-method-card">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                     <div className="nfc-track-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                       </svg>
                     </div>
-                    <div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <h4 style={{ color: 'var(--color-gold)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Direct Phone &amp; WhatsApp</h4>
-                      <a href="tel:+919998441519" style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 700 }}>+91 99984 41519</a>
+                      <a href="tel:+919998441519" style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 700, wordBreak: 'break-word' }}>+91 99984 41519</a>
                     </div>
                   </div>
                 </div>
 
-                <div className="service-card" style={{ padding: '22px' }}>
+                <div className="service-card contact-method-card">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                     <div className="nfc-track-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -64,14 +64,14 @@ export default function ContactPage() {
                         <polyline points="22,6 12,13 2,6" />
                       </svg>
                     </div>
-                    <div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <h4 style={{ color: 'var(--color-gold)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email Inquiries</h4>
-                      <a href="mailto:ambrosstudio.z@gmail.com" style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 700 }}>ambrosstudio.z@gmail.com</a>
+                      <a href="mailto:ambrosstudio.z@gmail.com" style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 700, wordBreak: 'break-all', overflowWrap: 'anywhere' }}>ambrosstudio.z@gmail.com</a>
                     </div>
                   </div>
                 </div>
 
-                <div className="service-card" style={{ padding: '22px' }}>
+                <div className="service-card contact-method-card">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                     <div className="nfc-track-icon">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -79,9 +79,9 @@ export default function ContactPage() {
                         <circle cx="12" cy="10" r="3" />
                       </svg>
                     </div>
-                    <div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <h4 style={{ color: 'var(--color-gold)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Studio Address</h4>
-                      <p style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 600, margin: 0 }}>
+                      <p style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 600, margin: 0, wordBreak: 'break-word' }}>
                         VIP Gallaria, Althan, Surat, Gujarat 395017
                       </p>
                     </div>
@@ -139,8 +139,8 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="process-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '20px', maxWidth: '980px', margin: '0 auto' }}>
-            <div className="service-card" style={{ padding: '28px' }}>
+          <div className="contact-faq-grid">
+            <div className="service-card faq-card">
               <h4 style={{ color: 'var(--color-gold)', marginBottom: '10px', fontSize: '1.05rem' }}>
                 How fast can our website go live?
               </h4>
@@ -149,7 +149,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="service-card" style={{ padding: '28px' }}>
+            <div className="service-card faq-card">
               <h4 style={{ color: 'var(--color-gold)', marginBottom: '10px', fontSize: '1.05rem' }}>
                 What makes AbrosStudio different?
               </h4>
@@ -158,7 +158,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="service-card" style={{ padding: '28px' }}>
+            <div className="service-card faq-card">
               <h4 style={{ color: 'var(--color-gold)', marginBottom: '10px', fontSize: '1.05rem' }}>
                 How do metal NFC cards work?
               </h4>
@@ -167,7 +167,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="service-card" style={{ padding: '28px' }}>
+            <div className="service-card faq-card">
               <h4 style={{ color: 'var(--color-gold)', marginBottom: '10px', fontSize: '1.05rem' }}>
                 Do you manage Meta ads ongoing?
               </h4>

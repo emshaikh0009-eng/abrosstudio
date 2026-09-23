@@ -1015,16 +1015,24 @@ p {
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 1px 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.95),
+    inset -1px 0 1px rgba(0, 0, 0, 0.8);
 }
 
-/* Front Face: Matte Metal Aesthetic */
+/* Front Face: Realistic Matte Black Stainless Steel Finish */
 .card-front {
-  background: linear-gradient(135deg, #0d2c21 0%, #061711 100%);
-  border: 1px solid rgba(251, 191, 2, 0.35);
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0.03) 60%, rgba(0, 0, 0, 0.45) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 3px),
+    linear-gradient(145deg, #181a1f 0%, #0d0e12 55%, #14151a 100%);
   padding: 26px 30px;
   justify-content: space-between;
   transform: rotateY(0deg);
@@ -1035,11 +1043,11 @@ p {
 .card-front::after {
   content: '';
   position: absolute;
-  top: -60px;
+  top: -80px;
   right: -60px;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle, rgba(251, 191, 2, 0.16) 0%, rgba(0, 0, 0, 0) 70%);
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1057,10 +1065,60 @@ p {
   align-items: center;
 }
 
-.card-front-logo {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
+/* Realistic Metal Smart Chip (EMV / Contact Module) */
+.metal-smart-chip {
+  width: 44px;
+  height: 34px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #e3ba56 0%, #aa8024 45%, #ffd470 55%, #926d18 100%);
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metal-smart-chip::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(70, 48, 5, 0.4);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.chip-trace {
+  position: absolute;
+  background: rgba(60, 40, 5, 0.45);
+}
+
+.chip-trace-1 {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.chip-trace-2 {
+  height: 100%;
+  width: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.chip-core {
+  width: 16px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(70, 48, 5, 0.45);
+  background: linear-gradient(135deg, #caa038 0%, #fae188 60%, #b88f28 100%);
+  position: relative;
+  z-index: 2;
 }
 
 .card-nfc-badge {
@@ -1069,12 +1127,12 @@ p {
   gap: 6px;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
-  background: rgba(251, 191, 2, 0.1);
-  border: 1px solid rgba(251, 191, 2, 0.3);
-  color: var(--color-gold);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #d6b460;
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 

@@ -16,14 +16,14 @@ export default function FounderPortrait() {
     >
       <img
         src="/assets/anas-shaikh.jpg"
-        alt="Anas Shaikh — Founder &amp; Lead Designer of AbrosStudio"
+        alt="Anas Shaikh, Founder of AbrosStudio"
         className="founder-portrait-img"
         style={{
           filter: isColor ? 'grayscale(0%)' : undefined,
         }}
       />
       <div className="founder-caption-pill">
-        <strong>Anas Shaikh</strong> &bull; Founder &amp; Lead Designer
+        <strong>Anas Shaikh</strong> &bull; Founder
       </div>
     </div>
   );
