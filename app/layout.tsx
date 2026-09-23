@@ -6,12 +6,13 @@ import ScrollObserver from '@/components/ScrollObserver';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://abrosstudio.com'),
-  title: 'AbrosStudio | Digital Agency Surat',
+  metadataBase: new URL('https://ambrosstudio.com'),
+  title: 'Ambros Studio | Premium Digital Studio Surat',
   description:
-    'Premium digital studio founded by Anas Shaikh in Surat, Gujarat. We build custom high-converting websites, targeted Meta ads, and digital + metal NFC business cards.',
+    'Ambros Studio creates professional digital experiences for businesses. We build custom high-converting websites, targeted Meta ads, and luxury metal NFC business cards.',
   keywords: [
-    'AbrosStudio',
+    'Ambros Studio',
+    'Ambros',
     'Anas Shaikh',
     'Digital Agency Surat',
     'Web Design Surat',
@@ -22,20 +23,20 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Anas Shaikh', url: 'https://wa.me/919998441519' }],
   icons: {
-    icon: '/assets/abros-logo-transparent.png',
+    icon: '/assets/ambros-logo-new.svg',
   },
   openGraph: {
-    title: 'AbrosStudio | Digital Agency Surat',
+    title: 'Ambros Studio | Premium Digital Studio Surat',
     description:
-      'We help ambitious local businesses look professional and win customers online with custom websites, targeted Meta ads, and metal NFC business cards.',
-    url: 'https://abrosstudio.com',
-    siteName: 'AbrosStudio',
+      'Ambros Studio creates professional digital experiences for businesses: custom websites, targeted Meta ads, and metal NFC business cards.',
+    url: 'https://ambrosstudio.com',
+    siteName: 'Ambros Studio',
     images: [
       {
-        url: '/assets/abros-logo-transparent.png',
-        width: 765,
-        height: 195,
-        alt: 'AbrosStudio Logo',
+        url: '/assets/ambros-logo-new.svg',
+        width: 320,
+        height: 54,
+        alt: 'Ambros Studio Logo',
       },
     ],
     locale: 'en_IN',
@@ -43,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AbrosStudio | Crafted With Purpose',
-    description: 'Digital agency in Surat, Gujarat founded by Anas Shaikh.',
-    images: ['/assets/abros-logo-transparent.png'],
+    title: 'Ambros Studio | Premium Digital Studio',
+    description: 'Boutique digital studio in Surat, Gujarat founded by Anas Shaikh.',
+    images: ['/assets/ambros-logo-new.svg'],
   },
 };
 

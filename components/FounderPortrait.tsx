@@ -16,7 +16,7 @@ export default function FounderPortrait() {
     >
       <img
         src="/assets/anas-shaikh.jpg"
-        alt="Anas Shaikh, Founder of AbrosStudio"
+        alt="Anas Shaikh, Founder of Ambros Studio"
         className="founder-portrait-img"
         style={{
           filter: isColor ? 'grayscale(0%)' : undefined,

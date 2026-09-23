@@ -6,12 +6,12 @@ import TestimonialSlider from '@/components/TestimonialSlider';
 
 export default function HomePage() {
   const demoWhatsAppUrl =
-    'https://wa.me/919998441519?text=Hi%20AbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
+    'https://wa.me/919998441519?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="hero">
+      {/* 1. HERO SECTION — Deep Emerald Authority */}
+      <section className="hero section-emerald">
         <div className="container">
           <div className="hero-grid">
             <div className="hero-content">
@@ -24,11 +24,11 @@ export default function HomePage() {
 
               <h1 className="hero-title">
                 Build Your Professional{' '}
-                <span className="text-gradient">Website Now</span>
+                <span className="text-gold">Website Now</span>
               </h1>
 
               <p className="hero-desc">
-                We craft bespoke, high-converting websites, targeted Meta ad campaigns, and luxury metal NFC business cards<span className="desktop-only-copy"> for ambitious Indian businesses that refuse to look average</span>.
+                We craft bespoke, high-converting websites, targeted Meta ad campaigns, and luxury metal NFC business cards<span className="desktop-only-copy"> for ambitious businesses that refuse to look average</span>.
               </p>
 
               <div className="hero-actions">
@@ -69,12 +69,12 @@ export default function HomePage() {
                     <span className="dot yellow" />
                     <span className="dot green" />
                   </div>
-                  <div className="frame-url">abrosstudio.com/client-showcase</div>
+                  <div className="frame-url">ambrosstudio.com/client-showcase</div>
                 </div>
                 <div className="frame-body">
                   <img
                     src="/assets/project-restaurant.jpg"
-                    alt="Zaika Gourmet Dining Concept by AbrosStudio"
+                    alt="Zaika Gourmet Dining Concept by Ambros Studio"
                   />
                 </div>
               </div>
@@ -83,8 +83,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Services Overview Grid */}
-      <section className="section" id="servicesOverview">
+      {/* 2. SERVICES OVERVIEW — Warm Ivory Breathing Space */}
+      <section className="section section-ivory" id="servicesOverview">
         <div className="container">
           <div className="section-header">
             <span className="kicker">Core Studio Capabilities</span>
@@ -131,7 +131,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="service-card highlight-card">
+            <div className="service-card">
               <div className="service-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="4" width="18" height="16" rx="2" />
@@ -151,117 +151,67 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Strategic Edge: Why Digital Credibility Matters */}
-      <section className="section" style={{ background: 'var(--bg-secondary)' }}>
+      {/* 3. WHY IT MATTERS — Deep Emerald Editorial Statement */}
+      <section className="section section-emerald" id="whyItMatters">
         <div className="container">
-          <div className="section-header text-center fade-in-up">
-            <span className="kicker">Strategic Edge</span>
-            <h2>Why Digital Credibility Matters For Local Businesses</h2>
+          <div className="section-header" style={{ maxWidth: '820px' }}>
+            <span className="kicker">Why It Matters</span>
+            <h2 style={{ fontSize: 'clamp(2.2rem, 4.2vw, 3.4rem)', lineHeight: 1.15 }}>
+              Local buyers judge you before they call you
+            </h2>
             <p className="section-subtitle">
-              Consumers judge your business within seconds of searching online. A high-grade digital presence converts casual searches into footfall and calls.
+              Consumers judge your business within seconds of searching online. A high-grade digital presence converts casual searches into footfall and qualified inquiries.
             </p>
           </div>
 
-          <div className="why-grid">
-            <div className="why-card fade-in-up">
-              <div className="why-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <h4 className="why-title">First 50 Milliseconds</h4>
-              <p className="why-desc">
-                Potential clients form 75% of their opinion on your establishment’s credibility based on website aesthetics alone.
+          <div className="why-pillars-grid">
+            <div className="why-pillar-item">
+              <h4>First impressions form fast</h4>
+              <p>
+                Most visitors decide whether a business looks credible within seconds of landing on a site &mdash; before reading a single word of copy.
               </p>
             </div>
 
-            <div className="why-card fade-in-up">
-              <div className="why-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-                  <line x1="12" y1="18" x2="12.01" y2="18" />
-                </svg>
-              </div>
-              <h4 className="why-title">Frictionless Mobile Flow</h4>
-              <p className="why-desc">
-                Over 80% of local searches happen on smartphones. We build interfaces where calling or messaging takes just one tap.
+            <div className="why-pillar-item">
+              <h4>Mobile is the default</h4>
+              <p>
+                The vast majority of local searches happen on a smartphone. We design so calling or messaging takes just one tap, not three.
               </p>
             </div>
 
-            <div className="why-card fade-in-up">
-              <div className="why-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-              </div>
-              <h4 className="why-title">Eliminating Ad Waste</h4>
-              <p className="why-desc">
-                We target buyers physically present in your local vicinity, turning marketing expenditure into real customer footfall.
+            <div className="why-pillar-item">
+              <h4>Ads that reach real buyers</h4>
+              <p>
+                We target people physically present near your business, so marketing expenditure converts into real-world footfall rather than vanity impressions.
               </p>
             </div>
 
-            <div className="why-card fade-in-up">
-              <div className="why-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
-              </div>
-              <h4 className="why-title">Modern Memorability</h4>
-              <p className="why-desc">
-                Paper cards get lost in drawers. Our digital business cards ensure you stay stored permanently in contacts with your portfolio.
+            <div className="why-pillar-item">
+              <h4>A card that doesn&rsquo;t get lost</h4>
+              <p>
+                Paper cards end up forgotten in drawers. A digital metal profile stays permanently saved in contacts along with your portfolio and links.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Smart Contactless Networking: Dual NFC + 3D Interactive Card */}
-      <section className="section card-feature-section" id="digitalCardFeature">
-        <div className="container">
-          <div className="card-showcase-grid">
-            <div className="card-explainer fade-in-up">
-              <span className="kicker">Smart Contactless Networking</span>
-              <h2>Physical Metal NFC Card + Digital Profile</h2>
-              <p className="lead">
-                AbrosStudio offers both premium laser-engraved metal NFC cards for in-person authority, and instantly shareable digital profile links for any device.
-              </p>
-
-              {/* Dual Pathways Component */}
-              <NfcDualTrack />
-
-              <div>
-                <Link href="/services#digitalCards" className="btn btn-secondary">
-                  <span>Explore Metal NFC &amp; Digital Cards</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* The 3D Interactive Card Scene */}
-            <div className="fade-in-up" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              <DigitalCard />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Selected Work Highlights */}
-      <section className="section" id="selectedWork">
+      {/* 4. SAMPLE WORK — Soft Ivory Gallery Showcase */}
+      <section className="section section-ivory-soft" id="selectedWork">
         <div className="container">
           <div className="section-header">
-            <span className="kicker">Demonstrated Excellence</span>
-            <h2>Concept Projects &amp; Visual Showcases</h2>
+            <span className="kicker">Sample Work</span>
+            <h2>Design concepts across Indian retail &amp; hospitality</h2>
             <p className="section-subtitle">
-              Explore how we apply our Emerald Prestige design philosophy across diverse Indian retail, hospitality, luxury, and professional services.
+              These are studio-built sample concepts used to demonstrate our design range, not live client engagements. Ask us for references from active projects.
             </p>
           </div>
 
           <div className="portfolio-grid">
-            <Link href="/work" className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card">
               <div className="portfolio-img-wrap">
-                <img src="/assets/project-restaurant.jpg" alt="Zaika Gourmet Dining" />
-                <div className="portfolio-badge-pill">Hospitality &amp; Dining</div>
+                <img src="/assets/project-restaurant.jpg" alt="Zaika Gourmet Dining Concept" />
+                <div className="portfolio-badge-pill">Hospitality &bull; Concept</div>
               </div>
               <div className="portfolio-info">
                 <span className="portfolio-cat">Custom Website &bull; Concept</span>
@@ -273,10 +223,10 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <Link href="/work" className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card">
               <div className="portfolio-img-wrap">
-                <img src="/assets/project-salon.jpg" alt="Aura Hair & Skin Studio" />
-                <div className="portfolio-badge-pill">Luxury Aesthetics</div>
+                <img src="/assets/project-salon.jpg" alt="Aura Hair & Skin Studio Concept" />
+                <div className="portfolio-badge-pill">Luxury Aesthetics &bull; Concept</div>
               </div>
               <div className="portfolio-info">
                 <span className="portfolio-cat">Brand Identity &bull; Concept</span>
@@ -288,10 +238,10 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <Link href="/work" className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card">
               <div className="portfolio-img-wrap">
-                <img src="/assets/project-estate.jpg" alt="PrimeHabitat Residences" />
-                <div className="portfolio-badge-pill">Real Estate &bull; Gujarat</div>
+                <img src="/assets/project-estate.jpg" alt="PrimeHabitat Residences Concept" />
+                <div className="portfolio-badge-pill">Real Estate &bull; Concept</div>
               </div>
               <div className="portfolio-info">
                 <span className="portfolio-cat">Web Portal &bull; Concept</span>
@@ -303,13 +253,13 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <Link href="/work" className="portfolio-card fade-in-up">
+            <Link href="/work" className="portfolio-card">
               <div className="portfolio-img-wrap">
-                <img src="/assets/project-gym.jpg" alt="IronForge Fitness Studio" />
-                <div className="portfolio-badge-pill">Metal NFC System</div>
+                <img src="/assets/project-gym.jpg" alt="IronForge Fitness Studio Concept" />
+                <div className="portfolio-badge-pill">Smart Networking &bull; Concept</div>
               </div>
               <div className="portfolio-info">
-                <span className="portfolio-cat">Smart Networking &bull; Concept</span>
+                <span className="portfolio-cat">NFC System &bull; Concept</span>
                 <h3 className="portfolio-title">IronForge Fitness Studio</h3>
                 <p className="portfolio-desc">Laser-engraved matte metal NFC cards connecting clients directly to personal trainer profiles and class bookings.</p>
                 <div className="portfolio-view-link">
@@ -321,14 +271,43 @@ export default function HomePage() {
 
           <div style={{ textAlign: 'center', marginTop: '48px' }}>
             <Link href="/work" className="btn btn-secondary">
-              <span>View All 8 Concept Case Studies &rarr;</span>
+              <span>Explore All Studio Concepts &rarr;</span>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* The Studio Standard (4-Step Process) */}
-      <section className="section" id="process">
+      {/* 5. SMART CONTACTLESS NETWORKING — Warm Ivory Physical Product Presentation */}
+      <section className="section section-ivory card-feature-section" id="digitalCardFeature">
+        <div className="container">
+          <div className="card-showcase-grid">
+            <div className="card-explainer">
+              <span className="kicker">Smart Contactless Networking</span>
+              <h2>Physical Metal NFC Card + Digital Profile</h2>
+              <p className="lead" style={{ color: 'var(--text-light-muted)' }}>
+                Ambros Studio delivers both premium laser-engraved metal NFC cards for in-person authority, and instantly shareable digital profile links for any device.
+              </p>
+
+              {/* Dual Pathways Component */}
+              <NfcDualTrack />
+
+              <div style={{ marginTop: '24px' }}>
+                <Link href="/services#digitalCards" className="btn btn-secondary">
+                  <span>Explore Metal NFC Solutions</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* The 3D Interactive Card Scene */}
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <DigitalCard />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. THE STUDIO STANDARD (PROCESS) — Soft Ivory */}
+      <section className="section section-ivory-soft" id="process">
         <div className="container">
           <div className="section-header">
             <span className="kicker">How We Deliver</span>
@@ -349,7 +328,7 @@ export default function HomePage() {
             <div className="process-card">
               <h3 className="process-title">Bespoke Design</h3>
               <p className="process-text">
-                We craft custom visual layouts using our curated Emerald Prestige aesthetic. Zero templates, zero off-the-shelf themes.
+                We craft custom visual layouts with intentional typography, whitespace, and art direction. Zero generic templates.
               </p>
             </div>
 
@@ -370,14 +349,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Client Feedback Slider */}
-      <section className="section" id="testimonials">
+      {/* 7. CLIENT FEEDBACK — Warm Ivory */}
+      <section className="section section-ivory" id="testimonials">
         <div className="container">
           <div className="section-header">
-            <span className="kicker">Client Confidence</span>
-            <h2>What Local Business Owners Say</h2>
+            <span className="kicker">Client Feedback</span>
+            <h2>What Business Leaders Say</h2>
             <p className="section-subtitle">
-              Feedback from business leaders who partnered with AbrosStudio to elevate their digital brand image.
+              Observations from entrepreneurs who elevated their digital brand with AmbrosStudio.
             </p>
           </div>
 
@@ -385,13 +364,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final Call to Action */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      {/* 8. FINAL CONVERSION MOMENT — Near Black High-Contrast Finish */}
+      <section className="section section-black" id="finalCta" style={{ paddingTop: '100px', paddingBottom: '100px' }}>
         <div className="container">
-          <div className="final-cta-card">
-            <span className="kicker">Ready to Stand Out?</span>
-            <h2>Transform How Customers Perceive Your Brand</h2>
-            <p className="lead" style={{ maxWidth: '640px', margin: '14px auto 32px' }}>
+          <div className="final-cta-card" style={{ background: '#111111', border: '1px solid rgba(215, 170, 74, 0.25)', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
+            <span className="kicker">Ready to Elevate?</span>
+            <h2 style={{ color: '#FFFFFF' }}>Transform How Customers Perceive Your Brand</h2>
+            <p className="lead" style={{ maxWidth: '640px', margin: '14px auto 32px', color: '#9EAAA2' }}>
               Schedule a direct consultation with founder Anas Shaikh to explore how a custom website, Meta ad campaign, or metal NFC cards can elevate your business.
             </p>
             <div className="hero-actions" style={{ justifyContent: 'center' }}>

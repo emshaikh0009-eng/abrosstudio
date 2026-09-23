@@ -1,46 +1,67 @@
 /* ==========================================================================
-   AbrosStudio — "CRAFTED WITH PURPOSE"
+   Ambros Studio — Premium Digital Studio
    Brand Design System & Core Stylesheet
-   Color Palette: Emerald Prestige (#081C15, #1B4332, #036666, #FBBF02, #EBF2FA)
+   Color Palette: Deep Emerald (#073D2E), Warm Ivory (#F5F1E8), Warm Gold (#D7AA4A)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
   /* Core Brand Colors */
-  --bg-primary: #081C15;
-  --bg-secondary: #0D281E;
-  --bg-card: #123326;
-  --bg-card-hover: #184131;
-  --bg-surface-elevated: #1a4938;
+  --bg-primary: #073D2E;
+  --bg-secondary: #081C15;
+  --bg-card: #0B4F3A;
+  --bg-card-hover: #0E5D45;
+  --bg-surface-elevated: #0f5e46;
 
-  --color-emerald: #1B4332;
-  --color-emerald-light: #2d6a4f;
-  --color-teal: #036666;
-  --color-teal-glow: rgba(3, 102, 102, 0.35);
+  /* Master Studio Palette */
+  --bg-emerald-deep: #073D2E;
+  --bg-emerald-dark: #081C15;
+  --bg-emerald-surface: #0B4F3A;
+  
+  --bg-ivory: #F5F1E8;
+  --bg-ivory-soft: #FAF8F2;
+  --bg-ivory-card: #FFFFFF;
+  --bg-ivory-card-hover: #FDFBF7;
+  
+  --bg-black: #0A0A0A;
+  --bg-black-surface: #141414;
 
-  --color-gold: #FBBF02;
-  --color-gold-hover: #E5AB00;
-  --color-gold-muted: rgba(251, 191, 2, 0.12);
-  --color-gold-glow: rgba(251, 191, 2, 0.25);
+  --color-emerald: #0B4F3A;
+  --color-emerald-light: #16684e;
+  --color-teal: #044b4b;
+  --color-teal-glow: rgba(4, 75, 75, 0.35);
 
-  --color-text: #EBF2FA;
-  --color-text-muted: #9BB0A5;
-  --color-text-dim: #6B8074;
+  --color-gold: #D7AA4A;
+  --color-gold-hover: #C69838;
+  --color-gold-muted: rgba(215, 170, 74, 0.12);
+  --color-gold-glow: rgba(215, 170, 74, 0.25);
 
-  --border-subtle: rgba(235, 242, 250, 0.08);
-  --border-card: rgba(45, 106, 79, 0.4);
-  --border-card-hover: rgba(251, 191, 2, 0.4);
+  /* Light Theme Text (used on Ivory sections) */
+  --text-light-heading: #073D2E;
+  --text-light-body: #2C3531;
+  --text-light-muted: #5A655E;
+  --border-light: rgba(7, 61, 46, 0.1);
+  --border-light-hover: rgba(215, 170, 74, 0.4);
 
-  /* Typography */
-  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Dark Theme Text (used on Emerald/Black sections) */
+  --color-text: #F5F1E8;
+  --color-text-muted: #A3B8AD;
+  --color-text-dim: #7A8E83;
+
+  --border-subtle: rgba(245, 241, 232, 0.08);
+  --border-card: rgba(215, 170, 74, 0.25);
+  --border-card-hover: rgba(215, 170, 74, 0.5);
+
+  /* Typography: Space Grotesk + Inter */
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Elevation & Shadows */
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
-  --shadow-gold: 0 8px 30px rgba(251, 191, 2, 0.2);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.35);
+  --shadow-gold: 0 8px 30px rgba(215, 170, 74, 0.2);
 
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -51,9 +72,10 @@
   /* Layout */
   --container-max: 1240px;
   --header-height: 84px;
+  --radius-xs: 4px;
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
   --radius-pill: 9999px;
 }
 
@@ -238,6 +260,235 @@ p {
   width: 18px;
   height: 2px;
   background: var(--color-gold);
+}
+
+/* ==========================================================================
+   Section Color Rhythm Themes (Dark Emerald, Warm Ivory, Soft Ivory, Near Black)
+   ========================================================================== */
+
+.section-emerald {
+  background-color: var(--bg-emerald-deep) !important;
+  color: var(--color-text);
+}
+.section-emerald h1,
+.section-emerald h2,
+.section-emerald h3,
+.section-emerald h4 {
+  color: var(--color-text) !important;
+  font-family: var(--font-heading);
+}
+.section-emerald .section-subtitle,
+.section-emerald p {
+  color: var(--color-text-muted);
+}
+.section-emerald .kicker {
+  color: var(--color-gold);
+}
+
+.section-ivory {
+  background-color: var(--bg-ivory) !important;
+  color: var(--text-light-body) !important;
+}
+.section-ivory h1,
+.section-ivory h2,
+.section-ivory h3,
+.section-ivory h4 {
+  color: var(--text-light-heading) !important;
+  font-family: var(--font-heading);
+}
+.section-ivory .section-subtitle,
+.section-ivory p {
+  color: var(--text-light-muted) !important;
+}
+.section-ivory .kicker {
+  color: #8C6A1E !important;
+}
+.section-ivory .kicker::before {
+  background: #8C6A1E !important;
+}
+
+.section-ivory-soft {
+  background-color: var(--bg-ivory-soft) !important;
+  color: var(--text-light-body) !important;
+}
+.section-ivory-soft h1,
+.section-ivory-soft h2,
+.section-ivory-soft h3,
+.section-ivory-soft h4 {
+  color: var(--text-light-heading) !important;
+  font-family: var(--font-heading);
+}
+.section-ivory-soft .section-subtitle,
+.section-ivory-soft p {
+  color: var(--text-light-muted) !important;
+}
+.section-ivory-soft .kicker {
+  color: #8C6A1E !important;
+}
+.section-ivory-soft .kicker::before {
+  background: #8C6A1E !important;
+}
+
+.section-black {
+  background-color: var(--bg-black) !important;
+  color: var(--color-text) !important;
+}
+.section-black h1,
+.section-black h2,
+.section-black h3,
+.section-black h4 {
+  color: #FFFFFF !important;
+  font-family: var(--font-heading);
+}
+.section-black .section-subtitle,
+.section-black p {
+  color: #9EAAA2 !important;
+}
+.section-black .kicker {
+  color: var(--color-gold) !important;
+}
+
+/* Editorial Cards inside Ivory & Soft Ivory sections */
+.section-ivory .service-card,
+.section-ivory-soft .service-card,
+.section-ivory .portfolio-card,
+.section-ivory-soft .portfolio-card,
+.section-ivory .process-card,
+.section-ivory-soft .process-card,
+.section-ivory .testimonial-card,
+.section-ivory-soft .testimonial-card,
+.section-ivory .value-card,
+.section-ivory-soft .value-card {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(7, 61, 46, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(7, 61, 46, 0.03) !important;
+}
+
+.section-ivory .service-card:hover,
+.section-ivory-soft .service-card:hover,
+.section-ivory .portfolio-card:hover,
+.section-ivory-soft .portfolio-card:hover,
+.section-ivory .process-card:hover,
+.section-ivory-soft .process-card:hover {
+  border-color: rgba(215, 170, 74, 0.4) !important;
+  box-shadow: 0 12px 32px rgba(7, 61, 46, 0.07) !important;
+}
+
+.section-ivory .service-title,
+.section-ivory-soft .service-title,
+.section-ivory .portfolio-title,
+.section-ivory-soft .portfolio-title,
+.section-ivory .process-title,
+.section-ivory-soft .process-title {
+  color: var(--text-light-heading) !important;
+  font-family: var(--font-heading);
+}
+
+.section-ivory .service-text,
+.section-ivory-soft .service-text,
+.section-ivory .portfolio-desc,
+.section-ivory-soft .portfolio-desc,
+.section-ivory .process-text,
+.section-ivory-soft .process-text {
+  color: var(--text-light-muted) !important;
+}
+
+.section-ivory .portfolio-cat,
+.section-ivory-soft .portfolio-cat {
+  color: #8C6A1E !important;
+}
+
+.section-ivory .portfolio-view-link,
+.section-ivory-soft .portfolio-view-link {
+  color: #073D2E !important;
+}
+
+.section-ivory .portfolio-badge-pill,
+.section-ivory-soft .portfolio-badge-pill {
+  background: #073D2E !important;
+  color: var(--color-gold) !important;
+  border-color: rgba(215, 170, 74, 0.3) !important;
+}
+
+.section-ivory .btn-secondary,
+.section-ivory-soft .btn-secondary {
+  color: #073D2E !important;
+  border-color: rgba(7, 61, 46, 0.25) !important;
+}
+.section-ivory .btn-secondary:hover,
+.section-ivory-soft .btn-secondary:hover {
+  border-color: #073D2E !important;
+  background: rgba(7, 61, 46, 0.05) !important;
+}
+
+/* NFC Dual Track Cards inside Ivory sections */
+.section-ivory .nfc-track-card,
+.section-ivory-soft .nfc-track-card {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(7, 61, 46, 0.1) !important;
+  box-shadow: 0 4px 18px rgba(7, 61, 46, 0.04) !important;
+}
+.section-ivory .nfc-track-card:hover,
+.section-ivory-soft .nfc-track-card:hover {
+  border-color: rgba(215, 170, 74, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(7, 61, 46, 0.08) !important;
+}
+.section-ivory .nfc-track-title,
+.section-ivory-soft .nfc-track-title {
+  color: #073D2E !important;
+}
+.section-ivory .nfc-track-icon,
+.section-ivory-soft .nfc-track-icon {
+  background: rgba(7, 61, 46, 0.08) !important;
+  color: #073D2E !important;
+}
+.section-ivory .nfc-flow-step,
+.section-ivory-soft .nfc-flow-step {
+  color: var(--text-light-muted) !important;
+}
+.section-ivory .nfc-flow-step .arrow,
+.section-ivory-soft .nfc-flow-step .arrow {
+  color: #D7AA4A !important;
+}
+
+/* Why It Matters Reference Section Styling */
+.why-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 50px;
+  margin-top: 48px;
+}
+
+.why-pillar-item {
+  border-left: 2px solid var(--color-gold);
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.why-pillar-item h3,
+.why-pillar-item h4 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.why-pillar-item p {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .why-pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
 }
 
 /* ==========================================================================
@@ -1135,7 +1386,7 @@ p {
 }
 
 /* ==========================================================================
-   Why AbrosStudio Section
+   Why Ambros Studio Section
    ========================================================================== */
 
 .why-grid {
@@ -1248,7 +1499,6 @@ p {
    ========================================================================== */
 
 .card-feature-section {
-  background: linear-gradient(180deg, var(--bg-primary) 0%, #071711 100%);
   position: relative;
 }
 
@@ -1496,11 +1746,13 @@ p {
   z-index: 2;
 }
 
+.card-scene .card-holder-name,
+.section-ivory .card-scene .card-holder-name,
 .card-holder-name {
   font-family: var(--font-heading);
   font-size: 1.65rem;
   font-weight: 800;
-  color: #fff;
+  color: #FFFFFF !important;
   letter-spacing: 0.02em;
   line-height: 1.1;
   margin-bottom: 4px;
@@ -1574,11 +1826,13 @@ p {
   margin-bottom: 10px;
 }
 
+.card-scene .card-back-name,
+.section-ivory .card-scene .card-back-name,
 .card-back-name {
   font-family: var(--font-heading);
   font-size: 1.35rem;
   font-weight: 800;
-  color: #fff;
+  color: #FFFFFF !important;
   line-height: 1.15;
   margin-bottom: 2px;
 }
@@ -2698,6 +2952,44 @@ p {
 .form-select option {
   background: #081C15;
   color: #fff;
+}
+
+.section-ivory .contact-form-card {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(7, 61, 46, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(7, 61, 46, 0.05) !important;
+}
+
+.section-ivory .contact-form-card .form-label {
+  color: #073D2E !important;
+}
+
+.section-ivory .contact-form-card .form-subtext {
+  color: var(--text-light-muted) !important;
+}
+
+.section-ivory .contact-form-card h3 {
+  color: #073D2E !important;
+}
+
+.section-ivory .contact-form-card .form-input,
+.section-ivory .contact-form-card .form-select,
+.section-ivory .contact-form-card .form-textarea {
+  background: #FAF8F2 !important;
+  border: 1px solid rgba(7, 61, 46, 0.18) !important;
+  color: #073D2E !important;
+}
+
+.section-ivory .contact-form-card .form-input:focus,
+.section-ivory .contact-form-card .form-select:focus,
+.section-ivory .contact-form-card .form-textarea:focus {
+  border-color: var(--color-gold) !important;
+  background: #FFFFFF !important;
+}
+
+.section-ivory .contact-form-card .form-select option {
+  background: #FFFFFF !important;
+  color: #073D2E !important;
 }
 
 .form-book-demo-box {

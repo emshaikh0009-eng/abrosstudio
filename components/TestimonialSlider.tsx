@@ -13,7 +13,7 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   {
     quote:
-      'AbrosStudio delivered a clean, premium website that made table booking seamless for our guests. Weekday dinner inquiries through our WhatsApp integration increased noticeably within the first two weeks.',
+      'Ambros Studio delivered a clean, premium website that made table booking seamless for our guests. Weekday dinner inquiries through our WhatsApp integration increased noticeably within the first two weeks.',
     name: 'Rajesh Patel',
     role: 'Founder, Zaika Gourmet Dining &bull; Surat',
     avatar: '/assets/avatar-rajesh.jpg',

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import AmbrosLogo from './AmbrosLogo';
 
 export default function Footer() {
   return (
@@ -7,13 +8,8 @@ export default function Footer() {
       <div className="container">
         <div className="footer-top-grid">
           <div className="footer-brand-col">
-            <Link href="/" className="brand-logo" aria-label="AbrosStudio Home">
-              <img
-                src="/assets/abros-logo-transparent.png"
-                alt="AbrosStudio"
-                className="brand-logo-img"
-                style={{ height: '44px', marginBottom: '12px' }}
-              />
+            <Link href="/" className="brand-logo" aria-label="Ambros Studio Home" style={{ display: 'inline-block', marginBottom: '16px' }}>
+              <AmbrosLogo variant="light" height={28} />
             </Link>
             <p className="footer-brand-desc">
               A boutique digital agency founded by Anas Shaikh, helping ambitious local businesses look professional and win customers online.
@@ -24,7 +20,7 @@ export default function Footer() {
                 className="social-btn"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="AbrosStudio on Instagram"
+                aria-label="Ambros Studio on Instagram"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -37,7 +33,7 @@ export default function Footer() {
                 className="social-btn"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="AbrosStudio on Facebook"
+                aria-label="Ambros Studio on Facebook"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
@@ -48,7 +44,7 @@ export default function Footer() {
                 className="social-btn"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="AbrosStudio on X"
+                aria-label="Ambros Studio on X"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -99,7 +95,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom-bar">
-          <p>&copy; {new Date().getFullYear()} AbrosStudio. All rights reserved. Crafted with Purpose by Anas Shaikh.</p>
+          <p>&copy; {new Date().getFullYear()} Ambros Studio. All rights reserved. Founded by Anas Shaikh.</p>
           <div className="footer-bottom-links">
             <span style={{ color: 'var(--color-text-dim)', fontSize: '0.8rem' }}>
               Surat, Gujarat &bull; Fast Turnaround &bull; Dedicated Support

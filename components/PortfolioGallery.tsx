@@ -165,7 +165,7 @@ export default function PortfolioGallery({ initialCategory = 'all' }: { initialC
               <div className="portfolio-badge-pill">{project.badge}</div>
             </div>
             <div className="portfolio-info">
-              <span className="portfolio-cat">Concept Showcase &bull; AbrosStudio</span>
+              <span className="portfolio-cat">Concept Showcase &bull; Ambros Studio</span>
               <h3 className="portfolio-title">{project.title}</h3>
               <p className="portfolio-desc">{project.subtitle}</p>
               <div className="portfolio-view-link">
@@ -258,7 +258,7 @@ export default function PortfolioGallery({ initialCategory = 'all' }: { initialC
 
               <div className="modal-actions-bar" style={{ marginTop: '28px' }}>
                 <a
-                  href="https://wa.me/919998441519?text=Hi%20AbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99m%20interested%20in%20a%20concept%20similar%20to%20your%20showcase."
+                  href="https://wa.me/919998441519?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99m%20interested%20in%20a%20concept%20similar%20to%20your%20showcase."
                   className="btn btn-primary btn-block"
                   target="_blank"
                   rel="noopener noreferrer"

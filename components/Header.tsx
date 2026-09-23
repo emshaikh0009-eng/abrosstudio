@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import AmbrosLogo from './AmbrosLogo';
 
 export default function Header() {
   const pathname = usePathname();
@@ -55,18 +56,14 @@ export default function Header() {
   const isDemoAllowed = pathname === '/' || pathname === '/contact';
 
   const demoWhatsAppUrl =
-    'https://wa.me/919998441519?text=Hi%20AbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
+    'https://wa.me/919998441519?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
 
   return (
     <>
       <header className={`site-header ${isScrolled ? 'scrolled' : ''}`} id="siteHeader">
         <div className="container nav-container">
-          <Link href="/" className="brand-logo" aria-label="AbrosStudio Home">
-            <img
-              src="/assets/abros-logo-transparent.png"
-              alt="AbrosStudio"
-              className="brand-logo-img"
-            />
+          <Link href="/" className="brand-logo" aria-label="Ambros Studio Home">
+            <AmbrosLogo variant="light" height={26} />
           </Link>
 
           <nav className="nav-links" aria-label="Primary Navigation">
@@ -136,13 +133,8 @@ export default function Header() {
         aria-label="Mobile Navigation Menu"
       >
         <div className="mobile-nav-card-header">
-          <Link href="/" className="brand-logo" onClick={() => setIsMobileOpen(false)} aria-label="AbrosStudio Home">
-            <img
-              src="/assets/abros-logo-transparent.png"
-              alt="AbrosStudio"
-              className="brand-logo-img"
-              style={{ height: '32px' }}
-            />
+          <Link href="/" className="brand-logo" onClick={() => setIsMobileOpen(false)} aria-label="Ambros Studio Home">
+            <AmbrosLogo variant="light" height={24} />
           </Link>
           <button
             className="mobile-nav-close-btn"

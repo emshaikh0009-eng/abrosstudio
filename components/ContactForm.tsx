@@ -20,7 +20,7 @@ export default function ContactForm() {
     }
 
     const text = encodeURIComponent(
-      `Hello AbrosStudio! 👋\n\nI’d like to discuss a project with you:\n• Name: ${formData.name}\n• Phone: ${formData.phone}\n• Email: ${formData.email || 'N/A'}\n• Service: ${formData.service}\n• Details: ${formData.message || 'I would like to discuss my requirements.'}`
+      `Hello AmbrosStudio! 👋\n\nI’d like to discuss a project with you:\n• Name: ${formData.name}\n• Phone: ${formData.phone}\n• Email: ${formData.email || 'N/A'}\n• Service: ${formData.service}\n• Details: ${formData.message || 'I would like to discuss my requirements.'}`
     );
 
     const whatsappUrl = `https://wa.me/919998441519?text=${text}`;

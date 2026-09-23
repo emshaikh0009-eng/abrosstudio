@@ -4,21 +4,21 @@ import Link from 'next/link';
 import FounderPortrait from '@/components/FounderPortrait';
 
 export const metadata: Metadata = {
-  title: 'About Founder | Anas Shaikh | AbrosStudio Surat',
+  title: 'About Founder | Anas Shaikh | Ambros Studio Surat',
   description:
-    'Learn about Anas Shaikh, founder of AbrosStudio in Surat, Gujarat. Discover our boutique agency philosophy, commitment to craft, and local business focus.',
+    'Learn about Anas Shaikh, founder of Ambros Studio in Surat, Gujarat. Discover our boutique agency philosophy, commitment to craft, and local business focus.',
 };
 
 export default function AboutPage() {
   return (
     <>
-      {/* About Hero Header */}
-      <section className="hero" style={{ paddingBottom: '40px' }}>
+      {/* 1. About Hero Header — Deep Emerald */}
+      <section className="hero section-emerald" style={{ paddingBottom: '40px' }}>
         <div className="container">
           <div className="section-header" style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
             <span className="kicker">About Founder &amp; Vision</span>
             <h1 className="hero-title">
-              The Story Behind AbrosStudio
+              The Story Behind Ambros Studio
             </h1>
             <p className="hero-desc" style={{ maxWidth: '700px', margin: '0 auto' }}>
               Built from a simple conviction: local businesses deserve the same visual prestige, rapid velocity, and high-converting digital polish as global luxury brands.
@@ -27,34 +27,36 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Founder Profile Section */}
-      <section className="section" style={{ paddingTop: '20px' }}>
+      {/* 2. Founder Profile Section — Warm Ivory Breathing Room */}
+      <section className="section section-ivory" style={{ paddingTop: '60px', paddingBottom: '70px' }}>
         <div className="container">
           <div className="founder-grid">
             <FounderPortrait />
 
-            <div className="founder-bio fade-in-up">
+            <div className="founder-bio">
               <span className="kicker">Meet the Founder</span>
-              <h2>&ldquo;Great digital design is not an expense. It is your business&rsquo;s most valuable asset.&rdquo;</h2>
-              <p className="lead">
-                I founded AbrosStudio to give ambitious local businesses a high-touch alternative to bloated agencies and generic templates.
+              <h2 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)', lineHeight: 1.25, marginBottom: '20px' }}>
+                &ldquo;Great digital design is not an expense. It is your business&rsquo;s most valuable asset.&rdquo;
+              </h2>
+              <p className="lead" style={{ color: 'var(--text-light-body)', marginBottom: '14px' }}>
+                I founded Ambros Studio to give ambitious local businesses a high-touch alternative to bloated agencies and generic templates.
               </p>
-              <p>
+              <p style={{ color: 'var(--text-light-muted)' }}>
                 When you partner with us, you collaborate directly with me. Every custom website, targeted Meta ad campaign, and metal NFC card is crafted with deliberate purpose and uncompromising quality.
               </p>
 
               <div className="founder-stats-grid" style={{ margin: '32px 0' }}>
-                <div className="stat-card">
-                  <div className="stat-value">Bespoke</div>
-                  <div className="stat-label">Zero generic templates</div>
+                <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
+                  <div className="stat-value" style={{ color: '#073D2E' }}>Bespoke</div>
+                  <div className="stat-label" style={{ color: '#5A655E' }}>Zero generic templates</div>
                 </div>
-                <div className="stat-card">
-                  <div className="stat-value">7–14d</div>
-                  <div className="stat-label">Average website delivery</div>
+                <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
+                  <div className="stat-value" style={{ color: '#073D2E' }}>7–14d</div>
+                  <div className="stat-label" style={{ color: '#5A655E' }}>Average website delivery</div>
                 </div>
-                <div className="stat-card">
-                  <div className="stat-value">Surat</div>
-                  <div className="stat-label">Locally rooted &bull; Global standard</div>
+                <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
+                  <div className="stat-value" style={{ color: '#073D2E' }}>Surat</div>
+                  <div className="stat-label" style={{ color: '#5A655E' }}>Locally rooted &bull; Global standard</div>
                 </div>
               </div>
             </div>
@@ -62,8 +64,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Core Studio Pillars */}
-      <section className="section" style={{ background: 'var(--bg-secondary)' }}>
+      {/* 3. Core Studio Pillars — Soft Ivory */}
+      <section className="section section-ivory-soft">
         <div className="container">
           <div className="section-header">
             <span className="kicker">Our Operating Philosophy</span>
@@ -102,14 +104,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Studio Location & Contact Anchor */}
-      <section className="section">
+      {/* 4. Studio Anchor / Final CTA — Near Black */}
+      <section className="section section-black" style={{ paddingTop: '90px', paddingBottom: '90px' }}>
         <div className="container">
-          <div className="final-cta-card" style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="final-cta-card" style={{ background: '#111111', border: '1px solid rgba(215, 170, 74, 0.25)', textAlign: 'left', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ maxWidth: '640px', width: '100%' }}>
               <span className="kicker">Headquartered in Surat</span>
-              <h2>Let&rsquo;s Discuss Your Vision</h2>
-              <p className="lead" style={{ margin: '14px 0 24px' }}>
+              <h2 style={{ color: '#FFFFFF' }}>Let&rsquo;s Discuss Your Vision</h2>
+              <p className="lead" style={{ margin: '14px 0 24px', color: '#9EAAA2' }}>
                 Whether you run a luxury dining destination, medical practice, salon, or professional consultancy, we’re ready to build your digital brand.
               </p>
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
