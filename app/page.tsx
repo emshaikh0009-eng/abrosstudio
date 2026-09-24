@@ -371,7 +371,7 @@ export default function HomePage() {
             <span className="kicker">Ready to Elevate?</span>
             <h2 style={{ color: '#FFFFFF' }}>Transform How Customers Perceive Your Brand</h2>
             <p className="lead" style={{ maxWidth: '640px', margin: '14px auto 32px', color: '#9EAAA2' }}>
-              Schedule a direct consultation with founder Anas Shaikh to explore how a custom website, Meta ad campaign, or metal NFC cards can elevate your business.
+              Schedule a direct consultation with the Ambros Studio team to explore how a custom website, Meta ad campaign, or metal NFC cards can elevate your business.
             </p>
             <div className="hero-actions" style={{ justifyContent: 'center' }}>
               <a

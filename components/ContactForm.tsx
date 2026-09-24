@@ -60,7 +60,7 @@ export default function ContactForm() {
             Inquiry Dispatched to WhatsApp!
           </h4>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '22px' }}>
-            We have opened your inquiry directly in WhatsApp. You can also message Anas Shaikh directly at +91 99984 41519.
+            We have opened your inquiry directly in WhatsApp. You can also message our team directly at +91 99984 41519.
           </p>
           <button
             className="btn btn-secondary btn-sm"

@@ -63,7 +63,7 @@ export default function Header() {
       <header className={`site-header ${isScrolled ? 'scrolled' : ''}`} id="siteHeader">
         <div className="container nav-container">
           <Link href="/" className="brand-logo" aria-label="Ambros Studio Home">
-            <AmbrosLogo variant="light" height={26} />
+            <AmbrosLogo variant="light" height={32} />
           </Link>
 
           <nav className="nav-links" aria-label="Primary Navigation">
@@ -134,7 +134,7 @@ export default function Header() {
       >
         <div className="mobile-nav-card-header">
           <Link href="/" className="brand-logo" onClick={() => setIsMobileOpen(false)} aria-label="Ambros Studio Home">
-            <AmbrosLogo variant="light" height={24} />
+            <AmbrosLogo variant="light" height={28} />
           </Link>
           <button
             className="mobile-nav-close-btn"

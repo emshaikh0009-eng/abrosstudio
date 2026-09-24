@@ -5,7 +5,7 @@ import ContactForm from '@/components/ContactForm';
 export const metadata: Metadata = {
   title: 'Contact Studio | Book a Demo | Ambros Studio Surat',
   description:
-    'Get in touch with Anas Shaikh at Ambros Studio in Surat, Gujarat. Discuss custom web design, Meta ad campaigns, or digital metal NFC business cards.',
+    'Get in touch with Ambros Studio in Surat, Gujarat. Discuss custom web design, Meta ad campaigns, or digital metal NFC business cards with our team.',
 };
 
 export default function ContactPage() {
@@ -18,7 +18,7 @@ export default function ContactPage() {
       <section className="hero section-emerald" style={{ paddingBottom: '30px' }}>
         <div className="container">
           <div className="section-header" style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <span className="kicker">Direct Founder Consultation</span>
+            <span className="kicker">Direct Studio Consultation</span>
             <h1 className="hero-title">
               Let&rsquo;s Build Your Brand’s Digital Authority
             </h1>
@@ -36,7 +36,7 @@ export default function ContactPage() {
             {/* Direct Contact Info & Map Card */}
             <div className="contact-info-col fade-in-up">
               <span className="kicker">Studio Headquarters</span>
-              <h2>Speak Directly With Anas Shaikh</h2>
+              <h2>Speak Directly With Our Team</h2>
               <p className="lead" style={{ marginBottom: '28px', color: 'var(--text-light-muted)' }}>
                 We believe in direct, candid communication. Message us on WhatsApp or submit your details to schedule a personal project walk-through.
               </p>
@@ -154,7 +154,7 @@ export default function ContactPage() {
                 What makes Ambros Studio different?
               </h4>
               <p style={{ color: 'var(--text-light-muted)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
-                You collaborate directly with founder Anas Shaikh. Zero junior interns, zero off-the-shelf templates, and high velocity.
+                You collaborate directly with our core dedicated team. Zero outsourced layers, zero off-the-shelf templates, and high velocity.
               </p>
             </div>
 

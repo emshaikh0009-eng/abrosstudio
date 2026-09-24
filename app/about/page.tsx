@@ -1,12 +1,11 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import FounderPortrait from '@/components/FounderPortrait';
 
 export const metadata: Metadata = {
-  title: 'About Founder | Anas Shaikh | Ambros Studio Surat',
+  title: 'About Our Team & Vision | Ambros Studio Surat',
   description:
-    'Learn about Anas Shaikh, founder of Ambros Studio in Surat, Gujarat. Discover our boutique agency philosophy, commitment to craft, and local business focus.',
+    'Discover Ambros Studio in Surat, Gujarat. Learn about our multidisciplinary digital studio, commitment to craft, and dedicated team approach.',
 };
 
 export default function AboutPage() {
@@ -16,48 +15,44 @@ export default function AboutPage() {
       <section className="hero section-emerald" style={{ paddingBottom: '40px' }}>
         <div className="container">
           <div className="section-header" style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <span className="kicker">About Founder &amp; Vision</span>
+            <span className="kicker">About Our Studio &amp; Vision</span>
             <h1 className="hero-title">
               The Story Behind Ambros Studio
             </h1>
             <p className="hero-desc" style={{ maxWidth: '700px', margin: '0 auto' }}>
-              Built from a simple conviction: local businesses deserve the same visual prestige, rapid velocity, and high-converting digital polish as global luxury brands.
+              Built from a simple conviction: ambitious businesses deserve the same visual prestige, rapid velocity, and high-converting digital polish as global luxury brands.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 2. Founder Profile Section — Warm Ivory Breathing Room */}
+      {/* 2. Studio Team & Philosophy Section — Warm Ivory Breathing Room */}
       <section className="section section-ivory" style={{ paddingTop: '60px', paddingBottom: '70px' }}>
         <div className="container">
-          <div className="founder-grid">
-            <FounderPortrait />
+          <div style={{ maxWidth: '860px', margin: '0 auto', textAlign: 'center' }}>
+            <span className="kicker">Our Mission &amp; Approach</span>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)', lineHeight: 1.25, marginBottom: '20px' }}>
+              &ldquo;Great digital design is not an expense. It is your business&rsquo;s most valuable asset.&rdquo;
+            </h2>
+            <p className="lead" style={{ color: 'var(--text-light-body)', marginBottom: '16px', maxWidth: '740px', margin: '0 auto 16px' }}>
+              Ambros Studio was established to give ambitious businesses a dedicated creative and technical partner, replacing bloated agency bureaucracy and generic off-the-shelf templates with custom excellence.
+            </p>
+            <p style={{ color: 'var(--text-light-muted)', maxWidth: '740px', margin: '0 auto' }}>
+              Our multidisciplinary team blends modern web engineering, strategic brand architecture, and performance-focused Meta advertising. Every project is crafted with deliberate purpose, rapid turnaround, and uncompromising attention to detail.
+            </p>
 
-            <div className="founder-bio">
-              <span className="kicker">Meet the Founder</span>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)', lineHeight: 1.25, marginBottom: '20px' }}>
-                &ldquo;Great digital design is not an expense. It is your business&rsquo;s most valuable asset.&rdquo;
-              </h2>
-              <p className="lead" style={{ color: 'var(--text-light-body)', marginBottom: '14px' }}>
-                I founded Ambros Studio to give ambitious local businesses a high-touch alternative to bloated agencies and generic templates.
-              </p>
-              <p style={{ color: 'var(--text-light-muted)' }}>
-                When you partner with us, you collaborate directly with me. Every custom website, targeted Meta ad campaign, and metal NFC card is crafted with deliberate purpose and uncompromising quality.
-              </p>
-
-              <div className="founder-stats-grid" style={{ margin: '32px 0' }}>
-                <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
-                  <div className="stat-value" style={{ color: '#073D2E' }}>Bespoke</div>
-                  <div className="stat-label" style={{ color: '#5A655E' }}>Zero generic templates</div>
-                </div>
-                <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
-                  <div className="stat-value" style={{ color: '#073D2E' }}>7–14d</div>
-                  <div className="stat-label" style={{ color: '#5A655E' }}>Average website delivery</div>
-                </div>
-                <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
-                  <div className="stat-value" style={{ color: '#073D2E' }}>Surat</div>
-                  <div className="stat-label" style={{ color: '#5A655E' }}>Locally rooted &bull; Global standard</div>
-                </div>
+            <div className="founder-stats-grid" style={{ margin: '36px auto 0', maxWidth: '720px' }}>
+              <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
+                <div className="stat-value" style={{ color: '#073D2E' }}>Bespoke</div>
+                <div className="stat-label" style={{ color: '#5A655E' }}>Zero generic templates</div>
+              </div>
+              <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
+                <div className="stat-value" style={{ color: '#073D2E' }}>7–14d</div>
+                <div className="stat-label" style={{ color: '#5A655E' }}>Average website delivery</div>
+              </div>
+              <div className="stat-card" style={{ background: '#FFFFFF', border: '1px solid rgba(7, 61, 46, 0.1)' }}>
+                <div className="stat-value" style={{ color: '#073D2E' }}>Surat</div>
+                <div className="stat-label" style={{ color: '#5A655E' }}>Locally rooted &bull; Global standard</div>
               </div>
             </div>
           </div>
@@ -83,9 +78,9 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="value-card">
-              <h3 className="value-title">Direct Founder Partnership</h3>
+              <h3 className="value-title">Direct Team Partnership</h3>
               <p className="value-text">
-                No middle management or communication breakdown. You collaborate directly with Anas Shaikh from strategy to deployment.
+                No middle management or communication breakdown. You collaborate directly with our core creative team from strategy to deployment.
               </p>
             </div>
             <div className="value-card">

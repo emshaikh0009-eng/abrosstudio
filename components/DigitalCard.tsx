@@ -76,8 +76,8 @@ export default function DigitalCard() {
           </div>
 
           <div className="card-front-center">
-            <h3 className="card-holder-name">Anas Shaikh</h3>
-            <span className="card-holder-title">Founder</span>
+            <h3 className="card-holder-name">AMBROS STUDIO</h3>
+            <span className="card-holder-title">Digital Member</span>
           </div>
 
           <div className="card-front-bottom">
@@ -91,8 +91,8 @@ export default function DigitalCard() {
           <div className="card-back-grid">
             <div className="card-back-info">
               <div className="card-back-person">
-                <h4 className="card-back-name">Anas Shaikh</h4>
-                <span className="card-back-role">Founder</span>
+                <h4 className="card-back-name">Ambros Studio</h4>
+                <span className="card-back-role">Creative &amp; Digital Team</span>
               </div>
 
               <div className="card-contact-lines">
@@ -107,7 +107,7 @@ export default function DigitalCard() {
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
                   </svg>
-                  <span>anas.shaikh@contactvip.in</span>
+                  <span>ambrosstudio.z@gmail.com</span>
                 </div>
                 <div className="card-contact-line">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

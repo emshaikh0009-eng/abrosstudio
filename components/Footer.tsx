@@ -9,10 +9,10 @@ export default function Footer() {
         <div className="footer-top-grid">
           <div className="footer-brand-col">
             <Link href="/" className="brand-logo" aria-label="Ambros Studio Home" style={{ display: 'inline-block', marginBottom: '16px' }}>
-              <AmbrosLogo variant="light" height={28} />
+              <AmbrosLogo variant="light" height={36} />
             </Link>
             <p className="footer-brand-desc">
-              A boutique digital agency founded by Anas Shaikh, helping ambitious local businesses look professional and win customers online.
+              A premium digital studio and multidisciplinary team, helping ambitious businesses build digital prestige and win customers online.
             </p>
             <div className="social-links-bar" style={{ border: 'none', paddingTop: 0, marginTop: 0 }}>
               <a
@@ -40,7 +40,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://x.com/AnasSha84485493"
+                href="https://x.com/ambrosstudio"
                 className="social-btn"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -58,7 +58,7 @@ export default function Footer() {
             <ul className="footer-links-list">
               <li><Link href="/" className="footer-link">Home</Link></li>
               <li><Link href="/services" className="footer-link">Services</Link></li>
-              <li><Link href="/about" className="footer-link">About Founder</Link></li>
+              <li><Link href="/about" className="footer-link">About Studio</Link></li>
               <li><Link href="/work" className="footer-link">Selected Work</Link></li>
               <li><Link href="/contact" className="footer-link">Contact Studio</Link></li>
             </ul>
@@ -95,7 +95,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom-bar">
-          <p>&copy; {new Date().getFullYear()} Ambros Studio. All rights reserved. Founded by Anas Shaikh.</p>
+          <p>&copy; {new Date().getFullYear()} Ambros Studio. All rights reserved.</p>
           <div className="footer-bottom-links">
             <span style={{ color: 'var(--color-text-dim)', fontSize: '0.8rem' }}>
               Surat, Gujarat &bull; Fast Turnaround &bull; Dedicated Support

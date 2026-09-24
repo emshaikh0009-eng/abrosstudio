@@ -237,7 +237,7 @@ export default function ServicesPage() {
             <div className="value-card">
               <h3 className="value-title">Direct Accountability</h3>
               <p className="value-text">
-                You communicate directly with founder Anas Shaikh throughout the entire engagement, not junior interns.
+                You communicate directly with our core dedicated team throughout the entire engagement, ensuring seamless alignment and rapid execution.
               </p>
             </div>
           </div>
@@ -257,7 +257,7 @@ export default function ServicesPage() {
             <span className="kicker">Ready to Start?</span>
             <h2 style={{ color: '#FFFFFF' }}>Take Your Business Digital Presence to the Highest Level</h2>
             <p className="lead" style={{ maxWidth: '640px', margin: '14px auto 32px', color: '#9EAAA2' }}>
-              Speak directly with founder Anas Shaikh on WhatsApp to review your requirements, timeline, and custom quotation.
+              Connect directly with our team on WhatsApp to review your requirements, timeline, and custom quotation.
             </p>
             <div className="hero-actions" style={{ justifyContent: 'center' }}>
               <a

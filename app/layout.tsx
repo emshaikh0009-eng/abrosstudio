@@ -17,7 +17,6 @@ export const metadata: Metadata = {
     'Ambros Studio',
     'Ambros Studio Surat',
     'Ambros Studio Gujarat',
-    'Anas Shaikh',
     'Digital Studio Surat',
     'Web Design Surat',
     'Web Development Surat',
@@ -31,16 +30,16 @@ export const metadata: Metadata = {
     'Digital Business Card India',
     'Luxury Web Agency',
   ],
-  authors: [{ name: 'Anas Shaikh', url: 'https://wa.me/919998441519' }],
-  creator: 'Anas Shaikh',
+  authors: [{ name: 'Ambros Studio Team', url: 'https://wa.me/919998441519' }],
+  creator: 'Ambros Studio',
   publisher: 'Ambros Studio',
   alternates: {
     canonical: '/',
   },
   icons: {
-    icon: '/assets/ambros-logo-new.svg',
-    shortcut: '/assets/ambros-logo-new.svg',
-    apple: '/assets/ambros-logo-new.svg',
+    icon: '/assets/ambros-logo.png',
+    shortcut: '/assets/ambros-logo.png',
+    apple: '/assets/ambros-logo.png',
   },
   openGraph: {
     title: 'Ambros Studio | Premium Digital Studio & Web Design in Surat, Gujarat',
@@ -52,10 +51,10 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/assets/ambros-logo-new.svg',
-        width: 1200,
-        height: 630,
-        alt: 'Ambros Studio Logo - Digital Studio in Surat, Gujarat',
+        url: '/assets/ambros-logo.png',
+        width: 1024,
+        height: 341,
+        alt: 'Ambros Studio - Crafted with Purpose',
       },
     ],
   },
@@ -63,8 +62,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Ambros Studio | Premium Digital Studio in Surat, Gujarat',
     description:
-      'Boutique digital studio in Surat, Gujarat founded by Anas Shaikh. Custom high-converting websites, Meta ads, and luxury metal NFC cards.',
-    images: ['/assets/ambros-logo-new.svg'],
+      'Boutique digital studio in Surat, Gujarat. Custom high-converting websites, Meta ads, and luxury metal NFC cards.',
+    images: ['/assets/ambros-logo.png'],
   },
   robots: {
     index: true,
