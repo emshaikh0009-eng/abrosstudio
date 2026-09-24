@@ -6,48 +6,78 @@ import ScrollObserver from '@/components/ScrollObserver';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ambrosstudio.com'),
-  title: 'Ambros Studio | Premium Digital Studio Surat',
+  metadataBase: new URL('https://ambrosstudio.space'),
+  title: {
+    default: 'Ambros Studio | Premium Digital Studio & Web Design in Surat, Gujarat',
+    template: '%s',
+  },
   description:
-    'Ambros Studio creates professional digital experiences for businesses. We build custom high-converting websites, targeted Meta ads, and luxury metal NFC business cards.',
+    'Ambros Studio is a premier digital studio based in Surat, Gujarat. We build custom high-converting websites, ROI-driven Meta ads, and luxury metal NFC business cards for ambitious brands.',
   keywords: [
     'Ambros Studio',
-    'Ambros',
+    'Ambros Studio Surat',
+    'Ambros Studio Gujarat',
     'Anas Shaikh',
-    'Digital Agency Surat',
+    'Digital Studio Surat',
     'Web Design Surat',
-    'Metal NFC Cards',
-    'Digital Business Card',
+    'Web Development Surat',
+    'Website Designer in Surat',
+    'Digital Agency Surat',
+    'Digital Marketing Agency Surat',
     'Meta Ads Surat',
+    'Facebook Ads Agency Surat',
+    'Metal NFC Cards',
+    'Metal NFC Business Cards Surat',
+    'Digital Business Card India',
     'Luxury Web Agency',
   ],
   authors: [{ name: 'Anas Shaikh', url: 'https://wa.me/919998441519' }],
+  creator: 'Anas Shaikh',
+  publisher: 'Ambros Studio',
+  alternates: {
+    canonical: '/',
+  },
   icons: {
     icon: '/assets/ambros-logo-new.svg',
+    shortcut: '/assets/ambros-logo-new.svg',
+    apple: '/assets/ambros-logo-new.svg',
   },
   openGraph: {
-    title: 'Ambros Studio | Premium Digital Studio Surat',
+    title: 'Ambros Studio | Premium Digital Studio & Web Design in Surat, Gujarat',
     description:
-      'Ambros Studio creates professional digital experiences for businesses: custom websites, targeted Meta ads, and metal NFC business cards.',
-    url: 'https://ambrosstudio.com',
+      'Ambros Studio is a premier digital studio based in Surat, Gujarat. We build custom high-converting websites, ROI-driven Meta ads, and luxury metal NFC business cards.',
+    url: 'https://ambrosstudio.space',
     siteName: 'Ambros Studio',
+    locale: 'en_IN',
+    type: 'website',
     images: [
       {
         url: '/assets/ambros-logo-new.svg',
-        width: 320,
-        height: 54,
-        alt: 'Ambros Studio Logo',
+        width: 1200,
+        height: 630,
+        alt: 'Ambros Studio Logo - Digital Studio in Surat, Gujarat',
       },
     ],
-    locale: 'en_IN',
-    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ambros Studio | Premium Digital Studio',
-    description: 'Boutique digital studio in Surat, Gujarat founded by Anas Shaikh.',
+    title: 'Ambros Studio | Premium Digital Studio in Surat, Gujarat',
+    description:
+      'Boutique digital studio in Surat, Gujarat founded by Anas Shaikh. Custom high-converting websites, Meta ads, and luxury metal NFC cards.',
     images: ['/assets/ambros-logo-new.svg'],
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  category: 'technology',
 };
 
 export default function RootLayout({
