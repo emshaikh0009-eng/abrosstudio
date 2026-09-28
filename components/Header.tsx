@@ -63,7 +63,7 @@ export default function Header() {
       <header className={`site-header ${isScrolled ? 'scrolled' : ''}`} id="siteHeader">
         <div className="container nav-container">
           <Link href="/" className="brand-logo" aria-label="Ambros Studio Home">
-            <AmbrosLogo variant="light" height={32} />
+            <AmbrosLogo variant="light" height={34} />
           </Link>
 
           <nav className="nav-links" aria-label="Primary Navigation">
@@ -88,15 +88,11 @@ export default function Header() {
             {isDemoAllowed ? (
               <a
                 href={demoWhatsAppUrl}
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm header-book-btn"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>Book a Demo</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
+                <span>Book a Demo &rarr;</span>
               </a>
             ) : (
               <Link href="/contact" className="btn btn-secondary btn-sm">

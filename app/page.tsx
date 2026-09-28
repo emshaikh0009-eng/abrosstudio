@@ -10,59 +10,47 @@ export default function HomePage() {
 
   return (
     <>
-      {/* 1. HERO SECTION — Deep Emerald Authority */}
-      <section className="hero section-emerald">
-        <div className="container">
-          <div className="hero-grid">
-            <div className="hero-content">
-              <h1 className="hero-title">
-                Build Your Professional{' '}
-                <span className="text-gold">Website Now</span>
-              </h1>
+      {/* 1. HERO SECTION — Full-Bleed Cinematic Studio Campaign */}
+      <section className="hero hero-cinematic" id="hero">
+        <div className="hero-cinematic-backdrop" aria-hidden="true">
+          <picture className="hero-cinematic-picture">
+            <source media="(max-width: 768px)" srcSet="/assets/hero-cinematic-bg-mobile.jpg" />
+            <img
+              src="/assets/hero-cinematic-bg-desktop.jpg"
+              alt="Ambros Studio creative workspace with laptop displaying luxury digital brand"
+              className="hero-cinematic-img"
+              loading="eager"
+              fetchPriority="high"
+            />
+          </picture>
+          <div className="hero-cinematic-scrim" />
+        </div>
 
-              <p className="hero-desc">
-                We craft bespoke, high-converting websites, targeted Meta ad campaigns, and luxury metal NFC business cards<span className="desktop-only-copy"> for ambitious businesses that refuse to look average</span>.
-              </p>
+        <div className="container hero-cinematic-container">
+          <div className="hero-cinematic-content fade-in-up">
+            <h1 className="hero-cinematic-headline">
+              Build a professional<br />
+              website <span className="hero-accent-word">now</span>
+            </h1>
 
-              <div className="hero-actions">
-                <a
-                  href={demoWhatsAppUrl}
-                  className="btn btn-primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="desktop-only-copy">Book a Demo (WhatsApp)</span>
-                  <span className="mobile-only-copy">Book a Demo</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
-                </a>
-                <Link href="/work" className="btn btn-secondary desktop-only">
-                  <span>Explore Selected Work</span>
-                </Link>
-              </div>
+            <p className="hero-cinematic-sub">
+              Modern websites and digital experiences<br className="desktop-br" />
+              for local businesses.
+            </p>
 
-              <div className="hero-trust-bar">
-                <div className="trust-item">
-                  <span className="trust-icon">&#10003;</span>
-                  <span>7–14 Day Delivery</span>
-                </div>
-                <div className="trust-item">
-                  <span className="trust-icon">&#10003;</span>
-                  <span>Zero Bloatware</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="hero-visual">
-              <div className="hero-editorial-frame fade-in-scale">
-                <img
-                  src="/assets/hero-studio-workspace.jpg"
-                  alt="Ambros Studio multidisciplinary agency workspace and modern creative studio"
-                  className="hero-editorial-img"
-                />
-              </div>
+            <div className="hero-cinematic-actions">
+              <a
+                href={demoWhatsAppUrl}
+                className="btn btn-cinematic-cta"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>Book a Demo</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </a>
             </div>
           </div>
         </div>
