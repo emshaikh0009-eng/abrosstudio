@@ -53,7 +53,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="footer-nav-col">
             <h4 className="footer-heading">Studio Navigation</h4>
             <ul className="footer-links-list">
               <li><Link href="/" className="footer-link">Home</Link></li>
@@ -64,7 +64,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="footer-capabilities-col desktop-only">
             <h4 className="footer-heading">Core Capabilities</h4>
             <ul className="footer-links-list">
               <li><Link href="/services#webDesign" className="footer-link">Professional Website Designing</Link></li>
@@ -75,7 +75,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="footer-contact-col">
             <h4 className="footer-heading">Direct Contact</h4>
             <div className="footer-contact-items">
               <p className="footer-contact-line">

@@ -15,13 +15,6 @@ export default function HomePage() {
         <div className="container">
           <div className="hero-grid">
             <div className="hero-content">
-              <div className="badge-wrapper">
-                <span className="badge-pill">
-                  <span className="badge-pulse" />
-                  Premium Digital Agency
-                </span>
-              </div>
-
               <h1 className="hero-title">
                 Build Your Professional{' '}
                 <span className="text-gold">Website Now</span>
@@ -38,13 +31,14 @@ export default function HomePage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span>Book a Demo (WhatsApp)</span>
+                  <span className="desktop-only-copy">Book a Demo (WhatsApp)</span>
+                  <span className="mobile-only-copy">Book a Demo</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M5 12h14" />
                     <path d="m12 5 7 7-7 7" />
                   </svg>
                 </a>
-                <Link href="/work" className="btn btn-secondary">
+                <Link href="/work" className="btn btn-secondary desktop-only">
                   <span>Explore Selected Work</span>
                 </Link>
               </div>
@@ -62,31 +56,22 @@ export default function HomePage() {
             </div>
 
             <div className="hero-visual">
-              <div className="hero-showcase-frame">
-                <div className="frame-header">
-                  <div className="frame-dots">
-                    <span className="dot red" />
-                    <span className="dot yellow" />
-                    <span className="dot green" />
-                  </div>
-                  <div className="frame-url">ambrosstudio.com/client-showcase</div>
-                </div>
-                <div className="frame-body">
-                  <img
-                    src="/assets/project-restaurant.jpg"
-                    alt="Zaika Gourmet Dining Concept by Ambros Studio"
-                  />
-                </div>
+              <div className="hero-editorial-frame fade-in-scale">
+                <img
+                  src="/assets/hero-studio-workspace.jpg"
+                  alt="Ambros Studio multidisciplinary agency workspace and modern creative studio"
+                  className="hero-editorial-img"
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. SERVICES OVERVIEW — Warm Ivory Breathing Space */}
+      {/* 2. SERVICES OVERVIEW — Essential Studio Capabilities */}
       <section className="section section-ivory" id="servicesOverview">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header fade-in-up">
             <span className="kicker">Core Studio Capabilities</span>
             <h2>Everything Your Brand Needs to Dominate Online</h2>
             <p className="section-subtitle">
@@ -95,7 +80,7 @@ export default function HomePage() {
           </div>
 
           <div className="services-grid">
-            <div className="service-card">
+            <div className="service-card fade-in-up stagger-1">
               <div className="service-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="2" y="3" width="20" height="14" rx="2" />
@@ -103,16 +88,16 @@ export default function HomePage() {
                   <line x1="12" y1="17" x2="12" y2="21" />
                 </svg>
               </div>
-              <h3 className="service-title">Professional Website Designing</h3>
+              <h3 className="service-title">Website Design &amp; Development</h3>
               <p className="service-text">
-                Bespoke websites hand-crafted to establish instant authority. Ultra-fast page speeds, mobile-first responsiveness, and direct WhatsApp lead capture funnels.
+                Bespoke, ultra-fast websites hand-crafted to establish instant authority and drive direct customer inquiries.
               </p>
               <Link href="/services#webDesign" className="service-link">
                 <span>Discover Web Services &rarr;</span>
               </Link>
             </div>
 
-            <div className="service-card">
+            <div className="service-card fade-in-up stagger-2">
               <div className="service-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
@@ -122,16 +107,16 @@ export default function HomePage() {
                   <path d="m9.17 14.83-4.24 4.24" />
                 </svg>
               </div>
-              <h3 className="service-title">Targeted Meta Ad Campaigns</h3>
+              <h3 className="service-title">Digital Ads / Meta Ads</h3>
               <p className="service-text">
-                Laser-focused Instagram &amp; Facebook advertising tailored for local Indian business markets. Proven creatives, localized copy, and zero ad spend waste.
+                Laser-focused Instagram &amp; Facebook advertising engineered to bring local buyers directly to your business.
               </p>
               <Link href="/services#leadGen" className="service-link">
                 <span>Discover Meta Ad Systems &rarr;</span>
               </Link>
             </div>
 
-            <div className="service-card">
+            <div className="service-card fade-in-up stagger-3">
               <div className="service-icon-box">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="4" width="18" height="16" rx="2" />
@@ -139,9 +124,9 @@ export default function HomePage() {
                   <line x1="7" y1="12" x2="13" y2="12" />
                 </svg>
               </div>
-              <h3 className="service-title">Digital Visiting Card</h3>
+              <h3 className="service-title">Digital Business Cards</h3>
               <p className="service-text">
-                Leave traditional paper cards in the past. Luxury engraved metal NFC cards paired with dynamic digital web profiles to share your contact with one tap.
+                <span className="desktop-only-copy">Leave traditional paper cards in the past. </span>Luxury engraved metal NFC cards paired with dynamic digital web profiles to share your contact with one tap.
               </p>
               <Link href="/services#digitalCards" className="service-link">
                 <span>Discover Card Solutions &rarr;</span>
@@ -151,8 +136,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. WHY IT MATTERS — Deep Emerald Editorial Statement */}
-      <section className="section section-emerald" id="whyItMatters">
+      {/* 3. TRUST / VALUE — 3-Pillar Authority (Mobile Only) */}
+      <section className="section section-trust mobile-only-section" id="trustSection">
+        <div className="container">
+          <div className="trust-strip-header fade-in-up">
+            <span className="kicker">Why Ambros Studio</span>
+            <h2>Built With Precision, Engineered for Results</h2>
+          </div>
+
+          <div className="trust-strip-grid">
+            <div className="trust-strip-card fade-in-up stagger-1">
+              <div className="trust-strip-icon-box">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                  <line x1="12" y1="18" x2="12.01" y2="18" />
+                </svg>
+              </div>
+              <div className="trust-strip-content">
+                <h4 className="trust-strip-title">Modern &amp; Responsive</h4>
+                <p className="trust-strip-text">
+                  Seamlessly optimized for every smartphone, tablet, and desktop display.
+                </p>
+              </div>
+            </div>
+
+            <div className="trust-strip-card fade-in-up stagger-2">
+              <div className="trust-strip-icon-box">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </div>
+              <div className="trust-strip-content">
+                <h4 className="trust-strip-title">Professional Design</h4>
+                <p className="trust-strip-text">
+                  Bespoke art direction, intentional typography, and distinctive visual prestige.
+                </p>
+              </div>
+            </div>
+
+            <div className="trust-strip-card fade-in-up stagger-3">
+              <div className="trust-strip-icon-box">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+              <div className="trust-strip-content">
+                <h4 className="trust-strip-title">Built for Local Businesses</h4>
+                <p className="trust-strip-text">
+                  Frictionless WhatsApp lead capture funnels designed for real-world growth.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. WHY IT MATTERS — Deep Emerald Editorial Statement (Desktop Only) */}
+      <section className="section section-emerald desktop-only-section" id="whyItMatters">
         <div className="container">
           <div className="section-header" style={{ maxWidth: '820px' }}>
             <span className="kicker">Why It Matters</span>
@@ -196,8 +237,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. SAMPLE WORK — Soft Ivory Gallery Showcase */}
-      <section className="section section-ivory-soft" id="selectedWork">
+      {/* 5. SAMPLE WORK — Soft Ivory Gallery Showcase (Desktop Only) */}
+      <section className="section section-ivory-soft desktop-only-section" id="selectedWork">
         <div className="container">
           <div className="section-header">
             <span className="kicker">Sample Work</span>
@@ -277,8 +318,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. SMART CONTACTLESS NETWORKING — Warm Ivory Physical Product Presentation */}
-      <section className="section section-ivory card-feature-section" id="digitalCardFeature">
+      {/* 6. SMART CONTACTLESS NETWORKING (Desktop Only) */}
+      <section className="section section-ivory card-feature-section desktop-only-section" id="digitalCardFeature">
         <div className="container">
           <div className="card-showcase-grid">
             <div className="card-explainer">
@@ -306,8 +347,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. THE STUDIO STANDARD (PROCESS) — Soft Ivory */}
-      <section className="section section-ivory-soft" id="process">
+      {/* 7. THE STUDIO STANDARD (PROCESS) (Desktop Only) */}
+      <section className="section section-ivory-soft desktop-only-section" id="process">
         <div className="container">
           <div className="section-header">
             <span className="kicker">How We Deliver</span>
@@ -349,8 +390,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. CLIENT FEEDBACK — Warm Ivory */}
-      <section className="section section-ivory" id="testimonials">
+      {/* 8. CLIENT FEEDBACK (Desktop Only) */}
+      <section className="section section-ivory desktop-only-section" id="testimonials">
         <div className="container">
           <div className="section-header">
             <span className="kicker">Client Feedback</span>
@@ -364,13 +405,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 8. FINAL CONVERSION MOMENT — Near Black High-Contrast Finish */}
-      <section className="section section-black" id="finalCta" style={{ paddingTop: '100px', paddingBottom: '100px' }}>
+      {/* 9. FINAL CONVERSION MOMENT — High-Contrast Finish */}
+      <section className="section section-black" id="finalCta">
         <div className="container">
-          <div className="final-cta-card" style={{ background: '#111111', border: '1px solid rgba(215, 170, 74, 0.25)', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}>
-            <span className="kicker">Ready to Elevate?</span>
-            <h2 style={{ color: '#FFFFFF' }}>Transform How Customers Perceive Your Brand</h2>
-            <p className="lead" style={{ maxWidth: '640px', margin: '14px auto 32px', color: '#9EAAA2' }}>
+          <div className="final-cta-card fade-in-up">
+            <span className="kicker desktop-only-copy">Ready to Elevate?</span>
+            <h2>
+              <span className="desktop-only-copy">Transform How Customers Perceive Your Brand</span>
+              <span className="mobile-only-copy">Ready to build a professional online presence?</span>
+            </h2>
+            <p className="lead final-cta-desc desktop-only-copy">
               Schedule a direct consultation with the Ambros Studio team to explore how a custom website, Meta ad campaign, or metal NFC cards can elevate your business.
             </p>
             <div className="hero-actions" style={{ justifyContent: 'center' }}>
@@ -380,13 +424,14 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>Book a Demo (WhatsApp)</span>
+                <span className="desktop-only-copy">Book a Demo (WhatsApp)</span>
+                <span className="mobile-only-copy">Book a Demo</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M5 12h14" />
                   <path d="m12 5 7 7-7 7" />
                 </svg>
               </a>
-              <Link href="/contact" className="btn btn-secondary">
+              <Link href="/contact" className="btn btn-secondary desktop-only">
                 <span>View Contact Information</span>
               </Link>
             </div>

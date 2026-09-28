@@ -11,9 +11,9 @@ import { usePathname } from 'next/navigation';
  *    Only after mounting does it add `js-loaded` to <html>.
  * 2. Instant reveal for above-the-fold elements: Anything already in or near the viewport
  *    gets .visible immediately without flashing invisible.
- * 3. Route-change aware: Re-runs on pathname change so page transitions animate smoothly.
- * 4. Failsafe timeout (1.5s): Automatically reveals any remaining elements to prevent
- *    permanent invisibility under any edge case.
+ * 3. Dual-mode detection: IntersectionObserver + passive scroll handler ensures even rapid
+ *    fling scrolling on mobile never leaves an element invisible.
+ * 4. Route-change aware: Re-runs on pathname change so page transitions animate smoothly.
  * 5. Respects prefers-reduced-motion via CSS.
  */
 export default function ScrollObserver() {
@@ -23,62 +23,81 @@ export default function ScrollObserver() {
     // 1. Signal that client JS is active
     document.documentElement.classList.add('js-loaded');
 
-    const revealElements = document.querySelectorAll<HTMLElement>('.fade-in-up');
+    const revealElements = Array.from(
+      document.querySelectorAll<HTMLElement>('.fade-in-up, .fade-in-scale')
+    );
     if (revealElements.length === 0) return;
+
+    const reveal = (el: HTMLElement) => {
+      el.classList.add('visible');
+      el.removeAttribute('data-scroll-reveal');
+    };
 
     // 2. Check for IntersectionObserver support
     if (!('IntersectionObserver' in window)) {
-      revealElements.forEach((el) => el.classList.add('visible'));
+      revealElements.forEach(reveal);
       return;
     }
 
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
 
-    // 3. Elements already in or near viewport are immediately visible
+    // 3. Elements already in, above, or near viewport become immediately visible
     const pendingElements: HTMLElement[] = [];
     revealElements.forEach((el) => {
       const rect = el.getBoundingClientRect();
-      if (rect.top <= windowHeight * 0.92 && rect.bottom >= 0) {
-        el.classList.add('visible');
-        el.removeAttribute('data-scroll-reveal');
+      if (rect.top <= windowHeight * 0.92) {
+        reveal(el);
       } else {
-        // Only elements well below the fold are primed for scroll-in animation
         el.setAttribute('data-scroll-reveal', 'pending');
         pendingElements.push(el);
       }
     });
 
-    // 4. Observe remaining elements
+    if (pendingElements.length === 0) return;
+
+    // 4. IntersectionObserver for smooth entrance
     const observer = new IntersectionObserver(
       (entries, obs) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting || entry.boundingClientRect.top <= window.innerHeight + 80) {
             const target = entry.target as HTMLElement;
-            target.classList.add('visible');
-            target.removeAttribute('data-scroll-reveal');
+            reveal(target);
             obs.unobserve(target);
           }
         });
       },
       {
-        threshold: 0.08,
-        rootMargin: '0px 0px -30px 0px',
+        threshold: 0,
+        rootMargin: '200px 0px 80px 0px',
       }
     );
 
     pendingElements.forEach((el) => observer.observe(el));
 
-    // 5. Fail-safe timer: after 1s, reveal all remaining elements and clean up pending state
-    const safetyTimer = setTimeout(() => {
-      document.querySelectorAll<HTMLElement>('.fade-in-up').forEach((el) => {
-        el.classList.add('visible');
-        el.removeAttribute('data-scroll-reveal');
+    // 5. Passive scroll listener failsafe so rapid scrolling or fling never leaves an element invisible
+    const handleScroll = () => {
+      const vh = window.innerHeight;
+      let remaining = 0;
+      pendingElements.forEach((el) => {
+        if (el.classList.contains('visible')) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= vh + 80) {
+          reveal(el);
+          observer.unobserve(el);
+        } else {
+          remaining++;
+        }
       });
-    }, 1000);
+      if (remaining === 0) {
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      clearTimeout(safetyTimer);
       observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [pathname]);
 

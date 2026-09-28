@@ -1,9 +1,24 @@
 import type { Metadata } from 'next';
+import { Sora, Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ScrollObserver from '@/components/ScrollObserver';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
+
+const sora = Sora({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sora',
+  weight: ['400', '500', '600', '700', '800'],
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+  weight: ['300', '400', '500', '600', '700'],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ambrosstudio.space'),
@@ -85,7 +100,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${sora.variable} ${inter.variable}`}>
       <body className="antialiased">
         <ScrollObserver />
         <Header />
