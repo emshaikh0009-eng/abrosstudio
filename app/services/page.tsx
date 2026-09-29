@@ -13,7 +13,7 @@ export default function ServicesPage() {
   return (
     <>
       {/* Service 01: Website Designing — Deep Emerald */}
-      <section className="section section-emerald" id="webDesign" style={{ paddingTop: '50px' }}>
+      <section className="hero section-emerald" id="webDesign">
         <div className="container">
           <div className="hero-grid">
             <div className="hero-content fade-in-up">
