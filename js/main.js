@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPortfolioModal();
   initContactForm();
   initScrollReveals();
+  initServicesCollapsible();
 });
 
 /* ==========================================================================
@@ -21,14 +22,37 @@ function initNavigation() {
   const toggle = document.querySelector('.mobile-toggle');
   const drawer = document.querySelector('.mobile-drawer');
 
-  // Sticky header background
+// Smooth scroll hide/show navigation
   if (header) {
+    let lastY = window.scrollY;
+    let ticking = false;
+
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 40) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
+      if (ticking) return;
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+
+        // Top of the page: show normally
+        if (currentY <= 30) {
+          header.classList.remove('scrolled', 'nav-hidden');
+        } else {
+          header.classList.add('scrolled');
+          const isDrawerOpen = drawer && drawer.classList.contains('open');
+          if (!isDrawerOpen) {
+            const delta = currentY - lastY;
+            if (delta > 8) {
+              // Scrolling down -> hide header
+              header.classList.add('nav-hidden');
+            } else if (delta < -8) {
+              // Scrolling up -> show header
+              header.classList.remove('nav-hidden');
+            }
+          }
+        }
+        lastY = currentY;
+        ticking = false;
+      });
+      ticking = true;
     }, { passive: true });
   }
 
@@ -485,4 +509,35 @@ function initScrollReveals() {
   });
 
   revealElements.forEach(el => observer.observe(el));
+}
+
+/* ==========================================================================
+   7. Services Mobile Collapsible Details Accordion
+   ========================================================================== */
+function initServicesCollapsible() {
+  const toggleButtons = document.querySelectorAll('.service-accordion-btn');
+  toggleButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const container = btn.closest('.service-accordion-container');
+      if (!container) return;
+      const content = container.querySelector('.service-accordion-content');
+      const chevron = btn.querySelector('.service-accordion-chevron');
+      const labelSpan = btn.querySelector('span');
+      const isExpanded = content && content.classList.contains('expanded');
+
+      if (isExpanded) {
+        content.classList.remove('expanded');
+        content.classList.add('collapsed');
+        if (chevron) chevron.classList.remove('rotate');
+        if (labelSpan) labelSpan.textContent = btn.getAttribute('data-collapsed-text') || 'View Details';
+        btn.setAttribute('aria-expanded', 'false');
+      } else {
+        content.classList.remove('collapsed');
+        content.classList.add('expanded');
+        if (chevron) chevron.classList.add('rotate');
+        if (labelSpan) labelSpan.textContent = 'Hide Details';
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
 }

@@ -99,24 +99,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 4. Studio Anchor / Final CTA — Near Black */}
+      {/* 4. Studio Anchor — Near Black */}
       <section className="section section-black" style={{ paddingTop: '90px', paddingBottom: '90px' }}>
         <div className="container">
           <div className="final-cta-card" style={{ background: '#111111', border: '1px solid rgba(215, 170, 74, 0.25)', textAlign: 'left', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ maxWidth: '640px', width: '100%' }}>
               <span className="kicker">Headquartered in Surat</span>
-              <h2 style={{ color: '#FFFFFF' }}>Let&rsquo;s Discuss Your Vision</h2>
-              <p className="lead" style={{ margin: '14px 0 24px', color: '#9EAAA2' }}>
-                Whether you run a luxury dining destination, medical practice, salon, or professional consultancy, we’re ready to build your digital brand.
+              <h2 style={{ color: '#FFFFFF' }}>Crafted With Deliberate Purpose</h2>
+              <p className="lead" style={{ margin: '14px 0 0', color: '#9EAAA2' }}>
+                Whether you run a luxury dining destination, medical practice, salon, or professional consultancy, our multidisciplinary team is dedicated to building enduring digital authority.
               </p>
-              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                <Link href="/contact" className="btn btn-primary">
-                  <span>Contact the Studio</span>
-                </Link>
-                <Link href="/work" className="btn btn-secondary">
-                  <span>View Selected Work</span>
-                </Link>
-              </div>
             </div>
           </div>
         </div>

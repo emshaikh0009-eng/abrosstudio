@@ -406,21 +406,15 @@ export default function HomePage() {
               Schedule a direct consultation with the Ambros Studio team to explore how a custom website, Meta ad campaign, or metal NFC cards can elevate your business.
             </p>
             <div className="hero-actions" style={{ justifyContent: 'center' }}>
-              <a
-                href={demoWhatsAppUrl}
-                className="btn btn-primary"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className="desktop-only-copy">Book a Demo (WhatsApp)</span>
-                <span className="mobile-only-copy">Book a Demo</span>
+              <Link href="/contact" className="btn btn-primary">
+                <span>Contact the Studio</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M5 12h14" />
                   <path d="m12 5 7 7-7 7" />
                 </svg>
-              </a>
-              <Link href="/contact" className="btn btn-secondary desktop-only">
-                <span>View Contact Information</span>
+              </Link>
+              <Link href="/services" className="btn btn-secondary desktop-only">
+                <span>Explore Capabilities</span>
               </Link>
             </div>
           </div>

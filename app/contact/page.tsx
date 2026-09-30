@@ -89,22 +89,6 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Book a Demo CTA */}
-              <div style={{ marginTop: '28px' }}>
-                <a
-                  href={demoWhatsAppUrl}
-                  className="btn btn-primary btn-block"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>Book a Demo (Instant WhatsApp)</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
-                </a>
-              </div>
-
               {/* Map Container */}
               <div className="map-frame-box" style={{ marginTop: '24px', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid rgba(7, 61, 46, 0.15)', height: '220px' }}>
                 <iframe
@@ -120,9 +104,29 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Interactive Contact Form */}
+            {/* Interactive Contact Form & Mandated Below-Form Demo Box */}
             <div className="fade-in-up">
               <ContactForm />
+
+              {/* Book a Demo CTA — Located strictly below the contact form as intended */}
+              <div className="form-book-demo-box">
+                <h4 className="demo-box-heading">Prefer Immediate Discussion?</h4>
+                <p className="demo-box-sub">
+                  Connect directly with our team on WhatsApp for an interactive live walkthrough of our digital solutions.
+                </p>
+                <a
+                  href={demoWhatsAppUrl}
+                  className="btn btn-primary btn-block"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>Book a Demo (Instant WhatsApp)</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -8,19 +8,50 @@ import AmbrosLogo from './AmbrosLogo';
 export default function Header() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isNavHidden, setIsNavHidden] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
+    let lastY = typeof window !== 'undefined' ? window.scrollY : 0;
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      if (ticking) return;
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+
+        // At the very top of the page: show normally
+        if (currentY <= 30) {
+          setIsScrolled(false);
+          setIsNavHidden(false);
+        } else {
+          setIsScrolled(true);
+          // Only auto-hide/show when mobile menu is closed
+          if (!isMobileOpen) {
+            const delta = currentY - lastY;
+            if (delta > 8) {
+              // Scrolling DOWN -> hide header
+              setIsNavHidden(true);
+            } else if (delta < -8) {
+              // Scrolling UP -> show header
+              setIsNavHidden(false);
+            }
+          }
+        }
+        lastY = currentY;
+        ticking = false;
+      });
+      ticking = true;
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMobileOpen]);
 
   // Close mobile drawer on route navigation
   useEffect(() => {
     setIsMobileOpen(false);
+    setIsNavHidden(false);
   }, [pathname]);
 
   // Lock body scroll when mobile menu is open
@@ -52,20 +83,24 @@ export default function Header() {
     { href: '/contact', label: 'Contact' },
   ];
 
-  // CTA Rule: "Book a Demo" allowed strictly on Home (/) and Contact (/contact)
-  const isDemoAllowed = pathname === '/' || pathname === '/contact';
+  // CTA Rule: Strictly NO CTA/inquiry button on About and Work pages per user instructions
+  const isCtaAllowedOnPage = pathname !== '/about' && pathname !== '/work';
 
   const demoWhatsAppUrl =
     'https://wa.me/919998441519?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
 
   return (
     <>
-      <header className={`site-header ${isScrolled ? 'scrolled' : ''}`} id="siteHeader">
+      <header
+        className={`site-header ${isScrolled ? 'scrolled' : ''} ${isNavHidden ? 'nav-hidden' : ''}`}
+        id="siteHeader"
+      >
         <div className="container nav-container">
           <Link href="/" className="brand-logo" aria-label="Ambros Studio Home">
             <AmbrosLogo variant="light" height={34} />
           </Link>
 
+          {/* Desktop Navigation (Unchanged layout & typography) */}
           <nav className="nav-links" aria-label="Primary Navigation">
             {navLinks.map((item) => {
               const isActive =
@@ -84,8 +119,9 @@ export default function Header() {
             })}
           </nav>
 
+          {/* Desktop Header CTA — Hidden on About & Work pages */}
           <div className="header-cta-group">
-            {isDemoAllowed ? (
+            {isCtaAllowedOnPage && (
               <a
                 href={demoWhatsAppUrl}
                 className="btn btn-primary btn-sm header-book-btn"
@@ -94,13 +130,10 @@ export default function Header() {
               >
                 <span>Book a Demo &rarr;</span>
               </a>
-            ) : (
-              <Link href="/contact" className="btn btn-secondary btn-sm">
-                <span>Start a Project</span>
-              </Link>
             )}
           </div>
 
+          {/* Mobile & Tablet Navigation Toggle */}
           <button
             className={`mobile-toggle ${isMobileOpen ? 'active' : ''}`}
             aria-label="Toggle navigation menu"
@@ -114,38 +147,46 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Navigation Backdrop */}
+      {/* ===================================================================
+          Mobile & Tablet Navigation Menu — Home Hero Aesthetic Treatment
+          =================================================================== */}
       <div
-        className={`mobile-nav-backdrop ${isMobileOpen ? 'open' : ''}`}
+        className={`hero-nav-backdrop ${isMobileOpen ? 'open' : ''}`}
         onClick={() => setIsMobileOpen(false)}
         aria-hidden="true"
       />
 
-      {/* Mobile Navigation Floating Sheet Modal */}
       <div
-        className={`mobile-nav-card ${isMobileOpen ? 'open' : ''}`}
+        className={`hero-nav-panel ${isMobileOpen ? 'open' : ''}`}
         role="dialog"
         aria-modal="true"
-        aria-label="Mobile Navigation Menu"
+        aria-label="Mobile and Tablet Navigation Menu"
       >
-        <div className="mobile-nav-card-header">
-          <Link href="/" className="brand-logo" onClick={() => setIsMobileOpen(false)} aria-label="Ambros Studio Home">
-            <AmbrosLogo variant="light" height={28} />
+        {/* Panel Header */}
+        <div className="hero-nav-header">
+          <Link
+            href="/"
+            className="brand-logo"
+            onClick={() => setIsMobileOpen(false)}
+            aria-label="Ambros Studio Home"
+          >
+            <AmbrosLogo variant="light" height={30} />
           </Link>
           <button
-            className="mobile-nav-close-btn"
+            className="hero-nav-close"
             onClick={() => setIsMobileOpen(false)}
             aria-label="Close navigation"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
 
-        <nav className="mobile-nav-list" aria-label="Mobile Menu">
-          {navLinks.map((item) => {
+        {/* Panel Navigation List — High Typography / Home Hero Visual Language */}
+        <nav className="hero-nav-links" aria-label="Mobile Menu Links">
+          {navLinks.map((item, index) => {
             const isActive =
               item.href === '/'
                 ? pathname === '/'
@@ -154,50 +195,49 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+                className={`hero-nav-link-item ${isActive ? 'active' : ''}`}
                 onClick={() => setIsMobileOpen(false)}
               >
-                <span>{item.label}</span>
-                {isActive && (
-                  <span className="mobile-nav-active-pill-badge">Active</span>
+                <div className="hero-nav-link-title-row">
+                  <span className="hero-nav-index">0{index + 1}</span>
+                  <span className="hero-nav-label">{item.label}</span>
+                </div>
+                {isActive ? (
+                  <span className="hero-nav-active-dot" aria-label="Current page" />
+                ) : (
+                  <svg className="hero-nav-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
                 )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="mobile-nav-footer">
-          {isDemoAllowed ? (
-            <a
-              href={demoWhatsAppUrl}
-              className="btn btn-primary mobile-nav-cta"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setIsMobileOpen(false)}
-            >
-              <span>Book a Demo (WhatsApp)</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </a>
-          ) : (
-            <Link
-              href="/contact"
-              className="btn btn-primary mobile-nav-cta"
-              onClick={() => setIsMobileOpen(false)}
-            >
-              <span>Get in Touch</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </Link>
+        {/* Panel Footer */}
+        <div className="hero-nav-footer">
+          {isCtaAllowedOnPage && (
+            <div className="hero-nav-action-wrap">
+              <a
+                href={demoWhatsAppUrl}
+                className="btn btn-cinematic-cta hero-nav-cta-btn"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMobileOpen(false)}
+              >
+                <span>Book a Demo</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </a>
+            </div>
           )}
 
-          <div className="mobile-nav-meta">
-            <p>Direct WhatsApp: +91 99984 41519</p>
-            <p>Surat, Gujarat &bull; Dedicated Support</p>
+          <div className="hero-nav-meta">
+            <p className="hero-nav-meta-line">Surat, Gujarat &bull; Dedicated Support</p>
+            <p className="hero-nav-meta-brand">Ambros Studio &bull; Crafted with Purpose</p>
           </div>
         </div>
       </div>
