@@ -108,6 +108,13 @@ body::after {
   z-index: 0;
 }
 
+@media (max-width: 1023.98px) {
+  body::before,
+  body::after {
+    display: none !important;
+  }
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -3072,6 +3079,38 @@ main > .service-showcase-section:first-child {
 .location-tag {
   color: #00C49F;
   font-weight: 600;
+}
+
+/* Physical Digital Visiting Card Showcase (Service 3) */
+.card-photo-showcase {
+  background: #080D0B;
+  border: 1px solid rgba(0, 196, 159, 0.28);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 28px 75px rgba(0, 0, 0, 0.7), 0 0 45px rgba(0, 196, 159, 0.12);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  position: relative;
+  width: 100%;
+}
+
+.card-photo-showcase:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.8), 0 0 55px rgba(0, 196, 159, 0.2);
+  border-color: rgba(0, 196, 159, 0.45);
+}
+
+.card-showcase-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1024 / 643;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-photo-showcase:hover .card-showcase-img {
+  transform: scale(1.025);
 }
 
 /* Service Accordion Toggle (Desktop = Always Visible, Mobile = Collapsible) */

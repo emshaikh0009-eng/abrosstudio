@@ -193,17 +193,13 @@ export default function ServicesPage() {
             </div>
 
             <div className="hero-visual fade-in-up">
-              <div className="hero-showcase-frame">
-                <div className="frame-header">
-                  <div className="frame-dots">
-                    <span className="dot red" />
-                    <span className="dot yellow" />
-                    <span className="dot green" />
-                  </div>
-                </div>
-                <div className="frame-body">
-                  <img src="/assets/project-gym.jpg" alt="Metal NFC Card Showcase" />
-                </div>
+              <div className="card-photo-showcase">
+                <img
+                  src="/assets/ambros-digital-card-showcase.jpg"
+                  alt="Ambros Studio Physical Metal NFC &amp; Digital Visiting Card in hand"
+                  className="card-showcase-img"
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>
