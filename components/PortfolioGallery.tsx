@@ -258,7 +258,7 @@ export default function PortfolioGallery({ initialCategory = 'all' }: { initialC
 
               <div className="modal-actions-bar" style={{ marginTop: '28px' }}>
                 <a
-                  href="https://wa.me/919998441519?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99m%20interested%20in%20a%20concept%20similar%20to%20your%20showcase."
+                  href="https://wa.me/919157778915?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99m%20interested%20in%20a%20concept%20similar%20to%20your%20showcase."
                   className="btn btn-primary btn-block"
                   target="_blank"
                   rel="noopener noreferrer"

@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     'Digital Business Card India',
     'Luxury Web Agency',
   ],
-  authors: [{ name: 'Ambros Studio Team', url: 'https://wa.me/919998441519' }],
+  authors: [{ name: 'Ambros Studio Team', url: 'https://wa.me/919157778915' }],
   creator: 'Ambros Studio',
   publisher: 'Ambros Studio',
   alternates: {

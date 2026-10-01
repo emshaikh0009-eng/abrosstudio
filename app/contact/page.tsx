@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   const demoWhatsAppUrl =
-    'https://wa.me/919998441519?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
+    'https://wa.me/919157778915?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
 
   return (
     <>
@@ -51,7 +51,7 @@ export default function ContactPage() {
                     </div>
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <h4 style={{ color: '#073D2E', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Direct Phone &amp; WhatsApp</h4>
-                      <a href="tel:+919998441519" style={{ color: '#073D2E', fontSize: '1.05rem', fontWeight: 700, wordBreak: 'break-word' }}>+91 99984 41519</a>
+                      <a href="tel:+919157778915" style={{ color: '#073D2E', fontSize: '1.05rem', fontWeight: 700, wordBreak: 'break-word' }}>+91 91577 78915</a>
                     </div>
                   </div>
                 </div>
@@ -66,7 +66,7 @@ export default function ContactPage() {
                     </div>
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <h4 style={{ color: '#073D2E', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email Inquiries</h4>
-                      <a href="mailto:ambrosstudio.z@gmail.com" style={{ color: '#073D2E', fontSize: '1.05rem', fontWeight: 700, wordBreak: 'break-all', overflowWrap: 'anywhere' }}>ambrosstudio.z@gmail.com</a>
+                      <a href="mailto:ambrosstudioltd@gmail.com" style={{ color: '#073D2E', fontSize: '1.05rem', fontWeight: 700, wordBreak: 'break-all', overflowWrap: 'anywhere' }}>ambrosstudioltd@gmail.com</a>
                     </div>
                   </div>
                 </div>

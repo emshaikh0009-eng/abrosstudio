@@ -6,7 +6,7 @@ import TestimonialSlider from '@/components/TestimonialSlider';
 
 export default function HomePage() {
   const demoWhatsAppUrl =
-    'https://wa.me/919998441519?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
+    'https://wa.me/919157778915?text=Hi%20AmbrosStudio!%20%F0%9F%91%8B%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services%20and%20discuss%20my%20requirements.';
 
   return (
     <>

@@ -23,7 +23,7 @@ export default function ContactForm() {
       `Hello AmbrosStudio! 👋\n\nI’d like to discuss a project with you:\n• Name: ${formData.name}\n• Phone: ${formData.phone}\n• Email: ${formData.email || 'N/A'}\n• Service: ${formData.service}\n• Details: ${formData.message || 'I would like to discuss my requirements.'}`
     );
 
-    const whatsappUrl = `https://wa.me/919998441519?text=${text}`;
+    const whatsappUrl = `https://wa.me/919157778915?text=${text}`;
     setIsSubmitted(true);
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
@@ -60,7 +60,7 @@ export default function ContactForm() {
             Inquiry Dispatched to WhatsApp!
           </h4>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '22px' }}>
-            We have opened your inquiry directly in WhatsApp. You can also message our team directly at +91 99984 41519.
+            We have opened your inquiry directly in WhatsApp. You can also message our team directly at +91 91577 78915.
           </p>
           <button
             className="btn btn-secondary btn-sm"

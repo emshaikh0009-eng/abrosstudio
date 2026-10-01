@@ -465,7 +465,7 @@ function initContactForm() {
       `Requirement:\n${message || 'I would like to discuss a digital project.'}`
     );
 
-    const waUrl = `https://wa.me/919998441519?text=${waText}`;
+    const waUrl = `https://wa.me/919157778915?text=${waText}`;
 
     // Open WhatsApp in new tab
     window.open(waUrl, '_blank');
