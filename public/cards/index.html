@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Business Card UI — Preview & Review Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #10b981;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top bar */
+    .topbar {
+      background-color: rgba(11, 17, 32, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .badge-review {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .portal-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .tabs {
+      display: flex;
+      background: #060911;
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-open-tab {
+      background: #1e293b;
+      color: #ffffff;
+      border: 1px solid #475569;
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-open-tab:hover {
+      background: #334155;
+      border-color: #64748b;
+    }
+
+    .content-area {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px 40px;
+      overflow-y: auto;
+    }
+
+    /* Device Preview Containers */
+    .preview-container {
+      display: none;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .preview-container.active {
+      display: flex;
+    }
+
+    .device-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .device-header {
+      margin-bottom: 12px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .device-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .device-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .device-actions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-card-direct {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #38bdf8;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      transition: background 0.15s ease;
+    }
+
+    .btn-card-direct:hover {
+      background: rgba(56, 189, 248, 0.2);
+    }
+
+    .mockup-frame {
+      width: 390px;
+      height: 780px;
+      max-height: calc(100vh - 170px);
+      min-height: 560px;
+      background: #000000;
+      border-radius: 44px;
+      padding: 10px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.12);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mockup-frame::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 20px;
+      background: #000000;
+      border-radius: 14px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .mockup-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 34px;
+      overflow: hidden;
+      border: none;
+      background: #ffffff;
+      flex: 1;
+    }
+
+    /* Single View frames can be slightly larger */
+    .single-frame {
+      width: 410px;
+      height: 820px;
+      max-height: calc(100vh - 170px);
+    }
+
+    /* Status Bar Footer */
+    .infobar {
+      background: #060911;
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .info-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-green {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar Controls -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="badge-review">Review Portal</span>
+      <h1 class="portal-title">Digital Business Card UI Previews</h1>
+    </div>
+
+    <!-- Tab View Switcher -->
+    <nav class="tabs" aria-label="Design tabs">
+      <button type="button" class="tab-btn active" onclick="switchTab('side-by-side')" id="tab-side-by-side">
+        <span>Both (Side-by-Side)</span>
+      </button>
+      <button type="button" class="tab-btn" onclick="switchTab('design-1')" id="tab-design-1">
+        <span>Design 1 (Lovable)</span>
+      </button>
+      <button type="button" class="tab-btn" onclick="switchTab('design-2')" id="tab-design-2">
+        <span>Design 2 (Cloud AI)</span>
+      </button>
+    </nav>
+
+    <!-- Direct Links -->
+    <div class="topbar-right">
+      <a href="./design-1/index.html" target="_blank" class="btn-open-tab" title="Open Design 1 in a dedicated browser tab">
+        <span>Open Design 1</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
+      <a href="./design-2/index.html" target="_blank" class="btn-open-tab" title="Open Design 2 in a dedicated browser tab">
+        <span>Open Design 2</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Interactive Viewing Canvas -->
+  <main class="content-area">
+
+    <!-- View A: Side by Side Comparison -->
+    <div class="preview-container active" id="view-side-by-side">
+      <!-- Frame 1: Lovable Reference -->
+      <div class="device-card">
+        <div class="device-header">
+          <h2 class="device-title">Design 1 — Lovable Reference</h2>
+          <p class="device-subtitle">Cream background &bull; Mint green CTA &bull; Rounded contact cards &bull; Follow Along</p>
+          <div class="device-actions">
+            <a href="./design-1/index.html" target="_blank" class="btn-card-direct">
+              <span>Open in new tab</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+            </a>
+          </div>
+        </div>
+        <div class="mockup-frame">
+          <iframe src="./design-1/index.html" class="mockup-screen" title="Design 1 Lovable Preview" loading="eager"></iframe>
+        </div>
+      </div>
+
+      <!-- Frame 2: Cloud AI Reference -->
+      <div class="device-card">
+        <div class="device-header">
+          <h2 class="device-title">Design 2 — Cloud AI Reference</h2>
+          <p class="device-subtitle">White background &bull; Forest green CTA &bull; Editorial Serif &bull; Minimal dividers</p>
+          <div class="device-actions">
+            <a href="./design-2/index.html" target="_blank" class="btn-card-direct">
+              <span>Open in new tab</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+            </a>
+          </div>
+        </div>
+        <div class="mockup-frame">
+          <iframe src="./design-2/index.html" class="mockup-screen" title="Design 2 Cloud AI Preview" loading="eager"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- View B: Single Design 1 (Lovable) -->
+    <div class="preview-container" id="view-design-1">
+      <div class="device-card">
+        <div class="device-header">
+          <h2 class="device-title">Design 1 — Lovable Reference Design</h2>
+          <p class="device-subtitle">Maya Chen &bull; Senior Product Designer &bull; Lumen Studio</p>
+          <div class="device-actions">
+            <a href="./design-1/index.html" target="_blank" class="btn-card-direct">
+              <span>Open full screen in new tab</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+            </a>
+          </div>
+        </div>
+        <div class="mockup-frame single-frame">
+          <iframe src="./design-1/index.html" class="mockup-screen" title="Design 1 Detailed Preview" loading="eager"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- View C: Single Design 2 (Cloud AI) -->
+    <div class="preview-container" id="view-design-2">
+      <div class="device-card">
+        <div class="device-header">
+          <h2 class="device-title">Design 2 — Cloud AI Reference Design</h2>
+          <p class="device-subtitle">Aarav Desai &bull; Principal Architect &bull; Desai &amp; Partners Architects</p>
+          <div class="device-actions">
+            <a href="./design-2/index.html" target="_blank" class="btn-card-direct">
+              <span>Open full screen in new tab</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+            </a>
+          </div>
+        </div>
+        <div class="mockup-frame single-frame">
+          <iframe src="./design-2/index.html" class="mockup-screen" title="Design 2 Detailed Preview" loading="eager"></iframe>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Status / Compliance Bar -->
+  <footer class="infobar">
+    <div class="info-tag">
+      <span class="dot-green"></span>
+      <span>Existing Official Website 100% Protected (Zero files modified)</span>
+    </div>
+    <div class="info-tag">
+      <span>100% White-Label (No external branding or watermarks)</span>
+    </div>
+    <div class="info-tag">
+      <span>Mobile-First &bull; NFC / QR Ready</span>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.preview-container').forEach(c => c.classList.remove('active'));
+
+      const activeBtn = document.getElementById('tab-' + tabId);
+      const activeView = document.getElementById('view-' + tabId);
+      if (activeBtn) activeBtn.classList.add('active');
+      if (activeView) activeView.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

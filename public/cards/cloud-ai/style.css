@@ -1,0 +1,380 @@
+/* ==========================================================================
+   Design 2: Cloud AI Reference — Digital Business Card
+   Standalone, Mobile-First, Minimal Luxury White-Label UI
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap');
+
+:root {
+  --bg-page: #ffffff;
+  --bg-desktop-frame: #f4f5f7;
+  
+  --text-headline: #111827;
+  --text-dark: #1f2937;
+  --text-body: #4b5563;
+  --text-muted: #6b7280;
+  --text-subtle: #9ca3af;
+  
+  /* Primary Action: Deep Forest / Hunter Green */
+  --btn-forest: #1b3a2f;
+  --btn-forest-hover: #142d24;
+  --btn-forest-active: #0f221b;
+  
+  /* Muted Monochromatic Accents */
+  --avatar-sage-bg: #dbe5df;
+  --avatar-sage-text: #1a382c;
+  --icon-circle-bg: #edf2ef;
+  --icon-color: #1b3a2f;
+  
+  /* Borders and Dividers */
+  --border-divider: #f0f2f4;
+  --border-subtle: #e5e7eb;
+  
+  --radius-avatar: 50%;
+  --radius-btn: 10px;
+  --radius-box: 12px;
+  
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--bg-page);
+  color: var(--text-headline);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--bg-page);
+}
+
+/* Desktop Presentation Wrapper */
+.viewport-wrapper {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: 0 auto;
+  padding: 32px 24px 44px;
+}
+
+@media (min-width: 640px) {
+  body {
+    background-color: var(--bg-desktop-frame);
+    padding: 32px 16px;
+  }
+  
+  .viewport-wrapper {
+    min-height: calc(100vh - 64px);
+    border-radius: 32px;
+    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+}
+
+/* ==========================================================================
+   Profile Section
+   ========================================================================== */
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.profile-avatar-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-avatar);
+  background-color: var(--avatar-sage-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  user-select: none;
+}
+
+.profile-avatar-initials {
+  font-family: var(--font-serif);
+  font-size: 1.75rem; /* 28px */
+  font-weight: 500;
+  color: var(--avatar-sage-text);
+  letter-spacing: 0.02em;
+}
+
+.profile-name {
+  font-family: var(--font-serif);
+  font-size: 2rem; /* 32px */
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text-headline);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.profile-designation {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.35;
+}
+
+.profile-company {
+  font-size: 0.9rem; /* 14.5px */
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.profile-bio {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.6;
+  color: var(--text-body);
+  margin-top: 16px;
+  margin-bottom: 22px;
+}
+
+/* ==========================================================================
+   Primary Action: Save Contact Button
+   ========================================================================== */
+.btn-save-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  background-color: var(--btn-forest);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-save-contact:hover, .btn-save-contact:focus-visible {
+  background-color: var(--btn-forest-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27, 58, 47, 0.2);
+}
+
+.btn-save-contact:active {
+  background-color: var(--btn-forest-active);
+  transform: translateY(0);
+}
+
+.btn-save-contact svg {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Section Headers
+   ========================================================================== */
+.section-title {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600;
+  color: #374151;
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   Get in Touch (Minimalist Contact List with Dividers)
+   ========================================================================== */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid var(--border-divider);
+  transition: background-color 0.15s ease, padding 0.15s ease;
+  cursor: pointer;
+}
+
+.contact-row:last-child {
+  border-bottom: none;
+}
+
+.contact-row:hover {
+  background-color: rgba(0, 0, 0, 0.015);
+  padding-left: 4px;
+  padding-right: 4px;
+  border-radius: 8px;
+}
+
+.contact-row-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--icon-circle-bg);
+  color: var(--icon-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.contact-sub {
+  font-size: 0.75rem; /* 12px */
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+
+.contact-main {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+  color: var(--text-headline);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row-chevron {
+  color: var(--text-subtle);
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.contact-row:hover .row-chevron {
+  color: var(--text-dark);
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   Business Section (Two-Column Key-Value Rows)
+   ========================================================================== */
+.business-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.business-row {
+  display: flex;
+  align-items: baseline;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border-divider);
+  gap: 16px;
+}
+
+.business-row:last-child {
+  border-bottom: none;
+}
+
+.business-key {
+  font-size: 0.84375rem; /* 13.5px */
+  color: var(--text-muted);
+  width: 96px;
+  flex-shrink: 0;
+  font-weight: 400;
+}
+
+.business-val {
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-headline);
+  font-weight: 500;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.business-val a {
+  color: var(--text-headline);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.business-val a:hover {
+  color: var(--btn-forest);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Follow Section (3-Column Bordered Box)
+   ========================================================================== */
+.follow-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-box);
+  overflow: hidden;
+  background-color: #ffffff;
+  margin-top: 4px;
+}
+
+.follow-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 8px;
+  text-decoration: none;
+  color: #374151;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.follow-item:not(:last-child) {
+  border-right: 1px solid var(--border-subtle);
+}
+
+.follow-item:hover, .follow-item:focus-visible {
+  background-color: #f9fafb;
+}
+
+.follow-item svg {
+  color: #374151;
+  transition: transform 0.2s ease;
+}
+
+.follow-item:hover svg {
+  transform: scale(1.08);
+}
+
+.follow-item-label {
+  font-size: 0.8125rem; /* 13px */
+  font-weight: 500;
+  color: #374151;
+}

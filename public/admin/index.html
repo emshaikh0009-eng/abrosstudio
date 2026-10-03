@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ambros Studio — Digital Card Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <base href="/admin/">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+
+  <!-- Auth Checking Overlay (Prevents flash of protected content) -->
+  <div id="adminAuthOverlay" class="admin-auth-overlay">
+    <div class="auth-loader-card">
+      <div class="auth-logo-badge" aria-hidden="true">A</div>
+      <div class="auth-loader-spinner" aria-hidden="true"></div>
+      <div class="auth-loader-text">Verifying admin session...</div>
+    </div>
+  </div>
+
+  <!-- Admin Login Screen -->
+  <div id="adminLoginScreen" class="admin-login-screen" style="display: none;">
+    <div class="login-container">
+      <div class="login-card">
+        
+        <!-- Brand Header -->
+        <div class="login-brand">
+          <div class="login-logo-badge" aria-hidden="true">A</div>
+          <div class="login-brand-text">
+            <span class="login-brand-title">Ambros</span>
+            <span class="login-brand-sub">Studio</span>
+          </div>
+        </div>
+
+        <div class="login-header-group">
+          <h2 class="login-title">Admin Portal Sign In</h2>
+          <p class="login-subtitle">Secure access to digital cards & client profile management</p>
+        </div>
+
+        <!-- Alert Message Container -->
+        <div id="loginAlert" class="login-alert" style="display: none;" role="alert">
+          <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="loginAlertMessage">Invalid credentials.</span>
+        </div>
+
+        <!-- Login Form -->
+        <form id="adminLoginForm" class="login-form" novalidate>
+          <div class="login-field-group">
+            <label for="loginEmail" class="login-field-label">Administrator Email</label>
+            <div class="login-input-wrapper">
+              <svg class="login-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input 
+                type="email" 
+                id="loginEmail" 
+                name="email" 
+                class="login-field-input" 
+                placeholder="admin@ambrosstudio.space" 
+                autocomplete="username" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="login-field-group">
+            <div class="login-label-row">
+              <label for="loginPassword" class="login-field-label">Password</label>
+            </div>
+            <div class="login-input-wrapper">
+              <svg class="login-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input 
+                type="password" 
+                id="loginPassword" 
+                name="password" 
+                class="login-field-input" 
+                placeholder="Enter your password" 
+                autocomplete="current-password" 
+                required
+              >
+              <button type="button" class="login-pwd-toggle" id="loginPasswordToggle" aria-label="Toggle password visibility">
+                <svg id="pwdEyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold login-submit-btn" id="loginSubmitBtn">
+            <span class="btn-text" id="loginSubmitText">Sign In to Admin Panel</span>
+            <span class="btn-spinner" id="loginSubmitSpinner" style="display: none;" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div class="login-footer-security">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Ambros Studio &bull; Protected by Supabase Auth</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-layout" id="adminDashboardLayout" style="display: none;">
+    
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- 1. Left Sidebar Navigation -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div>
+        <!-- Logo Area -->
+        <div class="sidebar-logo">
+          <div class="logo-badge" aria-hidden="true">A</div>
+          <div class="logo-text-group">
+            <span class="logo-title">Ambros</span>
+            <span class="logo-sub">Studio</span>
+          </div>
+        </div>
+
+        <!-- Main Navigation Items -->
+        <nav class="sidebar-nav" aria-label="Admin Navigation">
+          <button type="button" class="nav-item active" data-tab="dashboard">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="customers">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Customers</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="add-customer" id="navAddCustomerBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <span id="navAddCustomerText">Add Customer</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="digital-cards">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            <span>Digital Cards</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Sidebar Bottom Logout -->
+      <div class="sidebar-footer">
+        <button type="button" class="logout-btn" id="logoutBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- 2. Main Administration Canvas -->
+    <div class="admin-main">
+      
+      <!-- Top Header Bar -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open sidebar menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <h1 class="page-title" id="pageTitle">Dashboard</h1>
+        </div>
+
+        <div class="header-right">
+          <!-- Search input -->
+          <div class="header-search-wrap">
+            <svg class="header-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="header-search-input" id="headerSearchInput" placeholder="Search customers, companies...">
+          </div>
+
+          <!-- Notification Bell -->
+          <button type="button" class="header-btn-icon" aria-label="Notifications" onclick="showAdminToast('No unread notifications')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="bell-badge" aria-hidden="true"></span>
+          </button>
+
+          <!-- Admin Profile Group -->
+          <div class="admin-profile" id="adminProfileGroup">
+            <div class="admin-avatar" id="adminUserAvatar">AD</div>
+            <div class="admin-info">
+              <span class="admin-name" id="adminUserName">Admin</span>
+              <span class="admin-role" id="adminUserRole">Ambros Studio</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Body Tabs -->
+      <main class="admin-body">
+
+        <!-- =============================================================
+             SCREEN A: DASHBOARD OVERVIEW (1 · Dashboard overview)
+             ============================================================= -->
+        <section class="tab-content active" id="tab-dashboard" aria-label="Dashboard Overview">
+          <!-- 4 Stats Cards in a row -->
+          <div class="stats-grid">
+            <!-- Card 1: Total Customers (with Gold Top Accent) -->
+            <div class="stat-card stat-card-gold-accent">
+              <span class="stat-label">Total Customers</span>
+              <span class="stat-value">248</span>
+              <span class="stat-meta positive">+12 this month</span>
+            </div>
+
+            <!-- Card 2: Active Cards -->
+            <div class="stat-card">
+              <span class="stat-label">Active Cards</span>
+              <span class="stat-value">212</span>
+              <span class="stat-meta">85% of all cards</span>
+            </div>
+
+            <!-- Card 3: Inactive Cards -->
+            <div class="stat-card">
+              <span class="stat-label">Inactive Cards</span>
+              <span class="stat-value">36</span>
+              <span class="stat-meta">Paused or expired</span>
+            </div>
+
+            <!-- Card 4: Total Digital Profiles -->
+            <div class="stat-card">
+              <span class="stat-label">Total Digital Profiles</span>
+              <span class="stat-value">261</span>
+              <span class="stat-meta">13 awaiting a card</span>
+            </div>
+          </div>
+
+          <!-- Recent Customers Table Card -->
+          <div class="dashboard-card">
+            <div class="card-header-flex">
+              <div class="card-header-text">
+                <h2>Recent customers</h2>
+                <p>Latest five profiles added</p>
+              </div>
+              <button type="button" class="btn btn-white" onclick="navigateToTab('customers')">
+                View all customers
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Company</th>
+                    <th>Design Selected</th>
+                    <th>Profile Status</th>
+                    <th>Created Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardRecentTableBody">
+                  <!-- Populated and dynamically synchronized by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- =============================================================
+             SCREEN B: CUSTOMERS MANAGEMENT (2 · Customer management)
+             ============================================================= -->
+        <section class="tab-content" id="tab-customers" aria-label="Customer Management">
+          <!-- Toolbar with Search, Filter Pills & Add Customer CTA -->
+          <div class="customers-toolbar">
+            <div class="toolbar-left">
+              <!-- Search Input -->
+              <div class="table-search-wrap">
+                <svg class="header-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="table-search-input" id="customerSearchInput" placeholder="Search by name, company or email">
+              </div>
+
+              <!-- Filter Pills -->
+              <div class="filter-pills" role="group" aria-label="Customer Status Filters">
+                <button type="button" class="filter-pill active" data-filter="all">All 248</button>
+                <button type="button" class="filter-pill" data-filter="active">Active 212</button>
+                <button type="button" class="filter-pill" data-filter="inactive">Inactive 36</button>
+              </div>
+            </div>
+
+            <!-- Add Customer Action -->
+            <button type="button" class="btn btn-gold" id="btnOpenAddCustomer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+              <span>Add Customer</span>
+            </button>
+          </div>
+
+          <!-- Customer Management Table Card -->
+          <div class="dashboard-card">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Company</th>
+                    <th>Contact</th>
+                    <th>Design</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customersTableBody">
+                  <!-- Populated and dynamically synchronized by admin.js -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="pagination-bar">
+              <span>Showing 1–6 of 248 customers</span>
+              <div class="pagination-pages">
+                <span class="page-num active">1</span>
+                <span class="page-num">2</span>
+                <span class="page-num">3</span>
+                <span class="page-ellipsis">...</span>
+                <span class="page-num">42</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =============================================================
+             SCREEN C: ADD / EDIT CUSTOMER (3 · Add Customer Form)
+             ============================================================= -->
+        <section class="tab-content" id="tab-add-customer" aria-label="Customer Profile Form">
+          <!-- Dynamic Breadcrumb -->
+          <div class="breadcrumb" id="customerFormBreadcrumb">
+            <span>Customers</span>
+            <span>/</span>
+            <span class="current" id="formBreadcrumbCurrent">New customer</span>
+          </div>
+
+          <!-- Two-Column Form Layout -->
+          <form id="addCustomerForm" class="form-grid-layout">
+            
+            <!-- Left Column: Personal, Contact & Social Information -->
+            <div class="form-left-col">
+              
+              <!-- 1. Personal Information Card -->
+              <div class="form-card">
+                <h2 class="form-section-title" id="formMainTitle">Personal information</h2>
+                <p class="form-section-sub" id="formMainSub">Who the digital card belongs to.</p>
+
+                <!-- Profile Photo Area -->
+                <div class="avatar-upload-area">
+                  <div class="avatar-upload-circle" id="avatarUploadCircle" title="Click to upload photo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+                  </div>
+                  <div class="avatar-upload-info">
+                    <span class="avatar-upload-title">Profile photo</span>
+                    <span class="avatar-upload-sub">Upload a square image, at least 400 &times; 400 px.</span>
+                    <input type="file" id="photoFileInput" accept="image/*" style="display: none;">
+                    <div>
+                      <button type="button" class="btn btn-white btn-sm" id="choosePhotoBtn">Choose photo</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Full Name & Designation -->
+                <div class="form-row-2col">
+                  <div class="form-group">
+                    <label for="custFullName" class="form-label">Full name</label>
+                    <input type="text" id="custFullName" class="form-input" placeholder="e.g. Rahul Mehta" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="custDesignation" class="form-label">Designation</label>
+                    <input type="text" id="custDesignation" class="form-input" placeholder="e.g. Managing Director">
+                  </div>
+                </div>
+
+                <!-- Company Name -->
+                <div class="form-group">
+                  <label for="custCompany" class="form-label">Company name</label>
+                  <input type="text" id="custCompany" class="form-input" placeholder="e.g. Mehta Textiles">
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                  <label for="custDescription" class="form-label">Description</label>
+                  <textarea id="custDescription" class="form-textarea" placeholder="Short introduction shown on the profile"></textarea>
+                </div>
+              </div>
+
+              <!-- 2. Contact Information Card -->
+              <div class="form-card">
+                <h2 class="form-section-title">Contact information</h2>
+                <p class="form-section-sub">How people reach this customer.</p>
+
+                <!-- Mobile & WhatsApp Numbers -->
+                <div class="form-row-2col">
+                  <div class="form-group">
+                    <label for="custPhone" class="form-label">Mobile number</label>
+                    <div class="phone-input-group">
+                      <span class="phone-prefix">+91</span>
+                      <input type="tel" id="custPhone" class="phone-input" placeholder="98250 41872">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="custWhatsApp" class="form-label">WhatsApp number</label>
+                    <div class="phone-input-group">
+                      <span class="phone-prefix">+91</span>
+                      <input type="tel" id="custWhatsApp" class="phone-input" placeholder="98250 41872">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Email & Website -->
+                <div class="form-row-2col">
+                  <div class="form-group">
+                    <label for="custEmail" class="form-label">Email address</label>
+                    <input type="email" id="custEmail" class="form-input" placeholder="e.g. rahul@mehtatextiles.com">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="custWebsite" class="form-label">Website</label>
+                    <input type="text" id="custWebsite" class="form-input" placeholder="e.g. mehtatextiles.com">
+                  </div>
+                </div>
+
+                <!-- Office / Studio Address -->
+                <div class="form-group">
+                  <label for="custAddress" class="form-label">Studio / Business address</label>
+                  <input type="text" id="custAddress" class="form-input" placeholder="e.g. Ring Road, Surat, Gujarat 395002">
+                </div>
+              </div>
+
+              <!-- 3. Social Media Links Card -->
+              <div class="form-card">
+                <h2 class="form-section-title">Social media links</h2>
+                <p class="form-section-sub">Connect public social profiles.</p>
+
+                <div class="form-row-2col">
+                  <div class="form-group">
+                    <label for="custInstagram" class="form-label">Instagram username or URL</label>
+                    <input type="text" id="custInstagram" class="form-input" placeholder="e.g. instagram.com/rahulmehta">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="custLinkedIn" class="form-label">LinkedIn profile URL</label>
+                    <input type="text" id="custLinkedIn" class="form-input" placeholder="e.g. linkedin.com/in/rahulmehta">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form Action Buttons -->
+              <div class="form-actions-bar">
+                <button type="button" class="btn btn-white" id="cancelAddCustomer">Cancel</button>
+                <button type="submit" class="btn btn-gold" id="saveCustomerBtn">
+                  <span>Save Customer</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Right Column: Digital Card Design, Profile Link & QR Code Preview -->
+            <div class="form-right-col">
+              
+              <!-- Digital Card Selector -->
+              <div class="form-card">
+                <h2 class="form-section-title">Digital card</h2>
+                <p class="form-section-sub">Choose a design for this customer.</p>
+
+                <div class="card-select-grid">
+                  <!-- Option 1: Design 1 · Mint Haven (Selected) -->
+                  <div class="card-select-option selected" data-design="Mint Haven" role="radio" aria-checked="true" tabindex="0">
+                    <div class="card-option-left">
+                      <!-- Mini wireframe icon -->
+                      <div class="wireframe-icon" aria-hidden="true">
+                        <div class="wf-bar wf-bar-gold"></div>
+                        <div class="wf-bar wf-bar-sub"></div>
+                        <div class="wf-bar wf-bar-sub" style="width: 20px;"></div>
+                      </div>
+                      <div class="card-option-text">
+                        <span class="card-option-title">Design 1 &middot; Mint Haven</span>
+                        <span class="card-option-sub">Warm, friendly layout</span>
+                      </div>
+                    </div>
+                    <div class="radio-indicator">
+                      <div class="radio-indicator-dot"></div>
+                    </div>
+                  </div>
+
+                  <!-- Option 2: Design 2 · Evergreen -->
+                  <div class="card-select-option" data-design="Evergreen" role="radio" aria-checked="false" tabindex="0">
+                    <div class="card-option-left">
+                      <!-- Mini wireframe icon -->
+                      <div class="wireframe-icon evergreen" aria-hidden="true">
+                        <div class="wf-bar wf-bar-black"></div>
+                        <div class="wf-bar wf-bar-sub"></div>
+                        <div class="wf-bar wf-bar-sub" style="width: 20px;"></div>
+                      </div>
+                      <div class="card-option-text">
+                        <span class="card-option-title">Design 2 &middot; Evergreen</span>
+                        <span class="card-option-sub">Clean, modern layout</span>
+                      </div>
+                    </div>
+                    <div class="radio-indicator">
+                      <div class="radio-indicator-dot"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Preview Link of chosen template -->
+                <div style="margin-top: 14px; text-align: right;">
+                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" style="width: 100%; justify-content: center;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+                    <span>Inspect Design Templates Live</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Profile Link Preview Card -->
+              <div class="form-card">
+                <h2 class="form-section-title">Profile link</h2>
+                <p class="form-section-sub">Generated from the customer's name.</p>
+                <div class="profile-link-box" id="custProfileLink">
+                  ambros.studio/rahul-mehta
+                </div>
+              </div>
+
+              <!-- QR Code Preview Card -->
+              <div class="form-card">
+                <h2 class="form-section-title">QR code</h2>
+                <p class="form-section-sub">Updates when the link changes</p>
+                <div class="qr-preview-row">
+                  <div class="qr-box">
+                    <!-- Clean Vector QR Code Graphic -->
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M2 2h7v7H2V2zm2 2v3h3V4H4zm5 0h2v2H9V4zm4-2h7v7h-7V2zm2 2v3h3V4h-3zm-6 7h2v2H9v-2zm-7 4h7v7H2v-7zm2 2v3h3v-3H4zm7 0h2v2h-2v-2zm4-4h2v2h-2v-2zm2 2h3v2h-3v-2zm0 3h2v2h-2v-2zm-2 2h2v2h-2v-2zm4 0h2v2h-2v-2z"></path>
+                    </svg>
+                  </div>
+                  <div class="qr-text-meta">
+                    <span class="qr-label">Contact QR</span>
+                    <span class="qr-sub">Instant scan to save profile or program into metal NFC card.</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </form>
+        </section>
+
+        <!-- =============================================================
+             SCREEN D: DIGITAL CARDS MANAGEMENT
+             ============================================================= -->
+        <section class="tab-content" id="tab-digital-cards" aria-label="Digital Cards Templates">
+          <div class="dashboard-card" style="margin-bottom: 24px;">
+            <div class="card-header-flex">
+              <div class="card-header-text">
+                <h2>Digital Card Design Templates</h2>
+                <p>Customer-facing designs available in your studio system. Both designs are fully protected and independent.</p>
+              </div>
+              <a href="/cards/index.html" target="_blank" class="btn btn-white">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+                <span>Open Full Review Portal</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- 2 Design Showcase Cards -->
+          <div class="digital-cards-grid">
+            
+            <!-- Showcase 1: Mint Haven -->
+            <div class="digital-card-showcase">
+              <div class="showcase-header">
+                <div class="showcase-title-row">
+                  <h3 class="showcase-title">Design 1 &middot; Mint Haven</h3>
+                  <span class="tag-pill gold">Primary Choice</span>
+                </div>
+                <p class="showcase-sub">Warm, friendly aesthetic featuring rounded floating contact cards and pastel badges.</p>
+                <div class="showcase-tags">
+                  <span class="tag-pill">Cream Background</span>
+                  <span class="tag-pill">Mint Green CTA</span>
+                  <span class="tag-pill">Pastel Badges</span>
+                  <span class="tag-pill">142 Active Cards</span>
+                </div>
+              </div>
+
+              <div class="showcase-preview-frame">
+                <iframe src="/cards/design-1/index.html" title="Mint Haven Live Preview"></iframe>
+              </div>
+
+              <div class="showcase-footer">
+                <span style="font-size: 13px; color: var(--text-muted);">Route: <code>/cards/design-1/</code></span>
+                <a href="/cards/design-1/index.html" target="_blank" class="btn btn-gold btn-sm">
+                  <span>Open Live Card</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Showcase 2: Evergreen -->
+            <div class="digital-card-showcase">
+              <div class="showcase-header">
+                <div class="showcase-title-row">
+                  <h3 class="showcase-title">Design 2 &middot; Evergreen</h3>
+                  <span class="tag-pill">Minimalist Luxury</span>
+                </div>
+                <p class="showcase-sub">Clean, architectural editorial design with serif typography and understated dividers.</p>
+                <div class="showcase-tags">
+                  <span class="tag-pill">Pure White Canvas</span>
+                  <span class="tag-pill">Dark Forest Green CTA</span>
+                  <span class="tag-pill">Playfair Editorial Serif</span>
+                  <span class="tag-pill">70 Active Cards</span>
+                </div>
+              </div>
+
+              <div class="showcase-preview-frame">
+                <iframe src="/cards/design-2/index.html" title="Evergreen Live Preview"></iframe>
+              </div>
+
+              <div class="showcase-footer">
+                <span style="font-size: 13px; color: var(--text-muted);">Route: <code>/cards/design-2/</code></span>
+                <a href="/cards/design-2/index.html" target="_blank" class="btn btn-gold btn-sm">
+                  <span>Open Live Card</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- =============================================================
+             SCREEN E: SETTINGS
+             ============================================================= -->
+        <section class="tab-content" id="tab-settings" aria-label="Admin Settings">
+          <div class="settings-container">
+            
+            <!-- Studio Identity Settings -->
+            <div class="form-card">
+              <h2 class="form-section-title">Studio Profile &amp; Identity</h2>
+              <p class="form-section-sub">Settings for internal Ambros Studio digital card administration.</p>
+              
+              <div class="form-row-2col">
+                <div class="form-group">
+                  <label class="form-label">Studio Name</label>
+                  <input type="text" class="form-input" value="Ambros Studio" readonly style="background-color: #f8fafc;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Support Email</label>
+                  <input type="email" class="form-input" value="ambrosstudioltd@gmail.com">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Studio Office Address</label>
+                <input type="text" class="form-input" value="3rd Floor, VIP Gallaria, Althan, Surat, Gujarat 395017">
+              </div>
+            </div>
+
+            <!-- Digital Card Defaults -->
+            <div class="form-card">
+              <h2 class="form-section-title">Digital Card Defaults</h2>
+              <p class="form-section-sub">Configuration applied to newly initialized customer profiles.</p>
+
+              <div class="form-row-2col">
+                <div class="form-group">
+                  <label class="form-label">Default Template</label>
+                  <select class="form-input">
+                    <option selected>Design 1 &middot; Mint Haven (Cream / Mint)</option>
+                    <option>Design 2 &middot; Evergreen (White / Forest Green)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Default Country Code</label>
+                  <input type="text" class="form-input" value="+91 (India)">
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--border-light); margin-top: 10px;">
+                <div>
+                  <div style="font-size: 13.5px; font-weight: 600; color: var(--text-headline);">Auto-Generate vCard (.vcf)</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Enable one-tap contact saving for all new digital cards.</div>
+                </div>
+                <label class="switch-toggle">
+                  <input type="checkbox" checked>
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Security & Preferences -->
+            <div class="form-card">
+              <h2 class="form-section-title">Admin Security</h2>
+              <p class="form-section-sub">Manage administrator credentials and authentication preferences.</p>
+
+              <div class="form-row-2col">
+                <div class="form-group">
+                  <label class="form-label">Current Password</label>
+                  <input type="password" class="form-input" placeholder="••••••••••••">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">New Password</label>
+                  <input type="password" class="form-input" placeholder="Enter new password">
+                </div>
+              </div>
+
+              <div class="form-actions-bar" style="border: none; padding-top: 0; margin-top: 10px;">
+                <button type="button" class="btn btn-gold" onclick="showAdminToast('Settings updated successfully (UI Mockup)')">
+                  Save Changes
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Notification element -->
+  <div id="adminToast" class="admin-toast">
+    <span class="toast-dot"></span>
+    <span id="toastMessage">Action performed</span>
+  </div>
+
+  <script src="/admin/admin.js"></script>
+
+</body>
+</html>

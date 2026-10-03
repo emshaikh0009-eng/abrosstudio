@@ -1,0 +1,437 @@
+/* ==========================================================================
+   Design 1: Lovable Reference — Digital Business Card
+   Standalone, Mobile-First, White-Label UI
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-page: #faf6ee;
+  --bg-card: #ffffff;
+  --bg-desktop-frame: #f3ede2;
+  
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #8c827a;
+  --text-subtle: #a8a29e;
+  
+  /* Primary Action: Mint Green */
+  --btn-mint: #10b981;
+  --btn-mint-hover: #059669;
+  --btn-mint-shadow: rgba(16, 185, 129, 0.28);
+  
+  /* Pastel Icon Badges */
+  --badge-green-bg: #d1fae5;
+  --badge-green-fg: #059669;
+  --badge-blue-bg: #e0f2fe;
+  --badge-blue-fg: #0284c7;
+  --badge-yellow-bg: #fef9c3;
+  --badge-yellow-fg: #d97706;
+  --badge-purple-bg: #ede9fe;
+  --badge-purple-fg: #7c3aed;
+  --badge-peach-bg: #ffedd5;
+  --badge-peach-fg: #ea580c;
+  
+  --border-card: rgba(0, 0, 0, 0.035);
+  --shadow-card: 0 2px 8px -2px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-hover: 0 6px 16px -4px rgba(0, 0, 0, 0.07);
+  
+  --radius-card: 20px;
+  --radius-btn: 16px;
+  --radius-pill: 9999px;
+  
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--bg-page);
+}
+
+/* Desktop Presentation Wrapper */
+.viewport-wrapper {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: 0 auto;
+  padding: 28px 20px 36px;
+}
+
+@media (min-width: 640px) {
+  body {
+    background-color: var(--bg-desktop-frame);
+    padding: 32px 16px;
+  }
+  
+  .viewport-wrapper {
+    min-height: calc(100vh - 64px);
+    border-radius: 36px;
+    box-shadow: 0 20px 48px -12px rgba(44, 34, 20, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+}
+
+/* ==========================================================================
+   Profile Section
+   ========================================================================== */
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.profile-badge-active {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--btn-mint);
+  border: 2.5px solid #ffffff;
+}
+
+.profile-name {
+  font-size: 1.625rem; /* 26px */
+  font-weight: 700;
+  line-height: 1.2;
+  color: #18181b;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.profile-designation {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.profile-company {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.profile-bio {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.55;
+  color: #57534e;
+  margin-top: 14px;
+  margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   Primary Action Button
+   ========================================================================== */
+.btn-save-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 50px;
+  background-color: var(--btn-mint);
+  color: #ffffff;
+  font-family: var(--font-family);
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  box-shadow: 0 6px 16px -2px var(--btn-mint-shadow);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-save-contact:hover, .btn-save-contact:focus-visible {
+  background-color: var(--btn-mint-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -2px rgba(16, 185, 129, 0.38);
+}
+
+.btn-save-contact:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px -2px var(--btn-mint-shadow);
+}
+
+.btn-save-contact svg {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Section Headers
+   ========================================================================== */
+.section-title {
+  font-size: 0.725rem; /* ~11.5px */
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 28px;
+  margin-bottom: 12px;
+  padding-left: 2px;
+}
+
+/* ==========================================================================
+   Contact Cards (Individual White Rounded Cards)
+   ========================================================================== */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  padding: 13px 18px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.contact-card:hover, .contact-card:focus-visible {
+  transform: translateY(-1.5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.contact-card:active {
+  transform: translateY(0);
+}
+
+.contact-card-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.badge-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.contact-card:hover .badge-icon {
+  transform: scale(1.05);
+}
+
+.badge-green {
+  background-color: var(--badge-green-bg);
+  color: var(--badge-green-fg);
+}
+
+.badge-blue {
+  background-color: var(--badge-blue-bg);
+  color: var(--badge-blue-fg);
+}
+
+.badge-yellow {
+  background-color: var(--badge-yellow-bg);
+  color: var(--badge-yellow-fg);
+}
+
+.badge-purple {
+  background-color: var(--badge-purple-bg);
+  color: var(--badge-purple-fg);
+}
+
+.badge-peach {
+  background-color: var(--badge-peach-bg);
+  color: var(--badge-peach-fg);
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.contact-label {
+  font-size: 0.675rem; /* ~11px */
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+
+.contact-value {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-chevron {
+  color: #cbd5e1;
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.contact-card:hover .card-chevron {
+  color: #94a3b8;
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   Business Details Card
+   ========================================================================== */
+.business-card {
+  background-color: var(--bg-card);
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.675rem; /* ~11px */
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 3px;
+}
+
+.detail-value {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.45;
+}
+
+.detail-value.studio-name {
+  font-size: 1rem; /* 16px */
+  font-weight: 700;
+}
+
+.detail-value.detail-link {
+  color: #1e293b;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.detail-value.detail-link:hover {
+  color: var(--btn-mint-hover);
+}
+
+/* ==========================================================================
+   Follow Along Social Grid
+   ========================================================================== */
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.social-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  padding: 18px 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.social-card:hover, .social-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.social-card:active {
+  transform: translateY(0);
+}
+
+.social-label {
+  font-size: 0.8125rem; /* ~13px */
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.card-footer {
+  text-align: center;
+  margin-top: 32px;
+  margin-bottom: 8px;
+}
+
+.card-footer-text {
+  font-size: 0.775rem; /* ~12.5px */
+  color: var(--text-subtle);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
