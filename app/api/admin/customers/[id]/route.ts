@@ -108,10 +108,27 @@ export async function PATCH(
       );
     }
 
-    updates.updated_at = new Date().toISOString();
-
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
+
+    // Slug collision pre-check if profile_slug is being modified
+    if (updates.profile_slug) {
+      const { data: existingSlug } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("profile_slug", updates.profile_slug)
+        .neq("id", id)
+        .maybeSingle();
+
+      if (existingSlug) {
+        return NextResponse.json(
+          { error: `A customer with profile slug "${updates.profile_slug}" already exists.` },
+          { status: 409 }
+        );
+      }
+    }
+
+    updates.updated_at = new Date().toISOString();
 
     const { data, error } = await supabase
       .from("customers")
@@ -141,6 +158,58 @@ export async function PATCH(
     });
   } catch (err: any) {
     console.error("PATCH /api/admin/customers/[id] unexpected error:", err?.message);
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 }
+    );
+  }
+}
+
+// GET /api/admin/customers/[id] — fetch single customer record for admin preview/edit (protected by RLS)
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    if (!id || !/^\d+$/.test(id)) {
+      return NextResponse.json(
+        { error: "Invalid customer ID." },
+        { status: 400 }
+      );
+    }
+
+    const cookieStore = await cookies();
+    const supabase = createClient(cookieStore);
+
+    const { data, error } = await supabase
+      .from("customers")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("GET /api/admin/customers/[id] error:", error.message);
+      return NextResponse.json(
+        { error: "Failed to fetch customer record." },
+        { status: 500 }
+      );
+    }
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "Customer record not found." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      customer: data,
+    });
+  } catch (err: any) {
+    console.error("GET /api/admin/customers/[id] unexpected error:", err?.message);
     return NextResponse.json(
       { error: "Internal server error." },
       { status: 500 }

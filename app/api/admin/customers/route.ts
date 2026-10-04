@@ -105,6 +105,22 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
 
+    // Slug collision pre-check
+    if (profileSlug) {
+      const { data: existingSlug } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("profile_slug", profileSlug)
+        .maybeSingle();
+
+      if (existingSlug) {
+        return NextResponse.json(
+          { error: `A customer with profile slug "${profileSlug}" already exists.` },
+          { status: 409 }
+        );
+      }
+    }
+
     const { data, error } = await supabase
       .from("customers")
       .insert([newRecord])

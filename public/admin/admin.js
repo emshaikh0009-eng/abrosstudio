@@ -54,7 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
       profileLink: `ambros.studio/${slug}`,
       profileSlug: slug,
       createdDate: formattedDate,
-      cardUrl: isEvergreen ? '/cards/design-2/index.html' : '/cards/design-1/index.html'
+      cardUrl: isEvergreen
+        ? `/cards/design-2/index.html?id=${c.id}&preview=true`
+        : `/cards/design-1/index.html?id=${c.id}&preview=true`
     };
   }
 
@@ -282,7 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     customers.forEach((c) => {
       const isEvergreen = c.design === 'Evergreen';
-      const cardHref = isEvergreen ? '/cards/design-2/index.html' : '/cards/design-1/index.html';
+      const cardHref = isEvergreen
+        ? `/cards/design-2/index.html?id=${c.id}&preview=true`
+        : `/cards/design-1/index.html?id=${c.id}&preview=true`;
       const isActive = Boolean(c.is_active);
 
       const tr = document.createElement('tr');
@@ -348,7 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     recent.forEach((c) => {
       const isEvergreen = c.design === 'Evergreen';
-      const cardHref = isEvergreen ? '/cards/design-2/index.html' : '/cards/design-1/index.html';
+      const cardHref = isEvergreen
+        ? `/cards/design-2/index.html?id=${c.id}&preview=true`
+        : `/cards/design-1/index.html?id=${c.id}&preview=true`;
       const isActive = Boolean(c.is_active);
 
       const tr = document.createElement('tr');
