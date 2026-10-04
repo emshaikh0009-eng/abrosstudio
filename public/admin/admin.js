@@ -8,130 +8,105 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------
-  // Customer In-Memory Master Data
+  // Live Supabase Customer State & Field Mapping
   // -------------------------------------------------------------
-  let customers = [
-    {
-      id: "cust_1",
-      initials: "RM",
-      name: "Rahul Mehta",
-      role: "Managing Director",
-      company: "Mehta Textiles",
-      phone: "98250 41872",
-      whatsapp: "98250 41872",
-      email: "rahul@mehtatextiles.com",
-      website: "mehtatextiles.com",
-      address: "Ring Road, Surat, Gujarat 395002",
-      description: "Leading textile manufacturing and export solutions in Surat.",
-      socialInstagram: "instagram.com/mehtatextiles",
-      socialLinkedIn: "linkedin.com/in/rahulmehta",
-      design: "Mint Haven",
-      status: "active",
-      profileLink: "ambros.studio/rahul-mehta",
-      createdDate: "02 Oct 2026",
-      cardUrl: "/cards/design-1/index.html"
-    },
-    {
-      id: "cust_2",
-      initials: "PS",
-      name: "Priya Shah",
-      role: "Founder",
-      company: "Shah Diamonds",
-      phone: "99099 22315",
-      whatsapp: "99099 22315",
-      email: "priya@shahdiamonds.com",
-      website: "shahdiamonds.com",
-      address: "Varachha, Surat, Gujarat 395006",
-      description: "Ethically crafted natural diamond jewelry & bespoke designs.",
-      socialInstagram: "instagram.com/shahdiamonds",
-      socialLinkedIn: "linkedin.com/in/priyashah",
-      design: "Evergreen",
-      status: "active",
-      profileLink: "ambros.studio/priya-shah",
-      createdDate: "30 Sep 2026",
-      cardUrl: "/cards/design-2/index.html"
-    },
-    {
-      id: "cust_3",
-      initials: "KD",
-      name: "Kunal Desai",
-      role: "Operations Head",
-      company: "Desai Logistics",
-      phone: "94260 77013",
-      whatsapp: "94260 77013",
-      email: "kunal@desailogistics.in",
-      website: "desailogistics.in",
-      address: "GIDC Sachin, Surat, Gujarat 394230",
-      description: "Integrated cold storage, supply chain, and inter-state logistics.",
-      socialInstagram: "instagram.com/desailogistics",
-      socialLinkedIn: "linkedin.com/in/kunaldesai",
-      design: "Mint Haven",
-      status: "inactive",
-      profileLink: "ambros.studio/kunal-desai",
-      createdDate: "28 Sep 2026",
-      cardUrl: "/cards/design-1/index.html"
-    },
-    {
-      id: "cust_4",
-      initials: "AP",
-      name: "Anjali Patel",
-      role: "Principal Designer",
-      company: "Patel Interiors",
-      phone: "97144 36620",
-      whatsapp: "97144 36620",
-      email: "anjali@patelinteriors.in",
-      website: "patelinteriors.in",
-      address: "Vesu Main Road, Surat, Gujarat 395007",
-      description: "Luxury residential interior architecture and contemporary living spaces.",
-      socialInstagram: "instagram.com/patelinteriors",
-      socialLinkedIn: "linkedin.com/in/anjalipatel",
-      design: "Evergreen",
-      status: "active",
-      profileLink: "ambros.studio/anjali-patel",
-      createdDate: "25 Sep 2026",
-      cardUrl: "/cards/design-2/index.html"
-    },
-    {
-      id: "cust_5",
-      initials: "VJ",
-      name: "Vikram Joshi",
-      role: "Partner",
-      company: "Joshi Realty",
-      phone: "98795 10248",
-      whatsapp: "98795 10248",
-      email: "vikram@joshirealty.com",
-      website: "joshirealty.com",
-      address: "Dumas Road, Surat, Gujarat 395007",
-      description: "Commercial and ultra-luxury high-rise real estate consulting.",
-      socialInstagram: "instagram.com/joshirealty",
-      socialLinkedIn: "linkedin.com/in/vikramjoshi",
-      design: "Mint Haven",
-      status: "active",
-      profileLink: "ambros.studio/vikram-joshi",
-      createdDate: "22 Sep 2026",
-      cardUrl: "/cards/design-1/index.html"
-    },
-    {
-      id: "cust_6",
-      initials: "NT",
-      name: "Neha Trivedi",
-      role: "Chief Dentist",
-      company: "Trivedi Dental Care",
-      phone: "96011 58934",
-      whatsapp: "96011 58934",
-      email: "drneha@trivedidental.in",
-      website: "trivedidental.in",
-      address: "City Light, Surat, Gujarat 395007",
-      description: "Advanced cosmetic dentistry, implants, and laser treatments.",
-      socialInstagram: "instagram.com/trivedidental",
-      socialLinkedIn: "linkedin.com/in/drnehatrivedi",
-      design: "Evergreen",
-      status: "inactive",
-      profileLink: "ambros.studio/neha-trivedi",
-      createdDate: "18 Sep 2026",
-      cardUrl: "/cards/design-2/index.html"
+  let customers = [];
+  let isLoadingCustomers = false;
+
+  function mapDbCustomerToUi(c) {
+    const name = c.full_name || '';
+    const nameParts = name.split(' ').filter(Boolean);
+    const initials = nameParts.length >= 2
+      ? (nameParts[0][0] + nameParts[1][0]).toUpperCase()
+      : (name.slice(0, 2)).toUpperCase() || 'CU';
+
+    const isEvergreen = c.card_design === 'Evergreen';
+    const isActive = Boolean(c.is_active);
+    const slug = c.profile_slug || (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
+
+    let formattedDate = 'Recent';
+    if (c.created_at) {
+      try {
+        const d = new Date(c.created_at);
+        formattedDate = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      } catch {
+        formattedDate = 'Recent';
+      }
     }
-  ];
+
+    return {
+      id: c.id,
+      initials: initials,
+      name: name,
+      role: c.designation || '',
+      company: c.company_name || '',
+      phone: c.mobile_number || '',
+      whatsapp: c.whatsapp_number || '',
+      email: c.email || '',
+      website: c.website || '',
+      address: c.business_address || '',
+      description: c.description || '',
+      socialInstagram: c.instagram_url || '',
+      socialLinkedIn: c.linkedin_url || '',
+      design: isEvergreen ? 'Evergreen' : 'Mint Haven',
+      status: isActive ? 'active' : 'inactive',
+      is_active: isActive,
+      profileLink: `ambros.studio/${slug}`,
+      profileSlug: slug,
+      createdDate: formattedDate,
+      cardUrl: isEvergreen ? '/cards/design-2/index.html' : '/cards/design-1/index.html'
+    };
+  }
+
+  async function loadCustomers() {
+    if (isLoadingCustomers) return;
+    isLoadingCustomers = true;
+
+    // Show loading state if table currently has no rows
+    if (customersTableBody && customers.length === 0) {
+      customersTableBody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <span class="btn-spinner" style="display: inline-block; width: 18px; height: 18px; border-width: 2px;" aria-hidden="true"></span>
+              <span>Loading customer records from Supabase...</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    try {
+      const res = await apiFetch('/api/admin/customers');
+      if (!res.ok) {
+        throw new Error('Failed to load customers from server');
+      }
+      const data = await res.json();
+      if (data && Array.isArray(data.customers)) {
+        customers = data.customers.map(mapDbCustomerToUi);
+      } else {
+        customers = [];
+      }
+
+      renderCustomersTable();
+      renderRecentCustomersTable();
+    } catch (err) {
+      console.error('loadCustomers error:', err);
+      if (customersTableBody && customers.length === 0) {
+        customersTableBody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px 16px; color: #dc2626;">
+              Unable to load customer records. Please check connection or sign in again.
+            </td>
+          </tr>
+        `;
+      }
+      updateCustomerCounts();
+      filterCustomers();
+    } finally {
+      isLoadingCustomers = false;
+    }
+  }
 
   // Tracking current editing state (null = Create mode, id string = Edit mode)
   let currentEditingCustomerId = null;
@@ -181,12 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
       resetAddCustomerForm();
     }
 
-    // Reset customer search field whenever navigating to Customers
+    // Reset customer search field whenever navigating to Customers and load fresh data
     if (tabId === 'customers') {
       if (customerSearchInput) {
         customerSearchInput.value = '';
       }
-      filterCustomers();
+      loadCustomers();
     }
 
     tabContents.forEach(tab => tab.classList.remove('active'));
@@ -282,14 +257,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!customersTableBody) return;
 
     customersTableBody.innerHTML = '';
+
+    if (customers.length === 0) {
+      customersTableBody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 56px 16px; color: var(--text-muted);">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-subtle);">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span style="font-size: 14px; font-weight: 600; color: var(--text-headline);">No customers yet</span>
+              <span style="font-size: 12.5px; color: var(--text-muted);">Use the Add Customer button to create your first digital card profile.</span>
+            </div>
+          </td>
+        </tr>
+      `;
+      updateCustomerCounts();
+      filterCustomers();
+      return;
+    }
+
     customers.forEach((c) => {
       const isEvergreen = c.design === 'Evergreen';
       const cardHref = isEvergreen ? '/cards/design-2/index.html' : '/cards/design-1/index.html';
-      const isActive = c.status === 'active';
+      const isActive = Boolean(c.is_active);
 
       const tr = document.createElement('tr');
       tr.setAttribute('data-id', c.id);
-      tr.setAttribute('data-status', c.status);
+      tr.setAttribute('data-status', isActive ? 'active' : 'inactive');
 
       tr.innerHTML = `
         <td>
@@ -297,12 +295,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="customer-avatar-init">${escapeHtml(c.initials)}</div>
             <div class="customer-meta">
               <span class="customer-name">${escapeHtml(c.name)}</span>
-              <span class="customer-role">${escapeHtml(c.role)}</span>
+              <span class="customer-role">${escapeHtml(c.role || '—')}</span>
             </div>
           </div>
         </td>
-        <td>${escapeHtml(c.company)}</td>
-        <td>+91 ${escapeHtml(c.phone)}</td>
+        <td>${escapeHtml(c.company || '—')}</td>
+        <td>${c.phone ? (c.phone.startsWith('+') ? escapeHtml(c.phone) : '+91 ' + escapeHtml(c.phone)) : '—'}</td>
         <td><span class="badge-design">${escapeHtml(c.design)}</span></td>
         <td>
           <div class="switch-group">
@@ -334,12 +332,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!dashboardRecentTableBody) return;
 
     dashboardRecentTableBody.innerHTML = '';
+
+    if (customers.length === 0) {
+      dashboardRecentTableBody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+            No recent customer profiles created yet.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
     const recent = customers.slice(0, 5);
 
     recent.forEach((c) => {
       const isEvergreen = c.design === 'Evergreen';
       const cardHref = isEvergreen ? '/cards/design-2/index.html' : '/cards/design-1/index.html';
-      const isActive = c.status === 'active';
+      const isActive = Boolean(c.is_active);
 
       const tr = document.createElement('tr');
       tr.setAttribute('data-id', c.id);
@@ -350,11 +360,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="customer-avatar-init">${escapeHtml(c.initials)}</div>
             <div class="customer-meta">
               <span class="customer-name">${escapeHtml(c.name)}</span>
-              <span class="customer-role">${escapeHtml(c.role)}</span>
+              <span class="customer-role">${escapeHtml(c.role || '—')}</span>
             </div>
           </div>
         </td>
-        <td>${escapeHtml(c.company)}</td>
+        <td>${escapeHtml(c.company || '—')}</td>
         <td><span class="badge-design">${escapeHtml(c.design)}</span></td>
         <td>
           <span class="badge-status ${isActive ? 'active' : 'inactive'}">
@@ -392,39 +402,68 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    // Toggle Status Handlers
+    // Toggle Status Handlers (Connected to Live Database via PATCH)
     document.querySelectorAll('.customer-status-toggle').forEach(checkbox => {
-      checkbox.onchange = function() {
+      checkbox.onchange = async function() {
         const custId = this.getAttribute('data-id');
-        const customer = customers.find(c => c.id === custId);
+        const customer = customers.find(c => String(c.id) === String(custId));
         if (!customer) return;
 
-        customer.status = this.checked ? 'active' : 'inactive';
-        
-        // Update row status
-        const row = this.closest('tr');
-        if (row) {
-          row.setAttribute('data-status', customer.status);
-          const statusText = row.querySelector('.status-text');
-          const statusDot = row.querySelector('.status-dot');
-          const badgeStatus = row.querySelector('.badge-status');
+        const targetStatus = this.checked ? 'active' : 'inactive';
+        const targetIsActive = this.checked;
+        const previousChecked = !this.checked;
 
-          if (this.checked) {
-            if (statusText) statusText.textContent = 'Active';
-            if (statusDot) statusDot.className = 'status-dot active';
-            if (badgeStatus) badgeStatus.className = 'badge-status active';
-            showAdminToast(`${customer.name} card set to Active`);
+        // Prevent duplicate toggling while request is in-flight
+        this.disabled = true;
+
+        try {
+          const res = await apiFetch(`/api/admin/customers/${custId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ is_active: targetIsActive }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            customer.status = targetStatus;
+            customer.is_active = targetIsActive;
+
+            // Update row status
+            const row = this.closest('tr');
+            if (row) {
+              row.setAttribute('data-status', customer.status);
+              const statusText = row.querySelector('.status-text');
+              const statusDot = row.querySelector('.status-dot');
+              const badgeStatus = row.querySelector('.badge-status');
+
+              if (targetIsActive) {
+                if (statusText) statusText.textContent = 'Active';
+                if (statusDot) statusDot.className = 'status-dot active';
+                if (badgeStatus) badgeStatus.className = 'badge-status active';
+                showAdminToast(`${customer.name} card set to Active`);
+              } else {
+                if (statusText) statusText.textContent = 'Inactive';
+                if (statusDot) statusDot.className = 'status-dot inactive';
+                if (badgeStatus) badgeStatus.className = 'badge-status inactive';
+                showAdminToast(`${customer.name} card paused / Inactive`);
+              }
+            }
+
+            renderRecentCustomersTable();
+            updateCustomerCounts();
+            filterCustomers();
           } else {
-            if (statusText) statusText.textContent = 'Inactive';
-            if (statusDot) statusDot.className = 'status-dot inactive';
-            if (badgeStatus) badgeStatus.className = 'badge-status inactive';
-            showAdminToast(`${customer.name} card paused / Inactive`);
+            // Revert checkbox state on error
+            this.checked = previousChecked;
+            showAdminToast(data.error || 'Failed to update customer status.');
           }
+        } catch (err) {
+          console.error('Status toggle error:', err);
+          this.checked = previousChecked;
+          showAdminToast('Network error updating customer status.');
+        } finally {
+          this.disabled = false;
         }
-
-        renderRecentCustomersTable();
-        updateCustomerCounts();
-        filterCustomers();
       };
     });
   }
@@ -563,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Edit Customer Flow (In-Place Update)
   // -------------------------------------------------------------
   function openEditCustomer(custId) {
-    const customer = customers.find(c => c.id === custId);
+    const customer = customers.find(c => String(c.id) === String(custId));
     if (!customer) {
       showAdminToast('Customer not found');
       return;
@@ -693,12 +732,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Form Submit Handler
+  // Form Submit Handler (Connected to Live Database via POST / PATCH)
+  let isSubmittingCustomer = false;
+
   if (addCustomerForm) {
-    addCustomerForm.addEventListener('submit', (e) => {
+    addCustomerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const name = custFullName.value.trim() || 'New Customer';
+      if (isSubmittingCustomer) return;
+
+      const name = custFullName.value.trim();
+      if (!name) {
+        showAdminToast('Please enter customer full name.');
+        return;
+      }
+
       const role = custDesignation.value.trim();
       const company = custCompany.value.trim();
       const description = custDescription.value.trim();
@@ -710,79 +758,85 @@ document.addEventListener('DOMContentLoaded', () => {
       const instagram = custInstagram.value.trim();
       const linkedIn = custLinkedIn.value.trim();
 
-      // Compute initials
-      const nameParts = name.split(' ').filter(Boolean);
-      const initials = nameParts.length >= 2
-        ? (nameParts[0][0] + nameParts[1][0]).toUpperCase()
-        : (name.slice(0, 2)).toUpperCase();
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-      if (currentEditingCustomerId) {
-        // ========================================================
-        // UPDATE EXISTING CUSTOMER RECORD IN PLACE (NO DUPLICATES)
-        // ========================================================
-        const index = customers.findIndex(c => c.id === currentEditingCustomerId);
-        if (index !== -1) {
-          const existing = customers[index];
+      const payload = {
+        name,
+        role,
+        company,
+        description,
+        phone,
+        whatsapp,
+        email,
+        website,
+        address,
+        socialInstagram: instagram,
+        socialLinkedIn: linkedIn,
+        design: selectedDesign,
+        profileLink: `ambros.studio/${slug}`,
+        profileSlug: slug,
+      };
 
-          // Update record in place while strictly preserving ID & Profile Link
-          customers[index] = {
-            ...existing,
-            name: name,
-            initials: initials,
-            role: role,
-            company: company,
-            description: description,
-            phone: phone,
-            whatsapp: whatsapp,
-            email: email,
-            website: website,
-            address: address,
-            socialInstagram: instagram,
-            socialLinkedIn: linkedIn,
-            design: selectedDesign,
-            cardUrl: selectedDesign === 'Evergreen' ? '/cards/design-2/index.html' : '/cards/design-1/index.html'
-            // ID and profileLink remain untouched!
-          };
-
-          showAdminToast(`Customer "${name}" updated successfully (Existing record updated in place)`);
-        }
-      } else {
-        // ========================================================
-        // CREATE NEW CUSTOMER RECORD
-        // ========================================================
-        const newSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        const newCustomer = {
-          id: `cust_${Date.now()}`,
-          initials: initials,
-          name: name,
-          role: role,
-          company: company,
-          phone: phone,
-          whatsapp: whatsapp,
-          email: email,
-          website: website,
-          address: address,
-          description: description,
-          socialInstagram: instagram,
-          socialLinkedIn: linkedIn,
-          design: selectedDesign,
-          status: "active",
-          profileLink: `ambros.studio/${newSlug}`,
-          createdDate: "Just now",
-          cardUrl: selectedDesign === 'Evergreen' ? '/cards/design-2/index.html' : '/cards/design-1/index.html'
-        };
-
-        customers.unshift(newCustomer);
-        showAdminToast(`New customer "${name}" added successfully`);
+      isSubmittingCustomer = true;
+      if (saveCustomerBtn) {
+        saveCustomerBtn.disabled = true;
+        saveCustomerBtn.innerHTML = `<span>${currentEditingCustomerId ? 'Updating...' : 'Saving...'}</span>`;
       }
 
-      // Re-render both tables with updated customer list
-      renderCustomersTable();
-      renderRecentCustomersTable();
+      try {
+        if (currentEditingCustomerId) {
+          // ========================================================
+          // UPDATE EXISTING CUSTOMER VIA PATCH
+          // ========================================================
+          const res = await apiFetch(`/api/admin/customers/${currentEditingCustomerId}`, {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+          });
 
-      // Reset form mode and return to Customers screen
-      resetAddCustomerForm();
-      navigateToTab('customers');
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            showAdminToast(`Customer "${name}" updated successfully.`);
+            resetAddCustomerForm();
+            await loadCustomers();
+            navigateToTab('customers');
+          } else {
+            showAdminToast(data.error || 'Failed to update customer record.');
+          }
+        } else {
+          // ========================================================
+          // CREATE NEW CUSTOMER VIA POST
+          // ========================================================
+          const res = await apiFetch('/api/admin/customers', {
+            method: 'POST',
+            body: JSON.stringify({
+              ...payload,
+              status: 'active',
+              is_active: true,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            showAdminToast(`New customer "${name}" created successfully.`);
+            resetAddCustomerForm();
+            await loadCustomers();
+            navigateToTab('customers');
+          } else {
+            showAdminToast(data.error || 'Failed to create customer record.');
+          }
+        }
+      } catch (err) {
+        console.error('Customer form submit error:', err);
+        showAdminToast('Network or server error saving customer.');
+      } finally {
+        isSubmittingCustomer = false;
+        if (saveCustomerBtn) {
+          saveCustomerBtn.disabled = false;
+          saveCustomerBtn.innerHTML = `<span>${currentEditingCustomerId ? 'Update Customer' : 'Save Customer'}</span>`;
+        }
+      }
     });
   }
 
@@ -969,9 +1023,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loginScreen) loginScreen.style.display = 'none';
         updateAdminProfileHeader(data.user);
         
-        // Render dashboard data
-        renderCustomersTable();
-        renderRecentCustomersTable();
+        // Load live customer data from Supabase
+        await loadCustomers();
       } else {
         // Unauthenticated: hide dashboard, show login
         if (dashboardLayout) dashboardLayout.style.display = 'none';
@@ -1043,9 +1096,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (loginScreen) loginScreen.style.display = 'none';
           if (dashboardLayout) dashboardLayout.style.display = 'flex';
 
-          // Initialize dashboard tables
-          renderCustomersTable();
-          renderRecentCustomersTable();
+          // Initialize dashboard tables with live data
+          await loadCustomers();
 
           showAdminToast(`Welcome back, ${data.user.email}`);
         } else {
@@ -1088,11 +1140,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showAdminToast('Signed out successfully.');
     });
   }
-
-  // Initial render of counts and tables
-  updateCustomerCounts();
-  renderCustomersTable();
-  renderRecentCustomersTable();
 
   // Run initial session check
   checkAdminSession();

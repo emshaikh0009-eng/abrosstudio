@@ -1,0 +1,149 @@
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+
+function sanitizeText(val: any, maxLength = 255): string {
+  if (typeof val !== "string") return "";
+  return val.trim().slice(0, maxLength);
+}
+
+// PATCH /api/admin/customers/[id] — update customer fields or status
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    // Validate that id is a valid positive integer string (matching bigint)
+    if (!id || !/^\d+$/.test(id)) {
+      return NextResponse.json(
+        { error: "Invalid customer ID." },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const updates: Record<string, any> = {};
+
+    if (body.name !== undefined || body.full_name !== undefined) {
+      const val = sanitizeText(body.name || body.full_name, 120);
+      if (!val) {
+        return NextResponse.json(
+          { error: "Full name cannot be empty." },
+          { status: 400 }
+        );
+      }
+      updates.full_name = val;
+    }
+
+    if (body.role !== undefined || body.designation !== undefined) {
+      updates.designation = sanitizeText(body.role || body.designation, 120) || null;
+    }
+
+    if (body.company !== undefined || body.company_name !== undefined) {
+      updates.company_name = sanitizeText(body.company || body.company_name, 120) || null;
+    }
+
+    if (body.description !== undefined) {
+      updates.description = sanitizeText(body.description, 500) || null;
+    }
+
+    if (body.phone !== undefined || body.mobile_number !== undefined) {
+      updates.mobile_number = sanitizeText(body.phone || body.mobile_number, 30) || null;
+    }
+
+    if (body.whatsapp !== undefined || body.whatsapp_number !== undefined) {
+      updates.whatsapp_number = sanitizeText(body.whatsapp || body.whatsapp_number, 30) || null;
+    }
+
+    if (body.email !== undefined) {
+      updates.email = sanitizeText(body.email, 120) || null;
+    }
+
+    if (body.website !== undefined) {
+      updates.website = sanitizeText(body.website, 120) || null;
+    }
+
+    if (body.address !== undefined || body.business_address !== undefined) {
+      updates.business_address = sanitizeText(body.address || body.business_address, 255) || null;
+    }
+
+    if (body.socialInstagram !== undefined || body.instagram_url !== undefined) {
+      updates.instagram_url = sanitizeText(body.socialInstagram || body.instagram_url, 150) || null;
+    }
+
+    if (body.socialLinkedIn !== undefined || body.linkedin_url !== undefined) {
+      updates.linkedin_url = sanitizeText(body.socialLinkedIn || body.linkedin_url, 150) || null;
+    }
+
+    if (body.design !== undefined || body.card_design !== undefined) {
+      const design = body.design || body.card_design;
+      updates.card_design = design === "Evergreen" ? "Evergreen" : "Mint Haven";
+    }
+
+    if (body.profileLink !== undefined || body.profileSlug !== undefined || body.profile_slug !== undefined) {
+      const rawProfile = sanitizeText(body.profileLink || body.profileSlug || body.profile_slug, 100);
+      const slug = rawProfile
+        .replace(/^https?:\/\//i, "")
+        .replace(/^ambros\.studio\//i, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+      if (slug) {
+        updates.profile_slug = slug;
+      }
+    }
+
+    if (body.is_active !== undefined) {
+      updates.is_active = Boolean(body.is_active);
+    } else if (body.status !== undefined) {
+      updates.is_active = body.status === "active";
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { error: "No valid fields provided for update." },
+        { status: 400 }
+      );
+    }
+
+    updates.updated_at = new Date().toISOString();
+
+    const cookieStore = await cookies();
+    const supabase = createClient(cookieStore);
+
+    const { data, error } = await supabase
+      .from("customers")
+      .update(updates)
+      .eq("id", id)
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      console.error("PATCH /api/admin/customers/[id] error:", error.message);
+      return NextResponse.json(
+        { error: "Failed to update customer record." },
+        { status: 500 }
+      );
+    }
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "Customer record not found." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      customer: data,
+    });
+  } catch (err: any) {
+    console.error("PATCH /api/admin/customers/[id] unexpected error:", err?.message);
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 }
+    );
+  }
+}
