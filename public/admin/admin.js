@@ -181,6 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
       resetAddCustomerForm();
     }
 
+    // Reset customer search field whenever navigating to Customers
+    if (tabId === 'customers') {
+      if (customerSearchInput) {
+        customerSearchInput.value = '';
+      }
+      filterCustomers();
+    }
+
     tabContents.forEach(tab => tab.classList.remove('active'));
     navItems.forEach(nav => nav.classList.remove('active'));
 
@@ -319,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     attachTableEventListeners();
+    updateCustomerCounts();
   }
 
   function renderRecentCustomersTable() {
@@ -414,6 +423,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderRecentCustomersTable();
+        updateCustomerCounts();
+        filterCustomers();
       };
     });
   }
@@ -433,6 +444,79 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterPills = document.querySelectorAll('.filter-pill');
   const customerSearchInput = document.getElementById('customerSearchInput');
 
+  // Dynamically compute and update customer counts across stats and filters
+  function updateCustomerCounts() {
+    const total = customers.length;
+    const active = customers.filter(c => c.status === 'active' || c.is_active === true).length;
+    const inactive = customers.filter(c => c.status === 'inactive' || c.is_active === false).length;
+
+    // Update Dashboard Stat Cards
+    const statTotal = document.getElementById('statTotalCustomers');
+    const statActive = document.getElementById('statActiveCustomers');
+    const statInactive = document.getElementById('statInactiveCustomers');
+
+    if (statTotal) statTotal.textContent = total;
+    if (statActive) statActive.textContent = active;
+    if (statInactive) statInactive.textContent = inactive;
+
+    // Update Filter Pills
+    const pillAll = document.querySelector('.filter-pill[data-filter="all"]');
+    const pillActive = document.querySelector('.filter-pill[data-filter="active"]');
+    const pillInactive = document.querySelector('.filter-pill[data-filter="inactive"]');
+
+    if (pillAll) pillAll.textContent = `All ${total}`;
+    if (pillActive) pillActive.textContent = `Active ${active}`;
+    if (pillInactive) pillInactive.textContent = `Inactive ${inactive}`;
+  }
+
+  // Update dynamic customer pagination
+  function updatePagination(visibleCount) {
+    const paginationInfo = document.getElementById('customersPaginationInfo');
+    const paginationPages = document.getElementById('customersPaginationPages');
+    if (!paginationInfo) return;
+
+    const query = customerSearchInput ? customerSearchInput.value.trim() : '';
+
+    let totalInFilter = customers.length;
+    let filterCategory = 'customers';
+    if (currentFilter === 'active') {
+      totalInFilter = customers.filter(c => c.status === 'active' || c.is_active === true).length;
+      filterCategory = 'active customers';
+    } else if (currentFilter === 'inactive') {
+      totalInFilter = customers.filter(c => c.status === 'inactive' || c.is_active === false).length;
+      filterCategory = 'inactive customers';
+    }
+
+    if (query) {
+      if (visibleCount === 0) {
+        paginationInfo.textContent = `No customers found matching "${query}"`;
+      } else if (visibleCount === 1) {
+        paginationInfo.textContent = `Showing 1 of ${totalInFilter} ${filterCategory} (1 match)`;
+      } else {
+        paginationInfo.textContent = `Showing 1–${visibleCount} of ${totalInFilter} ${filterCategory} (${visibleCount} matches)`;
+      }
+    } else {
+      if (visibleCount === 0) {
+        paginationInfo.textContent = `No ${filterCategory} available`;
+      } else if (visibleCount === 1) {
+        paginationInfo.textContent = `Showing 1 of 1 ${currentFilter === 'all' ? 'customer' : filterCategory.slice(0, -1)}`;
+      } else {
+        paginationInfo.textContent = `Showing 1–${visibleCount} of ${totalInFilter} ${filterCategory}`;
+      }
+    }
+
+    // Hide unnecessary pagination buttons when all results fit on one page
+    if (paginationPages) {
+      if (visibleCount > 0) {
+        paginationPages.innerHTML = '<span class="page-num active">1</span>';
+        paginationPages.style.display = 'flex';
+      } else {
+        paginationPages.innerHTML = '';
+        paginationPages.style.display = 'none';
+      }
+    }
+  }
+
   filterPills.forEach(pill => {
     pill.addEventListener('click', () => {
       filterPills.forEach(p => p.classList.remove('active'));
@@ -443,7 +527,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (customerSearchInput) {
+    customerSearchInput.value = '';
     customerSearchInput.addEventListener('input', () => {
+      filterCustomers();
+    });
+    customerSearchInput.addEventListener('search', () => {
       filterCustomers();
     });
   }
@@ -451,6 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterCustomers() {
     const query = customerSearchInput ? customerSearchInput.value.toLowerCase().trim() : '';
     const rows = customersTableBody ? customersTableBody.querySelectorAll('tr') : [];
+    let visibleCount = 0;
 
     rows.forEach(row => {
       const status = row.getAttribute('data-status');
@@ -461,10 +550,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (matchesFilter && matchesQuery) {
         row.style.display = '';
+        visibleCount++;
       } else {
         row.style.display = 'none';
       }
     });
+
+    updatePagination(visibleCount);
   }
 
   // -------------------------------------------------------------
@@ -996,6 +1088,11 @@ document.addEventListener('DOMContentLoaded', () => {
       showAdminToast('Signed out successfully.');
     });
   }
+
+  // Initial render of counts and tables
+  updateCustomerCounts();
+  renderCustomersTable();
+  renderRecentCustomersTable();
 
   // Run initial session check
   checkAdminSession();
