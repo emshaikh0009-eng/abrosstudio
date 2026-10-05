@@ -66,6 +66,10 @@
                 class="login-field-input" 
                 placeholder="admin@ambrosstudio.space" 
                 autocomplete="username" 
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                inputmode="email"
                 required
               >
             </div>
@@ -87,6 +91,9 @@
                 class="login-field-input" 
                 placeholder="Enter your password" 
                 autocomplete="current-password" 
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
                 required
               >
               <button type="button" class="login-pwd-toggle" id="loginPasswordToggle" aria-label="Toggle password visibility">
@@ -551,9 +558,9 @@
 
                 <!-- Live Preview Link of chosen template -->
                 <div style="margin-top: 14px; text-align: right;">
-                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" style="width: 100%; justify-content: center;">
+                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" id="btnPreviewChosenDesign" style="width: 100%; justify-content: center;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
-                    <span>Inspect Design Templates Live</span>
+                    <span id="previewChosenDesignText">Inspect Design Templates Live</span>
                   </a>
                 </div>
               </div>

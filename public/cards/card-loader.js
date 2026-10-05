@@ -34,7 +34,7 @@
   }
 
   function generateVCard(card) {
-    const fn = card.fullName || card.name || 'Contact';
+    const fn = card.fullName || card.full_name || card.name || 'Contact';
     const org = card.company || card.company_name || '';
     const title = card.designation || card.role || '';
     const phone = card.phone || card.mobile_number || '';
@@ -71,7 +71,7 @@
         const blob = new Blob([vcardText], { type: 'text/vcard;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        const filename = `${(card.fullName || card.name || 'contact').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.vcf`;
+        const filename = `${(card.fullName || card.full_name || card.name || 'contact').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.vcf`;
         a.href = url;
         a.download = filename;
         document.body.appendChild(a);
@@ -116,7 +116,7 @@
   }
 
   function hydrateDesign1(card, isPreview) {
-    const name = card.fullName || card.name || 'Ambros Studio Member';
+    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
     const bio = card.description || '';
@@ -280,7 +280,7 @@
   }
 
   function hydrateDesign2(card, isPreview) {
-    const name = card.fullName || card.name || 'Ambros Studio Member';
+    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
     const bio = card.description || '';
@@ -438,6 +438,53 @@
     attachVCardDownload(card);
   }
 
+  function ensureCorrectTemplate(card) {
+    const design = card.cardDesign || card.card_design;
+    const isEvergreen = design === 'Evergreen';
+    const isDesign2 = window.location.pathname.includes('design-2');
+    if (design && ((isEvergreen && !isDesign2) || (!isEvergreen && isDesign2))) {
+      const targetDir = isEvergreen ? 'design-2' : 'design-1';
+      const newUrl = window.location.pathname.replace(/design-[12]/, targetDir) + window.location.search;
+      window.location.replace(newUrl);
+      return false;
+    }
+    return true;
+  }
+
+  async function loadPublicCard(slug) {
+    const isDesign2 = window.location.pathname.includes('design-2');
+    try {
+      const res = await fetch(`/api/cards/${encodeURIComponent(slug)}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.status === 404) {
+        renderError('This digital business card is currently inactive or does not exist.', 'Card Unavailable');
+        return;
+      }
+
+      if (!res.ok) {
+        renderError('Unable to load card details at this time. Please try again shortly.', 'Temporary Error');
+        return;
+      }
+
+      const data = await res.json();
+      if (data && data.card) {
+        if (!ensureCorrectTemplate(data.card)) return;
+        if (isDesign2) {
+          hydrateDesign2(data.card, false);
+        } else {
+          hydrateDesign1(data.card, false);
+        }
+      } else {
+        renderError('Card data format invalid.', 'Error');
+      }
+    } catch (err) {
+      console.error('Public card hydration error:', err);
+      renderError('Unable to display digital card due to a network connection error.', 'Connection Error');
+    }
+  }
+
   async function init() {
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
@@ -445,78 +492,56 @@
     const isPreview = params.get('preview') === 'true';
 
     // If no dynamic query parameters exist, do nothing (preserve static template preview)
-    if (!slug && !(custId && isPreview)) {
+    if (!slug && !custId) {
       return;
     }
 
     const isDesign2 = window.location.pathname.includes('design-2');
 
-    // 1. Admin Preview Mode
-    if (isPreview && custId) {
+    // 1. Admin Preview Mode (activated whenever preview=true and either id or slug is present)
+    if (isPreview && (custId || slug)) {
+      const identifier = custId || slug;
       try {
-        const res = await fetch(`/api/admin/customers/${encodeURIComponent(custId)}`, {
+        const res = await fetch(`/api/admin/customers/${encodeURIComponent(identifier)}`, {
           headers: { 'Accept': 'application/json' },
           credentials: 'include'
         });
 
-        if (res.status === 401 || res.status === 403) {
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.customer) {
+            if (!ensureCorrectTemplate(data.customer)) return;
+            if (isDesign2) {
+              hydrateDesign2(data.customer, true);
+            } else {
+              hydrateDesign1(data.customer, true);
+            }
+            return;
+          }
+        } else if (res.status === 401 || res.status === 403) {
+          // If admin session is expired or not present, fallback to public card lookup if slug is available
+          if (slug) {
+            await loadPublicCard(slug);
+            return;
+          }
           renderError('This customer profile preview is restricted to authorized Ambros Studio administrators.', 'Preview Access Denied');
           return;
-        }
-
-        if (!res.ok) {
+        } else if (!slug) {
           renderError('Customer profile record not found.', 'Record Not Found');
           return;
         }
-
-        const data = await res.json();
-        if (data && data.customer) {
-          if (isDesign2) {
-            hydrateDesign2(data.customer, true);
-          } else {
-            hydrateDesign1(data.customer, true);
-          }
-        } else {
-          renderError('Unable to load customer preview.', 'Error');
-        }
       } catch (err) {
         console.error('Admin preview hydration error:', err);
-        renderError('Unable to load customer preview due to a network error.', 'Connection Error');
+        if (!slug) {
+          renderError('Unable to load customer preview due to a network error.', 'Connection Error');
+          return;
+        }
       }
-      return;
     }
 
-    // 2. Public NFC Mode
+    // 2. Public NFC / Slug Mode
     if (slug) {
-      try {
-        const res = await fetch(`/api/cards/${encodeURIComponent(slug)}`, {
-          headers: { 'Accept': 'application/json' }
-        });
-
-        if (res.status === 404) {
-          renderError('This digital business card is currently inactive or does not exist.', 'Card Unavailable');
-          return;
-        }
-
-        if (!res.ok) {
-          renderError('Unable to load card details at this time. Please try again shortly.', 'Temporary Error');
-          return;
-        }
-
-        const data = await res.json();
-        if (data && data.card) {
-          if (isDesign2) {
-            hydrateDesign2(data.card, false);
-          } else {
-            hydrateDesign1(data.card, false);
-          }
-        } else {
-          renderError('Card data format invalid.', 'Error');
-        }
-      } catch (err) {
-        console.error('Public card hydration error:', err);
-        renderError('Unable to display digital card due to a network connection error.', 'Connection Error');
-      }
+      await loadPublicCard(slug);
     }
   }
 

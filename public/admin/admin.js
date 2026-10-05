@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
       profileSlug: slug,
       createdDate: formattedDate,
       cardUrl: isEvergreen
-        ? `/cards/design-2/index.html?id=${c.id}&preview=true`
-        : `/cards/design-1/index.html?id=${c.id}&preview=true`
+        ? `/cards/design-2/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`
+        : `/cards/design-1/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`
     };
   }
 
@@ -284,9 +284,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     customers.forEach((c) => {
       const isEvergreen = c.design === 'Evergreen';
+      const slug = c.profileSlug || '';
       const cardHref = isEvergreen
-        ? `/cards/design-2/index.html?id=${c.id}&preview=true`
-        : `/cards/design-1/index.html?id=${c.id}&preview=true`;
+        ? `/cards/design-2/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`
+        : `/cards/design-1/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`;
       const isActive = Boolean(c.is_active);
 
       const tr = document.createElement('tr');
@@ -352,9 +353,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     recent.forEach((c) => {
       const isEvergreen = c.design === 'Evergreen';
+      const slug = c.profileSlug || '';
       const cardHref = isEvergreen
-        ? `/cards/design-2/index.html?id=${c.id}&preview=true`
-        : `/cards/design-1/index.html?id=${c.id}&preview=true`;
+        ? `/cards/design-2/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`
+        : `/cards/design-1/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`;
       const isActive = Boolean(c.is_active);
 
       const tr = document.createElement('tr');
@@ -649,6 +651,16 @@ document.addEventListener('DOMContentLoaded', () => {
       custProfileLink.textContent = customer.profileLink;
     }
 
+    // Update design template inspection link to preview this customer directly
+    const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
+    const previewChosenDesignText = document.getElementById('previewChosenDesignText');
+    if (btnPreviewChosenDesign) {
+      btnPreviewChosenDesign.href = customer.cardUrl;
+      if (previewChosenDesignText) {
+        previewChosenDesignText.textContent = `Preview ${customer.name}'s Card`;
+      }
+    }
+
     // 6. Avatar Preview
     if (avatarUploadCircle) {
       avatarUploadCircle.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #92400e;">${customer.initials}</span>`;
@@ -695,6 +707,15 @@ document.addEventListener('DOMContentLoaded', () => {
       custProfileLink.textContent = 'ambros.studio/rahul-mehta';
     }
 
+    const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
+    const previewChosenDesignText = document.getElementById('previewChosenDesignText');
+    if (btnPreviewChosenDesign) {
+      btnPreviewChosenDesign.href = '/cards/index.html';
+      if (previewChosenDesignText) {
+        previewChosenDesignText.textContent = 'Inspect Design Templates Live';
+      }
+    }
+
     if (avatarUploadCircle) {
       avatarUploadCircle.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>`;
     }
@@ -719,6 +740,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const dName = opt.getAttribute('data-design') || "Mint Haven";
       selectedDesign = dName;
       setDesignSelection(dName);
+
+      // If editing an existing customer, update preview button href to reflect chosen design
+      if (currentEditingCustomerId) {
+        const c = customers.find(item => String(item.id) === String(currentEditingCustomerId));
+        const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
+        if (c && btnPreviewChosenDesign) {
+          const isEvergreen = dName === 'Evergreen';
+          btnPreviewChosenDesign.href = `/cards/${isEvergreen ? 'design-2' : 'design-1'}/index.html?slug=${encodeURIComponent(c.profileSlug || '')}&id=${encodeURIComponent(c.id)}&preview=true`;
+        }
+      }
     });
   });
 
@@ -1058,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       hideLoginError();
 
-      const email = loginEmailInput?.value.trim() || '';
+      const email = (loginEmailInput?.value || '').trim().toLowerCase();
       const password = loginPasswordInput?.value || '';
 
       if (!email || !password) {

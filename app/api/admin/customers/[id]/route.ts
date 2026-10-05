@@ -172,10 +172,11 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const trimmedId = typeof id === "string" ? id.trim() : "";
 
-    if (!id || !/^\d+$/.test(id)) {
+    if (!trimmedId) {
       return NextResponse.json(
-        { error: "Invalid customer ID." },
+        { error: "Customer identifier is required." },
         { status: 400 }
       );
     }
@@ -183,11 +184,15 @@ export async function GET(
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
 
-    const { data, error } = await supabase
-      .from("customers")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle();
+    let query = supabase.from("customers").select("*");
+
+    if (/^\d+$/.test(trimmedId)) {
+      query = query.eq("id", trimmedId);
+    } else {
+      query = query.eq("profile_slug", trimmedId.toLowerCase());
+    }
+
+    const { data, error } = await query.maybeSingle();
 
     if (error) {
       console.error("GET /api/admin/customers/[id] error:", error.message);
@@ -206,7 +211,20 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      customer: data,
+      customer: {
+        ...data,
+        fullName: data.full_name,
+        name: data.full_name,
+        role: data.designation || "",
+        company: data.company_name || "",
+        phone: data.mobile_number || "",
+        whatsapp: data.whatsapp_number || "",
+        address: data.business_address || "",
+        socialInstagram: data.instagram_url || "",
+        socialLinkedIn: data.linkedin_url || "",
+        cardDesign: data.card_design === "Evergreen" ? "Evergreen" : "Mint Haven",
+        profileSlug: data.profile_slug,
+      },
     });
   } catch (err: any) {
     console.error("GET /api/admin/customers/[id] unexpected error:", err?.message);

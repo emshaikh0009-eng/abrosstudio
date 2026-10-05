@@ -6,18 +6,20 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
-    if (!email || !password) {
+    if (!email || !password || typeof email !== "string" || typeof password !== "string") {
       return NextResponse.json(
         { error: "Email and password are required." },
         { status: 400 }
       );
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
+      email: normalizedEmail,
       password,
     });
 
