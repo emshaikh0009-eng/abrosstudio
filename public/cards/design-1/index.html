@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Maya Chen — Senior Product Designer | Lumen Studio</title>
   <meta name="description" content="Digital business card for Maya Chen, Senior Product Designer at Lumen Studio.">
+  <script>
+    (function () {
+      var p = new URLSearchParams(window.location.search);
+      if (p.get('slug') || p.get('id')) {
+        document.documentElement.classList.add('card-loading');
+        document.title = 'Digital Business Card | Ambros Studio';
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="./style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +22,47 @@
 
   <!-- Mobile-first Viewport Container -->
   <main class="viewport-wrapper" role="main">
+
+    <!-- Dynamic Loading Skeleton (Displayed only while loading customer data) -->
+    <div id="cardSkeleton" class="card-skeleton" aria-hidden="true">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-line skeleton-name"></div>
+      <div class="skeleton-line skeleton-role"></div>
+      <div class="skeleton-line skeleton-company"></div>
+      <div class="skeleton-line skeleton-bio-1"></div>
+      <div class="skeleton-line skeleton-bio-2"></div>
+      <div class="skeleton-btn"></div>
+      <div class="skeleton-cards">
+        <div class="skeleton-card">
+          <div class="skeleton-card-icon"></div>
+          <div class="skeleton-card-text">
+            <div class="skeleton-card-label"></div>
+            <div class="skeleton-card-val"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-card-icon"></div>
+          <div class="skeleton-card-text">
+            <div class="skeleton-card-label"></div>
+            <div class="skeleton-card-val"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-card-icon"></div>
+          <div class="skeleton-card-text">
+            <div class="skeleton-card-label"></div>
+            <div class="skeleton-card-val"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-card-icon"></div>
+          <div class="skeleton-card-text">
+            <div class="skeleton-card-label"></div>
+            <div class="skeleton-card-val"></div>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <!-- 1. Profile Header -->
     <header class="profile-section">

@@ -96,6 +96,10 @@
   }
 
   function renderError(message, title) {
+    document.documentElement.classList.remove('card-loading');
+    const skeleton = document.getElementById('cardSkeleton');
+    if (skeleton) skeleton.remove();
+
     const main = document.querySelector('main') || document.body;
     main.innerHTML = `
       <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
@@ -277,6 +281,11 @@
 
     // Hook vCard
     attachVCardDownload(card);
+
+    // Dismiss loading state and skeleton
+    document.documentElement.classList.remove('card-loading');
+    const skeleton = document.getElementById('cardSkeleton');
+    if (skeleton) skeleton.remove();
   }
 
   function hydrateDesign2(card, isPreview) {
@@ -436,6 +445,11 @@
 
     // Hook vCard
     attachVCardDownload(card);
+
+    // Dismiss loading state and skeleton
+    document.documentElement.classList.remove('card-loading');
+    const skeleton = document.getElementById('cardSkeleton');
+    if (skeleton) skeleton.remove();
   }
 
   function ensureCorrectTemplate(card) {
@@ -493,8 +507,12 @@
 
     // If no dynamic query parameters exist, do nothing (preserve static template preview)
     if (!slug && !custId) {
+      document.documentElement.classList.remove('card-loading');
       return;
     }
+
+    // Ensure loading state is active whenever dynamic parameters are present
+    document.documentElement.classList.add('card-loading');
 
     const isDesign2 = window.location.pathname.includes('design-2');
 
@@ -517,6 +535,9 @@
               hydrateDesign1(data.customer, true);
             }
             return;
+          } else {
+            renderError('Customer data format invalid.', 'Error');
+            return;
           }
         } else if (res.status === 401 || res.status === 403) {
           // If admin session is expired or not present, fallback to public card lookup if slug is available
@@ -532,16 +553,20 @@
         }
       } catch (err) {
         console.error('Admin preview hydration error:', err);
-        if (!slug) {
-          renderError('Unable to load customer preview due to a network error.', 'Connection Error');
+        if (slug) {
+          await loadPublicCard(slug);
           return;
         }
+        renderError('Unable to load customer preview due to a network error.', 'Connection Error');
+        return;
       }
     }
 
     // 2. Public NFC / Slug Mode
     if (slug) {
       await loadPublicCard(slug);
+    } else {
+      renderError('Customer profile record not found.', 'Record Not Found');
     }
   }
 

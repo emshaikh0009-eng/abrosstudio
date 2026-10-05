@@ -378,3 +378,139 @@ body {
   font-weight: 500;
   color: #374151;
 }
+
+/* ==========================================================================
+   Dynamic Loading Skeleton (Design 2: Evergreen)
+   ========================================================================== */
+html.card-loading .viewport-wrapper > :not(#cardSkeleton) {
+  display: none !important;
+}
+
+#cardSkeleton {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+html.card-loading #cardSkeleton {
+  display: flex !important;
+}
+
+@keyframes skeletonPulseD2 {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+.card-skeleton .skeleton-avatar,
+.card-skeleton .skeleton-line,
+.card-skeleton .skeleton-btn,
+.card-skeleton .skeleton-section-title,
+.card-skeleton .skeleton-row-icon,
+.card-skeleton .skeleton-row-sub,
+.card-skeleton .skeleton-row-main {
+  background: linear-gradient(90deg, #f0f3f2 25%, #f9fbfb 37%, #f0f3f2 63%);
+  background-size: 400% 100%;
+  animation: skeletonPulseD2 1.4s ease infinite;
+}
+
+.card-skeleton .skeleton-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.card-skeleton .skeleton-name {
+  width: 190px;
+  height: 26px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.card-skeleton .skeleton-role {
+  width: 140px;
+  height: 14px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.card-skeleton .skeleton-company {
+  width: 160px;
+  height: 14px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.card-skeleton .skeleton-bio-1 {
+  width: 95%;
+  height: 13px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.card-skeleton .skeleton-bio-2 {
+  width: 75%;
+  height: 13px;
+  border-radius: 4px;
+  margin-bottom: 22px;
+}
+
+.card-skeleton .skeleton-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--radius-btn);
+  margin-bottom: 28px;
+}
+
+.card-skeleton .skeleton-section-title {
+  width: 90px;
+  height: 12px;
+  border-radius: 3px;
+  margin-bottom: 14px;
+}
+
+.card-skeleton .skeleton-rows {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-skeleton .skeleton-row {
+  width: 100%;
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border-divider);
+}
+
+.card-skeleton .skeleton-row-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.card-skeleton .skeleton-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.card-skeleton .skeleton-row-sub {
+  width: 40px;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.card-skeleton .skeleton-row-main {
+  width: 130px;
+  height: 13px;
+  border-radius: 4px;
+}
