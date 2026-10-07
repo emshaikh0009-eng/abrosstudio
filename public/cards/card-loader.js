@@ -144,14 +144,34 @@
       document.body.prepend(banner);
     }
 
-    // Avatar
+    // Avatar / Photo
+    const avatarImgUrl = card.avatarUrl || card.avatar_url || card.profile_image_url || card.photo || card.image;
     const avatarWrap = document.querySelector('.profile-avatar-wrap');
     if (avatarWrap) {
-      avatarWrap.innerHTML = `
-        <div style="width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
-          ${escapeHtml(getInitials(name))}
-        </div>
-      `;
+      if (avatarImgUrl) {
+        avatarWrap.innerHTML = `
+          <img 
+            src="${escapeHtml(avatarImgUrl)}" 
+            alt="${escapeHtml(name)}" 
+            class="profile-avatar"
+            width="88"
+            height="88"
+            loading="eager"
+            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+          >
+          <div class="profile-avatar-initials-fallback" style="display: none; width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
+            ${escapeHtml(getInitials(name))}
+          </div>
+          <span class="profile-badge-active" title="Available for projects" aria-hidden="true"></span>
+        `;
+      } else {
+        avatarWrap.innerHTML = `
+          <div style="width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
+            ${escapeHtml(getInitials(name))}
+          </div>
+          <span class="profile-badge-active" title="Available for projects" aria-hidden="true"></span>
+        `;
+      }
     }
 
     // Headers
@@ -313,9 +333,26 @@
       document.body.prepend(banner);
     }
 
-    // Monogram Initials
-    const initialsEl = document.querySelector('.profile-avatar-initials');
-    if (initialsEl) initialsEl.textContent = getInitials(name);
+    // Avatar / Photo or Monogram Initials
+    const avatarImgUrl = card.avatarUrl || card.avatar_url || card.profile_image_url || card.photo || card.image;
+    const avatarCircle = document.querySelector('.profile-avatar-circle');
+    if (avatarCircle) {
+      if (avatarImgUrl) {
+        avatarCircle.innerHTML = `
+          <img 
+            src="${escapeHtml(avatarImgUrl)}" 
+            alt="${escapeHtml(name)}" 
+            style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;"
+            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';"
+          >
+          <span class="profile-avatar-initials" style="display: none;">${escapeHtml(getInitials(name))}</span>
+        `;
+      } else {
+        avatarCircle.innerHTML = `
+          <span class="profile-avatar-initials">${escapeHtml(getInitials(name))}</span>
+        `;
+      }
+    }
 
     // Headers
     const nameEl = document.querySelector('.profile-name');
@@ -453,6 +490,9 @@
   }
 
   function ensureCorrectTemplate(card) {
+    if (!window.location.pathname.includes('/cards/')) {
+      return true;
+    }
     const design = card.cardDesign || card.card_design;
     const isEvergreen = design === 'Evergreen';
     const isDesign2 = window.location.pathname.includes('design-2');
@@ -500,10 +540,30 @@
   }
 
   async function init() {
+    // 0. Pre-hydrated Server Data Check (instant 0ms hydration for clean /c/[slug] URLs)
+    if (typeof window !== 'undefined' && window.__INITIAL_CARD__) {
+      const card = window.__INITIAL_CARD__;
+      const isDesign2 = window.location.pathname.includes('design-2') || card.cardDesign === 'Evergreen';
+      if (isDesign2) {
+        hydrateDesign2(card, false);
+      } else {
+        hydrateDesign1(card, false);
+      }
+      return;
+    }
+
     const params = new URLSearchParams(window.location.search);
-    const slug = params.get('slug');
     const custId = params.get('id');
     const isPreview = params.get('preview') === 'true';
+
+    // Support slug from query param OR path (/c/[slug])
+    let slug = params.get('slug');
+    if (!slug) {
+      const pathMatch = window.location.pathname.match(/\/c\/([^/?#]+)/i);
+      if (pathMatch) {
+        slug = decodeURIComponent(pathMatch[1]);
+      }
+    }
 
     // If no dynamic query parameters exist, do nothing (preserve static template preview)
     if (!slug && !custId) {

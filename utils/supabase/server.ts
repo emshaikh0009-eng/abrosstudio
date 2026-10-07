@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -28,3 +29,14 @@ export const createClient = (cookieStore: Awaited<ReturnType<typeof cookies>>) =
     }
   );
 };
+
+// Pure anonymous Supabase client with zero session/cookie state for public digital business card queries
+export const createAnonymousClient = () => {
+  return createSupabaseClient(supabaseUrl!, supabaseKey!, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+};
+

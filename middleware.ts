@@ -5,10 +5,12 @@ import { createServerClient } from "@supabase/ssr";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Never intercept static files, admin panel, cards, or assets
+  // Never intercept static files, admin panel, cards, assets, or public customer card endpoints
   if (
     pathname.startsWith("/admin") ||
     pathname.startsWith("/cards") ||
+    pathname.startsWith("/c/") ||
+    pathname.startsWith("/api/cards") ||
     pathname.startsWith("/assets") ||
     pathname.includes(".")
   ) {

@@ -85,7 +85,15 @@ export async function POST(request: Request) {
       ? body.is_active
       : body.status !== "inactive";
 
-    const newRecord = {
+    const avatarUrl = typeof body.avatar_url === "string" 
+      ? body.avatar_url.trim()
+      : typeof body.avatarUrl === "string" 
+        ? body.avatarUrl.trim() 
+        : typeof body.profile_image_url === "string"
+          ? body.profile_image_url.trim()
+          : null;
+
+    const newRecord: Record<string, any> = {
       full_name: fullName,
       designation: designation || null,
       company_name: companyName || null,
@@ -101,6 +109,10 @@ export async function POST(request: Request) {
       profile_slug: profileSlug || null,
       is_active: isActive,
     };
+
+    if (avatarUrl) {
+      newRecord.avatar_url = avatarUrl;
+    }
 
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
@@ -121,19 +133,31 @@ export async function POST(request: Request) {
       }
     }
 
-    const { data, error } = await supabase
+    let insertRes = await supabase
       .from("customers")
       .insert([newRecord])
       .select()
       .single();
 
-    if (error) {
-      console.error("POST /api/admin/customers error:", error.message);
+    // If avatar_url column does not yet exist in the DB schema, safely fallback without it
+    if (insertRes.error && insertRes.error.message.includes("avatar_url")) {
+      delete newRecord.avatar_url;
+      insertRes = await supabase
+        .from("customers")
+        .insert([newRecord])
+        .select()
+        .single();
+    }
+
+    if (insertRes.error) {
+      console.error("POST /api/admin/customers error:", insertRes.error.message);
       return NextResponse.json(
         { error: "Failed to create customer record." },
         { status: 500 }
       );
     }
+
+    const data = insertRes.data;
 
     return NextResponse.json(
       {

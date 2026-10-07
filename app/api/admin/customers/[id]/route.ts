@@ -95,6 +95,11 @@ export async function PATCH(
       }
     }
 
+    if (body.avatar_url !== undefined || body.avatarUrl !== undefined || body.profile_image_url !== undefined || body.photo !== undefined) {
+      const imgVal = body.avatar_url || body.avatarUrl || body.profile_image_url || body.photo;
+      updates.avatar_url = typeof imgVal === 'string' && imgVal.trim() ? imgVal.trim() : null;
+    }
+
     if (body.is_active !== undefined) {
       updates.is_active = Boolean(body.is_active);
     } else if (body.status !== undefined) {
@@ -130,20 +135,33 @@ export async function PATCH(
 
     updates.updated_at = new Date().toISOString();
 
-    const { data, error } = await supabase
+    let updateRes = await supabase
       .from("customers")
       .update(updates)
       .eq("id", id)
       .select()
       .maybeSingle();
 
-    if (error) {
-      console.error("PATCH /api/admin/customers/[id] error:", error.message);
+    // If avatar_url column does not yet exist in the DB schema, safely fallback without it
+    if (updateRes.error && updateRes.error.message.includes("avatar_url")) {
+      delete updates.avatar_url;
+      updateRes = await supabase
+        .from("customers")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .maybeSingle();
+    }
+
+    if (updateRes.error) {
+      console.error("PATCH /api/admin/customers/[id] error:", updateRes.error.message);
       return NextResponse.json(
         { error: "Failed to update customer record." },
         { status: 500 }
       );
     }
+
+    const data = updateRes.data;
 
     if (!data) {
       return NextResponse.json(
@@ -224,6 +242,7 @@ export async function GET(
         socialLinkedIn: data.linkedin_url || "",
         cardDesign: data.card_design === "Evergreen" ? "Evergreen" : "Mint Haven",
         profileSlug: data.profile_slug,
+        avatarUrl: data.avatar_url || data.profile_image_url || "",
       },
     });
   } catch (err: any) {

@@ -1,5 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
+import { createAnonymousClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -17,13 +16,25 @@ export async function GET(
       );
     }
 
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    // Pure anonymous client: does not depend on admin session or client cookies
+    const supabase = createAnonymousClient();
 
-    // Call the hardened SECURITY DEFINER RPC
-    const { data, error } = await supabase.rpc("get_public_card", {
+    // 1. Exact slug match
+    let { data, error } = await supabase.rpc("get_public_card", {
       p_slug: sanitizedSlug,
     });
+
+    // 2. Safe alias fallback for Ambros Studio brand card (ambros <-> ambros-studio)
+    if ((!data || data.length === 0) && (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio")) {
+      const aliasSlug = sanitizedSlug === "ambros" ? "ambros-studio" : "ambros";
+      const fallbackRes = await supabase.rpc("get_public_card", {
+        p_slug: aliasSlug,
+      });
+      if (fallbackRes.data && fallbackRes.data.length > 0) {
+        data = fallbackRes.data;
+        error = null;
+      }
+    }
 
     if (error) {
       console.error("GET /api/cards/[slug] RPC error:", error.message);
@@ -58,6 +69,7 @@ export async function GET(
         socialLinkedIn: card.linkedin_url || "",
         cardDesign: card.card_design === "Evergreen" ? "Evergreen" : "Mint Haven",
         profileSlug: card.profile_slug,
+        avatarUrl: card.avatar_url || card.profile_image_url || "",
       },
     });
   } catch (err: any) {
@@ -68,3 +80,4 @@ export async function GET(
     );
   }
 }
+

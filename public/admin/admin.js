@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------
   let customers = [];
   let isLoadingCustomers = false;
+  let currentUploadedAvatar = null;
 
   function mapDbCustomerToUi(c) {
     const name = c.full_name || '';
@@ -51,7 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
       design: isEvergreen ? 'Evergreen' : 'Mint Haven',
       status: isActive ? 'active' : 'inactive',
       is_active: isActive,
-      profileLink: `ambros.studio/${slug}`,
+      avatarUrl: c.avatar_url || c.profile_image_url || c.photo_url || '',
+      publicUrl: `/c/${slug}`,
+      profileLink: `https://www.ambrosstudio.space/c/${slug}`,
       profileSlug: slug,
       createdDate: formattedDate,
       cardUrl: isEvergreen
@@ -297,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.innerHTML = `
         <td>
           <div class="customer-cell">
-            <div class="customer-avatar-init">${escapeHtml(c.initials)}</div>
+            <div class="customer-avatar-init">${c.avatarUrl ? `<img src="${escapeHtml(c.avatarUrl)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="${escapeHtml(c.name)}">` : escapeHtml(c.initials)}</div>
             <div class="customer-meta">
               <span class="customer-name">${escapeHtml(c.name)}</span>
               <span class="customer-role">${escapeHtml(c.role || '—')}</span>
@@ -321,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </td>
         <td>
           <div class="table-actions">
-            <a href="${cardHref}" target="_blank" class="btn btn-white btn-sm">View Profile</a>
+            <a href="/c/${encodeURIComponent(slug)}" target="_blank" class="btn btn-white btn-sm" title="Open customer public card">View Profile</a>
             <button type="button" class="btn btn-white btn-sm btn-edit-customer" data-id="${c.id}">Edit</button>
           </div>
         </td>
@@ -365,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.innerHTML = `
         <td>
           <div class="customer-cell">
-            <div class="customer-avatar-init">${escapeHtml(c.initials)}</div>
+            <div class="customer-avatar-init">${c.avatarUrl ? `<img src="${escapeHtml(c.avatarUrl)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="${escapeHtml(c.name)}">` : escapeHtml(c.initials)}</div>
             <div class="customer-meta">
               <span class="customer-name">${escapeHtml(c.name)}</span>
               <span class="customer-role">${escapeHtml(c.role || '—')}</span>
@@ -383,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${escapeHtml(c.createdDate)}</td>
         <td>
           <div class="table-actions">
-            <a href="${cardHref}" target="_blank" class="icon-action-btn" title="View Digital Card" aria-label="View ${escapeHtml(c.name)} profile">
+            <a href="/c/${encodeURIComponent(slug)}" target="_blank" class="icon-action-btn" title="View Customer Public Card" aria-label="View ${escapeHtml(c.name)} profile">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </a>
             <button type="button" class="icon-action-btn btn-edit-customer" data-id="${c.id}" title="Edit Customer" aria-label="Edit ${escapeHtml(c.name)}">
@@ -663,7 +666,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. Avatar Preview
     if (avatarUploadCircle) {
-      avatarUploadCircle.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #92400e;">${customer.initials}</span>`;
+      if (customer.avatarUrl) {
+        currentUploadedAvatar = customer.avatarUrl;
+        avatarUploadCircle.innerHTML = `<img src="${escapeHtml(customer.avatarUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Customer Avatar">`;
+      } else {
+        currentUploadedAvatar = null;
+        avatarUploadCircle.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #92400e;">${customer.initials}</span>`;
+      }
     }
 
     // 7. Open the Form Tab
@@ -699,12 +708,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (custInstagram) custInstagram.value = '';
     if (custLinkedIn) custLinkedIn.value = '';
 
+    // Clear avatar
+    currentUploadedAvatar = null;
+    if (avatarUploadCircle) {
+      avatarUploadCircle.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>`;
+    }
+    const photoFileInputEl = document.getElementById('photoFileInput');
+    if (photoFileInputEl) photoFileInputEl.value = '';
+
     // Default design
     selectedDesign = "Mint Haven";
     setDesignSelection("Mint Haven");
 
     if (custProfileLink) {
-      custProfileLink.textContent = 'ambros.studio/rahul-mehta';
+      custProfileLink.textContent = 'ambrosstudio.space/c/rahul-mehta';
     }
 
     const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
@@ -761,9 +778,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const val = custFullName.value.trim();
         if (val) {
           const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-          custProfileLink.textContent = `ambros.studio/${slug}`;
+          custProfileLink.textContent = `ambrosstudio.space/c/${slug}`;
         } else {
-          custProfileLink.textContent = 'ambros.studio/rahul-mehta';
+          custProfileLink.textContent = 'ambrosstudio.space/c/rahul-mehta';
         }
       }
     });
@@ -812,6 +829,7 @@ document.addEventListener('DOMContentLoaded', () => {
         design: selectedDesign,
         profileLink: `ambros.studio/${slug}`,
         profileSlug: slug,
+        avatar_url: currentUploadedAvatar,
       };
 
       isSubmittingCustomer = true;
@@ -897,14 +915,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     photoFileInput.addEventListener('change', function() {
       if (this.files && this.files[0]) {
+        const file = this.files[0];
+        if (file.size > 2 * 1024 * 1024) {
+          showAdminToast('Photo exceeds 2MB limit. Please choose a smaller image.');
+          return;
+        }
         const reader = new FileReader();
         reader.onload = function(evt) {
+          currentUploadedAvatar = evt.target.result;
           if (avatarUploadCircle) {
             avatarUploadCircle.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Uploaded Avatar">`;
           }
-          showAdminToast('Profile photo loaded for preview');
+          showAdminToast('Profile photo ready to save');
         };
-        reader.readAsDataURL(this.files[0]);
+        reader.readAsDataURL(file);
       }
     });
   }
