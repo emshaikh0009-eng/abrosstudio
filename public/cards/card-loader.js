@@ -33,6 +33,266 @@
     return url.startsWith('http://') || url.startsWith('https://') ? url : 'https://' + url;
   }
 
+  const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
+  function isValidHex(val) {
+    return typeof val === 'string' && HEX_COLOR_REGEX.test(val.trim());
+  }
+
+  const GOOGLE_FONT_MAP = {
+    'Inter': 'family=Inter:wght@400;500;600;700',
+    'Plus Jakarta Sans': 'family=Plus+Jakarta+Sans:wght@400;500;600;700;800',
+    'Poppins': 'family=Poppins:wght@400;500;600;700',
+    'Montserrat': 'family=Montserrat:wght@400;500;600;700',
+    'DM Sans': 'family=DM+Sans:wght@400;500;700',
+    'Playfair Display': 'family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600'
+  };
+
+  function loadGoogleFont(fontName) {
+    const query = GOOGLE_FONT_MAP[fontName];
+    if (!query) return;
+    const linkId = `google-font-${fontName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    if (document.getElementById(linkId)) return;
+
+    const link = document.createElement('link');
+    link.id = linkId;
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?${query}&display=swap`;
+    document.head.appendChild(link);
+  }
+
+  function applyCustomAppearance(appearance) {
+    if (!appearance || typeof appearance !== 'object') return;
+
+    if (appearance.primaryColor && isValidHex(appearance.primaryColor)) {
+      document.documentElement.style.setProperty('--card-primary', appearance.primaryColor.trim());
+    }
+    if (appearance.backgroundColor && isValidHex(appearance.backgroundColor)) {
+      document.documentElement.style.setProperty('--card-background', appearance.backgroundColor.trim());
+    }
+    if (appearance.textColor && isValidHex(appearance.textColor)) {
+      document.documentElement.style.setProperty('--card-text', appearance.textColor.trim());
+    }
+
+    const font = typeof appearance.fontFamily === 'string' ? appearance.fontFamily.trim() : '';
+    if (font && font !== 'Template Default' && GOOGLE_FONT_MAP[font]) {
+      loadGoogleFont(font);
+      document.documentElement.style.setProperty('--card-font', `'${font}', system-ui, sans-serif`);
+    }
+  }
+
+  const ALLOWED_LINK_TYPES = [
+    'whatsapp',
+    'phone',
+    'email',
+    'website',
+    'instagram',
+    'facebook',
+    'linkedin',
+    'youtube',
+    'twitter',
+    'telegram',
+    'maps',
+    'custom'
+  ];
+
+  function formatLinkDestination(type, rawValue) {
+    if (!rawValue || typeof rawValue !== 'string') return null;
+    const val = rawValue.trim();
+    if (!val) return null;
+
+    const lower = val.toLowerCase().replace(/[\x00-\x20]/g, '');
+    if (
+      lower.startsWith('javascript:') ||
+      lower.startsWith('data:') ||
+      lower.startsWith('vbscript:') ||
+      lower.startsWith('file:') ||
+      lower.startsWith('blob:')
+    ) {
+      return null;
+    }
+
+    switch (type) {
+      case 'whatsapp': {
+        if (val.startsWith('https://wa.me/') || val.startsWith('http://wa.me/')) {
+          return val.replace('http://', 'https://');
+        }
+        const digits = val.replace(/\D/g, '');
+        return digits ? `https://wa.me/${digits}` : null;
+      }
+      case 'phone': {
+        const cleaned = val.replace(/[^0-9+]/g, '');
+        return cleaned ? `tel:${cleaned}` : null;
+      }
+      case 'email': {
+        const email = val.replace(/^mailto:/i, '').trim();
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? `mailto:${email}` : null;
+      }
+      case 'maps': {
+        if (val.startsWith('https://maps.google.com') || val.startsWith('https://goo.gl/maps') || val.startsWith('https://www.google.com/maps')) {
+          return val;
+        }
+        return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(val)}`;
+      }
+      case 'website':
+      case 'instagram':
+      case 'facebook':
+      case 'linkedin':
+      case 'youtube':
+      case 'twitter':
+      case 'telegram':
+      case 'custom':
+      default: {
+        let target = val;
+        if (!/^https?:\/\//i.test(target)) {
+          if (type === 'instagram' && !val.includes('/')) target = `https://instagram.com/${val.replace(/^@/, '')}`;
+          else if (type === 'twitter' && !val.includes('/')) target = `https://twitter.com/${val.replace(/^@/, '')}`;
+          else if (type === 'telegram' && !val.includes('/')) target = `https://t.me/${val.replace(/^@/, '')}`;
+          else target = `https://${val}`;
+        }
+        try {
+          const parsed = new URL(target);
+          if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+            return target;
+          }
+        } catch (_) {
+          return null;
+        }
+        return null;
+      }
+    }
+  }
+
+  function getDefaultLabel(type) {
+    const map = {
+      whatsapp: 'WhatsApp',
+      phone: 'Call',
+      email: 'Email',
+      website: 'Website',
+      instagram: 'Instagram',
+      facebook: 'Facebook',
+      linkedin: 'LinkedIn',
+      youtube: 'YouTube',
+      twitter: 'X / Twitter',
+      telegram: 'Telegram',
+      maps: 'Location / Maps',
+      custom: 'Link'
+    };
+    return map[type] || 'Link';
+  }
+
+  function getDisplayValue(type, rawVal, label) {
+    if (!rawVal) return label || '';
+    const val = rawVal.trim();
+    if (type === 'phone' || type === 'whatsapp') return val;
+    if (type === 'email') return val.replace(/^mailto:/i, '');
+    if (type === 'website' || type === 'custom') return val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    if (type === 'instagram') {
+      const match = val.match(/instagram\.com\/([^/?#]+)/i);
+      return match ? `@${match[1]}` : (val.startsWith('@') ? val : `@${val}`);
+    }
+    if (type === 'twitter') {
+      const match = val.match(/(?:twitter|x)\.com\/([^/?#]+)/i);
+      return match ? `@${match[1]}` : (val.startsWith('@') ? val : `@${val}`);
+    }
+    if (type === 'telegram') {
+      const match = val.match(/t\.me\/([^/?#]+)/i);
+      const identifier = match ? match[1] : val;
+      return identifier.replace(/^@/, '');
+    }
+    if (type === 'linkedin') {
+      const match = val.match(/linkedin\.com\/(?:in|company)\/([^/?#]+)/i);
+      return match ? match[1] : val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    }
+    if (type === 'youtube') {
+      const match = val.match(/youtube\.com\/(@[^/?#]+)/i);
+      return match ? match[1] : 'YouTube Channel';
+    }
+    if (type === 'maps') {
+      return val.startsWith('http') ? 'View on Google Maps' : val;
+    }
+    return val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+  }
+
+  function getLinkIconSvg(type, size) {
+    switch (type) {
+      case 'phone':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
+      case 'whatsapp':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>`;
+      case 'email':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>`;
+      case 'website':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
+      case 'instagram':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
+      case 'facebook':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>`;
+      case 'linkedin':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>`;
+      case 'youtube':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>`;
+      case 'twitter':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>`;
+      case 'telegram':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+      case 'maps':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+      case 'custom':
+      default:
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+    }
+  }
+
+  function getDesign1BadgeClass(type) {
+    switch (type) {
+      case 'phone':
+      case 'whatsapp':
+        return 'badge-green';
+      case 'linkedin':
+      case 'twitter':
+      case 'telegram':
+        return 'badge-blue';
+      case 'email':
+        return 'badge-yellow';
+      case 'website':
+      case 'facebook':
+      case 'maps':
+        return 'badge-purple';
+      case 'instagram':
+      case 'youtube':
+      case 'custom':
+      default:
+        return 'badge-peach';
+    }
+  }
+
+  function extractValidLinks(card) {
+    const rawLinks = (card.customSettings && Array.isArray(card.customSettings.links))
+      ? card.customSettings.links
+      : [];
+
+    return rawLinks
+      .map((link, originalIndex) => ({ link, originalIndex }))
+      .filter(({ link }) => {
+        if (!link || typeof link !== 'object') return false;
+        if (link.enabled === false) return false;
+        const type = typeof link.type === 'string' ? link.type.trim().toLowerCase() : '';
+        if (!ALLOWED_LINK_TYPES.includes(type)) return false;
+        const dest = formatLinkDestination(type, link.value);
+        return Boolean(dest);
+      })
+      .sort((a, b) => {
+        const orderA = typeof a.link.order === 'number' && !isNaN(a.link.order) ? a.link.order : a.originalIndex;
+        const orderB = typeof b.link.order === 'number' && !isNaN(b.link.order) ? b.link.order : b.originalIndex;
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        return a.originalIndex - b.originalIndex;
+      })
+      .map(({ link }) => link);
+  }
+
+
   function generateVCard(card) {
     const fn = card.fullName || card.full_name || card.name || 'Contact';
     const org = card.company || card.company_name || '';
@@ -58,6 +318,235 @@
     ].filter(Boolean);
 
     return lines.join('\r\n');
+  }
+
+  const SOCIAL_LINK_TYPES = new Set(['instagram', 'facebook', 'linkedin', 'youtube', 'twitter']);
+
+  function showCardToast(message) {
+    let toast = document.getElementById('cardToast');
+    let toastMsg = document.getElementById('cardToastMessage');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'cardToast';
+      toast.className = 'card-toast';
+      toast.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span id="cardToastMessage"></span>`;
+      document.body.appendChild(toast);
+      toastMsg = document.getElementById('cardToastMessage');
+    }
+    if (toastMsg) toastMsg.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  function getCanonicalCardUrl(card) {
+    const slug = card.profileSlug || '';
+    const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
+      ? window.location.origin
+      : 'https://www.ambrosstudio.space';
+    return slug ? `${origin}/c/${encodeURIComponent(slug)}` : window.location.href;
+  }
+
+  async function handleCardShare(card) {
+    const name = card.fullName || card.full_name || card.name || 'Digital Business Card';
+    const canonicalUrl = getCanonicalCardUrl(card);
+    const shareBtn = document.getElementById('shareCardBtn');
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${name} — Ambros Studio`,
+          text: `Connect with ${name}`,
+          url: canonicalUrl
+        });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+
+    // Fallback: Clipboard copy
+    try {
+      await navigator.clipboard.writeText(canonicalUrl);
+      showCardToast('Card link copied to clipboard!');
+      if (shareBtn) {
+        const originalHtml = shareBtn.innerHTML;
+        shareBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span style="color: #10b981; font-weight: 600;">Copied!</span>
+        `;
+        setTimeout(() => {
+          shareBtn.innerHTML = originalHtml;
+        }, 2500);
+      }
+    } catch (_) {
+      const input = document.createElement('input');
+      input.value = canonicalUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      showCardToast('Card link copied to clipboard!');
+    }
+  }
+
+  function generateQrCanvas(qr, cellSize = 8, margin = 4) {
+    const moduleCount = qr.getModuleCount();
+    const size = (moduleCount + margin * 2) * cellSize;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = '#000000';
+    for (let r = 0; r < moduleCount; r++) {
+      for (let c = 0; c < moduleCount; c++) {
+        if (qr.isDark(r, c)) {
+          ctx.fillRect((c + margin) * cellSize, (r + margin) * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+    return canvas;
+  }
+
+  function openQrModal(card) {
+    const backdrop = document.getElementById('qrModalBackdrop');
+    if (!backdrop) return;
+
+    const name = card.fullName || card.full_name || card.name || 'Digital Card';
+    const slug = card.profileSlug || 'card';
+    const canonicalUrl = getCanonicalCardUrl(card);
+
+    const titleEl = document.getElementById('qrModalTitle');
+    if (titleEl) titleEl.textContent = name;
+
+    const urlTextEl = document.getElementById('qrModalUrlText');
+    if (urlTextEl) urlTextEl.textContent = canonicalUrl;
+
+    const container = document.getElementById('qrModalCanvasContainer');
+    if (container && typeof qrcode !== 'undefined') {
+      try {
+        const qr = qrcode(0, 'M');
+        qr.addData(canonicalUrl);
+        qr.make();
+        container.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2 });
+
+        // Download PNG
+        const pngBtn = document.getElementById('qrDownloadPngBtn');
+        if (pngBtn) {
+          pngBtn.onclick = function() {
+            try {
+              const canvas = generateQrCanvas(qr, 10, 4);
+              const a = document.createElement('a');
+              a.download = `${slug}-qr.png`;
+              a.href = canvas.toDataURL('image/png');
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              showCardToast('QR code downloaded (PNG)');
+            } catch (err) {
+              console.error('PNG download error:', err);
+            }
+          };
+        }
+
+        // Download SVG
+        const svgBtn = document.getElementById('qrDownloadSvgBtn');
+        if (svgBtn) {
+          svgBtn.onclick = function() {
+            try {
+              const svgData = qr.createSvgTag({ cellSize: 8, margin: 4 });
+              const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.download = `${slug}-qr.svg`;
+              a.href = url;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+              showCardToast('QR code downloaded (SVG)');
+            } catch (err) {
+              console.error('SVG download error:', err);
+            }
+          };
+        }
+      } catch (err) {
+        console.error('Error rendering QR code:', err);
+      }
+    }
+
+    // Copy Link button in modal
+    const copyBtn = document.getElementById('qrCopyLinkBtn');
+    if (copyBtn) {
+      copyBtn.onclick = function() {
+        navigator.clipboard.writeText(canonicalUrl).then(() => {
+          showCardToast('Card link copied to clipboard!');
+          const textEl = document.getElementById('qrCopyLinkText');
+          if (textEl) {
+            const orig = textEl.textContent;
+            textEl.textContent = 'Copied!';
+            setTimeout(() => { textEl.textContent = orig; }, 2000);
+          }
+        });
+      };
+    }
+
+    backdrop.classList.add('active');
+    backdrop.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeQrModal() {
+    const backdrop = document.getElementById('qrModalBackdrop');
+    if (backdrop) {
+      backdrop.classList.remove('active');
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function attachCardActions(card) {
+    attachVCardDownload(card);
+
+    const shareBtn = document.getElementById('shareCardBtn');
+    if (shareBtn) {
+      shareBtn.onclick = function(e) {
+        e.preventDefault();
+        handleCardShare(card);
+      };
+    }
+
+    const showQrBtn = document.getElementById('showQrBtn');
+    if (showQrBtn) {
+      showQrBtn.onclick = function(e) {
+        e.preventDefault();
+        openQrModal(card);
+      };
+    }
+
+    const closeBtn = document.getElementById('qrModalCloseBtn');
+    if (closeBtn) {
+      closeBtn.onclick = function() {
+        closeQrModal();
+      };
+    }
+
+    const backdrop = document.getElementById('qrModalBackdrop');
+    if (backdrop) {
+      backdrop.onclick = function(e) {
+        if (e.target === backdrop) {
+          closeQrModal();
+        }
+      };
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeQrModal();
+      }
+    });
   }
 
   function attachVCardDownload(card) {
@@ -120,6 +609,8 @@
   }
 
   function hydrateDesign1(card, isPreview) {
+    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
+
     const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
@@ -196,111 +687,187 @@
       bioEl.style.display = bio ? '' : 'none';
     }
 
-    // Contact Cards
-    const callCard = document.querySelector('.contact-card[href^="tel:"]');
-    if (callCard) {
-      if (phone) {
-        callCard.href = `tel:${phone.replace(/\s+/g, '')}`;
-        const valEl = callCard.querySelector('.contact-value');
-        if (valEl) valEl.textContent = phone;
-        callCard.style.display = '';
-      } else {
-        callCard.style.display = 'none';
+    // Custom Dynamic Links or Legacy Fallback (Get in touch vs Social)
+    const validLinks = extractValidLinks(card);
+    const hasCustomLinks = validLinks.length > 0;
+    const getInTouchSection = document.querySelector('.get-in-touch-section') || document.querySelector('.contact-list')?.closest('section');
+    const contactListEl = document.querySelector('.contact-list');
+    const socialSection = document.querySelector('.social-section') || document.querySelector('section[aria-label="Social media profiles"]');
+    const socialGridEl = document.querySelector('.social-grid');
+
+    if (hasCustomLinks) {
+      const contactLinks = validLinks.filter(l => !SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
+      const socialLinks = validLinks.filter(l => SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
+
+      // 1. Get in touch
+      if (contactListEl) {
+        contactListEl.innerHTML = '';
+        if (contactLinks.length > 0) {
+          contactLinks.forEach(link => {
+            const type = link.type.toLowerCase();
+            const dest = formatLinkDestination(type, link.value);
+            if (!dest) return;
+
+            const label = link.label || getDefaultLabel(type);
+            const displayVal = getDisplayValue(type, link.value, label);
+            const isExternal = type !== 'phone' && type !== 'email';
+            const badgeClass = getDesign1BadgeClass(type);
+            const svgIcon = getLinkIconSvg(type, 20);
+
+            const cardEl = document.createElement('a');
+            cardEl.href = dest;
+            cardEl.className = 'contact-card';
+            if (isExternal) {
+              cardEl.target = '_blank';
+              cardEl.rel = 'noopener noreferrer';
+            }
+            cardEl.setAttribute('aria-label', label);
+            cardEl.innerHTML = `
+              <div class="contact-card-left">
+                <div class="badge-icon ${badgeClass}" aria-hidden="true">
+                  ${svgIcon}
+                </div>
+                <div class="contact-info">
+                  <span class="contact-label">${escapeHtml(label)}</span>
+                  <span class="contact-value">${escapeHtml(displayVal)}</span>
+                </div>
+              </div>
+              <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            `;
+            contactListEl.appendChild(cardEl);
+          });
+          if (getInTouchSection) getInTouchSection.style.display = '';
+        } else {
+          if (getInTouchSection) getInTouchSection.style.display = 'none';
+        }
+      }
+
+      // 2. Social
+      if (socialGridEl) {
+        socialGridEl.innerHTML = '';
+        if (socialLinks.length > 0) {
+          socialLinks.forEach(link => {
+            const type = link.type.toLowerCase();
+            const dest = formatLinkDestination(type, link.value);
+            if (!dest) return;
+
+            const label = link.label || getDefaultLabel(type);
+            const badgeClass = getDesign1BadgeClass(type);
+            const svgIcon = getLinkIconSvg(type, 20);
+
+            const cardEl = document.createElement('a');
+            cardEl.href = dest;
+            cardEl.className = 'social-card';
+            cardEl.target = '_blank';
+            cardEl.rel = 'noopener noreferrer';
+            cardEl.setAttribute('aria-label', label);
+            cardEl.innerHTML = `
+              <div class="badge-icon ${badgeClass}" aria-hidden="true">
+                ${svgIcon}
+              </div>
+              <span class="social-label">${escapeHtml(label)}</span>
+            `;
+            socialGridEl.appendChild(cardEl);
+          });
+          if (socialSection) socialSection.style.display = '';
+        } else {
+          if (socialSection) socialSection.style.display = 'none';
+        }
+      }
+    } else {
+      // Existing fallback for legacy customers without custom links
+      let hasContact = false;
+      const callCard = document.querySelector('.contact-card[href^="tel:"]');
+      if (callCard) {
+        if (phone) {
+          callCard.href = `tel:${phone.replace(/\s+/g, '')}`;
+          const valEl = callCard.querySelector('.contact-value');
+          if (valEl) valEl.textContent = phone;
+          callCard.style.display = '';
+          hasContact = true;
+        } else {
+          callCard.style.display = 'none';
+        }
+      }
+
+      const waCard = document.querySelector('.contact-card[href*="wa.me"]');
+      if (waCard) {
+        if (whatsapp) {
+          const cleanWa = whatsapp.replace(/\D/g, '');
+          waCard.href = `https://wa.me/${cleanWa}`;
+          waCard.style.display = '';
+          hasContact = true;
+        } else {
+          waCard.style.display = 'none';
+        }
+      }
+
+      const emailCard = document.querySelector('.contact-card[href^="mailto:"]');
+      if (emailCard) {
+        if (email) {
+          emailCard.href = `mailto:${email}`;
+          const valEl = emailCard.querySelector('.contact-value');
+          if (valEl) valEl.textContent = email;
+          emailCard.style.display = '';
+          hasContact = true;
+        } else {
+          emailCard.style.display = 'none';
+        }
+      }
+
+      const webCard = document.querySelector('.contact-card[href*="lumenstudio.co"]');
+      if (webCard) {
+        if (website) {
+          webCard.href = normalizeUrl(website);
+          const valEl = webCard.querySelector('.contact-value');
+          if (valEl) valEl.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+          webCard.style.display = '';
+          hasContact = true;
+        } else {
+          webCard.style.display = 'none';
+        }
+      }
+
+      if (getInTouchSection) {
+        getInTouchSection.style.display = hasContact ? '' : 'none';
+      }
+
+      // Socials
+      let hasSocial = false;
+      const igLink = document.querySelector('.social-card[href*="instagram.com"]');
+      if (igLink) {
+        if (instagram) {
+          igLink.href = normalizeUrl(instagram);
+          igLink.style.display = '';
+          hasSocial = true;
+        } else {
+          igLink.style.display = 'none';
+        }
+      }
+
+      const inLink = document.querySelector('.social-card[href*="linkedin.com"]');
+      if (inLink) {
+        if (linkedin) {
+          inLink.href = normalizeUrl(linkedin);
+          inLink.style.display = '';
+          hasSocial = true;
+        } else {
+          inLink.style.display = 'none';
+        }
+      }
+
+      const fbLink = document.querySelector('.social-card[href*="facebook.com"]');
+      if (fbLink) fbLink.style.display = 'none';
+
+      if (socialSection) {
+        socialSection.style.display = hasSocial ? '' : 'none';
       }
     }
 
-    const waCard = document.querySelector('.contact-card[href*="wa.me"]');
-    if (waCard) {
-      if (whatsapp) {
-        const cleanWa = whatsapp.replace(/\D/g, '');
-        waCard.href = `https://wa.me/${cleanWa}`;
-        waCard.style.display = '';
-      } else {
-        waCard.style.display = 'none';
-      }
-    }
-
-    const emailCard = document.querySelector('.contact-card[href^="mailto:"]');
-    if (emailCard) {
-      if (email) {
-        emailCard.href = `mailto:${email}`;
-        const valEl = emailCard.querySelector('.contact-value');
-        if (valEl) valEl.textContent = email;
-        emailCard.style.display = '';
-      } else {
-        emailCard.style.display = 'none';
-      }
-    }
-
-    const webCard = document.querySelector('.contact-card[href*="lumenstudio.co"]');
-    if (webCard) {
-      if (website) {
-        webCard.href = normalizeUrl(website);
-        const valEl = webCard.querySelector('.contact-value');
-        if (valEl) valEl.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-        webCard.style.display = '';
-      } else {
-        webCard.style.display = 'none';
-      }
-    }
-
-    // Business Details section
-    const studioName = document.querySelector('.studio-name');
-    if (studioName) studioName.textContent = company || name;
-
-    const roleDetail = document.querySelector('.business-card .detail-group:nth-child(2) .detail-value');
-    if (roleDetail) roleDetail.textContent = role || '—';
-
-    const addressGroup = document.querySelector('.business-card address');
-    if (addressGroup) {
-      const parentGroup = addressGroup.closest('.detail-group');
-      if (address) {
-        addressGroup.innerHTML = escapeHtml(address).replace(/\n/g, '<br>');
-        if (parentGroup) parentGroup.style.display = '';
-      } else {
-        if (parentGroup) parentGroup.style.display = 'none';
-      }
-    }
-
-    const webDetail = document.querySelector('.business-card a.detail-link');
-    if (webDetail) {
-      const parentGroup = webDetail.closest('.detail-group');
-      if (website) {
-        webDetail.href = normalizeUrl(website);
-        webDetail.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-        if (parentGroup) parentGroup.style.display = '';
-      } else {
-        if (parentGroup) parentGroup.style.display = 'none';
-      }
-    }
-
-    // Socials
-    const igLink = document.querySelector('.social-card[href*="instagram.com"]');
-    if (igLink) {
-      if (instagram) {
-        igLink.href = normalizeUrl(instagram);
-        igLink.style.display = '';
-      } else {
-        igLink.style.display = 'none';
-      }
-    }
-
-    const inLink = document.querySelector('.social-card[href*="linkedin.com"]');
-    if (inLink) {
-      if (linkedin) {
-        inLink.href = normalizeUrl(linkedin);
-        inLink.style.display = '';
-      } else {
-        inLink.style.display = 'none';
-      }
-    }
-
-    // Hide Facebook by default as customer schema does not store Facebook
-    const fbLink = document.querySelector('.social-card[href*="facebook.com"]');
-    if (fbLink) fbLink.style.display = 'none';
-
-    // Hook vCard
-    attachVCardDownload(card);
+    // Hook card actions (Save Contact, Share, QR Code)
+    attachCardActions(card);
 
     // Dismiss loading state and skeleton
     document.documentElement.classList.remove('card-loading');
@@ -309,6 +876,8 @@
   }
 
   function hydrateDesign2(card, isPreview) {
+    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
+
     const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
@@ -342,7 +911,8 @@
           <img 
             src="${escapeHtml(avatarImgUrl)}" 
             alt="${escapeHtml(name)}" 
-            style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;"
+            class="profile-avatar-img"
+            style="width: 100%; height: 100%; border-radius: 50%; object-fit: contain; padding: 8px; box-sizing: border-box; background: #ffffff; display: block;"
             onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';"
           >
           <span class="profile-avatar-initials" style="display: none;">${escapeHtml(getInitials(name))}</span>
@@ -376,112 +946,183 @@
       bioEl.style.display = bio ? '' : 'none';
     }
 
-    // Contact Rows
-    const callRow = document.querySelector('.contact-row[href^="tel:"]');
-    if (callRow) {
-      if (phone) {
-        callRow.href = `tel:${phone.replace(/\s+/g, '')}`;
-        const mainEl = callRow.querySelector('.contact-main');
-        if (mainEl) mainEl.textContent = phone;
-        callRow.style.display = '';
-      } else {
-        callRow.style.display = 'none';
-      }
-    }
+    // Custom Dynamic Links or Legacy Fallback (Get in touch vs Social)
+    const validLinks = extractValidLinks(card);
+    const hasCustomLinks = validLinks.length > 0;
+    const getInTouchSection = document.querySelector('.get-in-touch-section') || document.querySelector('section[aria-label="Get in touch options"]');
+    const contactListEl = document.querySelector('.contact-list');
+    const socialSection = document.querySelector('.social-section') || document.querySelector('section[aria-label="Social media profiles"]');
+    const followBoxEl = document.querySelector('.follow-box');
 
-    const waRow = document.querySelector('.contact-row[href*="wa.me"]');
-    if (waRow) {
-      if (whatsapp) {
-        const cleanWa = whatsapp.replace(/\D/g, '');
-        waRow.href = `https://wa.me/${cleanWa}`;
-        waRow.style.display = '';
-      } else {
-        waRow.style.display = 'none';
-      }
-    }
+    if (hasCustomLinks) {
+      const contactLinks = validLinks.filter(l => !SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
+      const socialLinks = validLinks.filter(l => SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
 
-    const emailRow = document.querySelector('.contact-row[href^="mailto:"]');
-    if (emailRow) {
-      if (email) {
-        emailRow.href = `mailto:${email}`;
-        const mainEl = emailRow.querySelector('.contact-main');
-        if (mainEl) mainEl.textContent = email;
-        emailRow.style.display = '';
-      } else {
-        emailRow.style.display = 'none';
-      }
-    }
+      // 1. Get in touch
+      if (contactListEl) {
+        contactListEl.innerHTML = '';
+        if (contactLinks.length > 0) {
+          contactLinks.forEach(link => {
+            const type = link.type.toLowerCase();
+            const dest = formatLinkDestination(type, link.value);
+            if (!dest) return;
 
-    const webRow = document.querySelector('.contact-row[href*="desaipartners.in"]');
-    if (webRow) {
-      if (website) {
-        webRow.href = normalizeUrl(website);
-        const mainEl = webRow.querySelector('.contact-main');
-        if (mainEl) mainEl.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-        webRow.style.display = '';
-      } else {
-        webRow.style.display = 'none';
-      }
-    }
+            const label = link.label || getDefaultLabel(type);
+            const displayVal = getDisplayValue(type, link.value, label);
+            const isExternal = type !== 'phone' && type !== 'email';
+            const svgIcon = getLinkIconSvg(type, 18);
 
-    // Business Table
-    const companyVal = document.querySelector('.business-row:nth-child(1) .business-val');
-    if (companyVal) companyVal.textContent = company || name;
-
-    const roleVal = document.querySelector('.business-row:nth-child(2) .business-val');
-    if (roleVal) roleVal.textContent = role || '—';
-
-    const addrRow = document.querySelector('.business-row:nth-child(3)');
-    if (addrRow) {
-      const addrVal = addrRow.querySelector('address');
-      if (address) {
-        if (addrVal) addrVal.innerHTML = escapeHtml(address).replace(/\n/g, '<br>');
-        addrRow.style.display = '';
-      } else {
-        addrRow.style.display = 'none';
-      }
-    }
-
-    const webRowB = document.querySelector('.business-row:nth-child(4)');
-    if (webRowB) {
-      const webLink = webRowB.querySelector('a');
-      if (website) {
-        if (webLink) {
-          webLink.href = normalizeUrl(website);
-          webLink.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+            const rowEl = document.createElement('a');
+            rowEl.href = dest;
+            rowEl.className = 'contact-row';
+            if (isExternal) {
+              rowEl.target = '_blank';
+              rowEl.rel = 'noopener noreferrer';
+            }
+            rowEl.setAttribute('aria-label', label);
+            rowEl.innerHTML = `
+              <div class="contact-row-left">
+                <div class="icon-circle" aria-hidden="true">
+                  ${svgIcon}
+                </div>
+                <div class="contact-meta">
+                  <span class="contact-sub">${escapeHtml(label)}</span>
+                  <span class="contact-main">${escapeHtml(displayVal)}</span>
+                </div>
+              </div>
+              <svg class="row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            `;
+            contactListEl.appendChild(rowEl);
+          });
+          if (getInTouchSection) getInTouchSection.style.display = '';
+        } else {
+          if (getInTouchSection) getInTouchSection.style.display = 'none';
         }
-        webRowB.style.display = '';
-      } else {
-        webRowB.style.display = 'none';
+      }
+
+      // 2. Social
+      if (followBoxEl) {
+        followBoxEl.innerHTML = '';
+        if (socialLinks.length > 0) {
+          socialLinks.forEach(link => {
+            const type = link.type.toLowerCase();
+            const dest = formatLinkDestination(type, link.value);
+            if (!dest) return;
+
+            const label = link.label || getDefaultLabel(type);
+            const svgIcon = getLinkIconSvg(type, 20);
+
+            const rowEl = document.createElement('a');
+            rowEl.href = dest;
+            rowEl.className = 'follow-item';
+            rowEl.target = '_blank';
+            rowEl.rel = 'noopener noreferrer';
+            rowEl.setAttribute('aria-label', label);
+            rowEl.innerHTML = `
+              ${svgIcon}
+              <span class="follow-item-label">${escapeHtml(label)}</span>
+            `;
+            followBoxEl.appendChild(rowEl);
+          });
+          if (socialSection) socialSection.style.display = '';
+        } else {
+          if (socialSection) socialSection.style.display = 'none';
+        }
+      }
+    } else {
+      // Existing fallback for legacy customers without custom links
+      let hasContact = false;
+      const callRow = document.querySelector('.contact-row[href^="tel:"]');
+      if (callRow) {
+        if (phone) {
+          callRow.href = `tel:${phone.replace(/\s+/g, '')}`;
+          const mainEl = callRow.querySelector('.contact-main');
+          if (mainEl) mainEl.textContent = phone;
+          callRow.style.display = '';
+          hasContact = true;
+        } else {
+          callRow.style.display = 'none';
+        }
+      }
+
+      const waRow = document.querySelector('.contact-row[href*="wa.me"]');
+      if (waRow) {
+        if (whatsapp) {
+          const cleanWa = whatsapp.replace(/\D/g, '');
+          waRow.href = `https://wa.me/${cleanWa}`;
+          waRow.style.display = '';
+          hasContact = true;
+        } else {
+          waRow.style.display = 'none';
+        }
+      }
+
+      const emailRow = document.querySelector('.contact-row[href^="mailto:"]');
+      if (emailRow) {
+        if (email) {
+          emailRow.href = `mailto:${email}`;
+          const mainEl = emailRow.querySelector('.contact-main');
+          if (mainEl) mainEl.textContent = email;
+          emailRow.style.display = '';
+          hasContact = true;
+        } else {
+          emailRow.style.display = 'none';
+        }
+      }
+
+      const webRow = document.querySelector('.contact-row[href*="desaipartners.in"]');
+      if (webRow) {
+        if (website) {
+          webRow.href = normalizeUrl(website);
+          const mainEl = webRow.querySelector('.contact-main');
+          if (mainEl) mainEl.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+          webRow.style.display = '';
+          hasContact = true;
+        } else {
+          webRow.style.display = 'none';
+        }
+      }
+
+      if (getInTouchSection) {
+        getInTouchSection.style.display = hasContact ? '' : 'none';
+      }
+
+      // Follow Links
+      let hasSocial = false;
+      const igFollow = document.querySelector('.follow-item[href*="instagram.com"]');
+      if (igFollow) {
+        if (instagram) {
+          igFollow.href = normalizeUrl(instagram);
+          igFollow.style.display = '';
+          hasSocial = true;
+        } else {
+          igFollow.style.display = 'none';
+        }
+      }
+
+      const inFollow = document.querySelector('.follow-item[href*="linkedin.com"]');
+      if (inFollow) {
+        if (linkedin) {
+          inFollow.href = normalizeUrl(linkedin);
+          inFollow.style.display = '';
+          hasSocial = true;
+        } else {
+          inFollow.style.display = 'none';
+        }
+      }
+
+      const fbFollow = document.querySelector('.follow-item[href*="facebook.com"]');
+      if (fbFollow) fbFollow.style.display = 'none';
+
+      if (socialSection) {
+        socialSection.style.display = hasSocial ? '' : 'none';
       }
     }
 
-    // Follow Links
-    const igFollow = document.querySelector('.follow-item[href*="instagram.com"]');
-    if (igFollow) {
-      if (instagram) {
-        igFollow.href = normalizeUrl(instagram);
-        igFollow.style.display = '';
-      } else {
-        igFollow.style.display = 'none';
-      }
-    }
-
-    const inFollow = document.querySelector('.follow-item[href*="linkedin.com"]');
-    if (inFollow) {
-      if (linkedin) {
-        inFollow.href = normalizeUrl(linkedin);
-        inFollow.style.display = '';
-      } else {
-        inFollow.style.display = 'none';
-      }
-    }
-
-    const fbFollow = document.querySelector('.follow-item[href*="facebook.com"]');
-    if (fbFollow) fbFollow.style.display = 'none';
-
-    // Hook vCard
-    attachVCardDownload(card);
+    // Hook card actions (Save Contact, Share, QR Code)
+    attachCardActions(card);
 
     // Dismiss loading state and skeleton
     document.documentElement.classList.remove('card-loading');

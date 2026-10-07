@@ -924,6 +924,19 @@ input:checked + .switch-slider::before {
   border-color: var(--gold);
 }
 
+.avatar-upload-circle img,
+#custAvatarSyncPreview img,
+.customer-avatar-init img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 50%;
+  display: block;
+}
+
 .avatar-upload-info {
   display: flex;
   flex-direction: column;
@@ -1722,4 +1735,319 @@ input:checked + .switch-slider::before {
     padding: 28px 20px;
   }
 }
+
+/* ==========================================================================
+   Phase 2: Card Customization & Link Manager Design System
+   ========================================================================== */
+.customization-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.customization-subheading {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-headline);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-color-control {
+  background: #fbfbfc;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.custom-color-control label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.custom-color-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-color-picker-bubble {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.custom-color-picker-bubble::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.custom-color-picker-bubble::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.custom-color-hex-text {
+  font-family: monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Custom Link Items List */
+.custom-link-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  gap: 12px;
+  transition: all 0.18s ease;
+}
+
+.custom-link-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.custom-link-card.disabled {
+  opacity: 0.6;
+  background-color: #f9fafb;
+}
+
+.link-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.link-type-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.link-type-badge.whatsapp { background-color: #dcfce7; color: #16a34a; }
+.link-type-badge.phone { background-color: #e0f2fe; color: #0284c7; }
+.link-type-badge.email { background-color: #fef9c3; color: #ca8a04; }
+.link-type-badge.website { background-color: #ede9fe; color: #7c3aed; }
+.link-type-badge.instagram { background-color: #fce7f3; color: #db2777; }
+.link-type-badge.linkedin { background-color: #e0e7ff; color: #4338ca; }
+.link-type-badge.facebook { background-color: #dbeafe; color: #1d4ed8; }
+.link-type-badge.youtube { background-color: #fee2e2; color: #dc2626; }
+.link-type-badge.twitter { background-color: #f4f4f5; color: #18181b; }
+.link-type-badge.telegram { background-color: #e0f2fe; color: #0369a1; }
+.link-type-badge.maps { background-color: #ecfdf5; color: #047857; }
+.link-type-badge.custom { background-color: #f3f4f6; color: #4b5563; }
+
+.link-card-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.link-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-headline);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-card-meta {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.link-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.link-btn-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.link-btn-icon:hover {
+  background: #f3f4f6;
+  color: var(--text-headline);
+  border-color: var(--border-light);
+}
+
+.link-btn-icon.delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+/* Modal Overlay for Add / Edit Link */
+.custom-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.custom-modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  animation: modalEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.custom-modal-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.custom-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-headline);
+}
+
+.custom-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.custom-modal-footer {
+  padding: 14px 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Toggle Switch & Custom Badge Styles
+   ========================================================================== */
+.switch-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 38px;
+  height: 22px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #e2e8f0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch-toggle input:checked + .switch-slider {
+  background-color: var(--gold);
+  border-color: #d99a10;
+}
+
+.switch-toggle input:checked + .switch-slider:before {
+  transform: translateX(16px);
+}
+
+.switch-toggle input:focus-visible + .switch-slider {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.link-type-badge span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 

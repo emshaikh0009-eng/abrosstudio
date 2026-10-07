@@ -53,6 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
       status: isActive ? 'active' : 'inactive',
       is_active: isActive,
       avatarUrl: c.avatar_url || c.profile_image_url || c.photo_url || '',
+      customSettings: c.custom_settings || c.customSettings || {
+        appearance: { primaryColor: '', backgroundColor: '', textColor: '', fontFamily: '' },
+        links: []
+      },
       publicUrl: `/c/${slug}`,
       profileLink: `https://www.ambrosstudio.space/c/${slug}`,
       profileSlug: slug,
@@ -610,6 +614,188 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------
+  // Client Delivery Section Controller (URL, QR, Copy, Open, Share)
+  // -------------------------------------------------------------
+  let currentDeliveryQr = null;
+
+  function generateAdminQrCanvas(qr, cellSize = 10, margin = 4) {
+    const moduleCount = qr.getModuleCount();
+    const size = (moduleCount + margin * 2) * cellSize;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = '#000000';
+    for (let r = 0; r < moduleCount; r++) {
+      for (let c = 0; c < moduleCount; c++) {
+        if (qr.isDark(r, c)) {
+          ctx.fillRect((c + margin) * cellSize, (r + margin) * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+    return canvas;
+  }
+
+  function updateClientDelivery(slug, name) {
+    const canonicalSlug = (slug || '').trim().toLowerCase();
+    const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
+      ? window.location.origin
+      : 'https://www.ambrosstudio.space';
+
+    const publicUrl = canonicalSlug
+      ? `${origin}/c/${encodeURIComponent(canonicalSlug)}`
+      : `${origin}/c/your-slug`;
+
+    const custProfileLink = document.getElementById('custProfileLink');
+    if (custProfileLink) {
+      custProfileLink.textContent = publicUrl;
+    }
+
+    const openCardBtn = document.getElementById('btnAdminOpenCard');
+    if (openCardBtn) {
+      openCardBtn.href = canonicalSlug ? `/c/${encodeURIComponent(canonicalSlug)}` : '#';
+      if (!canonicalSlug) {
+        openCardBtn.style.pointerEvents = 'none';
+        openCardBtn.style.opacity = '0.5';
+      } else {
+        openCardBtn.style.pointerEvents = '';
+        openCardBtn.style.opacity = '1';
+      }
+    }
+
+    const badge = document.getElementById('deliverySlugBadge');
+    if (badge) {
+      badge.textContent = canonicalSlug ? 'Active' : 'Draft';
+      badge.style.background = canonicalSlug ? '#ecfdf5' : '#f8fafc';
+      badge.style.color = canonicalSlug ? '#047857' : '#64748b';
+      badge.style.borderColor = canonicalSlug ? '#a7f3d0' : '#e2e8f0';
+    }
+
+    // Dynamic QR generation
+    const qrBox = document.getElementById('adminQrBox');
+    if (qrBox && typeof qrcode !== 'undefined') {
+      try {
+        const qr = qrcode(0, 'M');
+        qr.addData(publicUrl);
+        qr.make();
+        currentDeliveryQr = { qr, slug: canonicalSlug || 'client-card' };
+        qrBox.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 1 });
+      } catch (err) {
+        console.error('Error generating admin delivery QR:', err);
+      }
+    }
+  }
+
+  function setupClientDeliveryListeners() {
+    // Copy Link button
+    const btnCopy = document.getElementById('btnAdminCopyLink');
+    const btnCopyText = document.getElementById('btnAdminCopyLinkText');
+    if (btnCopy) {
+      btnCopy.onclick = async function(e) {
+        e.preventDefault();
+        const custProfileLink = document.getElementById('custProfileLink');
+        const urlToCopy = custProfileLink ? custProfileLink.textContent.trim() : '';
+        if (!urlToCopy) return;
+
+        try {
+          await navigator.clipboard.writeText(urlToCopy);
+          if (btnCopyText) {
+            const orig = btnCopyText.textContent;
+            btnCopyText.textContent = 'Copied!';
+            setTimeout(() => { btnCopyText.textContent = orig; }, 2000);
+          }
+          showAdminToast('Client delivery link copied to clipboard');
+        } catch (_) {
+          const input = document.createElement('input');
+          input.value = urlToCopy;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          showAdminToast('Client delivery link copied to clipboard');
+        }
+      };
+    }
+
+    // Share button
+    const btnShare = document.getElementById('btnAdminShareCard');
+    if (btnShare) {
+      btnShare.onclick = async function(e) {
+        e.preventDefault();
+        const custProfileLink = document.getElementById('custProfileLink');
+        const urlToShare = custProfileLink ? custProfileLink.textContent.trim() : '';
+        const name = (custFullName && custFullName.value) ? custFullName.value.trim() : 'Digital Business Card';
+
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: `${name} — Ambros Studio`,
+              text: `Digital business card for ${name}`,
+              url: urlToShare
+            });
+            return;
+          } catch (err) {
+            if (err && err.name === 'AbortError') return;
+          }
+        }
+
+        // Fallback to copy
+        try {
+          await navigator.clipboard.writeText(urlToShare);
+          showAdminToast('Client card link copied to clipboard');
+        } catch (_) {}
+      };
+    }
+
+    // Download QR PNG button
+    const btnDownloadPng = document.getElementById('btnAdminDownloadQrPng');
+    if (btnDownloadPng) {
+      btnDownloadPng.onclick = function(e) {
+        e.preventDefault();
+        if (!currentDeliveryQr) return;
+        try {
+          const canvas = generateAdminQrCanvas(currentDeliveryQr.qr, 12, 4);
+          const a = document.createElement('a');
+          a.download = `${currentDeliveryQr.slug}-qr.png`;
+          a.href = canvas.toDataURL('image/png');
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showAdminToast('Production QR downloaded (PNG)');
+        } catch (err) {
+          console.error('Error downloading PNG:', err);
+        }
+      };
+    }
+
+    // Download QR SVG button
+    const btnDownloadSvg = document.getElementById('btnAdminDownloadQrSvg');
+    if (btnDownloadSvg) {
+      btnDownloadSvg.onclick = function(e) {
+        e.preventDefault();
+        if (!currentDeliveryQr) return;
+        try {
+          const svgData = currentDeliveryQr.qr.createSvgTag({ cellSize: 8, margin: 4 });
+          const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.download = `${currentDeliveryQr.slug}-qr.svg`;
+          a.href = url;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showAdminToast('Production QR downloaded (SVG)');
+        } catch (err) {
+          console.error('Error downloading SVG:', err);
+        }
+      };
+    }
+  }
+
+  // -------------------------------------------------------------
   // Edit Customer Flow (In-Place Update)
   // -------------------------------------------------------------
   function openEditCustomer(custId) {
@@ -649,10 +835,8 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedDesign = customer.design;
     setDesignSelection(customer.design);
 
-    // 5. Keep exact profile link
-    if (custProfileLink) {
-      custProfileLink.textContent = customer.profileLink;
-    }
+    // 5. Client Delivery section update (URL, QR, Actions)
+    updateClientDelivery(customer.profileSlug, customer.name);
 
     // Update design template inspection link to preview this customer directly
     const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
@@ -668,14 +852,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (avatarUploadCircle) {
       if (customer.avatarUrl) {
         currentUploadedAvatar = customer.avatarUrl;
-        avatarUploadCircle.innerHTML = `<img src="${escapeHtml(customer.avatarUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Customer Avatar">`;
+        avatarUploadCircle.innerHTML = `<img src="${escapeHtml(customer.avatarUrl)}" style="width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box;background:#ffffff;border-radius:50%;" alt="Customer Avatar">`;
       } else {
         currentUploadedAvatar = null;
         avatarUploadCircle.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #92400e;">${customer.initials}</span>`;
       }
     }
 
-    // 7. Open the Form Tab
+    // 7. Card Customization: Appearance & Links
+    const customSettings = customer.customSettings || {};
+    const app = customSettings.appearance || {};
+    const isEvergreen = customer.design === 'Evergreen';
+    if (custPrimaryColor) {
+      custPrimaryColor.value = app.primaryColor || '';
+      custPrimaryColor.placeholder = isEvergreen ? '#1b3a2f' : '#10b981';
+    }
+    if (custPrimaryColorPicker) custPrimaryColorPicker.value = app.primaryColor || (isEvergreen ? '#1b3a2f' : '#10b981');
+    if (custBgColor) {
+      custBgColor.value = app.backgroundColor || '';
+      custBgColor.placeholder = isEvergreen ? '#ffffff' : '#faf6ee';
+    }
+    if (custBgColorPicker) custBgColorPicker.value = app.backgroundColor || (isEvergreen ? '#ffffff' : '#faf6ee');
+    if (custTextColor) {
+      custTextColor.value = app.textColor || '';
+      custTextColor.placeholder = isEvergreen ? '#111827' : '#1e293b';
+    }
+    if (custTextColorPicker) custTextColorPicker.value = app.textColor || (isEvergreen ? '#111827' : '#1e293b');
+    if (custFontFamily) custFontFamily.value = app.fontFamily || '';
+
+    currentCustomLinks = Array.isArray(customSettings.links) ? JSON.parse(JSON.stringify(customSettings.links)) : [];
+    if (typeof renderCustomLinks === 'function') renderCustomLinks();
+    if (typeof updateAvatarSyncPreview === 'function') updateAvatarSyncPreview(customer.avatarUrl, customer.initials);
+
+    // 8. Open the Form Tab
     navigateToTab('add-customer');
     showAdminToast(`Editing ${customer.name} (Existing Record)`);
   }
@@ -708,6 +917,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (custInstagram) custInstagram.value = '';
     if (custLinkedIn) custLinkedIn.value = '';
 
+    // Reset Customization
+    if (custPrimaryColor) {
+      custPrimaryColor.value = '';
+      custPrimaryColor.placeholder = '#10b981';
+    }
+    if (custPrimaryColorPicker) custPrimaryColorPicker.value = '#10b981';
+    if (custBgColor) {
+      custBgColor.value = '';
+      custBgColor.placeholder = '#faf6ee';
+    }
+    if (custBgColorPicker) custBgColorPicker.value = '#faf6ee';
+    if (custTextColor) {
+      custTextColor.value = '';
+      custTextColor.placeholder = '#1e293b';
+    }
+    if (custTextColorPicker) custTextColorPicker.value = '#1e293b';
+    if (custFontFamily) custFontFamily.value = '';
+    currentCustomLinks = [];
+    if (typeof renderCustomLinks === 'function') renderCustomLinks();
+    if (typeof updateAvatarSyncPreview === 'function') updateAvatarSyncPreview(null, 'AS');
+
     // Clear avatar
     currentUploadedAvatar = null;
     if (avatarUploadCircle) {
@@ -720,9 +950,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedDesign = "Mint Haven";
     setDesignSelection("Mint Haven");
 
-    if (custProfileLink) {
-      custProfileLink.textContent = 'ambrosstudio.space/c/rahul-mehta';
-    }
+    updateClientDelivery('', '');
 
     const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
     const previewChosenDesignText = document.getElementById('previewChosenDesignText');
@@ -758,30 +986,41 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedDesign = dName;
       setDesignSelection(dName);
 
+      const isEvergreen = dName === 'Evergreen';
+
+      // If custom color inputs are currently empty, update picker bubbles and placeholders to match the chosen template defaults
+      if (custPrimaryColor && !custPrimaryColor.value.trim() && custPrimaryColorPicker) {
+        custPrimaryColorPicker.value = isEvergreen ? '#1b3a2f' : '#10b981';
+        custPrimaryColor.placeholder = isEvergreen ? '#1b3a2f' : '#10b981';
+      }
+      if (custBgColor && !custBgColor.value.trim() && custBgColorPicker) {
+        custBgColorPicker.value = isEvergreen ? '#ffffff' : '#faf6ee';
+        custBgColor.placeholder = isEvergreen ? '#ffffff' : '#faf6ee';
+      }
+      if (custTextColor && !custTextColor.value.trim() && custTextColorPicker) {
+        custTextColorPicker.value = isEvergreen ? '#111827' : '#1e293b';
+        custTextColor.placeholder = isEvergreen ? '#111827' : '#1e293b';
+      }
+
       // If editing an existing customer, update preview button href to reflect chosen design
       if (currentEditingCustomerId) {
         const c = customers.find(item => String(item.id) === String(currentEditingCustomerId));
         const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
         if (c && btnPreviewChosenDesign) {
-          const isEvergreen = dName === 'Evergreen';
           btnPreviewChosenDesign.href = `/cards/${isEvergreen ? 'design-2' : 'design-1'}/index.html?slug=${encodeURIComponent(c.profileSlug || '')}&id=${encodeURIComponent(c.id)}&preview=true`;
         }
       }
     });
   });
 
-  // Profile link live update on Full Name typing (only in Create mode)
-  if (custFullName && custProfileLink) {
+  // Profile link and Client Delivery live update on Full Name typing (only in Create mode)
+  if (custFullName) {
     custFullName.addEventListener('input', () => {
-      // In create mode, dynamically update link from name
+      // In create mode, dynamically update link and QR from name
       if (!currentEditingCustomerId) {
         const val = custFullName.value.trim();
-        if (val) {
-          const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-          custProfileLink.textContent = `ambrosstudio.space/c/${slug}`;
-        } else {
-          custProfileLink.textContent = 'ambrosstudio.space/c/rahul-mehta';
-        }
+        const slug = val ? val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+        updateClientDelivery(slug, val);
       }
     });
   }
@@ -827,9 +1066,27 @@ document.addEventListener('DOMContentLoaded', () => {
         socialInstagram: instagram,
         socialLinkedIn: linkedIn,
         design: selectedDesign,
-        profileLink: `ambros.studio/${slug}`,
+        profileLink: `https://www.ambrosstudio.space/c/${slug}`,
         profileSlug: slug,
         avatar_url: currentUploadedAvatar,
+        custom_settings: {
+          appearance: {
+            primaryColor: custPrimaryColor ? custPrimaryColor.value.trim() : '',
+            backgroundColor: custBgColor ? custBgColor.value.trim() : '',
+            textColor: custTextColor ? custTextColor.value.trim() : '',
+            fontFamily: custFontFamily ? custFontFamily.value : '',
+          },
+          links: Array.isArray(currentCustomLinks)
+            ? currentCustomLinks.map((item, idx) => ({
+                id: item.id || `link_${Date.now()}_${idx}`,
+                type: item.type,
+                label: item.label,
+                value: item.value,
+                enabled: item.enabled !== false,
+                order: idx,
+              }))
+            : [],
+        },
       };
 
       isSubmittingCustomer = true;
@@ -924,12 +1181,372 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = function(evt) {
           currentUploadedAvatar = evt.target.result;
           if (avatarUploadCircle) {
-            avatarUploadCircle.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Uploaded Avatar">`;
+            avatarUploadCircle.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box;background:#ffffff;border-radius:50%;" alt="Uploaded Avatar">`;
+          }
+          if (custAvatarSyncPreview) {
+            custAvatarSyncPreview.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box;background:#ffffff;border-radius:50%;" alt="Uploaded Avatar">`;
+          }
+          if (custAvatarSyncStatus) {
+            custAvatarSyncStatus.textContent = 'New Photo Ready to Save';
           }
           showAdminToast('Profile photo ready to save');
         };
         reader.readAsDataURL(file);
       }
+    });
+  }
+
+  // =============================================================
+  // Phase 2: Card Customization & Dynamic Link Manager Controller
+  // =============================================================
+  const custPrimaryColor = document.getElementById('custPrimaryColor');
+  const custPrimaryColorPicker = document.getElementById('custPrimaryColorPicker');
+  const custBgColor = document.getElementById('custBgColor');
+  const custBgColorPicker = document.getElementById('custBgColorPicker');
+  const custTextColor = document.getElementById('custTextColor');
+  const custTextColorPicker = document.getElementById('custTextColorPicker');
+  const custFontFamily = document.getElementById('custFontFamily');
+  const btnResetCustomization = document.getElementById('btnResetCustomization');
+
+  const custAvatarSyncPreview = document.getElementById('custAvatarSyncPreview');
+  const custAvatarSyncStatus = document.getElementById('custAvatarSyncStatus');
+  const btnSyncChangeAvatar = document.getElementById('btnSyncChangeAvatar');
+
+  const customLinksContainer = document.getElementById('customLinksContainer');
+  const customLinksEmptyState = document.getElementById('customLinksEmptyState');
+  const btnOpenAddLinkModal = document.getElementById('btnOpenAddLinkModal');
+  const btnImportContactLinks = document.getElementById('btnImportContactLinks');
+
+  const linkEditorModal = document.getElementById('linkEditorModal');
+  const linkEditorTitle = document.getElementById('linkEditorTitle');
+  const linkEditorForm = document.getElementById('linkEditorForm');
+  const linkTypeSelect = document.getElementById('linkTypeSelect');
+  const linkLabelInput = document.getElementById('linkLabelInput');
+  const linkValueInput = document.getElementById('linkValueInput');
+  const linkValueLabel = document.getElementById('linkValueLabel');
+  const linkEnabledInput = document.getElementById('linkEnabledInput');
+  const btnCloseLinkModal = document.getElementById('btnCloseLinkModal');
+  const btnCancelLinkModal = document.getElementById('btnCancelLinkModal');
+  const btnSaveLinkModal = document.getElementById('btnSaveLinkModal');
+  const saveLinkModalText = document.getElementById('saveLinkModalText');
+
+  let currentCustomLinks = [];
+  let editingLinkIndex = -1;
+
+  const LINK_TYPE_METADATA = {
+    whatsapp: { name: 'WhatsApp', badgeClass: 'whatsapp', iconLetter: 'WA', defaultLabel: 'Chat on WhatsApp', placeholder: '+91 98250 41872' },
+    phone: { name: 'Phone Call', badgeClass: 'phone', iconLetter: 'TEL', defaultLabel: 'Call Directly', placeholder: '+91 98250 41872' },
+    email: { name: 'Email', badgeClass: 'email', iconLetter: 'EM', defaultLabel: 'Send an Email', placeholder: 'hello@company.com' },
+    website: { name: 'Website', badgeClass: 'website', iconLetter: 'WEB', defaultLabel: 'Visit Website', placeholder: 'https://company.com' },
+    instagram: { name: 'Instagram', badgeClass: 'instagram', iconLetter: 'IG', defaultLabel: 'Follow on Instagram', placeholder: 'https://instagram.com/username' },
+    linkedin: { name: 'LinkedIn', badgeClass: 'linkedin', iconLetter: 'IN', defaultLabel: 'Connect on LinkedIn', placeholder: 'https://linkedin.com/in/username' },
+    facebook: { name: 'Facebook', badgeClass: 'facebook', iconLetter: 'FB', defaultLabel: 'Facebook Profile', placeholder: 'https://facebook.com/username' },
+    youtube: { name: 'YouTube', badgeClass: 'youtube', iconLetter: 'YT', defaultLabel: 'Watch on YouTube', placeholder: 'https://youtube.com/@channel' },
+    twitter: { name: 'X / Twitter', badgeClass: 'twitter', iconLetter: 'X', defaultLabel: 'Follow on X', placeholder: 'https://x.com/username' },
+    telegram: { name: 'Telegram', badgeClass: 'telegram', iconLetter: 'TG', defaultLabel: 'Message on Telegram', placeholder: 'https://t.me/username' },
+    maps: { name: 'Google Maps', badgeClass: 'maps', iconLetter: 'MAP', defaultLabel: 'Get Directions', placeholder: 'https://maps.google.com/...' },
+    custom: { name: 'Custom Link', badgeClass: 'custom', iconLetter: 'LNK', defaultLabel: 'Custom Action', placeholder: 'https://...' },
+  };
+
+  // Color Pickers <-> Hex Inputs Two-Way Synchronization
+  function setupColorControl(pickerEl, textEl) {
+    if (!pickerEl || !textEl) return;
+    pickerEl.addEventListener('input', () => {
+      textEl.value = pickerEl.value;
+    });
+    textEl.addEventListener('input', () => {
+      let val = textEl.value.trim();
+      if (/^[0-9A-Fa-f]{3}$|^[0-9A-Fa-f]{6}$/.test(val)) {
+        val = '#' + val;
+        textEl.value = val;
+      }
+      if (/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(val)) {
+        if (val.length === 4) {
+          pickerEl.value = '#' + val[1] + val[1] + val[2] + val[2] + val[3] + val[3];
+        } else {
+          pickerEl.value = val;
+        }
+      }
+    });
+  }
+
+  setupColorControl(custPrimaryColorPicker, custPrimaryColor);
+  setupColorControl(custBgColorPicker, custBgColor);
+  setupColorControl(custTextColorPicker, custTextColor);
+
+  // Reset Customization Defaults
+  if (btnResetCustomization) {
+    btnResetCustomization.addEventListener('click', () => {
+      if (custPrimaryColor) custPrimaryColor.value = '';
+      if (custBgColor) custBgColor.value = '';
+      if (custTextColor) custTextColor.value = '';
+      if (custPrimaryColorPicker) custPrimaryColorPicker.value = selectedDesign === 'Evergreen' ? '#1b3a2f' : '#10b981';
+      if (custBgColorPicker) custBgColorPicker.value = selectedDesign === 'Evergreen' ? '#ffffff' : '#faf6ee';
+      if (custTextColorPicker) custTextColorPicker.value = selectedDesign === 'Evergreen' ? '#111827' : '#1e293b';
+      if (custFontFamily) custFontFamily.value = '';
+      currentCustomLinks = [];
+      renderCustomLinks();
+      showAdminToast('Card customization reset to template defaults.');
+    });
+  }
+
+  // Profile Photo Sync trigger
+  if (btnSyncChangeAvatar && photoFileInput) {
+    btnSyncChangeAvatar.addEventListener('click', () => photoFileInput.click());
+  }
+
+  function updateAvatarSyncPreview(avatarUrl, initials) {
+    if (!custAvatarSyncPreview) return;
+    if (avatarUrl) {
+      custAvatarSyncPreview.innerHTML = `<img src="${escapeHtml(avatarUrl)}" style="width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box;background:#ffffff;border-radius:50%;" alt="Avatar">`;
+      if (custAvatarSyncStatus) custAvatarSyncStatus.textContent = 'Custom Photo Saved';
+    } else {
+      custAvatarSyncPreview.innerHTML = `<span style="font-size: 15px; font-weight: 700; color: #92400e;">${escapeHtml(initials || 'AS')}</span>`;
+      if (custAvatarSyncStatus) custAvatarSyncStatus.textContent = 'Using Generated Monogram';
+    }
+  }
+
+  // Render Custom Links in order
+  function renderCustomLinks() {
+    if (!customLinksContainer) return;
+    customLinksContainer.innerHTML = '';
+
+    if (!Array.isArray(currentCustomLinks) || currentCustomLinks.length === 0) {
+      if (customLinksEmptyState) customLinksEmptyState.style.display = 'block';
+      return;
+    }
+
+    if (customLinksEmptyState) customLinksEmptyState.style.display = 'none';
+
+    currentCustomLinks.forEach((link, idx) => {
+      const typeInfo = LINK_TYPE_METADATA[link.type] || LINK_TYPE_METADATA.custom;
+      const card = document.createElement('div');
+      card.className = `custom-link-card ${link.enabled ? '' : 'disabled'}`;
+      card.dataset.index = idx;
+
+      card.innerHTML = `
+        <div class="link-card-left">
+          <div class="link-type-badge ${typeInfo.badgeClass}" title="${typeInfo.name}">
+            <span>${typeInfo.iconLetter}</span>
+          </div>
+          <div class="link-card-info">
+            <div class="link-card-label">${escapeHtml(link.label || typeInfo.defaultLabel)}</div>
+            <div class="link-card-meta">
+              <span>${typeInfo.name}</span> &bull; <span style="font-family: monospace;">${escapeHtml(link.value || 'No URL')}</span>
+            </div>
+          </div>
+        </div>
+        <div class="link-card-actions">
+          <button type="button" class="link-btn-icon btn-move-up" title="Move Up" ${idx === 0 ? 'disabled style="opacity:0.3;cursor:not-allowed;"' : ''}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
+          </button>
+          <button type="button" class="link-btn-icon btn-move-down" title="Move Down" ${idx === currentCustomLinks.length - 1 ? 'disabled style="opacity:0.3;cursor:not-allowed;"' : ''}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <label class="switch-toggle" title="Toggle active status on card" style="margin: 0 4px;">
+            <input type="checkbox" class="link-toggle-checkbox" ${link.enabled ? 'checked' : ''}>
+            <span class="switch-slider"></span>
+          </label>
+          <button type="button" class="link-btn-icon btn-edit-link" title="Edit Link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          </button>
+          <button type="button" class="link-btn-icon delete btn-delete-link" title="Delete Link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      `;
+
+      // Event handlers
+      const btnUp = card.querySelector('.btn-move-up');
+      if (btnUp && idx > 0) {
+        btnUp.addEventListener('click', () => {
+          const temp = currentCustomLinks[idx];
+          currentCustomLinks[idx] = currentCustomLinks[idx - 1];
+          currentCustomLinks[idx - 1] = temp;
+          renderCustomLinks();
+        });
+      }
+
+      const btnDown = card.querySelector('.btn-move-down');
+      if (btnDown && idx < currentCustomLinks.length - 1) {
+        btnDown.addEventListener('click', () => {
+          const temp = currentCustomLinks[idx];
+          currentCustomLinks[idx] = currentCustomLinks[idx + 1];
+          currentCustomLinks[idx + 1] = temp;
+          renderCustomLinks();
+        });
+      }
+
+      const toggleCheckbox = card.querySelector('.link-toggle-checkbox');
+      if (toggleCheckbox) {
+        toggleCheckbox.addEventListener('change', (e) => {
+          currentCustomLinks[idx].enabled = e.target.checked;
+          card.classList.toggle('disabled', !e.target.checked);
+        });
+      }
+
+      const btnEdit = card.querySelector('.btn-edit-link');
+      if (btnEdit) {
+        btnEdit.addEventListener('click', () => {
+          openLinkModal(idx);
+        });
+      }
+
+      const btnDelete = card.querySelector('.btn-delete-link');
+      if (btnDelete) {
+        btnDelete.addEventListener('click', () => {
+          currentCustomLinks.splice(idx, 1);
+          renderCustomLinks();
+          showAdminToast('Link removed');
+        });
+      }
+
+      customLinksContainer.appendChild(card);
+    });
+  }
+
+  // Link Editor Modal open/close
+  function openLinkModal(index = -1) {
+    editingLinkIndex = index;
+    if (!linkEditorModal) return;
+
+    if (index >= 0 && currentCustomLinks[index]) {
+      const link = currentCustomLinks[index];
+      if (linkEditorTitle) linkEditorTitle.textContent = 'Edit Card Link';
+      if (saveLinkModalText) saveLinkModalText.textContent = 'Update Link';
+      if (linkTypeSelect) linkTypeSelect.value = link.type || 'custom';
+      if (linkLabelInput) linkLabelInput.value = link.label || '';
+      if (linkValueInput) linkValueInput.value = link.value || '';
+      if (linkEnabledInput) linkEnabledInput.checked = link.enabled !== false;
+    } else {
+      if (linkEditorTitle) linkEditorTitle.textContent = 'Add Card Link';
+      if (saveLinkModalText) saveLinkModalText.textContent = 'Save Link';
+      if (linkTypeSelect) linkTypeSelect.value = 'whatsapp';
+      const meta = LINK_TYPE_METADATA.whatsapp;
+      if (linkLabelInput) linkLabelInput.value = meta.defaultLabel;
+      if (linkValueInput) linkValueInput.value = custWhatsApp ? custWhatsApp.value : '';
+      if (linkEnabledInput) linkEnabledInput.checked = true;
+    }
+
+    updateLinkValuePlaceholder();
+    linkEditorModal.style.display = 'flex';
+    if (linkLabelInput) linkLabelInput.focus();
+  }
+
+  function closeLinkModal() {
+    if (linkEditorModal) linkEditorModal.style.display = 'none';
+    editingLinkIndex = -1;
+  }
+
+  function updateLinkValuePlaceholder() {
+    if (!linkTypeSelect) return;
+    const type = linkTypeSelect.value;
+    const meta = LINK_TYPE_METADATA[type] || LINK_TYPE_METADATA.custom;
+    if (linkValueLabel) linkValueLabel.textContent = type === 'phone' || type === 'whatsapp' ? 'Phone Number (+91...)' : 'Destination URL / Link';
+    if (linkValueInput) linkValueInput.placeholder = meta.placeholder;
+  }
+
+  if (linkTypeSelect) {
+    linkTypeSelect.addEventListener('change', () => {
+      const meta = LINK_TYPE_METADATA[linkTypeSelect.value] || LINK_TYPE_METADATA.custom;
+      if (linkLabelInput && !linkLabelInput.value.trim()) {
+        linkLabelInput.value = meta.defaultLabel;
+      }
+      updateLinkValuePlaceholder();
+    });
+  }
+
+  if (btnOpenAddLinkModal) {
+    btnOpenAddLinkModal.addEventListener('click', () => openLinkModal(-1));
+  }
+  if (btnCloseLinkModal) {
+    btnCloseLinkModal.addEventListener('click', closeLinkModal);
+  }
+  if (btnCancelLinkModal) {
+    btnCancelLinkModal.addEventListener('click', closeLinkModal);
+  }
+  if (linkEditorModal) {
+    linkEditorModal.addEventListener('click', (e) => {
+      if (e.target === linkEditorModal) {
+        closeLinkModal();
+      }
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && linkEditorModal && linkEditorModal.style.display === 'flex') {
+      closeLinkModal();
+    }
+  });
+
+  if (linkEditorForm) {
+    linkEditorForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const type = linkTypeSelect ? linkTypeSelect.value : 'custom';
+      const meta = LINK_TYPE_METADATA[type] || LINK_TYPE_METADATA.custom;
+      const label = linkLabelInput ? linkLabelInput.value.trim() : meta.defaultLabel;
+      const value = linkValueInput ? linkValueInput.value.trim() : '';
+      const enabled = linkEnabledInput ? linkEnabledInput.checked : true;
+
+      if (!value) {
+        showAdminToast('Please provide a URL or phone number.');
+        return;
+      }
+
+      if (editingLinkIndex >= 0 && currentCustomLinks[editingLinkIndex]) {
+        currentCustomLinks[editingLinkIndex] = {
+          ...currentCustomLinks[editingLinkIndex],
+          type,
+          label: label || meta.defaultLabel,
+          value,
+          enabled,
+        };
+        showAdminToast('Link updated');
+      } else {
+        currentCustomLinks.push({
+          id: `link_${Date.now()}_${currentCustomLinks.length}`,
+          type,
+          label: label || meta.defaultLabel,
+          value,
+          enabled,
+          order: currentCustomLinks.length,
+        });
+        showAdminToast('Link added');
+      }
+
+      closeLinkModal();
+      renderCustomLinks();
+    });
+  }
+
+  // Import Contact Links from form fields
+  if (btnImportContactLinks) {
+    btnImportContactLinks.addEventListener('click', () => {
+      const imports = [
+        { type: 'whatsapp', val: custWhatsApp ? custWhatsApp.value.trim() : '', label: 'Chat on WhatsApp' },
+        { type: 'phone', val: custPhone ? custPhone.value.trim() : '', label: 'Call Mobile' },
+        { type: 'email', val: custEmail ? custEmail.value.trim() : '', label: 'Send Email' },
+        { type: 'website', val: custWebsite ? custWebsite.value.trim() : '', label: 'Visit Website' },
+        { type: 'instagram', val: custInstagram ? custInstagram.value.trim() : '', label: 'Instagram Profile' },
+        { type: 'linkedin', val: custLinkedIn ? custLinkedIn.value.trim() : '', label: 'LinkedIn Profile' },
+      ];
+
+      let addedCount = 0;
+      imports.forEach(item => {
+        if (item.val && !currentCustomLinks.some(l => l.type === item.type)) {
+          currentCustomLinks.push({
+            id: `link_${Date.now()}_${currentCustomLinks.length}`,
+            type: item.type,
+            label: item.label,
+            value: item.val,
+            enabled: true,
+            order: currentCustomLinks.length,
+          });
+          addedCount++;
+        }
+      });
+
+      renderCustomLinks();
+      showAdminToast(addedCount > 0 ? `Imported ${addedCount} contact links` : 'All filled contact links are already present');
     });
   }
 
@@ -1201,6 +1818,10 @@ document.addEventListener('DOMContentLoaded', () => {
       showAdminToast('Signed out successfully.');
     });
   }
+
+  // Initialize Client Delivery section
+  setupClientDeliveryListeners();
+  updateClientDelivery('', '');
 
   // Run initial session check
   checkAdminSession();

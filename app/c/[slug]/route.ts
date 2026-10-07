@@ -161,6 +161,7 @@ export async function GET(
       cardDesign: isEvergreen ? "Evergreen" : "Mint Haven",
       profileSlug: rawCard.profile_slug || sanitizedSlug,
       avatarUrl: rawCard.avatar_url || rawCard.profile_image_url || "",
+      customSettings: rawCard.custom_settings || null,
       is_active: true,
     };
 
@@ -170,6 +171,7 @@ export async function GET(
 
     // Replace relative paths with absolute public paths so it loads cleanly under /c/[slug]
     html = html.replace(/href=["'](?:\.\/)?style\.css["']/g, `href="/cards/${targetTemplate}/style.css"`);
+    html = html.replace(/src=["'](?:\.\.\/|\.\/)?qrcode\.js["']/g, `src="/cards/qrcode.js"`);
     html = html.replace(/src=["'](?:\.\.\/|\.\/)?card-loader\.js["']/g, `src="/cards/card-loader.js"`);
 
     // Dynamic Title & Meta
@@ -182,9 +184,46 @@ export async function GET(
     // Injected Canonical URL pointing to permanent public /c/{slug} link
     const canonicalTag = `<link rel="canonical" href="https://www.ambrosstudio.space/c/${encodeURIComponent(cardData.profileSlug)}">`;
 
+    // Server-rendered theme styles & font link for 0ms paint
+    let customThemeTags = "";
+    const appearance = cardData.customSettings?.appearance;
+    if (appearance && typeof appearance === "object") {
+      const vars: string[] = [];
+      const HEX_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
+      if (appearance.primaryColor && HEX_REGEX.test(appearance.primaryColor.trim())) {
+        vars.push(`--card-primary: ${appearance.primaryColor.trim()};`);
+      }
+      if (appearance.backgroundColor && HEX_REGEX.test(appearance.backgroundColor.trim())) {
+        vars.push(`--card-background: ${appearance.backgroundColor.trim()};`);
+      }
+      if (appearance.textColor && HEX_REGEX.test(appearance.textColor.trim())) {
+        vars.push(`--card-text: ${appearance.textColor.trim()};`);
+      }
+
+      const FONT_MAP: Record<string, string> = {
+        "Inter": "family=Inter:wght@400;500;600;700",
+        "Plus Jakarta Sans": "family=Plus+Jakarta+Sans:wght@400;500;600;700;800",
+        "Poppins": "family=Poppins:wght@400;500;600;700",
+        "Montserrat": "family=Montserrat:wght@400;500;600;700",
+        "DM Sans": "family=DM+Sans:wght@400;500;700",
+        "Playfair Display": "family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600",
+      };
+
+      const font = typeof appearance.fontFamily === "string" ? appearance.fontFamily.trim() : "";
+      let fontLink = "";
+      if (font && FONT_MAP[font]) {
+        vars.push(`--card-font: '${font}', system-ui, sans-serif;`);
+        fontLink = `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?${FONT_MAP[font]}&display=swap">`;
+      }
+
+      if (vars.length > 0) {
+        customThemeTags = `\n  ${fontLink}\n  <style id="__CUSTOM_CARD_THEME__">:root { ${vars.join(" ")} }</style>`;
+      }
+    }
+
     // Embed pre-hydrated card data directly into the head so hydration is instantaneous with 0ms delay
     const initialDataScript = `
-  ${canonicalTag}
+  ${canonicalTag}${customThemeTags}
   <script id="__INITIAL_CARD_DATA__">
     window.__INITIAL_CARD__ = ${JSON.stringify(cardData)};
   </script>

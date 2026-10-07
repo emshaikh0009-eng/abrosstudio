@@ -498,6 +498,125 @@
                 </div>
               </div>
 
+              <!-- 4. Card Customization Section -->
+              <div class="form-card" id="cardCustomizationCard">
+                <div class="customization-section-title">
+                  <div>
+                    <h2 class="form-section-title">Card Customization</h2>
+                    <p class="form-section-sub">Personalize appearance, brand colors, typography, and interactive links.</p>
+                  </div>
+                  <button type="button" class="btn btn-white btn-sm" id="btnResetCustomization" title="Reset all customization to template defaults">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    <span>Reset Defaults</span>
+                  </button>
+                </div>
+
+                <!-- A) Appearance Sub-section -->
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
+                    Appearance &amp; Typography
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Override template color schemes and typography. Leave blank to inherit template defaults.</p>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 14px;">
+                    <!-- Primary Color -->
+                    <div class="custom-color-control">
+                      <label for="custPrimaryColor">Primary / Accent</label>
+                      <div class="custom-color-input-wrap">
+                        <input type="color" id="custPrimaryColorPicker" class="custom-color-picker-bubble" value="#10b981">
+                        <input type="text" id="custPrimaryColor" class="form-input custom-color-hex-text" placeholder="#10b981" maxlength="25">
+                      </div>
+                    </div>
+
+                    <!-- Background Color -->
+                    <div class="custom-color-control">
+                      <label for="custBgColor">Background</label>
+                      <div class="custom-color-input-wrap">
+                        <input type="color" id="custBgColorPicker" class="custom-color-picker-bubble" value="#faf6ee">
+                        <input type="text" id="custBgColor" class="form-input custom-color-hex-text" placeholder="#faf6ee" maxlength="25">
+                      </div>
+                    </div>
+
+                    <!-- Text Color -->
+                    <div class="custom-color-control">
+                      <label for="custTextColor">Text Color</label>
+                      <div class="custom-color-input-wrap">
+                        <input type="color" id="custTextColorPicker" class="custom-color-picker-bubble" value="#1e293b">
+                        <input type="text" id="custTextColor" class="form-input custom-color-hex-text" placeholder="#1e293b" maxlength="25">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Controlled Font Selector -->
+                  <div class="form-group" style="margin-bottom: 6px;">
+                    <label for="custFontFamily" class="form-label">Font Typography</label>
+                    <select id="custFontFamily" class="form-input" style="cursor: pointer;">
+                      <option value="">Template Default</option>
+                      <option value="Inter">Inter — Clean, Modern, Versatile</option>
+                      <option value="Plus Jakarta Sans">Plus Jakarta Sans — Geometric, Friendly</option>
+                      <option value="Poppins">Poppins — Modern Geometric</option>
+                      <option value="Montserrat">Montserrat — Premium Editorial</option>
+                      <option value="DM Sans">DM Sans — Elegant Minimalist</option>
+                      <option value="Playfair Display">Playfair Display — Luxury Serif</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- B) Profile Logo / Image Sub-section -->
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Profile Logo &amp; Photo
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 12px 14px; margin-top: 8px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <div id="custAvatarSyncPreview" style="width: 40px; height: 40px; border-radius: 50%; background: #fef3c7; color: #92400e; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; overflow: hidden; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                        AS
+                      </div>
+                      <div>
+                        <div style="font-size: 13px; font-weight: 600; color: var(--text-headline);" id="custAvatarSyncStatus">Synced with Customer Photo</div>
+                        <div style="font-size: 11.5px; color: var(--text-muted);">Saves directly to customer avatar_url</div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnSyncChangeAvatar">
+                      <span>Choose Photo</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- C) Links / Social Contacts Sub-section -->
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        Card Links &amp; Actions
+                      </div>
+                      <p style="font-size: 12px; color: var(--text-muted);">Reorder, enable/disable, or add custom interactive links.</p>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                      <button type="button" class="btn btn-white btn-sm" id="btnImportContactLinks" title="Generate link cards from filled contact fields above">
+                        <span>Import Contact Info</span>
+                      </button>
+                      <button type="button" class="btn btn-gold btn-sm" id="btnOpenAddLinkModal">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>+ Add Link</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Container for rendered links -->
+                  <div id="customLinksContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                    <!-- Dynamically rendered custom links -->
+                  </div>
+                  <div id="customLinksEmptyState" style="text-align: center; padding: 24px 16px; background: #fafafa; border: 1px dashed var(--border-light); border-radius: var(--radius-md); color: var(--text-muted); font-size: 12.5px; margin-top: 8px;">
+                    No custom links added yet. Click <strong>+ Add Link</strong> or <strong>Import Contact Info</strong> to customize card buttons.
+                  </div>
+                </div>
+
+              </div>
+
               <!-- Form Action Buttons -->
               <div class="form-actions-bar">
                 <button type="button" class="btn btn-white" id="cancelAddCustomer">Cancel</button>
@@ -565,30 +684,61 @@
                 </div>
               </div>
 
-              <!-- Profile Link Preview Card -->
-              <div class="form-card">
-                <h2 class="form-section-title">Profile link</h2>
-                <p class="form-section-sub">Generated from the customer's name.</p>
-                <div class="profile-link-box" id="custProfileLink">
-                  ambros.studio/rahul-mehta
+              <!-- Client Delivery Card -->
+              <div class="form-card" id="clientDeliveryCard">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
+                  <div>
+                    <h2 class="form-section-title" style="margin-bottom: 2px;">Client Delivery</h2>
+                    <p class="form-section-sub">Production link &amp; scannable NFC / QR assets.</p>
+                  </div>
+                  <span class="delivery-status-pill" id="deliverySlugBadge" style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; text-transform: uppercase; letter-spacing: 0.04em;">Ready</span>
                 </div>
-              </div>
 
-              <!-- QR Code Preview Card -->
-              <div class="form-card">
-                <h2 class="form-section-title">QR code</h2>
-                <p class="form-section-sub">Updates when the link changes</p>
+                <!-- Dynamic QR Code Preview Row -->
                 <div class="qr-preview-row">
-                  <div class="qr-box">
-                    <!-- Clean Vector QR Code Graphic -->
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M2 2h7v7H2V2zm2 2v3h3V4H4zm5 0h2v2H9V4zm4-2h7v7h-7V2zm2 2v3h3V4h-3zm-6 7h2v2H9v-2zm-7 4h7v7H2v-7zm2 2v3h3v-3H4zm7 0h2v2h-2v-2zm4-4h2v2h-2v-2zm2 2h3v2h-3v-2zm0 3h2v2h-2v-2zm-2 2h2v2h-2v-2zm4 0h2v2h-2v-2z"></path>
-                    </svg>
+                  <div class="qr-box" id="adminQrBox" style="width: 76px; height: 76px; padding: 4px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+                    <!-- Dynamic SVG will be rendered here -->
                   </div>
-                  <div class="qr-text-meta">
-                    <span class="qr-label">Contact QR</span>
-                    <span class="qr-sub">Instant scan to save profile or program into metal NFC card.</span>
+                  <div class="qr-text-meta" style="flex: 1;">
+                    <span class="qr-label">Production QR</span>
+                    <span class="qr-sub" id="adminQrSub">Instant scan to open profile or encode metal NFC card.</span>
+                    <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+                      <button type="button" class="btn btn-white btn-xs" id="btnAdminDownloadQrPng" title="Download High-Res PNG">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Download QR (PNG)</span>
+                      </button>
+                      <button type="button" class="btn btn-white btn-xs" id="btnAdminDownloadQrSvg" title="Download Vector SVG">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>SVG</span>
+                      </button>
+                    </div>
                   </div>
+                </div>
+
+                <!-- Canonical Public Card URL -->
+                <div style="margin-top: 14px;">
+                  <label class="form-label" style="font-size: 11.5px; margin-bottom: 4px; display: block; color: var(--text-muted); font-weight: 600;">Public Card URL</label>
+                  <div class="profile-link-box" id="custProfileLink" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; padding: 9px 12px; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); color: var(--text-headline); word-break: break-all;">
+                    https://www.ambrosstudio.space/c/rahul-mehta
+                  </div>
+                </div>
+
+                <!-- Client Delivery Quick Actions (Copy Link, Open Card, Share) -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px;">
+                  <button type="button" class="btn btn-white btn-sm" id="btnAdminCopyLink" title="Copy public card URL" style="justify-content: center; padding: 7px 6px; font-size: 12px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span id="btnAdminCopyLinkText">Copy Link</span>
+                  </button>
+
+                  <a href="/c/rahul-mehta" target="_blank" class="btn btn-white btn-sm" id="btnAdminOpenCard" title="Open digital card in new tab" style="justify-content: center; padding: 7px 6px; font-size: 12px; text-decoration: none;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+                    <span>Open Card</span>
+                  </a>
+
+                  <button type="button" class="btn btn-white btn-sm" id="btnAdminShareCard" title="Share public card URL" style="justify-content: center; padding: 7px 6px; font-size: 12px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    <span>Share</span>
+                  </button>
                 </div>
               </div>
 
@@ -775,6 +925,64 @@
     <span id="toastMessage">Action performed</span>
   </div>
 
+  <!-- Modal: Add / Edit Custom Card Link -->
+  <div id="linkEditorModal" class="custom-modal-backdrop" style="display: none;">
+    <div class="custom-modal-card" role="dialog" aria-modal="true" aria-labelledby="linkEditorTitle">
+      <div class="custom-modal-header">
+        <h3 class="custom-modal-title" id="linkEditorTitle">Add Card Link</h3>
+        <button type="button" class="link-btn-icon" id="btnCloseLinkModal" aria-label="Close modal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <form id="linkEditorForm">
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label for="linkTypeSelect" class="form-label">Link Type</label>
+            <select id="linkTypeSelect" class="form-input" style="cursor: pointer;" required>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="phone">Phone / Mobile Call</option>
+              <option value="email">Email Address</option>
+              <option value="website">Website / Portfolio</option>
+              <option value="instagram">Instagram</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="facebook">Facebook</option>
+              <option value="youtube">YouTube</option>
+              <option value="twitter">X / Twitter</option>
+              <option value="telegram">Telegram</option>
+              <option value="maps">Google Maps / Location</option>
+              <option value="custom">Custom Link / Action</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="linkLabelInput" class="form-label">Button Label</label>
+            <input type="text" id="linkLabelInput" class="form-input" placeholder="e.g. Chat on WhatsApp" required>
+          </div>
+
+          <div class="form-group">
+            <label for="linkValueInput" class="form-label" id="linkValueLabel">Destination URL / Number</label>
+            <input type="text" id="linkValueInput" class="form-input" placeholder="e.g. +91 98250 41872" required>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 2px;">
+            <span style="font-size: 13px; font-weight: 600; color: var(--text-headline);">Enable on Card</span>
+            <label class="switch-toggle" style="margin: 0;">
+              <input type="checkbox" id="linkEnabledInput" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-white btn-sm" id="btnCancelLinkModal">Cancel</button>
+          <button type="submit" class="btn btn-gold btn-sm" id="btnSaveLinkModal">
+            <span id="saveLinkModalText">Save Link</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/admin/qrcode.js"></script>
   <script src="/admin/admin.js"></script>
 
 </body>

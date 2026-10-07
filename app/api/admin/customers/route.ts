@@ -7,6 +7,85 @@ function sanitizeText(val: any, maxLength = 255): string {
   return val.trim().slice(0, maxLength);
 }
 
+const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
+
+const ALLOWED_FONTS = new Set([
+  "",
+  "Inter",
+  "Plus Jakarta Sans",
+  "Poppins",
+  "Montserrat",
+  "DM Sans",
+  "Playfair Display",
+]);
+
+const ALLOWED_LINK_TYPES = new Set([
+  "whatsapp",
+  "phone",
+  "email",
+  "website",
+  "instagram",
+  "facebook",
+  "linkedin",
+  "youtube",
+  "twitter",
+  "telegram",
+  "maps",
+  "custom",
+]);
+
+function sanitizeColor(val: any): string {
+  if (typeof val !== "string") return "";
+  const trimmed = val.trim();
+  return HEX_COLOR_REGEX.test(trimmed) ? trimmed : "";
+}
+
+function sanitizeFont(val: any): string {
+  if (typeof val !== "string") return "";
+  const trimmed = val.trim();
+  return ALLOWED_FONTS.has(trimmed) ? trimmed : "";
+}
+
+function sanitizeCustomSettings(val: any) {
+  if (!val || typeof val !== "object") return null;
+
+  const appearance = val.appearance && typeof val.appearance === "object" ? val.appearance : {};
+  const cleanAppearance = {
+    primaryColor: sanitizeColor(appearance.primaryColor || appearance.primary_color),
+    backgroundColor: sanitizeColor(appearance.backgroundColor || appearance.background_color),
+    textColor: sanitizeColor(appearance.textColor || appearance.text_color),
+    fontFamily: sanitizeFont(appearance.fontFamily || appearance.font_family),
+  };
+
+  const rawLinks = Array.isArray(val.links) ? val.links : [];
+  const cleanLinks: any[] = [];
+
+  for (let idx = 0; idx < Math.min(rawLinks.length, 50); idx++) {
+    const item = rawLinks[idx];
+    if (!item || typeof item !== "object") continue;
+
+    const rawType = typeof item.type === "string" ? item.type.trim().toLowerCase() : "";
+    if (!ALLOWED_LINK_TYPES.has(rawType)) {
+      continue;
+    }
+
+    cleanLinks.push({
+      id: sanitizeText(item.id, 50) || `link_${Date.now()}_${idx}`,
+      type: rawType,
+      label: sanitizeText(item.label, 80),
+      value: sanitizeText(item.value || item.url, 500),
+      enabled: item.enabled !== false,
+      order: typeof item.order === "number" ? item.order : idx,
+    });
+  }
+
+  return {
+    appearance: cleanAppearance,
+    links: cleanLinks,
+  };
+}
+
+
 // GET /api/admin/customers — fetch customer records using authenticated session
 export async function GET() {
   try {
@@ -114,6 +193,11 @@ export async function POST(request: Request) {
       newRecord.avatar_url = avatarUrl;
     }
 
+    const customSettings = sanitizeCustomSettings(body.custom_settings || body.customSettings);
+    if (customSettings) {
+      newRecord.custom_settings = customSettings;
+    }
+
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
 
@@ -139,9 +223,14 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    // If avatar_url column does not yet exist in the DB schema, safely fallback without it
-    if (insertRes.error && insertRes.error.message.includes("avatar_url")) {
-      delete newRecord.avatar_url;
+    // If custom_settings or avatar_url columns do not yet exist in the DB schema, safely fallback
+    if (insertRes.error && (insertRes.error.message.includes("custom_settings") || insertRes.error.message.includes("avatar_url"))) {
+      if (insertRes.error.message.includes("custom_settings")) {
+        delete newRecord.custom_settings;
+      }
+      if (insertRes.error.message.includes("avatar_url")) {
+        delete newRecord.avatar_url;
+      }
       insertRes = await supabase
         .from("customers")
         .insert([newRecord])

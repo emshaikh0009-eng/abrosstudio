@@ -70,6 +70,7 @@ export async function GET(
         cardDesign: card.card_design === "Evergreen" ? "Evergreen" : "Mint Haven",
         profileSlug: card.profile_slug,
         avatarUrl: card.avatar_url || card.profile_image_url || "",
+        customSettings: card.custom_settings || null,
       },
     });
   } catch (err: any) {
