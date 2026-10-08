@@ -630,56 +630,48 @@
             <!-- Right Column: Digital Card Design, Profile Link & QR Code Preview -->
             <div class="form-right-col">
               
-              <!-- Digital Card Selector -->
-              <div class="form-card">
-                <h2 class="form-section-title">Digital card</h2>
-                <p class="form-section-sub">Choose a design for this customer.</p>
-
-                <div class="card-select-grid">
-                  <!-- Option 1: Design 1 · Mint Haven (Selected) -->
-                  <div class="card-select-option selected" data-design="Mint Haven" role="radio" aria-checked="true" tabindex="0">
-                    <div class="card-option-left">
-                      <!-- Mini wireframe icon -->
-                      <div class="wireframe-icon" aria-hidden="true">
-                        <div class="wf-bar wf-bar-gold"></div>
-                        <div class="wf-bar wf-bar-sub"></div>
-                        <div class="wf-bar wf-bar-sub" style="width: 20px;"></div>
-                      </div>
-                      <div class="card-option-text">
-                        <span class="card-option-title">Design 1 &middot; Mint Haven</span>
-                        <span class="card-option-sub">Warm, friendly layout</span>
-                      </div>
-                    </div>
-                    <div class="radio-indicator">
-                      <div class="radio-indicator-dot"></div>
-                    </div>
+              <!-- Digital Card Design System Gallery -->
+              <div class="form-card admin-design-system-card" id="adminDesignGalleryCard">
+                <div class="design-gallery-header">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px;">
+                    <h2 class="form-section-title" style="margin: 0;">Digital Card Design</h2>
+                    <span class="badge-design-selected" id="selectedDesignDisplayBadge">Mint Haven</span>
                   </div>
-
-                  <!-- Option 2: Design 2 · Evergreen -->
-                  <div class="card-select-option" data-design="Evergreen" role="radio" aria-checked="false" tabindex="0">
-                    <div class="card-option-left">
-                      <!-- Mini wireframe icon -->
-                      <div class="wireframe-icon evergreen" aria-hidden="true">
-                        <div class="wf-bar wf-bar-black"></div>
-                        <div class="wf-bar wf-bar-sub"></div>
-                        <div class="wf-bar wf-bar-sub" style="width: 20px;"></div>
-                      </div>
-                      <div class="card-option-text">
-                        <span class="card-option-title">Design 2 &middot; Evergreen</span>
-                        <span class="card-option-sub">Clean, modern layout</span>
-                      </div>
-                    </div>
-                    <div class="radio-indicator">
-                      <div class="radio-indicator-dot"></div>
-                    </div>
-                  </div>
+                  <p class="form-section-sub">Choose how this customer's digital identity will look (16 curated designs from portfolio).</p>
                 </div>
 
-                <!-- Live Preview Link of chosen template -->
-                <div style="margin-top: 14px; text-align: right;">
-                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" id="btnPreviewChosenDesign" style="width: 100%; justify-content: center;">
+                <!-- Category Filter Tabs: All (16), Personal (6), Business (6), Industry (4) -->
+                <div class="design-category-tabs" role="tablist" aria-label="Design Categories">
+                  <button type="button" class="design-cat-btn active" data-category="all">
+                    <span>All</span> <span class="cat-count">16</span>
+                  </button>
+                  <button type="button" class="design-cat-btn" data-category="personal">
+                    <span>Personal</span> <span class="cat-count">6</span>
+                  </button>
+                  <button type="button" class="design-cat-btn" data-category="business">
+                    <span>Business</span> <span class="cat-count">6</span>
+                  </button>
+                  <button type="button" class="design-cat-btn" data-category="industry">
+                    <span>Industry</span> <span class="cat-count">4</span>
+                  </button>
+                </div>
+
+                <!-- Dynamic 16-Design Grid (populated by admin.js from CARD_DESIGN_REGISTRY) -->
+                <div class="admin-design-gallery-grid" id="adminDesignGalleryGrid" role="radiogroup" aria-label="Select card design">
+                  <!-- Generated dynamically from CARD_DESIGN_REGISTRY.ALL_DESIGNS -->
+                </div>
+
+                <!-- Hidden Input for Form Submission -->
+                <input type="hidden" id="selectedDesignInput" name="card_design" value="Mint Haven">
+
+                <!-- Quick Action Bar -->
+                <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" class="btn btn-white btn-sm" id="btnPreviewCurrentCustomerDesign" style="flex: 1; justify-content: center;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <span>Preview Live with Customer Data</span>
+                  </button>
+                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" id="btnPreviewChosenDesign" title="Open Full 16-Design Showcase" style="padding: 0 10px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
-                    <span id="previewChosenDesignText">Inspect Design Templates Live</span>
                   </a>
                 </div>
               </div>
@@ -754,77 +746,37 @@
           <div class="dashboard-card" style="margin-bottom: 24px;">
             <div class="card-header-flex">
               <div class="card-header-text">
-                <h2>Digital Card Design Templates</h2>
-                <p>Customer-facing designs available in your studio system. Both designs are fully protected and independent.</p>
+                <h2>Digital Card Design Portfolio (16 Designs)</h2>
+                <p>Complete curated design system matching the Ambros Studio 2026 brochure. All designs are isolated and production-ready.</p>
               </div>
-              <a href="/cards/index.html" target="_blank" class="btn btn-white">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
-                <span>Open Full Review Portal</span>
-              </a>
+              <div style="display: flex; gap: 8px;">
+                <a href="/cards/index.html" target="_blank" class="btn btn-white">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
+                  <span>Open Interactive Showroom</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Showroom Category Filter Tabs -->
+            <div class="design-category-tabs" id="showroomCatTabs" style="margin-top: 18px;" role="tablist" aria-label="Showroom Categories">
+              <button type="button" class="design-cat-btn active" data-showroom-cat="all">
+                <span>All Designs</span> <span class="cat-count">16</span>
+              </button>
+              <button type="button" class="design-cat-btn" data-showroom-cat="personal">
+                <span>Personal</span> <span class="cat-count">6</span>
+              </button>
+              <button type="button" class="design-cat-btn" data-showroom-cat="business">
+                <span>Business</span> <span class="cat-count">6</span>
+              </button>
+              <button type="button" class="design-cat-btn" data-showroom-cat="industry">
+                <span>Industry Specials</span> <span class="cat-count">4</span>
+              </button>
             </div>
           </div>
 
-          <!-- 2 Design Showcase Cards -->
-          <div class="digital-cards-grid">
-            
-            <!-- Showcase 1: Mint Haven -->
-            <div class="digital-card-showcase">
-              <div class="showcase-header">
-                <div class="showcase-title-row">
-                  <h3 class="showcase-title">Design 1 &middot; Mint Haven</h3>
-                  <span class="tag-pill gold">Primary Choice</span>
-                </div>
-                <p class="showcase-sub">Warm, friendly aesthetic featuring rounded floating contact cards and pastel badges.</p>
-                <div class="showcase-tags">
-                  <span class="tag-pill">Cream Background</span>
-                  <span class="tag-pill">Mint Green CTA</span>
-                  <span class="tag-pill">Pastel Badges</span>
-                  <span class="tag-pill">142 Active Cards</span>
-                </div>
-              </div>
-
-              <div class="showcase-preview-frame">
-                <iframe src="/cards/design-1/index.html" title="Mint Haven Live Preview"></iframe>
-              </div>
-
-              <div class="showcase-footer">
-                <span style="font-size: 13px; color: var(--text-muted);">Route: <code>/cards/design-1/</code></span>
-                <a href="/cards/design-1/index.html" target="_blank" class="btn btn-gold btn-sm">
-                  <span>Open Live Card</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
-                </a>
-              </div>
-            </div>
-
-            <!-- Showcase 2: Evergreen -->
-            <div class="digital-card-showcase">
-              <div class="showcase-header">
-                <div class="showcase-title-row">
-                  <h3 class="showcase-title">Design 2 &middot; Evergreen</h3>
-                  <span class="tag-pill">Minimalist Luxury</span>
-                </div>
-                <p class="showcase-sub">Clean, architectural editorial design with serif typography and understated dividers.</p>
-                <div class="showcase-tags">
-                  <span class="tag-pill">Pure White Canvas</span>
-                  <span class="tag-pill">Dark Forest Green CTA</span>
-                  <span class="tag-pill">Playfair Editorial Serif</span>
-                  <span class="tag-pill">70 Active Cards</span>
-                </div>
-              </div>
-
-              <div class="showcase-preview-frame">
-                <iframe src="/cards/design-2/index.html" title="Evergreen Live Preview"></iframe>
-              </div>
-
-              <div class="showcase-footer">
-                <span style="font-size: 13px; color: var(--text-muted);">Route: <code>/cards/design-2/</code></span>
-                <a href="/cards/design-2/index.html" target="_blank" class="btn btn-gold btn-sm">
-                  <span>Open Live Card</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
-                </a>
-              </div>
-            </div>
-
+          <!-- Dynamic 16-Design Showcase Grid -->
+          <div class="showroom-cards-grid" id="showroomCardsGrid">
+            <!-- Populated dynamically by admin.js from CARD_DESIGN_REGISTRY -->
           </div>
         </section>
 
@@ -982,6 +934,66 @@
     </div>
   </div>
 
+  <!-- Reusable Live Customer Card Preview Modal -->
+  <div id="adminCardPreviewModal" class="custom-modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="previewModalTitle">
+    <div class="preview-modal-dialog">
+      <div class="preview-modal-header">
+        <div class="preview-modal-title-wrap">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="preview-device-pill">Live Production Engine</span>
+            <span class="preview-category-pill" id="previewModalCategoryBadge">Personal</span>
+          </div>
+          <h3 class="preview-modal-title" id="previewModalTitle">Preview: <span id="previewModalDesignName">Noir Gold</span></h3>
+          <p class="preview-modal-subtitle" id="previewModalSubtitle">Rendered using current customer form data with zero static fallback leaks.</p>
+        </div>
+        <div class="preview-modal-header-actions">
+          <!-- Viewport Size Switcher -->
+          <div class="device-viewport-toggle" role="group" aria-label="Device viewport">
+            <button type="button" class="viewport-toggle-btn active" data-width="390" title="Standard Mobile (390px)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              <span>390px</span>
+            </button>
+            <button type="button" class="viewport-toggle-btn" data-width="480" title="Large Mobile (480px)">
+              <span>480px</span>
+            </button>
+            <button type="button" class="viewport-toggle-btn" data-width="768" title="Tablet Viewport (768px)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              <span>768px</span>
+            </button>
+          </div>
+          <button type="button" class="link-btn-icon" id="btnClosePreviewModal" aria-label="Close Preview Modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-modal-body">
+        <div class="preview-device-stage">
+          <div class="preview-phone-shell" id="previewPhoneShell">
+            <div class="preview-phone-notch"><div class="notch-speaker"></div></div>
+            <iframe id="previewModalIframe" class="preview-phone-iframe" title="Digital Card Live Render"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-modal-footer">
+        <div class="preview-footer-info">
+          <span class="preview-status-dot"></span>
+          <span id="previewFooterDesignInfo">Design: Noir Gold &bull; Personal Collection</span>
+        </div>
+        <div class="preview-footer-buttons">
+          <button type="button" class="btn btn-white btn-sm" id="btnClosePreviewFooter">Close</button>
+          <button type="button" class="btn btn-gold btn-sm" id="btnApplyDesignFromPreview">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span id="btnApplyDesignText">Use This Design</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/cards/design-registry.js"></script>
+  <script src="/cards/card-renderer.js"></script>
   <script src="/admin/qrcode.js"></script>
   <script src="/admin/admin.js"></script>
 

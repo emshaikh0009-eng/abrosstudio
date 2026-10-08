@@ -46,6 +46,8 @@ function sanitizeFont(val: any): string {
   return ALLOWED_FONTS.has(trimmed) ? trimmed : "";
 }
 
+import { resolveCardDesign } from "@/utils/card-designs";
+
 function sanitizeCustomSettings(val: any) {
   if (!val || typeof val !== "object") return null;
 
@@ -79,11 +81,21 @@ function sanitizeCustomSettings(val: any) {
     });
   }
 
-  return {
+  const result: Record<string, any> = {
     appearance: cleanAppearance,
     links: cleanLinks,
   };
+
+  if (val.industry && typeof val.industry === "object") {
+    result.industry = {
+      type: sanitizeText(val.industry.type, 50),
+      data: (val.industry.data && typeof val.industry.data === "object") ? val.industry.data : {},
+    };
+  }
+
+  return result;
 }
+
 
 
 // PATCH /api/admin/customers/[id] — update customer fields or status
@@ -158,8 +170,9 @@ export async function PATCH(
 
     if (body.design !== undefined || body.card_design !== undefined) {
       const design = body.design || body.card_design;
-      updates.card_design = design === "Evergreen" ? "Evergreen" : "Mint Haven";
+      updates.card_design = resolveCardDesign(design).name;
     }
+
 
     if (body.profileLink !== undefined || body.profileSlug !== undefined || body.profile_slug !== undefined) {
       const rawProfile = sanitizeText(body.profileLink || body.profileSlug || body.profile_slug, 100);

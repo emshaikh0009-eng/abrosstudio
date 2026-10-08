@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Maya Chen — Senior Product Designer | Lumen Studio</title>
-  <meta name="description" content="Digital business card for Maya Chen, Senior Product Designer at Lumen Studio.">
+  <title>Digital Business Card | Ambros Studio</title>
+  <meta name="description" content="Digital business card by Ambros Studio.">
   <script>
     (function () {
       var p = new URLSearchParams(window.location.search);
@@ -67,28 +67,21 @@
     <!-- 1. Profile Header -->
     <header class="profile-section">
       <div class="profile-avatar-wrap">
-        <img 
-          src="../assets/maya-chen.jpg" 
-          alt="Maya Chen" 
-          class="profile-avatar"
-          width="88"
-          height="88"
-          loading="eager"
-        >
+        <div class="profile-avatar-initials-fallback" style="display: flex; width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
+          AS
+        </div>
         <span class="profile-badge-active" title="Available for projects" aria-hidden="true"></span>
       </div>
 
-      <h1 class="profile-name">Maya Chen</h1>
-      <p class="profile-designation">Senior Product Designer</p>
-      <p class="profile-company">Lumen Studio</p>
+      <h1 class="profile-name">Ambros Studio Member</h1>
+      <p class="profile-designation"></p>
+      <p class="profile-company"></p>
 
-      <p class="profile-bio">
-        Crafting thoughtful digital experiences and brand identities for high-growth tech startups and creative studios.
-      </p>
+      <p class="profile-bio"></p>
 
       <!-- Actions CTA Wrap -->
       <div class="profile-actions-wrap">
-        <button type="button" class="btn-save-contact" id="saveContactBtn" aria-label="Save Maya Chen to contacts">
+        <button type="button" class="btn-save-contact" id="saveContactBtn" aria-label="Save contact to phone">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
@@ -127,120 +120,115 @@
     <section class="get-in-touch-section" aria-label="Get in touch options">
       <h2 class="section-title">Get in touch</h2>
       <div class="contact-list">
-      <!-- Call -->
-      <a href="tel:+15035550148" class="contact-card" aria-label="Call +1 (503) 555-0148">
-        <div class="contact-card-left">
-          <div class="badge-icon badge-green" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
+        <!-- Call -->
+        <a href="tel:" class="contact-card" style="display: none;" aria-label="Phone number">
+          <div class="contact-card-left">
+            <div class="badge-icon badge-green" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div class="contact-info">
+              <span class="contact-label">Call</span>
+              <span class="contact-value"></span>
+            </div>
           </div>
-          <div class="contact-info">
-            <span class="contact-label">Call</span>
-            <span class="contact-value">+1 (503) 555-0148</span>
-          </div>
-        </div>
-        <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </a>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
 
-      <!-- WhatsApp -->
-      <a href="https://wa.me/15035550148" class="contact-card" target="_blank" rel="noopener noreferrer" aria-label="Message on WhatsApp">
-        <div class="contact-card-left">
-          <div class="badge-icon badge-blue" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
+        <!-- WhatsApp -->
+        <a href="https://wa.me/" class="contact-card" target="_blank" rel="noopener noreferrer" style="display: none;" aria-label="WhatsApp">
+          <div class="contact-card-left">
+            <div class="badge-icon badge-blue" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+            </div>
+            <div class="contact-info">
+              <span class="contact-label">WhatsApp</span>
+              <span class="contact-value">Message on WhatsApp</span>
+            </div>
           </div>
-          <div class="contact-info">
-            <span class="contact-label">WhatsApp</span>
-            <span class="contact-value">Message on WhatsApp</span>
-          </div>
-        </div>
-        <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </a>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
 
-      <!-- Email -->
-      <a href="mailto:maya@lumenstudio.co" class="contact-card" aria-label="Send email to maya@lumenstudio.co">
-        <div class="contact-card-left">
-          <div class="badge-icon badge-yellow" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-            </svg>
+        <!-- Email -->
+        <a href="mailto:" class="contact-card" style="display: none;" aria-label="Email">
+          <div class="contact-card-left">
+            <div class="badge-icon badge-yellow" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+            </div>
+            <div class="contact-info">
+              <span class="contact-label">Email</span>
+              <span class="contact-value"></span>
+            </div>
           </div>
-          <div class="contact-info">
-            <span class="contact-label">Email</span>
-            <span class="contact-value">maya@lumenstudio.co</span>
-          </div>
-        </div>
-        <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </a>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
 
-      <!-- Website -->
-      <a href="https://lumenstudio.co" class="contact-card" target="_blank" rel="noopener noreferrer" aria-label="Visit website lumenstudio.co">
-        <div class="contact-card-left">
-          <div class="badge-icon badge-purple" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-            </svg>
+        <!-- Website -->
+        <a href="#" class="contact-card contact-card-website" target="_blank" rel="noopener noreferrer" style="display: none;" aria-label="Website">
+          <div class="contact-card-left">
+            <div class="badge-icon badge-purple" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <div class="contact-info">
+              <span class="contact-label">Website</span>
+              <span class="contact-value"></span>
+            </div>
           </div>
-          <div class="contact-info">
-            <span class="contact-label">Website</span>
-            <span class="contact-value">lumenstudio.co</span>
-          </div>
-        </div>
-        <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </a>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
       </div>
     </section>
 
     <!-- 3. Business Details Card -->
-    <section aria-label="Business details">
+    <section class="business-section" aria-label="Business details" style="display: none;">
       <h2 class="section-title">Business Details</h2>
       <div class="business-card">
-        <div class="detail-group">
-          <span class="detail-label">Studio</span>
-          <span class="detail-value studio-name">Lumen Studio</span>
+        <div class="detail-group detail-group-company" style="display: none;">
+          <span class="detail-label">Company</span>
+          <span class="detail-value studio-name"></span>
         </div>
 
-        <div class="detail-group">
+        <div class="detail-group detail-group-designation" style="display: none;">
           <span class="detail-label">Role</span>
-          <span class="detail-value">Senior Product Designer</span>
+          <span class="detail-value"></span>
         </div>
 
-        <div class="detail-group">
+        <div class="detail-group detail-group-address" style="display: none;">
           <span class="detail-label">Address</span>
-          <address class="detail-value" style="font-style: normal;">
-            412 Maple Row, Suite 3<br>
-            Portland, OR 97204
-          </address>
+          <address class="detail-value" style="font-style: normal;"></address>
         </div>
 
-        <div class="detail-group">
+        <div class="detail-group detail-group-website" style="display: none;">
           <span class="detail-label">Website</span>
-          <a href="https://lumenstudio.co" target="_blank" rel="noopener noreferrer" class="detail-value detail-link">
-            lumenstudio.co
-          </a>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="detail-value detail-link"></a>
         </div>
       </div>
     </section>
 
     <!-- 4. Social Section -->
-    <section class="social-section" aria-label="Social media profiles">
+    <section class="social-section" aria-label="Social media profiles" style="display: none;">
       <h2 class="section-title">Social</h2>
       <div class="social-grid">
         <!-- Instagram -->
-        <a href="https://instagram.com" class="social-card" target="_blank" rel="noopener noreferrer" aria-label="Instagram profile">
+        <a href="#" class="social-card social-card-instagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram profile" style="display: none;">
           <div class="badge-icon badge-peach" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -252,7 +240,7 @@
         </a>
 
         <!-- Facebook -->
-        <a href="https://facebook.com" class="social-card" target="_blank" rel="noopener noreferrer" aria-label="Facebook profile">
+        <a href="#" class="social-card social-card-facebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook profile" style="display: none;">
           <div class="badge-icon badge-purple" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
@@ -262,7 +250,7 @@
         </a>
 
         <!-- LinkedIn -->
-        <a href="https://linkedin.com" class="social-card" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
+        <a href="#" class="social-card social-card-linkedin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" style="display: none;">
           <div class="badge-icon badge-blue" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
@@ -275,48 +263,11 @@
       </div>
     </section>
 
-    <!-- 5. Card Footer -->
-    <footer class="card-footer">
-      <p class="card-footer-text">Tap your card again anytime to revisit</p>
-    </footer>
-
   </main>
 
-  <!-- Clean Data Structure for Future Backend / Dynamic Ingestion -->
-  <script>
-    window.CARD_PROFILE = {
-      fullName: "Maya Chen",
-      designation: "Senior Product Designer",
-      company: "Lumen Studio",
-      bio: "Crafting thoughtful digital experiences and brand identities for high-growth tech startups and creative studios.",
-      avatarUrl: "../assets/maya-chen.jpg",
-      phone: "+1 (503) 555-0148",
-      whatsapp: "15035550148",
-      email: "maya@lumenstudio.co",
-      website: "https://lumenstudio.co",
-      websiteDisplay: "lumenstudio.co",
-      address: "412 Maple Row, Suite 3\nPortland, OR 97204",
-      socials: {
-        instagram: "https://instagram.com",
-        facebook: "https://facebook.com",
-        linkedin: "https://linkedin.com"
-      }
-    };
-
-    // Client-side feedback on Save Contact (non-backend mock)
-    document.getElementById('saveContactBtn')?.addEventListener('click', function() {
-      const btn = this;
-      const originalText = btn.innerHTML;
-      btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Contact Saved!</span>`;
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-      }, 2500);
-    });
-  </script>
-
-    <!-- Dynamic Card Hydration Controller -->
-    <script src="/cards/qrcode.js"></script>
-    <script src="/cards/card-loader.js"></script>
+  <!-- Dynamic Card Hydration Controller -->
+  <script src="/cards/qrcode.js"></script>
+  <script src="/cards/card-loader.js"></script>
 
   <!-- QR Modal Dialog -->
   <div id="qrModalBackdrop" class="qr-modal-backdrop" aria-hidden="true">
@@ -324,7 +275,7 @@
       <button type="button" class="qr-modal-close" id="qrModalCloseBtn" aria-label="Close QR dialog">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
-      <h3 id="qrModalTitle" class="qr-modal-title">Maya Chen</h3>
+      <h3 id="qrModalTitle" class="qr-modal-title">Digital Business Card</h3>
       <p id="qrModalSub" class="qr-modal-sub">Scan to connect or save this business card</p>
       <div class="qr-modal-qr-wrap" id="qrModalCanvasContainer">
         <!-- Live dynamic QR generated from canonical card URL -->

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Digital Card Preview | Ambros Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/cards/card-themes.css">
+  <script src="/cards/qrcode.js"></script>
+  <script src="/cards/design-registry.js"></script>
+  <script src="/cards/card-renderer.js"></script>
+</head>
+<body>
+  <main class="viewport-wrapper" id="cardViewport">
+    <div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; font-size: 13px; opacity: 0.6;">
+      Loading design preview...
+    </div>
+  </main>
+
+  <!-- Reusable Shared QR Modal -->
+  <div id="qrModalBackdrop" class="qr-modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="qr-modal-card">
+      <button type="button" id="qrModalCloseBtn" class="qr-modal-close-btn" aria-label="Close QR Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <h3 id="qrModalTitle" style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Digital Card</h3>
+      <p style="font-size: 12px; opacity: 0.7; margin-bottom: 12px;">Scan with phone camera to open profile</p>
+      <div id="qrModalCanvasContainer" class="qr-canvas-wrap"></div>
+      <div style="font-size: 11px; opacity: 0.6; word-break: break-all; margin-bottom: 16px;" id="qrModalUrlText"></div>
+      <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+        <button type="button" class="cta-btn cta-btn-secondary" id="qrCopyLinkBtn" style="font-size: 12px; padding: 8px 12px;">
+          <span>Copy Link</span>
+        </button>
+        <button type="button" class="cta-btn cta-btn-secondary" id="qrDownloadPngBtn" style="font-size: 12px; padding: 8px 12px;">
+          <span>Download PNG</span>
+        </button>
+        <button type="button" class="cta-btn cta-btn-secondary" id="qrDownloadSvgBtn" style="font-size: 12px; padding: 8px 12px;">
+          <span>Vector SVG</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cardToast" class="card-toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="cardToastMessage"></span>
+  </div>
+
+  <script src="/cards/card-loader.js"></script>
+
+  <script>
+    (async function() {
+      var params = new URLSearchParams(window.location.search);
+      var designParam = params.get('design') || 'mint-haven';
+      var custId = params.get('id');
+      var slug = params.get('slug');
+
+      var registry = window.CARD_DESIGN_REGISTRY;
+      var renderer = window.CARD_RENDERER;
+      var design = registry ? registry.resolveCardDesign(designParam) : { id: 'mint-haven', name: 'Mint Haven' };
+
+      document.documentElement.className = 'theme-' + design.id;
+      document.body.className = 'theme-' + design.id;
+
+      if (design.theme) {
+        if (design.theme.primaryColor) document.documentElement.style.setProperty('--card-primary', design.theme.primaryColor);
+        if (design.theme.backgroundColor) document.documentElement.style.setProperty('--card-background', design.theme.backgroundColor);
+        if (design.theme.textColor) document.documentElement.style.setProperty('--card-text', design.theme.textColor);
+        if (design.theme.fontFamily) document.documentElement.style.setProperty('--card-font', `'${design.theme.fontFamily}', system-ui, sans-serif`);
+
+        if (design.theme.fontUrl) {
+          var fontLinkId = 'theme-font-' + design.id;
+          if (!document.getElementById(fontLinkId)) {
+            var fl = document.createElement('link');
+            fl.id = fontLinkId;
+            fl.rel = 'stylesheet';
+            fl.href = design.theme.fontUrl;
+            document.head.appendChild(fl);
+          }
+        }
+      }
+
+      // If customer identifier exists for a custom client, card-loader.js will hydrate real customer data.
+      // If no customer identifier is specified, or previewing the canonical studio brand:
+      if (!custId && (!slug || slug === 'ambros' || slug === 'ambros-studio')) {
+        var baseRecord = (registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER)
+          ? JSON.parse(JSON.stringify(registry.AUTHORITATIVE_AMBROS_CUSTOMER))
+          : {
+              fullName: 'Ambros Studio',
+              designation: 'Creative & Digital Team',
+              company: 'Ambros Studio',
+              description: 'Bespoke websites, high-impact digital campaigns, and luxury contactless NFC business cards crafted with purpose.',
+              phone: '+91 91577 78915',
+              whatsapp: '919157778915',
+              email: 'ambrosstudioltd@gmail.com',
+              website: 'https://www.ambrosstudio.space',
+              address: '3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017',
+              socialInstagram: 'https://www.instagram.com/ambros.studio',
+              socialLinkedIn: 'https://linkedin.com/company/ambrosstudio',
+              cardDesign: design.id,
+              profileSlug: 'ambros-studio',
+              avatarUrl: '/assets/abros-logo-transparent.png',
+              is_active: true,
+              customSettings: {
+                appearance: {
+                  primaryColor: '#10b981',
+                  backgroundColor: '#faf6ee',
+                  textColor: '#1e293b',
+                  fontFamily: 'Plus Jakarta Sans'
+                },
+                links: [
+                  { id: '1', type: 'phone', label: 'Call Studio', value: '+91 91577 78915', enabled: true, order: 0 },
+                  { id: '2', type: 'whatsapp', label: 'Chat on WhatsApp', value: '919157778915', enabled: true, order: 1 },
+                  { id: '3', type: 'email', label: 'Email Team', value: 'ambrosstudioltd@gmail.com', enabled: true, order: 2 },
+                  { id: '4', type: 'website', label: 'Visit Website', value: 'https://www.ambrosstudio.space', enabled: true, order: 3 },
+                  { id: '5', type: 'instagram', label: 'Instagram', value: 'https://www.instagram.com/ambros.studio', enabled: true, order: 4 },
+                  { id: '6', type: 'linkedin', label: 'LinkedIn', value: 'https://linkedin.com/company/ambrosstudio', enabled: true, order: 5 }
+                ]
+              }
+            };
+
+        baseRecord.cardDesign = design.id;
+        if (!baseRecord.customSettings) baseRecord.customSettings = {};
+        if (!baseRecord.customSettings.appearance) baseRecord.customSettings.appearance = {};
+        baseRecord.customSettings.appearance.primaryColor = design.theme.primaryColor;
+        baseRecord.customSettings.appearance.backgroundColor = design.theme.backgroundColor;
+        baseRecord.customSettings.appearance.textColor = design.theme.textColor;
+        baseRecord.customSettings.appearance.fontFamily = design.theme.fontFamily;
+
+        // Apply industry special presets if relevant to the design
+        baseRecord.customSettings.industry = {
+          type: design.industryModule || 'general',
+          data: design.id === 'skyline' ? {
+            stats: [{ num: '320+', label: 'Homes sold' }, { num: '₹450Cr', label: 'Deals closed' }, { num: '9 yrs', label: 'Experience' }],
+            listings: [
+              { tag: 'For sale', price: '₹1.85 Cr', title: '3 BHK · 1,450 sq ft', location: 'VIP Road, Vesu, Surat' },
+              { tag: 'New launch', price: '₹96 Lac', title: '2 BHK · 920 sq ft', location: 'Althan Canal Corridor, Surat' }
+            ]
+          } : (design.id === 'atelier' ? {
+            services: [
+              { name: 'Bespoke Couture', subtitle: 'by appointment' },
+              { name: 'Custom Tailoring', subtitle: 'from 7 days' },
+              { name: 'Brand Identity', subtitle: '1:1 sessions' },
+              { name: 'Digital Edit', subtitle: 'new every season' }
+            ]
+          } : (design.id === 'care-plus' ? {
+            nextSlot: 'Today, 4:00 pm',
+            treatments: ['NFC Integration', 'Web Systems', 'Meta Ad Audits', 'Brand Identity', 'Performance Tuning'],
+            timings: 'Mon – Sat: 10:00 am – 7:30 pm'
+          } : (design.id === 'roast-and-co' ? {
+            menu: [
+              { name: 'Flat White', price: '₹190', popular: true },
+              { name: 'Cappuccino', price: '₹170' },
+              { name: 'Specialty Cold Brew', price: '₹210', popular: true },
+              { name: 'Pour Over', price: '₹180' }
+            ],
+            loyalty: 'Collect 8 stamps, get a free drink: 8 to go'
+          } : {})))
+        };
+
+        var viewport = document.getElementById('cardViewport');
+        if (viewport && renderer) {
+          viewport.innerHTML = renderer.renderCardBody(baseRecord, design);
+          if (typeof attachCardActions === 'function') {
+            attachCardActions(baseRecord);
+          }
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

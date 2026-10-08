@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ? (nameParts[0][0] + nameParts[1][0]).toUpperCase()
       : (name.slice(0, 2)).toUpperCase() || 'CU';
 
-    const isEvergreen = c.card_design === 'Evergreen';
+    const registry = window.CARD_DESIGN_REGISTRY;
+    const resolvedDesign = registry ? registry.resolveCardDesign(c.card_design) : { id: 'mint-haven', name: 'Mint Haven', category: 'personal' };
     const isActive = Boolean(c.is_active);
     const slug = c.profile_slug || (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
 
@@ -49,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
       description: c.description || '',
       socialInstagram: c.instagram_url || '',
       socialLinkedIn: c.linkedin_url || '',
-      design: isEvergreen ? 'Evergreen' : 'Mint Haven',
+      design: resolvedDesign.name,
+      designId: resolvedDesign.id,
       status: isActive ? 'active' : 'inactive',
       is_active: isActive,
       avatarUrl: c.avatar_url || c.profile_image_url || c.photo_url || '',
@@ -61,9 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       profileLink: `https://www.ambrosstudio.space/c/${slug}`,
       profileSlug: slug,
       createdDate: formattedDate,
-      cardUrl: isEvergreen
-        ? `/cards/design-2/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`
-        : `/cards/design-1/index.html?slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}&preview=true`
+      cardUrl: `/cards/preview.html?design=${encodeURIComponent(resolvedDesign.id)}&slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}`
     };
   }
 
@@ -861,23 +861,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 7. Card Customization: Appearance & Links
     const customSettings = customer.customSettings || {};
-    const app = customSettings.appearance || {};
-    const isEvergreen = customer.design === 'Evergreen';
+    const registry = window.CARD_DESIGN_REGISTRY;
+    const resolvedD = registry ? registry.resolveCardDesign(customer.design) : null;
+    const defaultPrimary = resolvedD?.theme?.primaryColor || '#10b981';
+    const defaultBg = resolvedD?.theme?.backgroundColor || '#faf6ee';
+    const defaultText = resolvedD?.theme?.textColor || '#1e293b';
+
     if (custPrimaryColor) {
       custPrimaryColor.value = app.primaryColor || '';
-      custPrimaryColor.placeholder = isEvergreen ? '#1b3a2f' : '#10b981';
+      custPrimaryColor.placeholder = defaultPrimary;
     }
-    if (custPrimaryColorPicker) custPrimaryColorPicker.value = app.primaryColor || (isEvergreen ? '#1b3a2f' : '#10b981');
+    if (custPrimaryColorPicker) custPrimaryColorPicker.value = app.primaryColor || defaultPrimary;
     if (custBgColor) {
       custBgColor.value = app.backgroundColor || '';
-      custBgColor.placeholder = isEvergreen ? '#ffffff' : '#faf6ee';
+      custBgColor.placeholder = defaultBg;
     }
-    if (custBgColorPicker) custBgColorPicker.value = app.backgroundColor || (isEvergreen ? '#ffffff' : '#faf6ee');
+    if (custBgColorPicker) custBgColorPicker.value = app.backgroundColor || defaultBg;
     if (custTextColor) {
       custTextColor.value = app.textColor || '';
-      custTextColor.placeholder = isEvergreen ? '#111827' : '#1e293b';
+      custTextColor.placeholder = defaultText;
     }
-    if (custTextColorPicker) custTextColorPicker.value = app.textColor || (isEvergreen ? '#111827' : '#1e293b');
+    if (custTextColorPicker) custTextColorPicker.value = app.textColor || defaultText;
     if (custFontFamily) custFontFamily.value = app.fontFamily || '';
 
     currentCustomLinks = Array.isArray(customSettings.links) ? JSON.parse(JSON.stringify(customSettings.links)) : [];
@@ -966,50 +970,431 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function setDesignSelection(designName) {
-    cardSelectOptions.forEach(opt => {
-      const optDesign = opt.getAttribute('data-design');
-      if (optDesign === designName) {
-        opt.classList.add('selected');
-        opt.setAttribute('aria-checked', 'true');
-      } else {
-        opt.classList.remove('selected');
-        opt.setAttribute('aria-checked', 'false');
-      }
+  // -------------------------------------------------------------
+  // Digital Card Design Gallery & Live Customer Preview System
+  // -------------------------------------------------------------
+  const adminDesignGalleryGrid = document.getElementById('adminDesignGalleryGrid');
+  const selectedDesignDisplayBadge = document.getElementById('selectedDesignDisplayBadge');
+  const selectedDesignInput = document.getElementById('selectedDesignInput');
+  const catFilterBtns = document.querySelectorAll('.design-category-tabs .design-cat-btn');
+
+  // Preview Modal Elements
+  const adminCardPreviewModal = document.getElementById('adminCardPreviewModal');
+  const previewModalIframe = document.getElementById('previewModalIframe');
+  const previewModalDesignName = document.getElementById('previewModalDesignName');
+  const previewModalCategoryBadge = document.getElementById('previewModalCategoryBadge');
+  const previewFooterDesignInfo = document.getElementById('previewFooterDesignInfo');
+  const previewPhoneShell = document.getElementById('previewPhoneShell');
+  const btnClosePreviewModal = document.getElementById('btnClosePreviewModal');
+  const btnClosePreviewFooter = document.getElementById('btnClosePreviewFooter');
+  const btnApplyDesignFromPreview = document.getElementById('btnApplyDesignFromPreview');
+  const btnPreviewCurrentCustomerDesign = document.getElementById('btnPreviewCurrentCustomerDesign');
+  const viewportToggleBtns = document.querySelectorAll('.viewport-toggle-btn');
+  let modalActiveDesign = 'Mint Haven';
+
+  function renderDesignGallery(filterCat = 'all') {
+    if (!adminDesignGalleryGrid) return;
+    const registry = window.CARD_DESIGN_REGISTRY;
+    if (!registry || !Array.isArray(registry.ALL_DESIGNS)) {
+      adminDesignGalleryGrid.innerHTML = '<div style="padding: 12px; font-size: 12px; color: var(--text-muted);">Loading designs...</div>';
+      return;
+    }
+
+    const designs = filterCat === 'all'
+      ? registry.ALL_DESIGNS
+      : registry.ALL_DESIGNS.filter(d => d.category === filterCat);
+
+    const resolvedCurrent = registry.resolveCardDesign(selectedDesign);
+
+    adminDesignGalleryGrid.innerHTML = designs.map(d => {
+      const isSelected = d.id === resolvedCurrent.id || d.name === resolvedCurrent.name;
+      const catClass = d.category || 'personal';
+      const catLabel = d.industryModule ? `Industry: ${d.industryModule}` : (d.categoryLabel || d.category);
+
+      return `
+        <div class="admin-design-card ${isSelected ? 'selected' : ''}" 
+             data-design-id="${escapeHtml(d.id)}" 
+             data-design-name="${escapeHtml(d.name)}"
+             role="radio"
+             aria-checked="${isSelected ? 'true' : 'false'}"
+             tabindex="0">
+          <div class="design-card-thumb thumb-${escapeHtml(d.id)}">
+            ${d.id === 'bento-grid' ? `
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 6px; width: 50px; height: 50px;">
+                <div style="background: #e0e7ff; border-radius: 4px;"></div>
+                <div style="background: #fef3c7; border-radius: 4px;"></div>
+                <div style="background: #dcfce7; border-radius: 4px;"></div>
+                <div style="background: #fce7f3; border-radius: 4px;"></div>
+              </div>
+            ` : `
+              <div class="thumb-elem-avatar"></div>
+            `}
+          </div>
+          <div class="design-card-meta">
+            <div class="design-card-title-row">
+              <span class="design-card-title">${escapeHtml(d.name)}</span>
+              <span class="design-card-cat-pill ${escapeHtml(catClass)}">${escapeHtml(catLabel)}</span>
+            </div>
+            <p class="design-card-desc">${escapeHtml(d.description || '')}</p>
+          </div>
+          <div class="design-card-actions">
+            <button type="button" class="btn-card-use" data-design-name="${escapeHtml(d.name)}">
+              ${isSelected ? '✓ Selected' : 'Use Design'}
+            </button>
+            <button type="button" class="btn-card-preview" data-design-id="${escapeHtml(d.id)}" title="Preview with customer data">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Attach click events
+    adminDesignGalleryGrid.querySelectorAll('.admin-design-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-card-preview')) {
+          e.stopPropagation();
+          const dId = card.getAttribute('data-design-id');
+          openCardPreviewModal(dId);
+          return;
+        }
+
+        const dName = card.getAttribute('data-design-name') || 'Mint Haven';
+        setDesignSelection(dName);
+      });
+    });
+
+    adminDesignGalleryGrid.querySelectorAll('.btn-card-preview').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dId = btn.getAttribute('data-design-id');
+        openCardPreviewModal(dId);
+      });
     });
   }
 
-  // Digital card selection click handler
-  cardSelectOptions.forEach(opt => {
-    opt.addEventListener('click', () => {
-      const dName = opt.getAttribute('data-design') || "Mint Haven";
-      selectedDesign = dName;
-      setDesignSelection(dName);
+  // Category Filter Tab Clicks
+  catFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      catFilterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.getAttribute('data-category') || 'all';
+      renderDesignGallery(cat);
+    });
+  });
 
-      const isEvergreen = dName === 'Evergreen';
+  function setDesignSelection(designName) {
+    const registry = window.CARD_DESIGN_REGISTRY;
+    const resolved = registry ? registry.resolveCardDesign(designName) : { id: 'mint-haven', name: 'Mint Haven' };
+    selectedDesign = resolved.name;
 
-      // If custom color inputs are currently empty, update picker bubbles and placeholders to match the chosen template defaults
+    if (selectedDesignDisplayBadge) {
+      selectedDesignDisplayBadge.textContent = resolved.name;
+    }
+    if (selectedDesignInput) {
+      selectedDesignInput.value = resolved.name;
+    }
+
+    // Update gallery cards in form
+    const galleryCards = document.querySelectorAll('.admin-design-card');
+    galleryCards.forEach(card => {
+      const cId = card.getAttribute('data-design-id');
+      const cName = card.getAttribute('data-design-name');
+      const isSelected = cId === resolved.id || cName === resolved.name;
+      if (isSelected) {
+        card.classList.add('selected');
+        card.setAttribute('aria-checked', 'true');
+        const useBtn = card.querySelector('.btn-card-use');
+        if (useBtn) useBtn.textContent = '✓ Selected';
+      } else {
+        card.classList.remove('selected');
+        card.setAttribute('aria-checked', 'false');
+        const useBtn = card.querySelector('.btn-card-use');
+        if (useBtn) useBtn.textContent = 'Use Design';
+      }
+    });
+
+    // Update color pickers placeholders to match chosen design palette if empty
+    if (resolved.theme) {
       if (custPrimaryColor && !custPrimaryColor.value.trim() && custPrimaryColorPicker) {
-        custPrimaryColorPicker.value = isEvergreen ? '#1b3a2f' : '#10b981';
-        custPrimaryColor.placeholder = isEvergreen ? '#1b3a2f' : '#10b981';
+        custPrimaryColorPicker.value = resolved.theme.primaryColor || '#10b981';
+        custPrimaryColor.placeholder = resolved.theme.primaryColor || '#10b981';
       }
       if (custBgColor && !custBgColor.value.trim() && custBgColorPicker) {
-        custBgColorPicker.value = isEvergreen ? '#ffffff' : '#faf6ee';
-        custBgColor.placeholder = isEvergreen ? '#ffffff' : '#faf6ee';
+        custBgColorPicker.value = resolved.theme.backgroundColor || '#faf6ee';
+        custBgColor.placeholder = resolved.theme.backgroundColor || '#faf6ee';
       }
       if (custTextColor && !custTextColor.value.trim() && custTextColorPicker) {
-        custTextColorPicker.value = isEvergreen ? '#111827' : '#1e293b';
-        custTextColor.placeholder = isEvergreen ? '#111827' : '#1e293b';
+        custTextColorPicker.value = resolved.theme.textColor || '#1e293b';
+        custTextColor.placeholder = resolved.theme.textColor || '#1e293b';
       }
+    }
 
-      // If editing an existing customer, update preview button href to reflect chosen design
-      if (currentEditingCustomerId) {
-        const c = customers.find(item => String(item.id) === String(currentEditingCustomerId));
-        const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
-        if (c && btnPreviewChosenDesign) {
-          btnPreviewChosenDesign.href = `/cards/${isEvergreen ? 'design-2' : 'design-1'}/index.html?slug=${encodeURIComponent(c.profileSlug || '')}&id=${encodeURIComponent(c.id)}&preview=true`;
+    // Update inspect links if customer exists
+    if (currentEditingCustomerId) {
+      const c = customers.find(item => String(item.id) === String(currentEditingCustomerId));
+      const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
+      if (c && btnPreviewChosenDesign) {
+        btnPreviewChosenDesign.href = `/cards/preview.html?design=${encodeURIComponent(resolved.id)}&slug=${encodeURIComponent(c.profileSlug || '')}&id=${encodeURIComponent(c.id)}`;
+      }
+    }
+  }
+
+  // -------------------------------------------------------------
+  // Live Customer Card Preview Modal Implementation
+  // -------------------------------------------------------------
+  function buildCustomerPreviewPayload(design) {
+    const rawName = custFullName ? custFullName.value.trim() : '';
+    const rawRole = custDesignation ? custDesignation.value.trim() : '';
+    const rawCompany = custCompany ? custCompany.value.trim() : '';
+    const rawPhone = custPhone ? custPhone.value.trim() : '';
+    const rawWhatsApp = custWhatsApp ? custWhatsApp.value.trim() : '';
+    const rawEmail = custEmail ? custEmail.value.trim() : '';
+    const rawWebsite = custWebsite ? custWebsite.value.trim() : '';
+    const rawAddress = custAddress ? custAddress.value.trim() : '';
+    const rawDesc = custDescription ? custDescription.value.trim() : '';
+    const rawInstagram = custInstagram ? custInstagram.value.trim() : '';
+    const rawLinkedIn = custLinkedIn ? custLinkedIn.value.trim() : '';
+
+    const authAmbros = (window.CARD_DESIGN_REGISTRY && window.CARD_DESIGN_REGISTRY.AUTHORITATIVE_AMBROS_CUSTOMER) || {};
+
+    const fullName = rawName || authAmbros.fullName || 'Ambros Studio';
+    const designation = rawRole || authAmbros.designation || 'Creative & Digital Team';
+    const company = rawCompany || authAmbros.company || 'Ambros Studio';
+    const phone = rawPhone || authAmbros.phone || '+91 91577 78915';
+    const whatsapp = rawWhatsApp || (rawPhone ? rawPhone.replace(/[^0-9]/g, '') : (authAmbros.whatsapp || '919157778915'));
+    const email = rawEmail || authAmbros.email || 'ambrosstudioltd@gmail.com';
+    const website = rawWebsite || authAmbros.website || 'https://www.ambrosstudio.space';
+    const address = rawAddress || authAmbros.address || '3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017';
+    const description = rawDesc || authAmbros.description || 'Bespoke websites, high-impact digital campaigns, and luxury contactless NFC business cards crafted with purpose.';
+    const avatarUrl = currentUploadedAvatar || authAmbros.avatarUrl || '/assets/abros-logo-transparent.png';
+
+    const links = Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0
+      ? currentCustomLinks
+      : [
+          { id: '1', type: 'phone', label: 'Call Studio', value: phone, enabled: true, order: 0 },
+          { id: '2', type: 'whatsapp', label: 'Chat on WhatsApp', value: whatsapp, enabled: true, order: 1 },
+          { id: '3', type: 'email', label: 'Email Team', value: email, enabled: true, order: 2 },
+          { id: '4', type: 'website', label: 'Visit Website', value: website, enabled: true, order: 3 },
+          { id: '5', type: 'instagram', label: 'Instagram', value: rawInstagram || 'https://www.instagram.com/ambros.studio', enabled: true, order: 4 },
+          { id: '6', type: 'linkedin', label: 'LinkedIn', value: rawLinkedIn || 'https://linkedin.com/company/ambrosstudio', enabled: true, order: 5 }
+        ];
+
+    let industryData = {};
+    if (design.id === 'skyline') {
+      industryData = {
+        stats: [{ num: '320+', label: 'Homes sold' }, { num: '₹450Cr', label: 'Deals closed' }, { num: '9 yrs', label: 'Experience' }],
+        listings: [
+          { tag: 'For sale', price: '₹1.85 Cr', title: '3 BHK · 1,450 sq ft', location: 'VIP Road, Vesu, Surat' },
+          { tag: 'New launch', price: '₹96 Lac', title: '2 BHK · 920 sq ft', location: 'Althan Canal Corridor, Surat' }
+        ]
+      };
+    } else if (design.id === 'atelier') {
+      industryData = {
+        services: [
+          { name: 'Bespoke Couture', subtitle: 'by appointment' },
+          { name: 'Custom Tailoring', subtitle: 'from 7 days' },
+          { name: 'Brand Identity', subtitle: '1:1 sessions' },
+          { name: 'Digital Edit', subtitle: 'new every season' }
+        ]
+      };
+    } else if (design.id === 'care-plus') {
+      industryData = {
+        nextSlot: 'Today, 4:00 pm',
+        treatments: ['NFC Integration', 'Web Systems', 'Meta Ad Audits', 'Brand Identity', 'Performance Tuning'],
+        timings: 'Mon – Sat: 10:00 am – 7:30 pm'
+      };
+    } else if (design.id === 'roast-and-co') {
+      industryData = {
+        menu: [
+          { name: 'Flat White', price: '₹190', popular: true },
+          { name: 'Cappuccino', price: '₹170' },
+          { name: 'Specialty Cold Brew', price: '₹210', popular: true },
+          { name: 'Pour Over', price: '₹180' }
+        ],
+        loyalty: 'Collect 8 stamps, get a free drink: 8 to go'
+      };
+    }
+
+    return {
+      fullName,
+      designation,
+      company,
+      phone,
+      whatsapp,
+      email,
+      website,
+      address,
+      description,
+      socialInstagram: rawInstagram,
+      socialLinkedIn: rawLinkedIn,
+      cardDesign: design.id,
+      profileSlug: (fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')) || 'ambros-studio',
+      avatarUrl: avatarUrl,
+      is_active: true,
+      customSettings: {
+        appearance: {
+          primaryColor: custPrimaryColor ? custPrimaryColor.value.trim() : (design.theme?.primaryColor || ''),
+          backgroundColor: custBgColor ? custBgColor.value.trim() : (design.theme?.backgroundColor || ''),
+          textColor: custTextColor ? custTextColor.value.trim() : (design.theme?.textColor || ''),
+          fontFamily: custFontFamily ? custFontFamily.value : (design.theme?.fontFamily || '')
+        },
+        links,
+        industry: {
+          type: design.industryModule || 'general',
+          data: industryData
         }
       }
+    };
+  }
+
+  function openCardPreviewModal(designNameOrId) {
+    if (!adminCardPreviewModal) return;
+    const registry = window.CARD_DESIGN_REGISTRY;
+    const renderer = window.CARD_RENDERER;
+    const resolved = registry ? registry.resolveCardDesign(designNameOrId) : { id: 'mint-haven', name: 'Mint Haven', category: 'personal' };
+    modalActiveDesign = resolved.name;
+
+    if (previewModalDesignName) previewModalDesignName.textContent = resolved.name;
+    if (previewModalCategoryBadge) {
+      previewModalCategoryBadge.textContent = resolved.industryModule ? `Industry: ${resolved.industryModule}` : resolved.category;
+    }
+    if (previewFooterDesignInfo) {
+      previewFooterDesignInfo.innerHTML = `Design: <strong>${escapeHtml(resolved.name)}</strong> &bull; ${escapeHtml(resolved.categoryLabel || resolved.category)} &bull; ${escapeHtml(resolved.badge || '')}`;
+    }
+
+    const customerPayload = buildCustomerPreviewPayload(resolved);
+
+    if (previewModalIframe) {
+      if (renderer && typeof renderer.renderCardHtml === 'function') {
+        const fullHtml = renderer.renderCardHtml(customerPayload);
+        previewModalIframe.srcdoc = fullHtml;
+      } else {
+        previewModalIframe.src = `/cards/preview.html?design=${encodeURIComponent(resolved.id)}`;
+      }
+    }
+
+    adminCardPreviewModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCardPreviewModal() {
+    if (!adminCardPreviewModal) return;
+    adminCardPreviewModal.style.display = 'none';
+    document.body.style.overflow = '';
+    if (previewModalIframe) previewModalIframe.srcdoc = 'about:blank';
+  }
+
+  if (btnClosePreviewModal) btnClosePreviewModal.addEventListener('click', closeCardPreviewModal);
+  if (btnClosePreviewFooter) btnClosePreviewFooter.addEventListener('click', closeCardPreviewModal);
+  if (adminCardPreviewModal) {
+    adminCardPreviewModal.addEventListener('click', (e) => {
+      if (e.target === adminCardPreviewModal) closeCardPreviewModal();
+    });
+  }
+
+  if (btnApplyDesignFromPreview) {
+    btnApplyDesignFromPreview.addEventListener('click', () => {
+      setDesignSelection(modalActiveDesign);
+      closeCardPreviewModal();
+      showAdminToast(`Selected design: ${modalActiveDesign}`);
+    });
+  }
+
+  if (btnPreviewCurrentCustomerDesign) {
+    btnPreviewCurrentCustomerDesign.addEventListener('click', () => {
+      openCardPreviewModal(selectedDesign);
+    });
+  }
+
+  viewportToggleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      viewportToggleBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const w = btn.getAttribute('data-width') || '390';
+      if (previewPhoneShell) {
+        previewPhoneShell.style.width = w + 'px';
+      }
+    });
+  });
+
+  // -------------------------------------------------------------
+  // Showroom Tab Rendering (Screen D: Digital Cards Management)
+  // -------------------------------------------------------------
+  const showroomCardsGrid = document.getElementById('showroomCardsGrid');
+  const showroomCatTabs = document.querySelectorAll('#showroomCatTabs .design-cat-btn');
+
+  function renderShowroom(filterCat = 'all') {
+    if (!showroomCardsGrid) return;
+    const registry = window.CARD_DESIGN_REGISTRY;
+    if (!registry || !Array.isArray(registry.ALL_DESIGNS)) return;
+
+    const designs = filterCat === 'all'
+      ? registry.ALL_DESIGNS
+      : registry.ALL_DESIGNS.filter(d => d.category === filterCat);
+
+    showroomCardsGrid.innerHTML = designs.map(d => {
+      const catClass = d.category || 'personal';
+      const catLabel = d.industryModule ? `Industry: ${d.industryModule}` : (d.categoryLabel || d.category);
+
+      return `
+        <div class="showroom-card-item">
+          <div class="showroom-thumb thumb-${escapeHtml(d.id)}">
+            ${d.id === 'bento-grid' ? `
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 12px; width: 60px; height: 60px;">
+                <div style="background: #e0e7ff; border-radius: 4px;"></div>
+                <div style="background: #fef3c7; border-radius: 4px;"></div>
+                <div style="background: #dcfce7; border-radius: 4px;"></div>
+                <div style="background: #fce7f3; border-radius: 4px;"></div>
+              </div>
+            ` : `
+              <div class="thumb-elem-avatar" style="transform: scale(1.4);"></div>
+            `}
+          </div>
+          <div class="showroom-body">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <h3 style="font-size: 15px; font-weight: 700; color: var(--text-headline);">${escapeHtml(d.name)}</h3>
+              <span class="design-card-cat-pill ${escapeHtml(catClass)}">${escapeHtml(catLabel)}</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">${escapeHtml(d.description || '')}</p>
+          </div>
+          <div class="showroom-footer">
+            <button type="button" class="btn btn-white btn-xs btn-showroom-preview" data-design-id="${escapeHtml(d.id)}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <span>Live Preview</span>
+            </button>
+            <button type="button" class="btn btn-gold btn-xs btn-showroom-use" data-design-name="${escapeHtml(d.name)}">
+              <span>Create Customer</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    showroomCardsGrid.querySelectorAll('.btn-showroom-preview').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dId = btn.getAttribute('data-design-id');
+        openCardPreviewModal(dId);
+      });
+    });
+
+    showroomCardsGrid.querySelectorAll('.btn-showroom-use').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dName = btn.getAttribute('data-design-name');
+        resetAddCustomerForm();
+        setDesignSelection(dName);
+        navigateToTab('add-customer');
+        showAdminToast(`Selected ${dName}. Ready to create customer profile.`);
+      });
+    });
+  }
+
+  showroomCatTabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showroomCatTabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.getAttribute('data-showroom-cat') || 'all';
+      renderShowroom(cat);
     });
   });
 
@@ -1822,6 +2207,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Client Delivery section
   setupClientDeliveryListeners();
   updateClientDelivery('', '');
+
+  // Initialize Digital Card Design System Gallery & Showroom
+  renderDesignGallery('all');
+  renderShowroom('all');
 
   // Run initial session check
   checkAdminSession();

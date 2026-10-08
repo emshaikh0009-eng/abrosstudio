@@ -1,4 +1,5 @@
 import { createAnonymousClient } from "@/utils/supabase/server";
+import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER } from "@/utils/card-designs";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -38,6 +39,16 @@ export async function GET(
 
     if (error) {
       console.error("GET /api/cards/[slug] RPC error:", error.message);
+      // If brand card and RPC fails, safely fallback to authoritative payload
+      if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {
+        return NextResponse.json({
+          success: true,
+          card: {
+            ...AUTHORITATIVE_AMBROS_CUSTOMER,
+            cardDesign: resolveCardDesign(AUTHORITATIVE_AMBROS_CUSTOMER.cardDesign).id,
+          },
+        });
+      }
       return NextResponse.json(
         { error: "Failed to retrieve digital business card." },
         { status: 500 }
@@ -45,6 +56,16 @@ export async function GET(
     }
 
     if (!data || !Array.isArray(data) || data.length === 0) {
+      // Authoritative fallback for verified Ambros Studio brand card
+      if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {
+        return NextResponse.json({
+          success: true,
+          card: {
+            ...AUTHORITATIVE_AMBROS_CUSTOMER,
+            cardDesign: resolveCardDesign(AUTHORITATIVE_AMBROS_CUSTOMER.cardDesign).id,
+          },
+        });
+      }
       return NextResponse.json(
         { error: "Card not found or currently unavailable." },
         { status: 404 }
@@ -52,6 +73,7 @@ export async function GET(
     }
 
     const card = data[0];
+    const resolvedDesign = resolveCardDesign(card.card_design);
 
     return NextResponse.json({
       success: true,
@@ -67,7 +89,7 @@ export async function GET(
         address: card.business_address || "",
         socialInstagram: card.instagram_url || "",
         socialLinkedIn: card.linkedin_url || "",
-        cardDesign: card.card_design === "Evergreen" ? "Evergreen" : "Mint Haven",
+        cardDesign: resolvedDesign.id,
         profileSlug: card.profile_slug,
         avatarUrl: card.avatar_url || card.profile_image_url || "",
         customSettings: card.custom_settings || null,
@@ -81,4 +103,3 @@ export async function GET(
     );
   }
 }
-

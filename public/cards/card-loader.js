@@ -1,9 +1,15 @@
 /**
  * Ambros Studio — Universal Digital Card Dynamic Hydration Controller
+ * Supports all 16 Canonical Designs:
+ *   - Personal (6): Mint Haven, Evergreen, Noir Gold, Emerald Ivory, Neon Pulse, Mono Studio
+ *   - Business (6): Classic Navy, Fresh Mint, Bold Pop, Bento Grid, Glass Aurora, Luxe Foil
+ *   - Industry Specials (4): Skyline, Atelier, Care Plus, Roast & Co.
+ * 
  * Supports:
- *   1. Public Mode: ?slug={profile_slug} via GET /api/cards/{slug} (active cards only)
- *   2. Admin Preview Mode: ?id={id}&preview=true via GET /api/admin/customers/{id} (session-protected)
- *   3. Static Showroom Fallback: When no query parameters are present, leaves demo template intact
+ *   1. Pre-hydrated Server Mode (window.__INITIAL_CARD__ with 0ms paint)
+ *   2. Public Mode: ?slug={profile_slug} via GET /api/cards/{slug}
+ *   3. Admin Preview Mode: ?id={id}&preview=true via GET /api/admin/customers/{id}
+ *   4. Legacy Template Mode (/cards/design-1/ & /cards/design-2/)
  */
 
 (function () {
@@ -21,11 +27,11 @@
 
   function getInitials(name) {
     if (!name) return 'AS';
-    const parts = name.trim().split(/\s+/).filter(Boolean);
+    const parts = String(name).trim().split(/\s+/).filter(Boolean);
     if (parts.length >= 2) {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
-    return name.slice(0, 2).toUpperCase();
+    return String(name).slice(0, 2).toUpperCase();
   }
 
   function normalizeUrl(url) {
@@ -39,7 +45,7 @@
   }
 
   const GOOGLE_FONT_MAP = {
-    'Inter': 'family=Inter:wght@400;500;600;700',
+    'Inter': 'family=Inter:wght@400;500;600;700;800;900',
     'Plus Jakarta Sans': 'family=Plus+Jakarta+Sans:wght@400;500;600;700;800',
     'Poppins': 'family=Poppins:wght@400;500;600;700',
     'Montserrat': 'family=Montserrat:wght@400;500;600;700',
@@ -80,219 +86,6 @@
     }
   }
 
-  const ALLOWED_LINK_TYPES = [
-    'whatsapp',
-    'phone',
-    'email',
-    'website',
-    'instagram',
-    'facebook',
-    'linkedin',
-    'youtube',
-    'twitter',
-    'telegram',
-    'maps',
-    'custom'
-  ];
-
-  function formatLinkDestination(type, rawValue) {
-    if (!rawValue || typeof rawValue !== 'string') return null;
-    const val = rawValue.trim();
-    if (!val) return null;
-
-    const lower = val.toLowerCase().replace(/[\x00-\x20]/g, '');
-    if (
-      lower.startsWith('javascript:') ||
-      lower.startsWith('data:') ||
-      lower.startsWith('vbscript:') ||
-      lower.startsWith('file:') ||
-      lower.startsWith('blob:')
-    ) {
-      return null;
-    }
-
-    switch (type) {
-      case 'whatsapp': {
-        if (val.startsWith('https://wa.me/') || val.startsWith('http://wa.me/')) {
-          return val.replace('http://', 'https://');
-        }
-        const digits = val.replace(/\D/g, '');
-        return digits ? `https://wa.me/${digits}` : null;
-      }
-      case 'phone': {
-        const cleaned = val.replace(/[^0-9+]/g, '');
-        return cleaned ? `tel:${cleaned}` : null;
-      }
-      case 'email': {
-        const email = val.replace(/^mailto:/i, '').trim();
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? `mailto:${email}` : null;
-      }
-      case 'maps': {
-        if (val.startsWith('https://maps.google.com') || val.startsWith('https://goo.gl/maps') || val.startsWith('https://www.google.com/maps')) {
-          return val;
-        }
-        return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(val)}`;
-      }
-      case 'website':
-      case 'instagram':
-      case 'facebook':
-      case 'linkedin':
-      case 'youtube':
-      case 'twitter':
-      case 'telegram':
-      case 'custom':
-      default: {
-        let target = val;
-        if (!/^https?:\/\//i.test(target)) {
-          if (type === 'instagram' && !val.includes('/')) target = `https://instagram.com/${val.replace(/^@/, '')}`;
-          else if (type === 'twitter' && !val.includes('/')) target = `https://twitter.com/${val.replace(/^@/, '')}`;
-          else if (type === 'telegram' && !val.includes('/')) target = `https://t.me/${val.replace(/^@/, '')}`;
-          else target = `https://${val}`;
-        }
-        try {
-          const parsed = new URL(target);
-          if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
-            return target;
-          }
-        } catch (_) {
-          return null;
-        }
-        return null;
-      }
-    }
-  }
-
-  function getDefaultLabel(type) {
-    const map = {
-      whatsapp: 'WhatsApp',
-      phone: 'Call',
-      email: 'Email',
-      website: 'Website',
-      instagram: 'Instagram',
-      facebook: 'Facebook',
-      linkedin: 'LinkedIn',
-      youtube: 'YouTube',
-      twitter: 'X / Twitter',
-      telegram: 'Telegram',
-      maps: 'Location / Maps',
-      custom: 'Link'
-    };
-    return map[type] || 'Link';
-  }
-
-  function getDisplayValue(type, rawVal, label) {
-    if (!rawVal) return label || '';
-    const val = rawVal.trim();
-    if (type === 'phone' || type === 'whatsapp') return val;
-    if (type === 'email') return val.replace(/^mailto:/i, '');
-    if (type === 'website' || type === 'custom') return val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-    if (type === 'instagram') {
-      const match = val.match(/instagram\.com\/([^/?#]+)/i);
-      return match ? `@${match[1]}` : (val.startsWith('@') ? val : `@${val}`);
-    }
-    if (type === 'twitter') {
-      const match = val.match(/(?:twitter|x)\.com\/([^/?#]+)/i);
-      return match ? `@${match[1]}` : (val.startsWith('@') ? val : `@${val}`);
-    }
-    if (type === 'telegram') {
-      const match = val.match(/t\.me\/([^/?#]+)/i);
-      const identifier = match ? match[1] : val;
-      return identifier.replace(/^@/, '');
-    }
-    if (type === 'linkedin') {
-      const match = val.match(/linkedin\.com\/(?:in|company)\/([^/?#]+)/i);
-      return match ? match[1] : val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-    }
-    if (type === 'youtube') {
-      const match = val.match(/youtube\.com\/(@[^/?#]+)/i);
-      return match ? match[1] : 'YouTube Channel';
-    }
-    if (type === 'maps') {
-      return val.startsWith('http') ? 'View on Google Maps' : val;
-    }
-    return val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-  }
-
-  function getLinkIconSvg(type, size) {
-    switch (type) {
-      case 'phone':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>`;
-      case 'whatsapp':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>`;
-      case 'email':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>`;
-      case 'website':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
-      case 'instagram':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
-      case 'facebook':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>`;
-      case 'linkedin':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>`;
-      case 'youtube':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>`;
-      case 'twitter':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>`;
-      case 'telegram':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
-      case 'maps':
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
-      case 'custom':
-      default:
-        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-    }
-  }
-
-  function getDesign1BadgeClass(type) {
-    switch (type) {
-      case 'phone':
-      case 'whatsapp':
-        return 'badge-green';
-      case 'linkedin':
-      case 'twitter':
-      case 'telegram':
-        return 'badge-blue';
-      case 'email':
-        return 'badge-yellow';
-      case 'website':
-      case 'facebook':
-      case 'maps':
-        return 'badge-purple';
-      case 'instagram':
-      case 'youtube':
-      case 'custom':
-      default:
-        return 'badge-peach';
-    }
-  }
-
-  function extractValidLinks(card) {
-    const rawLinks = (card.customSettings && Array.isArray(card.customSettings.links))
-      ? card.customSettings.links
-      : [];
-
-    return rawLinks
-      .map((link, originalIndex) => ({ link, originalIndex }))
-      .filter(({ link }) => {
-        if (!link || typeof link !== 'object') return false;
-        if (link.enabled === false) return false;
-        const type = typeof link.type === 'string' ? link.type.trim().toLowerCase() : '';
-        if (!ALLOWED_LINK_TYPES.includes(type)) return false;
-        const dest = formatLinkDestination(type, link.value);
-        return Boolean(dest);
-      })
-      .sort((a, b) => {
-        const orderA = typeof a.link.order === 'number' && !isNaN(a.link.order) ? a.link.order : a.originalIndex;
-        const orderB = typeof b.link.order === 'number' && !isNaN(b.link.order) ? b.link.order : b.originalIndex;
-        if (orderA !== orderB) {
-          return orderA - orderB;
-        }
-        return a.originalIndex - b.originalIndex;
-      })
-      .map(({ link }) => link);
-  }
-
-
   function generateVCard(card) {
     const fn = card.fullName || card.full_name || card.name || 'Contact';
     const org = card.company || card.company_name || '';
@@ -320,8 +113,6 @@
     return lines.join('\r\n');
   }
 
-  const SOCIAL_LINK_TYPES = new Set(['instagram', 'facebook', 'linkedin', 'youtube', 'twitter']);
-
   function showCardToast(message) {
     let toast = document.getElementById('cardToast');
     let toastMsg = document.getElementById('cardToastMessage');
@@ -342,7 +133,7 @@
   }
 
   function getCanonicalCardUrl(card) {
-    const slug = card.profileSlug || '';
+    const slug = card.profileSlug || card.profile_slug || '';
     const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
       ? window.location.origin
       : 'https://www.ambrosstudio.space';
@@ -417,7 +208,7 @@
     if (!backdrop) return;
 
     const name = card.fullName || card.full_name || card.name || 'Digital Card';
-    const slug = card.profileSlug || 'card';
+    const slug = card.profileSlug || card.profile_slug || 'card';
     const canonicalUrl = getCanonicalCardUrl(card);
 
     const titleEl = document.getElementById('qrModalTitle');
@@ -479,7 +270,6 @@
       }
     }
 
-    // Copy Link button in modal
     const copyBtn = document.getElementById('qrCopyLinkBtn');
     if (copyBtn) {
       copyBtn.onclick = function() {
@@ -508,8 +298,41 @@
   }
 
   function attachCardActions(card) {
-    attachVCardDownload(card);
+    // 1. Save Contact
+    const saveBtn = document.getElementById('saveContactBtn');
+    if (saveBtn) {
+      saveBtn.onclick = function (e) {
+        e.preventDefault();
+        try {
+          const vcardText = generateVCard(card);
+          const blob = new Blob([vcardText], { type: 'text/vcard;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          const filename = `${(card.fullName || card.full_name || card.name || 'contact').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.vcf`;
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
 
+          const originalHtml = saveBtn.innerHTML;
+          saveBtn.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Contact Saved!</span>
+          `;
+          setTimeout(() => {
+            saveBtn.innerHTML = originalHtml;
+          }, 2500);
+        } catch (err) {
+          console.error('Error generating vCard:', err);
+        }
+      };
+    }
+
+    // 2. Share
     const shareBtn = document.getElementById('shareCardBtn');
     if (shareBtn) {
       shareBtn.onclick = function(e) {
@@ -518,6 +341,7 @@
       };
     }
 
+    // 3. QR Modal
     const showQrBtn = document.getElementById('showQrBtn');
     if (showQrBtn) {
       showQrBtn.onclick = function(e) {
@@ -549,39 +373,351 @@
     });
   }
 
-  function attachVCardDownload(card) {
-    const saveBtn = document.getElementById('saveContactBtn');
-    if (!saveBtn) return;
+  /**
+   * Universal Hydration for All 16 Designs
+   */
+  function hydrateUniversal(card, isPreview) {
+    const registry = window.CARD_DESIGN_REGISTRY;
+    const renderer = window.CARD_RENDERER;
+    const design = registry ? registry.resolveCardDesign(card.cardDesign || card.card_design) : { id: 'mint-haven', name: 'Mint Haven' };
 
-    saveBtn.onclick = function (e) {
-      e.preventDefault();
-      try {
-        const vcardText = generateVCard(card);
-        const blob = new Blob([vcardText], { type: 'text/vcard;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        const filename = `${(card.fullName || card.full_name || card.name || 'contact').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.vcf`;
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
 
-        const originalHtml = saveBtn.innerHTML;
-        saveBtn.innerHTML = `
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-          <span>Contact Saved!</span>
+    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
+    const role = card.designation || card.role || '';
+    const company = card.company || card.company_name || '';
+
+    document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
+
+    // Update body theme classes
+    document.documentElement.className = `theme-${design.id}`;
+    document.body.className = `theme-${design.id}`;
+
+    // If viewport wrapper exists and needs body rendering (e.g. preview mode or dynamic fetch)
+    const viewport = document.getElementById('cardViewport') || document.querySelector('main.viewport-wrapper');
+    if (viewport && renderer && typeof renderer.renderCardBody === 'function') {
+      let previewBanner = '';
+      if (isPreview) {
+        const isActive = card.is_active !== false;
+        previewBanner = `
+          <div style="background: #0f172a; color: #f8fafc; font-size: 11.5px; font-weight: 700; text-align: center; padding: 8px 14px; border-radius: 8px; margin-bottom: 14px; border: 1px solid #334155;">
+            ADMIN PREVIEW &bull; ${escapeHtml(design.name)} (${isActive ? '<span style="color: #34d399;">Active</span>' : '<span style="color: #fbbf24;">Inactive</span>'})
+          </div>
         `;
-        setTimeout(() => {
-          saveBtn.innerHTML = originalHtml;
-        }, 2500);
-      } catch (err) {
-        console.error('Error generating vCard:', err);
       }
-    };
+      viewport.innerHTML = previewBanner + renderer.renderCardBody(card, design);
+    }
+
+    attachCardActions(card);
+
+    document.documentElement.classList.remove('card-loading');
+    const skeleton = document.getElementById('cardSkeleton');
+    if (skeleton) skeleton.remove();
+  }
+
+  /**
+   * Legacy Template Hydration: Design 1 (Mint Haven)
+   */
+  function hydrateLegacyDesign1(card, isPreview) {
+    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
+
+    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
+    const role = card.designation || card.role || '';
+    const company = card.company || card.company_name || '';
+    const bio = card.description || '';
+    const phone = card.phone || card.mobile_number || '';
+    const whatsapp = card.whatsapp || card.whatsapp_number || '';
+    const email = card.email || '';
+    const website = card.website || '';
+    const address = card.address || card.business_address || '';
+    const instagram = card.socialInstagram || card.instagram_url || '';
+    const linkedin = card.socialLinkedIn || card.linkedin_url || '';
+
+    document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
+
+    if (isPreview) {
+      const banner = document.createElement('div');
+      const isActive = card.is_active !== false;
+      banner.style.cssText = `background: #0f172a; color: #f8fafc; font-size: 12px; font-weight: 600; text-align: center; padding: 10px 16px; border-bottom: 2px solid ${isActive ? '#10b981' : '#f59e0b'}; position: sticky; top: 0; z-index: 1000; letter-spacing: 0.02em;`;
+      banner.innerHTML = `ADMIN PREVIEW &bull; ${escapeHtml(name)} (${isActive ? '<span style="color: #34d399;">Active Card</span>' : '<span style="color: #fbbf24;">Inactive</span>'})`;
+      document.body.prepend(banner);
+    }
+
+    // Avatar
+    const avatarImgUrl = card.avatarUrl || card.avatar_url || card.profile_image_url || card.photo || '';
+    const avatarWrap = document.querySelector('.profile-avatar-wrap');
+    if (avatarWrap) {
+      if (avatarImgUrl) {
+        avatarWrap.innerHTML = `
+          <img src="${escapeHtml(avatarImgUrl)}" alt="${escapeHtml(name)}" class="profile-avatar" width="88" height="88" loading="eager" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+          <div class="profile-avatar-initials-fallback" style="display: none; width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">${escapeHtml(getInitials(name))}</div>
+          <span class="profile-badge-active" title="Available for projects" aria-hidden="true"></span>
+        `;
+      } else {
+        avatarWrap.innerHTML = `
+          <div style="width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">${escapeHtml(getInitials(name))}</div>
+          <span class="profile-badge-active" title="Available for projects" aria-hidden="true"></span>
+        `;
+      }
+    }
+
+    const nameEl = document.querySelector('.profile-name');
+    if (nameEl) nameEl.textContent = name;
+    const roleEl = document.querySelector('.profile-designation');
+    if (roleEl) { roleEl.textContent = role; roleEl.style.display = role ? '' : 'none'; }
+    const companyEl = document.querySelector('.profile-company');
+    if (companyEl) { companyEl.textContent = company; companyEl.style.display = company ? '' : 'none'; }
+    const bioEl = document.querySelector('.profile-bio');
+    if (bioEl) { bioEl.textContent = bio; bioEl.style.display = bio ? '' : 'none'; }
+
+    // Business details section
+    const bSection = document.querySelector('.business-section');
+    if (bSection) {
+      let hasBiz = false;
+      const bCompany = bSection.querySelector('.detail-group-company');
+      if (bCompany) {
+        if (company) { bCompany.querySelector('.detail-value').textContent = company; bCompany.style.display = ''; hasBiz = true; }
+        else bCompany.style.display = 'none';
+      }
+      const bRole = bSection.querySelector('.detail-group-designation');
+      if (bRole) {
+        if (role) { bRole.querySelector('.detail-value').textContent = role; bRole.style.display = ''; hasBiz = true; }
+        else bRole.style.display = 'none';
+      }
+      const bAddress = bSection.querySelector('.detail-group-address');
+      if (bAddress) {
+        if (address) { bAddress.querySelector('.detail-value').textContent = address; bAddress.style.display = ''; hasBiz = true; }
+        else bAddress.style.display = 'none';
+      }
+      const bWeb = bSection.querySelector('.detail-group-website');
+      if (bWeb) {
+        if (website) {
+          const a = bWeb.querySelector('a');
+          if (a) { a.href = normalizeUrl(website); a.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, ''); }
+          bWeb.style.display = '';
+          hasBiz = true;
+        } else bWeb.style.display = 'none';
+      }
+      bSection.style.display = hasBiz ? '' : 'none';
+    }
+
+    // Call / WA / Email / Web
+    const callCard = document.querySelector('.contact-card[href^="tel:"]');
+    if (callCard) {
+      if (phone) { callCard.href = `tel:${phone.replace(/\s+/g, '')}`; const val = callCard.querySelector('.contact-value'); if (val) val.textContent = phone; callCard.style.display = ''; }
+      else callCard.style.display = 'none';
+    }
+    const waCard = document.querySelector('.contact-card[href*="wa.me"]');
+    if (waCard) {
+      if (whatsapp) { waCard.href = `https://wa.me/${whatsapp.replace(/\D/g, '')}`; waCard.style.display = ''; }
+      else waCard.style.display = 'none';
+    }
+    const emCard = document.querySelector('.contact-card[href^="mailto:"]');
+    if (emCard) {
+      if (email) { emCard.href = `mailto:${email}`; const val = emCard.querySelector('.contact-value'); if (val) val.textContent = email; emCard.style.display = ''; }
+      else emCard.style.display = 'none';
+    }
+    const webCard = document.querySelector('.contact-card-website') || document.querySelector('.contact-card[href*="lumenstudio.co"]');
+    if (webCard) {
+      if (website) { webCard.href = normalizeUrl(website); const val = webCard.querySelector('.contact-value'); if (val) val.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, ''); webCard.style.display = ''; }
+      else webCard.style.display = 'none';
+    }
+
+    // Socials
+    const sSection = document.querySelector('.social-section');
+    if (sSection) {
+      let hasSoc = false;
+      const ig = sSection.querySelector('.social-card-instagram') || sSection.querySelector('a[href*="instagram.com"]');
+      if (ig) { if (instagram) { ig.href = normalizeUrl(instagram); ig.style.display = ''; hasSoc = true; } else ig.style.display = 'none'; }
+      const li = sSection.querySelector('.social-card-linkedin') || sSection.querySelector('a[href*="linkedin.com"]');
+      if (li) { if (linkedin) { li.href = normalizeUrl(linkedin); li.style.display = ''; hasSoc = true; } else li.style.display = 'none'; }
+      const fb = sSection.querySelector('.social-card-facebook');
+      if (fb) fb.style.display = 'none';
+      sSection.style.display = hasSoc ? '' : 'none';
+    }
+
+    attachCardActions(card);
+    document.documentElement.classList.remove('card-loading');
+    const skeleton = document.getElementById('cardSkeleton');
+    if (skeleton) skeleton.remove();
+  }
+
+  /**
+   * Legacy Template Hydration: Design 2 (Evergreen)
+   */
+  function hydrateLegacyDesign2(card, isPreview) {
+    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
+
+    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
+    const role = card.designation || card.role || '';
+    const company = card.company || card.company_name || '';
+    const bio = card.description || '';
+    const phone = card.phone || card.mobile_number || '';
+    const whatsapp = card.whatsapp || card.whatsapp_number || '';
+    const email = card.email || '';
+    const website = card.website || '';
+    const address = card.address || card.business_address || '';
+    const instagram = card.socialInstagram || card.instagram_url || '';
+    const linkedin = card.socialLinkedIn || card.linkedin_url || '';
+
+    document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
+
+    if (isPreview) {
+      const banner = document.createElement('div');
+      const isActive = card.is_active !== false;
+      banner.style.cssText = `background: #0f172a; color: #f8fafc; font-size: 12px; font-weight: 600; text-align: center; padding: 10px 16px; border-bottom: 2px solid ${isActive ? '#10b981' : '#f59e0b'}; position: sticky; top: 0; z-index: 1000; letter-spacing: 0.02em;`;
+      banner.innerHTML = `ADMIN PREVIEW &bull; ${escapeHtml(name)} (${isActive ? '<span style="color: #34d399;">Active Card</span>' : '<span style="color: #fbbf24;">Inactive</span>'})`;
+      document.body.prepend(banner);
+    }
+
+    // Avatar
+    const avatarImgUrl = card.avatarUrl || card.avatar_url || card.profile_image_url || card.photo || '';
+    const avatarCircle = document.querySelector('.profile-avatar-circle');
+    if (avatarCircle) {
+      if (avatarImgUrl) {
+        avatarCircle.innerHTML = `
+          <img src="${escapeHtml(avatarImgUrl)}" alt="${escapeHtml(name)}" class="profile-avatar-img" style="width: 100%; height: 100%; border-radius: 50%; object-fit: contain; padding: 4px; box-sizing: border-box; background: #ffffff;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';">
+          <span class="profile-avatar-initials" style="display: none;">${escapeHtml(getInitials(name))}</span>
+        `;
+      } else {
+        avatarCircle.innerHTML = `<span class="profile-avatar-initials">${escapeHtml(getInitials(name))}</span>`;
+      }
+    }
+
+    const nameEl = document.querySelector('.profile-name');
+    if (nameEl) nameEl.textContent = name;
+    const roleEl = document.querySelector('.profile-designation');
+    if (roleEl) { roleEl.textContent = role; roleEl.style.display = role ? '' : 'none'; }
+    const companyEl = document.querySelector('.profile-company');
+    if (companyEl) { companyEl.textContent = company; companyEl.style.display = company ? '' : 'none'; }
+    const bioEl = document.querySelector('.profile-bio');
+    if (bioEl) { bioEl.textContent = bio; bioEl.style.display = bio ? '' : 'none'; }
+
+    // Business details section (NO LEAKS)
+    const bSection = document.querySelector('.business-section') || document.querySelector('section[aria-label="Business details"]');
+    if (bSection) {
+      let hasBiz = false;
+      const bCompany = bSection.querySelector('.business-row-company') || bSection.querySelector('.business-row:nth-child(1)');
+      if (bCompany) {
+        if (company) {
+          const val = bCompany.querySelector('.business-val');
+          if (val) val.textContent = company;
+          bCompany.style.display = '';
+          hasBiz = true;
+        } else bCompany.style.display = 'none';
+      }
+      const bRole = bSection.querySelector('.business-row-designation') || bSection.querySelector('.business-row:nth-child(2)');
+      if (bRole) {
+        if (role) {
+          const val = bRole.querySelector('.business-val');
+          if (val) val.textContent = role;
+          bRole.style.display = '';
+          hasBiz = true;
+        } else bRole.style.display = 'none';
+      }
+      const bAddress = bSection.querySelector('.business-row-address') || bSection.querySelector('.business-row:nth-child(3)');
+      if (bAddress) {
+        if (address) {
+          const val = bAddress.querySelector('.business-val') || bAddress.querySelector('address');
+          if (val) val.textContent = address;
+          bAddress.style.display = '';
+          hasBiz = true;
+        } else bAddress.style.display = 'none';
+      }
+      const bWeb = bSection.querySelector('.business-row-website') || bSection.querySelector('.business-row:nth-child(4)');
+      if (bWeb) {
+        if (website) {
+          const a = bWeb.querySelector('a');
+          if (a) { a.href = normalizeUrl(website); a.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, ''); }
+          bWeb.style.display = '';
+          hasBiz = true;
+        } else bWeb.style.display = 'none';
+      }
+      bSection.style.display = hasBiz ? '' : 'none';
+    }
+
+    // Call / WA / Email / Web
+    const callRow = document.querySelector('.contact-row[href^="tel:"]');
+    if (callRow) {
+      if (phone) { callRow.href = `tel:${phone.replace(/\s+/g, '')}`; const val = callRow.querySelector('.contact-main'); if (val) val.textContent = phone; callRow.style.display = ''; }
+      else callRow.style.display = 'none';
+    }
+    const waRow = document.querySelector('.contact-row[href*="wa.me"]');
+    if (waRow) {
+      if (whatsapp) { waRow.href = `https://wa.me/${whatsapp.replace(/\D/g, '')}`; waRow.style.display = ''; }
+      else waRow.style.display = 'none';
+    }
+    const emRow = document.querySelector('.contact-row[href^="mailto:"]');
+    if (emRow) {
+      if (email) { emRow.href = `mailto:${email}`; const val = emRow.querySelector('.contact-main'); if (val) val.textContent = email; emRow.style.display = ''; }
+      else emRow.style.display = 'none';
+    }
+    const webRow = document.querySelector('.contact-row-website') || document.querySelector('.contact-row[href*="desaipartners.in"]');
+    if (webRow) {
+      if (website) { webRow.href = normalizeUrl(website); const val = webRow.querySelector('.contact-main'); if (val) val.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, ''); webRow.style.display = ''; }
+      else webRow.style.display = 'none';
+    }
+
+    // Socials
+    const sSection = document.querySelector('.social-section');
+    if (sSection) {
+      let hasSoc = false;
+      const ig = sSection.querySelector('.follow-item-instagram') || sSection.querySelector('a[href*="instagram.com"]');
+      if (ig) { if (instagram) { ig.href = normalizeUrl(instagram); ig.style.display = ''; hasSoc = true; } else ig.style.display = 'none'; }
+      const li = sSection.querySelector('.follow-item-linkedin') || sSection.querySelector('a[href*="linkedin.com"]');
+      if (li) { if (linkedin) { li.href = normalizeUrl(linkedin); li.style.display = ''; hasSoc = true; } else li.style.display = 'none'; }
+      const fb = sSection.querySelector('.follow-item-facebook');
+      if (fb) fb.style.display = 'none';
+      sSection.style.display = hasSoc ? '' : 'none';
+    }
+
+    attachCardActions(card);
+    document.documentElement.classList.remove('card-loading');
+    const skeleton = document.getElementById('cardSkeleton');
+    if (skeleton) skeleton.remove();
+  }
+
+  function dispatchCardHydration(card, isPreview) {
+    const isLegacy1 = window.location.pathname.includes('design-1');
+    const isLegacy2 = window.location.pathname.includes('design-2');
+
+    if (isLegacy1) {
+      hydrateLegacyDesign1(card, isPreview);
+      return;
+    }
+    if (isLegacy2) {
+      hydrateLegacyDesign2(card, isPreview);
+      return;
+    }
+
+    hydrateUniversal(card, isPreview);
+  }
+
+  async function loadPublicCard(slug) {
+    try {
+      const res = await fetch(`/api/cards/${encodeURIComponent(slug)}`, {
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.status === 404) {
+        renderError('This digital business card is currently inactive or does not exist.', 'Card Unavailable');
+        return;
+      }
+      if (!res.ok) {
+        renderError('Unable to load card details at this time. Please try again shortly.', 'Temporary Error');
+        return;
+      }
+
+      const data = await res.json();
+      if (data && data.card) {
+        dispatchCardHydration(data.card, false);
+      } else {
+        renderError('Card data format invalid.', 'Error');
+      }
+    } catch (err) {
+      console.error('Public card hydration error:', err);
+      renderError('Unable to display digital card due to a network connection error.', 'Connection Error');
+    }
   }
 
   function renderError(message, title) {
@@ -591,7 +727,7 @@
 
     const main = document.querySelector('main') || document.body;
     main.innerHTML = `
-      <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
+      <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
@@ -608,588 +744,15 @@
     `;
   }
 
-  function hydrateDesign1(card, isPreview) {
-    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
-
-    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
-    const role = card.designation || card.role || '';
-    const company = card.company || card.company_name || '';
-    const bio = card.description || '';
-    const phone = card.phone || card.mobile_number || '';
-    const whatsapp = card.whatsapp || card.whatsapp_number || '';
-    const email = card.email || '';
-    const website = card.website || '';
-    const address = card.address || card.business_address || '';
-    const instagram = card.socialInstagram || card.instagram_url || '';
-    const linkedin = card.socialLinkedIn || card.linkedin_url || '';
-
-    // Title & Meta
-    document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
-
-    // Admin preview watermark banner
-    if (isPreview) {
-      const banner = document.createElement('div');
-      const isActive = card.is_active !== false;
-      banner.style.cssText = `background: #0f172a; color: #f8fafc; font-size: 12px; font-weight: 600; text-align: center; padding: 10px 16px; border-bottom: 2px solid ${isActive ? '#10b981' : '#f59e0b'}; position: sticky; top: 0; z-index: 1000; letter-spacing: 0.02em;`;
-      banner.innerHTML = `ADMIN PREVIEW &bull; ${escapeHtml(name)} (${isActive ? '<span style="color: #34d399;">Active Card</span>' : '<span style="color: #fbbf24;">Inactive / Paused Card</span>'})`;
-      document.body.prepend(banner);
-    }
-
-    // Avatar / Photo
-    const avatarImgUrl = card.avatarUrl || card.avatar_url || card.profile_image_url || card.photo || card.image;
-    const avatarWrap = document.querySelector('.profile-avatar-wrap');
-    if (avatarWrap) {
-      if (avatarImgUrl) {
-        avatarWrap.innerHTML = `
-          <img 
-            src="${escapeHtml(avatarImgUrl)}" 
-            alt="${escapeHtml(name)}" 
-            class="profile-avatar"
-            width="88"
-            height="88"
-            loading="eager"
-            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
-          >
-          <div class="profile-avatar-initials-fallback" style="display: none; width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
-            ${escapeHtml(getInitials(name))}
-          </div>
-          <span class="profile-badge-active" title="Available for projects" aria-hidden="true"></span>
-        `;
-      } else {
-        avatarWrap.innerHTML = `
-          <div style="width: 88px; height: 88px; border-radius: 50%; background: #fef3c7; color: #92400e; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
-            ${escapeHtml(getInitials(name))}
-          </div>
-          <span class="profile-badge-active" title="Available for projects" aria-hidden="true"></span>
-        `;
-      }
-    }
-
-    // Headers
-    const nameEl = document.querySelector('.profile-name');
-    if (nameEl) nameEl.textContent = name;
-
-    const roleEl = document.querySelector('.profile-designation');
-    if (roleEl) {
-      roleEl.textContent = role;
-      roleEl.style.display = role ? '' : 'none';
-    }
-
-    const companyEl = document.querySelector('.profile-company');
-    if (companyEl) {
-      companyEl.textContent = company;
-      companyEl.style.display = company ? '' : 'none';
-    }
-
-    const bioEl = document.querySelector('.profile-bio');
-    if (bioEl) {
-      bioEl.textContent = bio;
-      bioEl.style.display = bio ? '' : 'none';
-    }
-
-    // Custom Dynamic Links or Legacy Fallback (Get in touch vs Social)
-    const validLinks = extractValidLinks(card);
-    const hasCustomLinks = validLinks.length > 0;
-    const getInTouchSection = document.querySelector('.get-in-touch-section') || document.querySelector('.contact-list')?.closest('section');
-    const contactListEl = document.querySelector('.contact-list');
-    const socialSection = document.querySelector('.social-section') || document.querySelector('section[aria-label="Social media profiles"]');
-    const socialGridEl = document.querySelector('.social-grid');
-
-    if (hasCustomLinks) {
-      const contactLinks = validLinks.filter(l => !SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
-      const socialLinks = validLinks.filter(l => SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
-
-      // 1. Get in touch
-      if (contactListEl) {
-        contactListEl.innerHTML = '';
-        if (contactLinks.length > 0) {
-          contactLinks.forEach(link => {
-            const type = link.type.toLowerCase();
-            const dest = formatLinkDestination(type, link.value);
-            if (!dest) return;
-
-            const label = link.label || getDefaultLabel(type);
-            const displayVal = getDisplayValue(type, link.value, label);
-            const isExternal = type !== 'phone' && type !== 'email';
-            const badgeClass = getDesign1BadgeClass(type);
-            const svgIcon = getLinkIconSvg(type, 20);
-
-            const cardEl = document.createElement('a');
-            cardEl.href = dest;
-            cardEl.className = 'contact-card';
-            if (isExternal) {
-              cardEl.target = '_blank';
-              cardEl.rel = 'noopener noreferrer';
-            }
-            cardEl.setAttribute('aria-label', label);
-            cardEl.innerHTML = `
-              <div class="contact-card-left">
-                <div class="badge-icon ${badgeClass}" aria-hidden="true">
-                  ${svgIcon}
-                </div>
-                <div class="contact-info">
-                  <span class="contact-label">${escapeHtml(label)}</span>
-                  <span class="contact-value">${escapeHtml(displayVal)}</span>
-                </div>
-              </div>
-              <svg class="card-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            `;
-            contactListEl.appendChild(cardEl);
-          });
-          if (getInTouchSection) getInTouchSection.style.display = '';
-        } else {
-          if (getInTouchSection) getInTouchSection.style.display = 'none';
-        }
-      }
-
-      // 2. Social
-      if (socialGridEl) {
-        socialGridEl.innerHTML = '';
-        if (socialLinks.length > 0) {
-          socialLinks.forEach(link => {
-            const type = link.type.toLowerCase();
-            const dest = formatLinkDestination(type, link.value);
-            if (!dest) return;
-
-            const label = link.label || getDefaultLabel(type);
-            const badgeClass = getDesign1BadgeClass(type);
-            const svgIcon = getLinkIconSvg(type, 20);
-
-            const cardEl = document.createElement('a');
-            cardEl.href = dest;
-            cardEl.className = 'social-card';
-            cardEl.target = '_blank';
-            cardEl.rel = 'noopener noreferrer';
-            cardEl.setAttribute('aria-label', label);
-            cardEl.innerHTML = `
-              <div class="badge-icon ${badgeClass}" aria-hidden="true">
-                ${svgIcon}
-              </div>
-              <span class="social-label">${escapeHtml(label)}</span>
-            `;
-            socialGridEl.appendChild(cardEl);
-          });
-          if (socialSection) socialSection.style.display = '';
-        } else {
-          if (socialSection) socialSection.style.display = 'none';
-        }
-      }
-    } else {
-      // Existing fallback for legacy customers without custom links
-      let hasContact = false;
-      const callCard = document.querySelector('.contact-card[href^="tel:"]');
-      if (callCard) {
-        if (phone) {
-          callCard.href = `tel:${phone.replace(/\s+/g, '')}`;
-          const valEl = callCard.querySelector('.contact-value');
-          if (valEl) valEl.textContent = phone;
-          callCard.style.display = '';
-          hasContact = true;
-        } else {
-          callCard.style.display = 'none';
-        }
-      }
-
-      const waCard = document.querySelector('.contact-card[href*="wa.me"]');
-      if (waCard) {
-        if (whatsapp) {
-          const cleanWa = whatsapp.replace(/\D/g, '');
-          waCard.href = `https://wa.me/${cleanWa}`;
-          waCard.style.display = '';
-          hasContact = true;
-        } else {
-          waCard.style.display = 'none';
-        }
-      }
-
-      const emailCard = document.querySelector('.contact-card[href^="mailto:"]');
-      if (emailCard) {
-        if (email) {
-          emailCard.href = `mailto:${email}`;
-          const valEl = emailCard.querySelector('.contact-value');
-          if (valEl) valEl.textContent = email;
-          emailCard.style.display = '';
-          hasContact = true;
-        } else {
-          emailCard.style.display = 'none';
-        }
-      }
-
-      const webCard = document.querySelector('.contact-card[href*="lumenstudio.co"]');
-      if (webCard) {
-        if (website) {
-          webCard.href = normalizeUrl(website);
-          const valEl = webCard.querySelector('.contact-value');
-          if (valEl) valEl.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-          webCard.style.display = '';
-          hasContact = true;
-        } else {
-          webCard.style.display = 'none';
-        }
-      }
-
-      if (getInTouchSection) {
-        getInTouchSection.style.display = hasContact ? '' : 'none';
-      }
-
-      // Socials
-      let hasSocial = false;
-      const igLink = document.querySelector('.social-card[href*="instagram.com"]');
-      if (igLink) {
-        if (instagram) {
-          igLink.href = normalizeUrl(instagram);
-          igLink.style.display = '';
-          hasSocial = true;
-        } else {
-          igLink.style.display = 'none';
-        }
-      }
-
-      const inLink = document.querySelector('.social-card[href*="linkedin.com"]');
-      if (inLink) {
-        if (linkedin) {
-          inLink.href = normalizeUrl(linkedin);
-          inLink.style.display = '';
-          hasSocial = true;
-        } else {
-          inLink.style.display = 'none';
-        }
-      }
-
-      const fbLink = document.querySelector('.social-card[href*="facebook.com"]');
-      if (fbLink) fbLink.style.display = 'none';
-
-      if (socialSection) {
-        socialSection.style.display = hasSocial ? '' : 'none';
-      }
-    }
-
-    // Hook card actions (Save Contact, Share, QR Code)
-    attachCardActions(card);
-
-    // Dismiss loading state and skeleton
-    document.documentElement.classList.remove('card-loading');
-    const skeleton = document.getElementById('cardSkeleton');
-    if (skeleton) skeleton.remove();
-  }
-
-  function hydrateDesign2(card, isPreview) {
-    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
-
-    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
-    const role = card.designation || card.role || '';
-    const company = card.company || card.company_name || '';
-    const bio = card.description || '';
-    const phone = card.phone || card.mobile_number || '';
-    const whatsapp = card.whatsapp || card.whatsapp_number || '';
-    const email = card.email || '';
-    const website = card.website || '';
-    const address = card.address || card.business_address || '';
-    const instagram = card.socialInstagram || card.instagram_url || '';
-    const linkedin = card.socialLinkedIn || card.linkedin_url || '';
-
-    // Title
-    document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
-
-    // Admin preview watermark banner
-    if (isPreview) {
-      const banner = document.createElement('div');
-      const isActive = card.is_active !== false;
-      banner.style.cssText = `background: #0f172a; color: #f8fafc; font-size: 12px; font-weight: 600; text-align: center; padding: 10px 16px; border-bottom: 2px solid ${isActive ? '#10b981' : '#f59e0b'}; position: sticky; top: 0; z-index: 1000; letter-spacing: 0.02em;`;
-      banner.innerHTML = `ADMIN PREVIEW &bull; ${escapeHtml(name)} (${isActive ? '<span style="color: #34d399;">Active Card</span>' : '<span style="color: #fbbf24;">Inactive / Paused Card</span>'})`;
-      document.body.prepend(banner);
-    }
-
-    // Avatar / Photo or Monogram Initials
-    const avatarImgUrl = card.avatarUrl || card.avatar_url || card.profile_image_url || card.photo || card.image;
-    const avatarCircle = document.querySelector('.profile-avatar-circle');
-    if (avatarCircle) {
-      if (avatarImgUrl) {
-        avatarCircle.innerHTML = `
-          <img 
-            src="${escapeHtml(avatarImgUrl)}" 
-            alt="${escapeHtml(name)}" 
-            class="profile-avatar-img"
-            style="width: 100%; height: 100%; border-radius: 50%; object-fit: contain; padding: 8px; box-sizing: border-box; background: #ffffff; display: block;"
-            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';"
-          >
-          <span class="profile-avatar-initials" style="display: none;">${escapeHtml(getInitials(name))}</span>
-        `;
-      } else {
-        avatarCircle.innerHTML = `
-          <span class="profile-avatar-initials">${escapeHtml(getInitials(name))}</span>
-        `;
-      }
-    }
-
-    // Headers
-    const nameEl = document.querySelector('.profile-name');
-    if (nameEl) nameEl.textContent = name;
-
-    const roleEl = document.querySelector('.profile-designation');
-    if (roleEl) {
-      roleEl.textContent = role;
-      roleEl.style.display = role ? '' : 'none';
-    }
-
-    const companyEl = document.querySelector('.profile-company');
-    if (companyEl) {
-      companyEl.textContent = company;
-      companyEl.style.display = company ? '' : 'none';
-    }
-
-    const bioEl = document.querySelector('.profile-bio');
-    if (bioEl) {
-      bioEl.textContent = bio;
-      bioEl.style.display = bio ? '' : 'none';
-    }
-
-    // Custom Dynamic Links or Legacy Fallback (Get in touch vs Social)
-    const validLinks = extractValidLinks(card);
-    const hasCustomLinks = validLinks.length > 0;
-    const getInTouchSection = document.querySelector('.get-in-touch-section') || document.querySelector('section[aria-label="Get in touch options"]');
-    const contactListEl = document.querySelector('.contact-list');
-    const socialSection = document.querySelector('.social-section') || document.querySelector('section[aria-label="Social media profiles"]');
-    const followBoxEl = document.querySelector('.follow-box');
-
-    if (hasCustomLinks) {
-      const contactLinks = validLinks.filter(l => !SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
-      const socialLinks = validLinks.filter(l => SOCIAL_LINK_TYPES.has(l.type.toLowerCase()));
-
-      // 1. Get in touch
-      if (contactListEl) {
-        contactListEl.innerHTML = '';
-        if (contactLinks.length > 0) {
-          contactLinks.forEach(link => {
-            const type = link.type.toLowerCase();
-            const dest = formatLinkDestination(type, link.value);
-            if (!dest) return;
-
-            const label = link.label || getDefaultLabel(type);
-            const displayVal = getDisplayValue(type, link.value, label);
-            const isExternal = type !== 'phone' && type !== 'email';
-            const svgIcon = getLinkIconSvg(type, 18);
-
-            const rowEl = document.createElement('a');
-            rowEl.href = dest;
-            rowEl.className = 'contact-row';
-            if (isExternal) {
-              rowEl.target = '_blank';
-              rowEl.rel = 'noopener noreferrer';
-            }
-            rowEl.setAttribute('aria-label', label);
-            rowEl.innerHTML = `
-              <div class="contact-row-left">
-                <div class="icon-circle" aria-hidden="true">
-                  ${svgIcon}
-                </div>
-                <div class="contact-meta">
-                  <span class="contact-sub">${escapeHtml(label)}</span>
-                  <span class="contact-main">${escapeHtml(displayVal)}</span>
-                </div>
-              </div>
-              <svg class="row-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            `;
-            contactListEl.appendChild(rowEl);
-          });
-          if (getInTouchSection) getInTouchSection.style.display = '';
-        } else {
-          if (getInTouchSection) getInTouchSection.style.display = 'none';
-        }
-      }
-
-      // 2. Social
-      if (followBoxEl) {
-        followBoxEl.innerHTML = '';
-        if (socialLinks.length > 0) {
-          socialLinks.forEach(link => {
-            const type = link.type.toLowerCase();
-            const dest = formatLinkDestination(type, link.value);
-            if (!dest) return;
-
-            const label = link.label || getDefaultLabel(type);
-            const svgIcon = getLinkIconSvg(type, 20);
-
-            const rowEl = document.createElement('a');
-            rowEl.href = dest;
-            rowEl.className = 'follow-item';
-            rowEl.target = '_blank';
-            rowEl.rel = 'noopener noreferrer';
-            rowEl.setAttribute('aria-label', label);
-            rowEl.innerHTML = `
-              ${svgIcon}
-              <span class="follow-item-label">${escapeHtml(label)}</span>
-            `;
-            followBoxEl.appendChild(rowEl);
-          });
-          if (socialSection) socialSection.style.display = '';
-        } else {
-          if (socialSection) socialSection.style.display = 'none';
-        }
-      }
-    } else {
-      // Existing fallback for legacy customers without custom links
-      let hasContact = false;
-      const callRow = document.querySelector('.contact-row[href^="tel:"]');
-      if (callRow) {
-        if (phone) {
-          callRow.href = `tel:${phone.replace(/\s+/g, '')}`;
-          const mainEl = callRow.querySelector('.contact-main');
-          if (mainEl) mainEl.textContent = phone;
-          callRow.style.display = '';
-          hasContact = true;
-        } else {
-          callRow.style.display = 'none';
-        }
-      }
-
-      const waRow = document.querySelector('.contact-row[href*="wa.me"]');
-      if (waRow) {
-        if (whatsapp) {
-          const cleanWa = whatsapp.replace(/\D/g, '');
-          waRow.href = `https://wa.me/${cleanWa}`;
-          waRow.style.display = '';
-          hasContact = true;
-        } else {
-          waRow.style.display = 'none';
-        }
-      }
-
-      const emailRow = document.querySelector('.contact-row[href^="mailto:"]');
-      if (emailRow) {
-        if (email) {
-          emailRow.href = `mailto:${email}`;
-          const mainEl = emailRow.querySelector('.contact-main');
-          if (mainEl) mainEl.textContent = email;
-          emailRow.style.display = '';
-          hasContact = true;
-        } else {
-          emailRow.style.display = 'none';
-        }
-      }
-
-      const webRow = document.querySelector('.contact-row[href*="desaipartners.in"]');
-      if (webRow) {
-        if (website) {
-          webRow.href = normalizeUrl(website);
-          const mainEl = webRow.querySelector('.contact-main');
-          if (mainEl) mainEl.textContent = website.replace(/^https?:\/\//i, '').replace(/\/$/, '');
-          webRow.style.display = '';
-          hasContact = true;
-        } else {
-          webRow.style.display = 'none';
-        }
-      }
-
-      if (getInTouchSection) {
-        getInTouchSection.style.display = hasContact ? '' : 'none';
-      }
-
-      // Follow Links
-      let hasSocial = false;
-      const igFollow = document.querySelector('.follow-item[href*="instagram.com"]');
-      if (igFollow) {
-        if (instagram) {
-          igFollow.href = normalizeUrl(instagram);
-          igFollow.style.display = '';
-          hasSocial = true;
-        } else {
-          igFollow.style.display = 'none';
-        }
-      }
-
-      const inFollow = document.querySelector('.follow-item[href*="linkedin.com"]');
-      if (inFollow) {
-        if (linkedin) {
-          inFollow.href = normalizeUrl(linkedin);
-          inFollow.style.display = '';
-          hasSocial = true;
-        } else {
-          inFollow.style.display = 'none';
-        }
-      }
-
-      const fbFollow = document.querySelector('.follow-item[href*="facebook.com"]');
-      if (fbFollow) fbFollow.style.display = 'none';
-
-      if (socialSection) {
-        socialSection.style.display = hasSocial ? '' : 'none';
-      }
-    }
-
-    // Hook card actions (Save Contact, Share, QR Code)
-    attachCardActions(card);
-
-    // Dismiss loading state and skeleton
-    document.documentElement.classList.remove('card-loading');
-    const skeleton = document.getElementById('cardSkeleton');
-    if (skeleton) skeleton.remove();
-  }
-
-  function ensureCorrectTemplate(card) {
-    if (!window.location.pathname.includes('/cards/')) {
-      return true;
-    }
-    const design = card.cardDesign || card.card_design;
-    const isEvergreen = design === 'Evergreen';
-    const isDesign2 = window.location.pathname.includes('design-2');
-    if (design && ((isEvergreen && !isDesign2) || (!isEvergreen && isDesign2))) {
-      const targetDir = isEvergreen ? 'design-2' : 'design-1';
-      const newUrl = window.location.pathname.replace(/design-[12]/, targetDir) + window.location.search;
-      window.location.replace(newUrl);
-      return false;
-    }
-    return true;
-  }
-
-  async function loadPublicCard(slug) {
-    const isDesign2 = window.location.pathname.includes('design-2');
-    try {
-      const res = await fetch(`/api/cards/${encodeURIComponent(slug)}`, {
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (res.status === 404) {
-        renderError('This digital business card is currently inactive or does not exist.', 'Card Unavailable');
-        return;
-      }
-
-      if (!res.ok) {
-        renderError('Unable to load card details at this time. Please try again shortly.', 'Temporary Error');
-        return;
-      }
-
-      const data = await res.json();
-      if (data && data.card) {
-        if (!ensureCorrectTemplate(data.card)) return;
-        if (isDesign2) {
-          hydrateDesign2(data.card, false);
-        } else {
-          hydrateDesign1(data.card, false);
-        }
-      } else {
-        renderError('Card data format invalid.', 'Error');
-      }
-    } catch (err) {
-      console.error('Public card hydration error:', err);
-      renderError('Unable to display digital card due to a network connection error.', 'Connection Error');
-    }
-  }
-
   async function init() {
-    // 0. Pre-hydrated Server Data Check (instant 0ms hydration for clean /c/[slug] URLs)
+    // If preview mode or preview.html, allow preview controller to manage rendering cleanly
+    if (typeof window !== 'undefined' && (window.__CARD_PREVIEW__ || window.location.pathname.includes('preview.html'))) {
+      return;
+    }
+
+    // 0. Pre-hydrated Server Data Check (0ms instantaneous execution)
     if (typeof window !== 'undefined' && window.__INITIAL_CARD__) {
-      const card = window.__INITIAL_CARD__;
-      const isDesign2 = window.location.pathname.includes('design-2') || card.cardDesign === 'Evergreen';
-      if (isDesign2) {
-        hydrateDesign2(card, false);
-      } else {
-        hydrateDesign1(card, false);
-      }
+      dispatchCardHydration(window.__INITIAL_CARD__, false);
       return;
     }
 
@@ -1197,7 +760,6 @@
     const custId = params.get('id');
     const isPreview = params.get('preview') === 'true';
 
-    // Support slug from query param OR path (/c/[slug])
     let slug = params.get('slug');
     if (!slug) {
       const pathMatch = window.location.pathname.match(/\/c\/([^/?#]+)/i);
@@ -1206,18 +768,14 @@
       }
     }
 
-    // If no dynamic query parameters exist, do nothing (preserve static template preview)
     if (!slug && !custId) {
       document.documentElement.classList.remove('card-loading');
       return;
     }
 
-    // Ensure loading state is active whenever dynamic parameters are present
     document.documentElement.classList.add('card-loading');
 
-    const isDesign2 = window.location.pathname.includes('design-2');
-
-    // 1. Admin Preview Mode (activated whenever preview=true and either id or slug is present)
+    // 1. Admin Preview Mode
     if (isPreview && (custId || slug)) {
       const identifier = custId || slug;
       try {
@@ -1229,46 +787,27 @@
         if (res.ok) {
           const data = await res.json();
           if (data && data.customer) {
-            if (!ensureCorrectTemplate(data.customer)) return;
-            if (isDesign2) {
-              hydrateDesign2(data.customer, true);
-            } else {
-              hydrateDesign1(data.customer, true);
-            }
-            return;
-          } else {
-            renderError('Customer data format invalid.', 'Error');
+            dispatchCardHydration(data.customer, true);
             return;
           }
-        } else if (res.status === 401 || res.status === 403) {
-          // If admin session is expired or not present, fallback to public card lookup if slug is available
-          if (slug) {
-            await loadPublicCard(slug);
-            return;
-          }
-          renderError('This customer profile preview is restricted to authorized Ambros Studio administrators.', 'Preview Access Denied');
-          return;
-        } else if (!slug) {
-          renderError('Customer profile record not found.', 'Record Not Found');
-          return;
         }
       } catch (err) {
-        console.error('Admin preview hydration error:', err);
-        if (slug) {
-          await loadPublicCard(slug);
-          return;
-        }
-        renderError('Unable to load customer preview due to a network error.', 'Connection Error');
-        return;
+        console.error('Admin preview fetch error:', err);
       }
     }
 
-    // 2. Public NFC / Slug Mode
+    // 2. Public Slug Mode
     if (slug) {
       await loadPublicCard(slug);
     } else {
       renderError('Customer profile record not found.', 'Record Not Found');
     }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.attachCardActions = attachCardActions;
+    window.generateVCard = generateVCard;
+    window.handleCardShare = handleCardShare;
   }
 
   if (document.readyState === 'loading') {

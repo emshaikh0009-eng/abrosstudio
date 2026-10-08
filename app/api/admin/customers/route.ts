@@ -46,6 +46,8 @@ function sanitizeFont(val: any): string {
   return ALLOWED_FONTS.has(trimmed) ? trimmed : "";
 }
 
+import { resolveCardDesign } from "@/utils/card-designs";
+
 function sanitizeCustomSettings(val: any) {
   if (!val || typeof val !== "object") return null;
 
@@ -79,11 +81,21 @@ function sanitizeCustomSettings(val: any) {
     });
   }
 
-  return {
+  const result: Record<string, any> = {
     appearance: cleanAppearance,
     links: cleanLinks,
   };
+
+  if (val.industry && typeof val.industry === "object") {
+    result.industry = {
+      type: sanitizeText(val.industry.type, 50),
+      data: (val.industry.data && typeof val.industry.data === "object") ? val.industry.data : {},
+    };
+  }
+
+  return result;
 }
+
 
 
 // GET /api/admin/customers — fetch customer records using authenticated session
@@ -142,7 +154,7 @@ export async function POST(request: Request) {
     const businessAddress = sanitizeText(body.address || body.business_address, 255);
     const instagramUrl = sanitizeText(body.socialInstagram || body.instagram_url, 150);
     const linkedinUrl = sanitizeText(body.socialLinkedIn || body.linkedin_url, 150);
-    const cardDesign = (body.design || body.card_design) === "Evergreen" ? "Evergreen" : "Mint Haven";
+    const cardDesign = resolveCardDesign(body.design || body.card_design).name;
 
     // Format profile slug cleanly from profileLink, profileSlug, or profile_slug
     const rawProfile = sanitizeText(body.profileLink || body.profileSlug || body.profile_slug, 100);

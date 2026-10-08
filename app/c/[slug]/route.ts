@@ -1,6 +1,6 @@
 import { createAnonymousClient } from "@/utils/supabase/server";
-import fs from "fs";
-import path from "path";
+import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER } from "@/utils/card-designs";
+import { renderCardHtml, ResolvedCustomerCard } from "@/utils/card-renderer";
 
 function renderUnavailableHtml(title = "Card Unavailable", message = "This digital business card is currently inactive or does not exist."): string {
   return `<!DOCTYPE html>
@@ -109,6 +109,9 @@ export async function GET(
       });
     }
 
+    const requestUrl = new URL(request.url);
+    const designParam = requestUrl.searchParams.get("design");
+
     // Pure anonymous client with zero session/cookie state
     const supabase = createAnonymousClient();
 
@@ -130,6 +133,22 @@ export async function GET(
     }
 
     if (error || !data || !Array.isArray(data) || data.length === 0) {
+      if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {
+        const activeDesignId = designParam
+          ? resolveCardDesign(designParam).id
+          : resolveCardDesign(AUTHORITATIVE_AMBROS_CUSTOMER.cardDesign).id;
+        const html = renderCardHtml({
+          ...AUTHORITATIVE_AMBROS_CUSTOMER,
+          cardDesign: activeDesignId,
+        });
+        return new Response(html, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "public, max-age=0, must-revalidate",
+          },
+        });
+      }
       return new Response(
         renderUnavailableHtml("Card Unavailable", "This digital business card is currently inactive or does not exist."),
         {
@@ -143,10 +162,9 @@ export async function GET(
     }
 
     const rawCard = data[0];
-    const isEvergreen = rawCard.card_design === "Evergreen";
-    const targetTemplate = isEvergreen ? "design-2" : "design-1";
+    const resolvedDesign = designParam ? resolveCardDesign(designParam) : resolveCardDesign(rawCard.card_design);
 
-    const cardData = {
+    const cardData: ResolvedCustomerCard = {
       fullName: rawCard.full_name,
       designation: rawCard.designation || "",
       company: rawCard.company_name || "",
@@ -158,77 +176,15 @@ export async function GET(
       address: rawCard.business_address || "",
       socialInstagram: rawCard.instagram_url || "",
       socialLinkedIn: rawCard.linkedin_url || "",
-      cardDesign: isEvergreen ? "Evergreen" : "Mint Haven",
+      cardDesign: resolvedDesign.id,
       profileSlug: rawCard.profile_slug || sanitizedSlug,
       avatarUrl: rawCard.avatar_url || rawCard.profile_image_url || "",
       customSettings: rawCard.custom_settings || null,
       is_active: true,
     };
 
-    // Read the static template HTML directly from public/cards/${targetTemplate}/index.html
-    const templatePath = path.join(process.cwd(), "public", "cards", targetTemplate, "index.html");
-    let html = fs.readFileSync(templatePath, "utf8");
-
-    // Replace relative paths with absolute public paths so it loads cleanly under /c/[slug]
-    html = html.replace(/href=["'](?:\.\/)?style\.css["']/g, `href="/cards/${targetTemplate}/style.css"`);
-    html = html.replace(/src=["'](?:\.\.\/|\.\/)?qrcode\.js["']/g, `src="/cards/qrcode.js"`);
-    html = html.replace(/src=["'](?:\.\.\/|\.\/)?card-loader\.js["']/g, `src="/cards/card-loader.js"`);
-
-    // Dynamic Title & Meta
-    const metaTitle = `${cardData.fullName} — ${cardData.designation ? cardData.designation + ' | ' : ''}${cardData.company || 'Ambros Studio'}`;
-    const metaDesc = cardData.description || `Digital business card for ${cardData.fullName}.`;
-
-    html = html.replace(/<title>.*?<\/title>/i, `<title>${metaTitle}</title>`);
-    html = html.replace(/<meta name="description" content=".*?">/i, `<meta name="description" content="${metaDesc.replace(/"/g, '&quot;')}">`);
-
-    // Injected Canonical URL pointing to permanent public /c/{slug} link
-    const canonicalTag = `<link rel="canonical" href="https://www.ambrosstudio.space/c/${encodeURIComponent(cardData.profileSlug)}">`;
-
-    // Server-rendered theme styles & font link for 0ms paint
-    let customThemeTags = "";
-    const appearance = cardData.customSettings?.appearance;
-    if (appearance && typeof appearance === "object") {
-      const vars: string[] = [];
-      const HEX_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
-      if (appearance.primaryColor && HEX_REGEX.test(appearance.primaryColor.trim())) {
-        vars.push(`--card-primary: ${appearance.primaryColor.trim()};`);
-      }
-      if (appearance.backgroundColor && HEX_REGEX.test(appearance.backgroundColor.trim())) {
-        vars.push(`--card-background: ${appearance.backgroundColor.trim()};`);
-      }
-      if (appearance.textColor && HEX_REGEX.test(appearance.textColor.trim())) {
-        vars.push(`--card-text: ${appearance.textColor.trim()};`);
-      }
-
-      const FONT_MAP: Record<string, string> = {
-        "Inter": "family=Inter:wght@400;500;600;700",
-        "Plus Jakarta Sans": "family=Plus+Jakarta+Sans:wght@400;500;600;700;800",
-        "Poppins": "family=Poppins:wght@400;500;600;700",
-        "Montserrat": "family=Montserrat:wght@400;500;600;700",
-        "DM Sans": "family=DM+Sans:wght@400;500;700",
-        "Playfair Display": "family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600",
-      };
-
-      const font = typeof appearance.fontFamily === "string" ? appearance.fontFamily.trim() : "";
-      let fontLink = "";
-      if (font && FONT_MAP[font]) {
-        vars.push(`--card-font: '${font}', system-ui, sans-serif;`);
-        fontLink = `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?${FONT_MAP[font]}&display=swap">`;
-      }
-
-      if (vars.length > 0) {
-        customThemeTags = `\n  ${fontLink}\n  <style id="__CUSTOM_CARD_THEME__">:root { ${vars.join(" ")} }</style>`;
-      }
-    }
-
-    // Embed pre-hydrated card data directly into the head so hydration is instantaneous with 0ms delay
-    const initialDataScript = `
-  ${canonicalTag}${customThemeTags}
-  <script id="__INITIAL_CARD_DATA__">
-    window.__INITIAL_CARD__ = ${JSON.stringify(cardData)};
-  </script>
-</head>`;
-    html = html.replace(/<\/head>/i, initialDataScript);
+    // Render HTML dynamically from the single authoritative customer payload
+    const html = renderCardHtml(cardData);
 
     return new Response(html, {
       status: 200,
