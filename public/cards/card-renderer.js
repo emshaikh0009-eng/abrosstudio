@@ -738,6 +738,7 @@
 
   return {
     renderCardBody: renderCardBody,
+    renderCardHtml: renderCompleteCardHtml,
     renderCompleteCardHtml: renderCompleteCardHtml,
     resolveCustomerLinks: resolveCustomerLinks,
     getInitials: getInitials

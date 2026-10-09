@@ -15,7 +15,7 @@
   <!-- Auth Checking Overlay (Prevents flash of protected content) -->
   <div id="adminAuthOverlay" class="admin-auth-overlay">
     <div class="auth-loader-card">
-      <div class="auth-logo-badge" aria-hidden="true">A</div>
+      <img src="/assets/ambros-logo-light.png" alt="Ambros Studio" style="height: 32px; width: auto; max-width: 180px; object-fit: contain; margin-bottom: 16px;">
       <div class="auth-loader-spinner" aria-hidden="true"></div>
       <div class="auth-loader-text">Verifying admin session...</div>
     </div>
@@ -27,12 +27,8 @@
       <div class="login-card">
         
         <!-- Brand Header -->
-        <div class="login-brand">
-          <div class="login-logo-badge" aria-hidden="true">A</div>
-          <div class="login-brand-text">
-            <span class="login-brand-title">Ambros</span>
-            <span class="login-brand-sub">Studio</span>
-          </div>
+        <div class="login-brand" style="justify-content: center; margin-bottom: 20px;">
+          <img src="/assets/ambros-logo-light.png" alt="Ambros Studio" style="height: 36px; width: auto; max-width: 220px; object-fit: contain;">
         </div>
 
         <div class="login-header-group">
@@ -132,12 +128,11 @@
     <aside class="admin-sidebar" id="adminSidebar">
       <div>
         <!-- Logo Area -->
+        <!-- Logo Area with Approved Ambros Studio Brand Asset -->
         <div class="sidebar-logo">
-          <div class="logo-badge" aria-hidden="true">A</div>
-          <div class="logo-text-group">
-            <span class="logo-title">Ambros</span>
-            <span class="logo-sub">Studio</span>
-          </div>
+          <a href="/admin/" style="display: flex; align-items: center; text-decoration: none;" aria-label="Ambros Studio Admin">
+            <img src="/assets/ambros-logo-light.png" alt="Ambros Studio" class="sidebar-brand-img" style="height: 32px; width: auto; max-width: 190px; object-fit: contain;">
+          </a>
         </div>
 
         <!-- Main Navigation Items -->
@@ -612,6 +607,65 @@
                   </div>
                   <div id="customLinksEmptyState" style="text-align: center; padding: 24px 16px; background: #fafafa; border: 1px dashed var(--border-light); border-radius: var(--radius-md); color: var(--text-muted); font-size: 12.5px; margin-top: 8px;">
                     No custom links added yet. Click <strong>+ Add Link</strong> or <strong>Import Contact Info</strong> to customize card buttons.
+                  </div>
+                </div>
+
+                <!-- D) Front & Back Card Images Sub-section -->
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Front &amp; Back Card Images
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Optional digital card or physical NFC card artwork. Images persist with customer settings.</p>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+                    <!-- Front Image Control -->
+                    <div class="card-image-upload-box" id="frontImageUploadBox">
+                      <div class="card-image-upload-header">
+                        <span class="card-image-label">Front Side Image</span>
+                        <span class="card-image-badge" id="frontImageStatus">Not set</span>
+                      </div>
+                      <div class="card-image-preview-area" id="frontImagePreviewArea">
+                        <div class="card-image-placeholder" id="frontImagePlaceholder">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                          <span>Upload front side image (JPG, PNG, WEBP, max 2MB)</span>
+                        </div>
+                        <img id="frontImagePreviewImg" src="" alt="Front Card Preview" class="card-image-preview-img" style="display: none;">
+                      </div>
+                      <div class="card-image-actions">
+                        <input type="file" id="frontImageFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display: none;">
+                        <button type="button" class="btn btn-white btn-sm" id="btnUploadFrontImage">
+                          <span id="btnUploadFrontText">Upload Front</span>
+                        </button>
+                        <button type="button" class="btn btn-white btn-sm" id="btnRemoveFrontImage" style="display: none; color: #ef4444;">
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Back Image Control -->
+                    <div class="card-image-upload-box" id="backImageUploadBox">
+                      <div class="card-image-upload-header">
+                        <span class="card-image-label">Back Side Image</span>
+                        <span class="card-image-badge" id="backImageStatus">Not set</span>
+                      </div>
+                      <div class="card-image-preview-area" id="backImagePreviewArea">
+                        <div class="card-image-placeholder" id="backImagePlaceholder">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                          <span>Upload back side image (JPG, PNG, WEBP, max 2MB)</span>
+                        </div>
+                        <img id="backImagePreviewImg" src="" alt="Back Card Preview" class="card-image-preview-img" style="display: none;">
+                      </div>
+                      <div class="card-image-actions">
+                        <input type="file" id="backImageFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display: none;">
+                        <button type="button" class="btn btn-white btn-sm" id="btnUploadBackImage">
+                          <span id="btnUploadBackText">Upload Back</span>
+                        </button>
+                        <button type="button" class="btn btn-white btn-sm" id="btnRemoveBackImage" style="display: none; color: #ef4444;">
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

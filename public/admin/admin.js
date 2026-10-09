@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let customers = [];
   let isLoadingCustomers = false;
   let currentUploadedAvatar = null;
+  let currentFrontImageUrl = '';
+  let currentBackImageUrl = '';
 
   function mapDbCustomerToUi(c) {
     const name = c.full_name || '';
@@ -55,10 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
       status: isActive ? 'active' : 'inactive',
       is_active: isActive,
       avatarUrl: c.avatar_url || c.profile_image_url || c.photo_url || '',
-      customSettings: c.custom_settings || c.customSettings || {
-        appearance: { primaryColor: '', backgroundColor: '', textColor: '', fontFamily: '' },
-        links: []
-      },
+      customSettings: (function() {
+        const raw = c.custom_settings || c.customSettings || {};
+        return {
+          appearance: raw.appearance || { primaryColor: '', backgroundColor: '', textColor: '', fontFamily: '' },
+          links: Array.isArray(raw.links) ? raw.links : [],
+          cardImages: (raw.cardImages && typeof raw.cardImages === 'object')
+            ? { frontUrl: raw.cardImages.frontUrl || raw.cardImages.front_url || '', backUrl: raw.cardImages.backUrl || raw.cardImages.back_url || '' }
+            : { frontUrl: '', backUrl: '' },
+          industry: raw.industry || null
+        };
+      })(),
       publicUrl: `/c/${slug}`,
       profileLink: `https://www.ambrosstudio.space/c/${slug}`,
       profileSlug: slug,
@@ -328,8 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </td>
         <td>
           <div class="table-actions">
-            <a href="/c/${encodeURIComponent(slug)}" target="_blank" class="btn btn-white btn-sm" title="Open customer public card">View Profile</a>
-            <button type="button" class="btn btn-white btn-sm btn-edit-customer" data-id="${c.id}">Edit</button>
+            <a href="/c/${encodeURIComponent(slug)}" target="_blank" class="btn btn-white btn-sm btn-action-compact" title="Open customer public card in new tab">View</a>
+            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-edit-customer" data-id="${c.id}" title="Edit customer profile">Edit</button>
+            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Copy canonical public card link">Link</button>
+            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Share digital card">Share</button>
           </div>
         </td>
       `;
@@ -396,6 +407,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <button type="button" class="icon-action-btn btn-edit-customer" data-id="${c.id}" title="Edit Customer" aria-label="Edit ${escapeHtml(c.name)}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             </button>
+            <button type="button" class="icon-action-btn btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Copy Canonical Link" aria-label="Copy ${escapeHtml(c.name)} card link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </button>
+            <button type="button" class="icon-action-btn btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Share Digital Card" aria-label="Share ${escapeHtml(c.name)} card">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
           </div>
         </td>
       `;
@@ -403,6 +420,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     attachTableEventListeners();
+  }
+
+  function getCanonicalCustomerCardUrl(slug) {
+    if (!slug) return '';
+    const origin = window.location.origin;
+    return `${origin}/c/${encodeURIComponent(slug)}`;
+  }
+
+  async function copyCustomerCardUrl(slug, name) {
+    const url = getCanonicalCustomerCardUrl(slug);
+    if (!url) {
+      showAdminToast('No profile slug available for this customer.');
+      return;
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const temp = document.createElement('input');
+        temp.value = url;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+      showAdminToast(`Link copied: ${url}`);
+    } catch (err) {
+      console.error('Failed to copy public card link:', err);
+      showAdminToast('Could not copy link to clipboard.');
+    }
+  }
+
+  async function shareCustomerCard(slug, name) {
+    const url = getCanonicalCustomerCardUrl(slug);
+    if (!url) {
+      showAdminToast('No profile slug available for this customer.');
+      return;
+    }
+    const cardTitle = `${name || 'Digital Card'} — Ambros Studio`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: cardTitle,
+          text: `Digital business card for ${name || 'Ambros Studio client'}`,
+          url: url,
+        });
+        showAdminToast('Shared successfully.');
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+    await copyCustomerCardUrl(slug, name);
   }
 
   function attachTableEventListeners() {
@@ -414,6 +484,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (custId) {
           openEditCustomer(custId);
         }
+      };
+    });
+
+    // Copy Public Link Handlers
+    document.querySelectorAll('.btn-copy-card-link').forEach(btn => {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        const slug = this.getAttribute('data-slug');
+        const name = this.getAttribute('data-name');
+        copyCustomerCardUrl(slug, name);
+      };
+    });
+
+    // Share Card Handlers
+    document.querySelectorAll('.btn-share-card').forEach(btn => {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        const slug = this.getAttribute('data-slug');
+        const name = this.getAttribute('data-name');
+        shareCustomerCard(slug, name);
       };
     });
 
@@ -866,6 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const defaultPrimary = resolvedD?.theme?.primaryColor || '#10b981';
     const defaultBg = resolvedD?.theme?.backgroundColor || '#faf6ee';
     const defaultText = resolvedD?.theme?.textColor || '#1e293b';
+    const app = customSettings.appearance || {};
 
     if (custPrimaryColor) {
       custPrimaryColor.value = app.primaryColor || '';
@@ -887,6 +978,12 @@ document.addEventListener('DOMContentLoaded', () => {
     currentCustomLinks = Array.isArray(customSettings.links) ? JSON.parse(JSON.stringify(customSettings.links)) : [];
     if (typeof renderCustomLinks === 'function') renderCustomLinks();
     if (typeof updateAvatarSyncPreview === 'function') updateAvatarSyncPreview(customer.avatarUrl, customer.initials);
+
+    // Front & Back Card Images
+    const cardImages = customSettings.cardImages || {};
+    currentFrontImageUrl = cardImages.frontUrl || '';
+    currentBackImageUrl = cardImages.backUrl || '';
+    if (typeof updateCardImagePreviews === 'function') updateCardImagePreviews();
 
     // 8. Open the Form Tab
     navigateToTab('add-customer');
@@ -941,6 +1038,11 @@ document.addEventListener('DOMContentLoaded', () => {
     currentCustomLinks = [];
     if (typeof renderCustomLinks === 'function') renderCustomLinks();
     if (typeof updateAvatarSyncPreview === 'function') updateAvatarSyncPreview(null, 'AS');
+
+    // Reset Card Images
+    currentFrontImageUrl = '';
+    currentBackImageUrl = '';
+    if (typeof updateCardImagePreviews === 'function') updateCardImagePreviews();
 
     // Clear avatar
     currentUploadedAvatar = null;
@@ -1158,27 +1260,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const authAmbros = (window.CARD_DESIGN_REGISTRY && window.CARD_DESIGN_REGISTRY.AUTHORITATIVE_AMBROS_CUSTOMER) || {};
 
-    const fullName = rawName || authAmbros.fullName || 'Ambros Studio';
-    const designation = rawRole || authAmbros.designation || 'Creative & Digital Team';
-    const company = rawCompany || authAmbros.company || 'Ambros Studio';
-    const phone = rawPhone || authAmbros.phone || '+91 91577 78915';
-    const whatsapp = rawWhatsApp || (rawPhone ? rawPhone.replace(/[^0-9]/g, '') : (authAmbros.whatsapp || '919157778915'));
-    const email = rawEmail || authAmbros.email || 'ambrosstudioltd@gmail.com';
-    const website = rawWebsite || authAmbros.website || 'https://www.ambrosstudio.space';
-    const address = rawAddress || authAmbros.address || '3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017';
-    const description = rawDesc || authAmbros.description || 'Bespoke websites, high-impact digital campaigns, and luxury contactless NFC business cards crafted with purpose.';
-    const avatarUrl = currentUploadedAvatar || authAmbros.avatarUrl || '/assets/abros-logo-transparent.png';
+    // Check if there is actual customer data in the editor
+    const hasFormInput = Boolean(
+      rawName || rawRole || rawCompany || rawPhone || rawWhatsApp || rawEmail || 
+      rawWebsite || rawAddress || rawDesc || rawInstagram || rawLinkedIn || 
+      currentUploadedAvatar || currentFrontImageUrl || currentBackImageUrl ||
+      (Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0)
+    );
 
-    const links = Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0
-      ? currentCustomLinks
-      : [
-          { id: '1', type: 'phone', label: 'Call Studio', value: phone, enabled: true, order: 0 },
-          { id: '2', type: 'whatsapp', label: 'Chat on WhatsApp', value: whatsapp, enabled: true, order: 1 },
-          { id: '3', type: 'email', label: 'Email Team', value: email, enabled: true, order: 2 },
-          { id: '4', type: 'website', label: 'Visit Website', value: website, enabled: true, order: 3 },
-          { id: '5', type: 'instagram', label: 'Instagram', value: rawInstagram || 'https://www.instagram.com/ambros.studio', enabled: true, order: 4 },
-          { id: '6', type: 'linkedin', label: 'LinkedIn', value: rawLinkedIn || 'https://linkedin.com/company/ambrosstudio', enabled: true, order: 5 }
-        ];
+    // If form has user data, render ONLY that customer's real data (no demo address or demo links leaked)
+    // If form is completely empty (showroom browsing), use the authoritative Ambros Studio showcase profile
+    const fullName = hasFormInput ? (rawName || 'Client Profile') : (authAmbros.fullName || 'Ambros Studio');
+    const designation = hasFormInput ? rawRole : (authAmbros.designation || 'Creative & Digital Team');
+    const company = hasFormInput ? rawCompany : (authAmbros.company || 'Ambros Studio');
+    const phone = hasFormInput ? rawPhone : (authAmbros.phone || '+91 91577 78915');
+    const whatsapp = hasFormInput ? (rawWhatsApp || (rawPhone ? rawPhone.replace(/[^0-9]/g, '') : '')) : (authAmbros.whatsapp || '919157778915');
+    const email = hasFormInput ? rawEmail : (authAmbros.email || 'ambrosstudioltd@gmail.com');
+    const website = hasFormInput ? rawWebsite : (authAmbros.website || 'https://www.ambrosstudio.space');
+    const address = hasFormInput ? rawAddress : (authAmbros.address || '3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017');
+    const description = hasFormInput ? rawDesc : (authAmbros.description || 'Bespoke websites, high-impact digital campaigns, and luxury contactless NFC business cards crafted with purpose.');
+    const avatarUrl = currentUploadedAvatar || (hasFormInput ? '' : (authAmbros.avatarUrl || '/assets/ambros-logo-light.png'));
+
+    let links = [];
+    if (Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0) {
+      links = currentCustomLinks;
+    } else if (!hasFormInput) {
+      links = [
+        { id: '1', type: 'phone', label: 'Call Studio', value: phone, enabled: true, order: 0 },
+        { id: '2', type: 'whatsapp', label: 'Chat on WhatsApp', value: whatsapp, enabled: true, order: 1 },
+        { id: '3', type: 'email', label: 'Email Team', value: email, enabled: true, order: 2 },
+        { id: '4', type: 'website', label: 'Visit Website', value: website, enabled: true, order: 3 },
+        { id: '5', type: 'instagram', label: 'Instagram', value: rawInstagram || 'https://www.instagram.com/ambros.studio', enabled: true, order: 4 },
+        { id: '6', type: 'linkedin', label: 'LinkedIn', value: rawLinkedIn || 'https://linkedin.com/company/ambrosstudio', enabled: true, order: 5 }
+      ];
+    } else {
+      let order = 0;
+      if (phone) links.push({ id: `link_${++order}`, type: 'phone', label: 'Phone', value: phone, enabled: true, order });
+      if (whatsapp) links.push({ id: `link_${++order}`, type: 'whatsapp', label: 'WhatsApp', value: whatsapp, enabled: true, order });
+      if (email) links.push({ id: `link_${++order}`, type: 'email', label: 'Email', value: email, enabled: true, order });
+      if (website) links.push({ id: `link_${++order}`, type: 'website', label: 'Website', value: website, enabled: true, order });
+      if (rawInstagram) links.push({ id: `link_${++order}`, type: 'instagram', label: 'Instagram', value: rawInstagram, enabled: true, order });
+      if (rawLinkedIn) links.push({ id: `link_${++order}`, type: 'linkedin', label: 'LinkedIn', value: rawLinkedIn, enabled: true, order });
+      if (address) links.push({ id: `link_${++order}`, type: 'maps', label: 'Directions', value: address, enabled: true, order });
+    }
 
     let industryData = {};
     if (design.id === 'skyline') {
@@ -1240,6 +1364,10 @@ document.addEventListener('DOMContentLoaded', () => {
           fontFamily: custFontFamily ? custFontFamily.value : (design.theme?.fontFamily || '')
         },
         links,
+        cardImages: {
+          frontUrl: currentFrontImageUrl || '',
+          backUrl: currentBackImageUrl || '',
+        },
         industry: {
           type: design.industryModule || 'general',
           data: industryData
@@ -1266,10 +1394,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const customerPayload = buildCustomerPreviewPayload(resolved);
 
     if (previewModalIframe) {
-      if (renderer && typeof renderer.renderCardHtml === 'function') {
-        const fullHtml = renderer.renderCardHtml(customerPayload);
+      const renderFn = renderer && (renderer.renderCardHtml || renderer.renderCompleteCardHtml);
+      if (typeof renderFn === 'function') {
+        const fullHtml = renderFn(customerPayload, { isPreview: true });
+        previewModalIframe.removeAttribute('src');
         previewModalIframe.srcdoc = fullHtml;
       } else {
+        previewModalIframe.removeAttribute('srcdoc');
         previewModalIframe.src = `/cards/preview.html?design=${encodeURIComponent(resolved.id)}`;
       }
     }
@@ -1282,7 +1413,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!adminCardPreviewModal) return;
     adminCardPreviewModal.style.display = 'none';
     document.body.style.overflow = '';
-    if (previewModalIframe) previewModalIframe.srcdoc = 'about:blank';
+    if (previewModalIframe) {
+      previewModalIframe.removeAttribute('srcdoc');
+      previewModalIframe.src = 'about:blank';
+    }
   }
 
   if (btnClosePreviewModal) btnClosePreviewModal.addEventListener('click', closeCardPreviewModal);
@@ -1436,7 +1570,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const instagram = custInstagram.value.trim();
       const linkedIn = custLinkedIn.value.trim();
 
-      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const existing = currentEditingCustomerId ? customers.find(c => String(c.id) === String(currentEditingCustomerId)) : null;
+      const slug = (existing && existing.profileSlug) ? existing.profileSlug : (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
 
       const payload = {
         name,
@@ -1455,6 +1590,7 @@ document.addEventListener('DOMContentLoaded', () => {
         profileSlug: slug,
         avatar_url: currentUploadedAvatar,
         custom_settings: {
+          ...(existing && existing.customSettings && existing.customSettings.industry ? { industry: existing.customSettings.industry } : {}),
           appearance: {
             primaryColor: custPrimaryColor ? custPrimaryColor.value.trim() : '',
             backgroundColor: custBgColor ? custBgColor.value.trim() : '',
@@ -1471,6 +1607,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 order: idx,
               }))
             : [],
+          cardImages: {
+            frontUrl: currentFrontImageUrl || '',
+            backUrl: currentBackImageUrl || '',
+          },
         },
       };
 
@@ -1671,6 +1811,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (custFontFamily) custFontFamily.value = '';
       currentCustomLinks = [];
       renderCustomLinks();
+      currentFrontImageUrl = '';
+      currentBackImageUrl = '';
+      if (typeof updateCardImagePreviews === 'function') updateCardImagePreviews();
       showAdminToast('Card customization reset to template defaults.');
     });
   }
@@ -1689,6 +1832,173 @@ document.addEventListener('DOMContentLoaded', () => {
       custAvatarSyncPreview.innerHTML = `<span style="font-size: 15px; font-weight: 700; color: #92400e;">${escapeHtml(initials || 'AS')}</span>`;
       if (custAvatarSyncStatus) custAvatarSyncStatus.textContent = 'Using Generated Monogram';
     }
+  }
+
+  // -------------------------------------------------------------
+  // Front & Back Card Image Upload Controls & Previews
+  // -------------------------------------------------------------
+  const frontImageStatus = document.getElementById('frontImageStatus');
+  const frontImagePlaceholder = document.getElementById('frontImagePlaceholder');
+  const frontImagePreviewImg = document.getElementById('frontImagePreviewImg');
+  const frontImageFileInput = document.getElementById('frontImageFileInput');
+  const btnUploadFrontImage = document.getElementById('btnUploadFrontImage');
+  const btnUploadFrontText = document.getElementById('btnUploadFrontText');
+  const btnRemoveFrontImage = document.getElementById('btnRemoveFrontImage');
+
+  const backImageStatus = document.getElementById('backImageStatus');
+  const backImagePlaceholder = document.getElementById('backImagePlaceholder');
+  const backImagePreviewImg = document.getElementById('backImagePreviewImg');
+  const backImageFileInput = document.getElementById('backImageFileInput');
+  const btnUploadBackImage = document.getElementById('btnUploadBackImage');
+  const btnUploadBackText = document.getElementById('btnUploadBackText');
+  const btnRemoveBackImage = document.getElementById('btnRemoveBackImage');
+
+  function updateCardImagePreviews() {
+    // Front Image
+    if (currentFrontImageUrl) {
+      if (frontImagePreviewImg) {
+        frontImagePreviewImg.src = currentFrontImageUrl;
+        frontImagePreviewImg.style.display = 'block';
+      }
+      if (frontImagePlaceholder) frontImagePlaceholder.style.display = 'none';
+      if (frontImageStatus) {
+        frontImageStatus.textContent = 'Uploaded';
+        frontImageStatus.classList.add('active');
+      }
+      if (btnUploadFrontText) btnUploadFrontText.textContent = 'Replace Front';
+      if (btnRemoveFrontImage) btnRemoveFrontImage.style.display = 'inline-flex';
+    } else {
+      if (frontImagePreviewImg) {
+        frontImagePreviewImg.src = '';
+        frontImagePreviewImg.style.display = 'none';
+      }
+      if (frontImagePlaceholder) frontImagePlaceholder.style.display = 'flex';
+      if (frontImageStatus) {
+        frontImageStatus.textContent = 'Not set';
+        frontImageStatus.classList.remove('active');
+      }
+      if (btnUploadFrontText) btnUploadFrontText.textContent = 'Upload Front';
+      if (btnRemoveFrontImage) btnRemoveFrontImage.style.display = 'none';
+      if (frontImageFileInput) frontImageFileInput.value = '';
+    }
+
+    // Back Image
+    if (currentBackImageUrl) {
+      if (backImagePreviewImg) {
+        backImagePreviewImg.src = currentBackImageUrl;
+        backImagePreviewImg.style.display = 'block';
+      }
+      if (backImagePlaceholder) backImagePlaceholder.style.display = 'none';
+      if (backImageStatus) {
+        backImageStatus.textContent = 'Uploaded';
+        backImageStatus.classList.add('active');
+      }
+      if (btnUploadBackText) btnUploadBackText.textContent = 'Replace Back';
+      if (btnRemoveBackImage) btnRemoveBackImage.style.display = 'inline-flex';
+    } else {
+      if (backImagePreviewImg) {
+        backImagePreviewImg.src = '';
+        backImagePreviewImg.style.display = 'none';
+      }
+      if (backImagePlaceholder) backImagePlaceholder.style.display = 'flex';
+      if (backImageStatus) {
+        backImageStatus.textContent = 'Not set';
+        backImageStatus.classList.remove('active');
+      }
+      if (btnUploadBackText) btnUploadBackText.textContent = 'Upload Back';
+      if (btnRemoveBackImage) btnRemoveBackImage.style.display = 'none';
+      if (backImageFileInput) backImageFileInput.value = '';
+    }
+  }
+
+  async function handleCardImageUpload(file, kind) {
+    if (!file) return;
+
+    // Validate size (max 2MB)
+    const MAX_SIZE = 2 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      showAdminToast(`File exceeds 2MB limit (${(file.size / (1024 * 1024)).toFixed(1)}MB). Please choose a smaller image.`);
+      return;
+    }
+
+    // Validate type
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) {
+      showAdminToast('Unsupported file type. Please upload a JPG, PNG, WEBP, or GIF image.');
+      return;
+    }
+
+    const isFront = kind === 'front';
+    const btnText = isFront ? btnUploadFrontText : btnUploadBackText;
+    const originalText = btnText ? btnText.textContent : '';
+
+    if (btnText) btnText.textContent = 'Uploading...';
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('kind', kind);
+
+      const res = await apiFetch('/api/admin/media', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.url) {
+        if (isFront) {
+          currentFrontImageUrl = data.url;
+        } else {
+          currentBackImageUrl = data.url;
+        }
+        updateCardImagePreviews();
+        showAdminToast(`${isFront ? 'Front' : 'Back'} card image uploaded successfully.`);
+      } else {
+        showAdminToast(data.error || 'Failed to upload card image.');
+      }
+    } catch (err) {
+      console.error('Card image upload error:', err);
+      showAdminToast('Network error while uploading card image.');
+    } finally {
+      if (btnText) {
+        const hasUrl = isFront ? currentFrontImageUrl : currentBackImageUrl;
+        btnText.textContent = hasUrl ? `Replace ${isFront ? 'Front' : 'Back'}` : `Upload ${isFront ? 'Front' : 'Back'}`;
+      }
+    }
+  }
+
+  if (btnUploadFrontImage && frontImageFileInput) {
+    btnUploadFrontImage.addEventListener('click', () => frontImageFileInput.click());
+    frontImageFileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        handleCardImageUpload(this.files[0], 'front');
+      }
+    });
+  }
+
+  if (btnRemoveFrontImage) {
+    btnRemoveFrontImage.addEventListener('click', () => {
+      currentFrontImageUrl = '';
+      updateCardImagePreviews();
+      showAdminToast('Front card image removed.');
+    });
+  }
+
+  if (btnUploadBackImage && backImageFileInput) {
+    btnUploadBackImage.addEventListener('click', () => backImageFileInput.click());
+    backImageFileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        handleCardImageUpload(this.files[0], 'back');
+      }
+    });
+  }
+
+  if (btnRemoveBackImage) {
+    btnRemoveBackImage.addEventListener('click', () => {
+      currentBackImageUrl = '';
+      updateCardImagePreviews();
+      showAdminToast('Back card image removed.');
+    });
   }
 
   // Render Custom Links in order
@@ -2207,6 +2517,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Client Delivery section
   setupClientDeliveryListeners();
   updateClientDelivery('', '');
+  updateCardImagePreviews();
 
   // Initialize Digital Card Design System Gallery & Showroom
   renderDesignGallery('all');

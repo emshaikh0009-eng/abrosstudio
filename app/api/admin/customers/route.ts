@@ -48,6 +48,20 @@ function sanitizeFont(val: any): string {
 
 import { resolveCardDesign } from "@/utils/card-designs";
 
+function sanitizeImageRef(val: any): string {
+  if (typeof val !== "string") return "";
+  const trimmed = val.trim();
+  if (!trimmed || trimmed.length > 2000) return "";
+  const lower = trimmed.toLowerCase();
+  if (lower.startsWith("data:") || lower.startsWith("javascript:") || lower.startsWith("blob:")) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("/")) {
+    return trimmed;
+  }
+  return "";
+}
+
 function sanitizeCustomSettings(val: any) {
   if (!val || typeof val !== "object") return null;
 
@@ -92,6 +106,14 @@ function sanitizeCustomSettings(val: any) {
       data: (val.industry.data && typeof val.industry.data === "object") ? val.industry.data : {},
     };
   }
+
+  const rawImages = val.cardImages && typeof val.cardImages === "object" ? val.cardImages : {};
+  const frontUrl = sanitizeImageRef(rawImages.frontUrl || rawImages.front_url);
+  const backUrl = sanitizeImageRef(rawImages.backUrl || rawImages.back_url);
+  result.cardImages = {
+    frontUrl: frontUrl || "",
+    backUrl: backUrl || "",
+  };
 
   return result;
 }
@@ -156,11 +178,16 @@ export async function POST(request: Request) {
     const linkedinUrl = sanitizeText(body.socialLinkedIn || body.linkedin_url, 150);
     const cardDesign = resolveCardDesign(body.design || body.card_design).name;
 
-    // Format profile slug cleanly from profileLink, profileSlug, or profile_slug
-    const rawProfile = sanitizeText(body.profileLink || body.profileSlug || body.profile_slug, 100);
+    // Format profile slug cleanly from profileSlug, profile_slug, or profileLink
+    let rawProfile = sanitizeText(body.profileSlug || body.profile_slug || body.profileLink, 100);
+    if (rawProfile.includes("/c/")) {
+      rawProfile = rawProfile.split("/c/").pop() || "";
+    }
     let profileSlug = rawProfile
       .replace(/^https?:\/\//i, "")
-      .replace(/^ambros\.studio\//i, "")
+      .replace(/^www\./i, "")
+      .replace(/^ambros\.studio\/?/i, "")
+      .replace(/^ambrosstudio\.space\/?/i, "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");

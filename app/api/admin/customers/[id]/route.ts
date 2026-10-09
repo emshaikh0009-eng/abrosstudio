@@ -48,6 +48,20 @@ function sanitizeFont(val: any): string {
 
 import { resolveCardDesign } from "@/utils/card-designs";
 
+function sanitizeImageRef(val: any): string {
+  if (typeof val !== "string") return "";
+  const trimmed = val.trim();
+  if (!trimmed || trimmed.length > 2000) return "";
+  const lower = trimmed.toLowerCase();
+  if (lower.startsWith("data:") || lower.startsWith("javascript:") || lower.startsWith("blob:")) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("/")) {
+    return trimmed;
+  }
+  return "";
+}
+
 function sanitizeCustomSettings(val: any) {
   if (!val || typeof val !== "object") return null;
 
@@ -92,6 +106,14 @@ function sanitizeCustomSettings(val: any) {
       data: (val.industry.data && typeof val.industry.data === "object") ? val.industry.data : {},
     };
   }
+
+  const rawImages = val.cardImages && typeof val.cardImages === "object" ? val.cardImages : {};
+  const frontUrl = sanitizeImageRef(rawImages.frontUrl || rawImages.front_url);
+  const backUrl = sanitizeImageRef(rawImages.backUrl || rawImages.back_url);
+  result.cardImages = {
+    frontUrl: frontUrl || "",
+    backUrl: backUrl || "",
+  };
 
   return result;
 }
@@ -174,11 +196,16 @@ export async function PATCH(
     }
 
 
-    if (body.profileLink !== undefined || body.profileSlug !== undefined || body.profile_slug !== undefined) {
-      const rawProfile = sanitizeText(body.profileLink || body.profileSlug || body.profile_slug, 100);
+    if (body.profileSlug !== undefined || body.profile_slug !== undefined || body.profileLink !== undefined) {
+      let rawProfile = sanitizeText(body.profileSlug || body.profile_slug || body.profileLink, 100);
+      if (rawProfile.includes("/c/")) {
+        rawProfile = rawProfile.split("/c/").pop() || "";
+      }
       const slug = rawProfile
         .replace(/^https?:\/\//i, "")
-        .replace(/^ambros\.studio\//i, "")
+        .replace(/^www\./i, "")
+        .replace(/^ambros\.studio\/?/i, "")
+        .replace(/^ambrosstudio\.space\/?/i, "")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
@@ -342,7 +369,7 @@ export async function GET(
         address: data.business_address || "",
         socialInstagram: data.instagram_url || "",
         socialLinkedIn: data.linkedin_url || "",
-        cardDesign: data.card_design === "Evergreen" ? "Evergreen" : "Mint Haven",
+        cardDesign: resolveCardDesign(data.card_design).id,
         profileSlug: data.profile_slug,
         avatarUrl: data.avatar_url || data.profile_image_url || "",
         customSettings: data.custom_settings || null,

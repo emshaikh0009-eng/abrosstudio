@@ -636,7 +636,7 @@ export const AUTHORITATIVE_AMBROS_CUSTOMER = {
   socialLinkedIn: "https://linkedin.com/company/ambrosstudio",
   cardDesign: "mint-haven",
   profileSlug: "ambros-studio",
-  avatarUrl: "/assets/abros-logo-transparent.png",
+  avatarUrl: "/assets/ambros-logo-light.png",
   is_active: true,
   customSettings: {
     appearance: {

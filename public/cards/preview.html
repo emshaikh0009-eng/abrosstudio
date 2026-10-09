@@ -81,10 +81,47 @@
         }
       }
 
-      // If customer identifier exists for a custom client, card-loader.js will hydrate real customer data.
-      // If no customer identifier is specified, or previewing the canonical studio brand:
-      if (!custId && (!slug || slug === 'ambros' || slug === 'ambros-studio')) {
-        var baseRecord = (registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER)
+      // Customer hydration:
+      // If customer identifier exists (id or slug), fetch actual customer record.
+      // If no customer identifier is specified, preview the authoritative Ambros Studio showroom profile.
+      var customerRecord = null;
+      if (custId) {
+        try {
+          var res = await fetch('/api/admin/customers/' + encodeURIComponent(custId), {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'include'
+          });
+          if (res.ok) {
+            var json = await res.json();
+            if (json && json.customer) {
+              customerRecord = json.customer;
+            }
+          }
+        } catch (err) {
+          console.warn('Preview: could not fetch customer by ID:', err);
+        }
+      } else if (slug && slug !== 'ambros' && slug !== 'ambros-studio') {
+        try {
+          var res = await fetch('/api/cards/' + encodeURIComponent(slug), {
+            headers: { 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            var json = await res.json();
+            if (json && json.card) {
+              customerRecord = json.card;
+            }
+          }
+        } catch (err) {
+          console.warn('Preview: could not fetch customer by slug:', err);
+        }
+      }
+
+      var baseRecord;
+      if (customerRecord) {
+        baseRecord = customerRecord;
+        baseRecord.cardDesign = design.id;
+      } else {
+        baseRecord = (registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER)
           ? JSON.parse(JSON.stringify(registry.AUTHORITATIVE_AMBROS_CUSTOMER))
           : {
               fullName: 'Ambros Studio',
@@ -100,7 +137,7 @@
               socialLinkedIn: 'https://linkedin.com/company/ambrosstudio',
               cardDesign: design.id,
               profileSlug: 'ambros-studio',
-              avatarUrl: '/assets/abros-logo-transparent.png',
+              avatarUrl: '/assets/ambros-logo-light.png',
               is_active: true,
               customSettings: {
                 appearance: {
@@ -158,13 +195,13 @@
             loyalty: 'Collect 8 stamps, get a free drink: 8 to go'
           } : {})))
         };
+      }
 
-        var viewport = document.getElementById('cardViewport');
-        if (viewport && renderer) {
-          viewport.innerHTML = renderer.renderCardBody(baseRecord, design);
-          if (typeof attachCardActions === 'function') {
-            attachCardActions(baseRecord);
-          }
+      var viewport = document.getElementById('cardViewport');
+      if (viewport && renderer) {
+        viewport.innerHTML = renderer.renderCardBody(baseRecord, design);
+        if (typeof attachCardActions === 'function') {
+          attachCardActions(baseRecord);
         }
       }
     })();
