@@ -206,6 +206,7 @@ export async function PATCH(
         .replace(/^www\./i, "")
         .replace(/^ambros\.studio\/?/i, "")
         .replace(/^ambrosstudio\.space\/?/i, "")
+        .replace(/^ambrosstudio\.com\/?/i, "")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");

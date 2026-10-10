@@ -32,6 +32,32 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'ambrosstudio.space',
+          },
+        ],
+        destination: 'https://ambrosstudio.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.ambrosstudio.space',
+          },
+        ],
+        destination: 'https://ambrosstudio.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,5 +1,5 @@
 import { createAnonymousClient } from "@/utils/supabase/server";
-import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER } from "@/utils/card-designs";
+import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, getDemoProfile } from "@/utils/card-designs";
 import { renderCardHtml, ResolvedCustomerCard } from "@/utils/card-renderer";
 
 function renderUnavailableHtml(title = "Card Unavailable", message = "This digital business card is currently inactive or does not exist."): string {
@@ -86,7 +86,7 @@ function renderUnavailableHtml(title = "Card Unavailable", message = "This digit
     </div>
     <h1>${title}</h1>
     <p>${message}</p>
-    <a href="https://www.ambrosstudio.space" class="btn-home">
+    <a href="https://ambrosstudio.com" class="btn-home">
       &larr; Back to Ambros Studio
     </a>
   </div>
@@ -111,6 +111,18 @@ export async function GET(
 
     const requestUrl = new URL(request.url);
     const designParam = requestUrl.searchParams.get("design");
+
+    if (sanitizedSlug === "demo") {
+      const demoCard = getDemoProfile(designParam || "mint-haven");
+      const html = renderCardHtml(demoCard);
+      return new Response(html, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "public, max-age=0, must-revalidate",
+        },
+      });
+    }
 
     // Pure anonymous client with zero session/cookie state
     const supabase = createAnonymousClient();

@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://ambrosstudio.space/sitemap.xml',
+    sitemap: 'https://ambrosstudio.com/sitemap.xml',
   };
 }

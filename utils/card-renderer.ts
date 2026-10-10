@@ -1,8 +1,12 @@
 /**
  * Ambros Studio — Universal Server-Side Card HTML Renderer
  * 
- * Renders all 16 canonical designs from ONE authoritative customer payload.
- * High performance 0ms initial server paint. Zero hardcoded customer leaks.
+ * Renders all 16 canonical designs from ONE authoritative customer payload:
+ *   - Personal (6): Mint Haven, Evergreen, Noir Gold, Emerald Ivory, Neon Pulse, Mono Studio
+ *   - Business (6): Classic Navy, Fresh Mint, Bold Pop, Bento Grid, Glass Aurora, Luxe Foil
+ *   - Industry Specials (4): Skyline, Atelier, Care Plus, Roast & Co.
+ * 
+ * High performance 0ms initial server paint. Zero cross-customer leaks.
  */
 
 import { CARD_DESIGNS, CardDesignDefinition, resolveCardDesign } from "./card-designs";
@@ -144,7 +148,7 @@ function formatLinkDestination(type: string, rawValue?: string | null): string |
 function getDefaultLabel(type: string): string {
   const map: Record<string, string> = {
     whatsapp: "WhatsApp",
-    phone: "Call",
+    phone: "Call Directly",
     email: "Email",
     website: "Website",
     instagram: "Instagram",
@@ -153,13 +157,13 @@ function getDefaultLabel(type: string): string {
     youtube: "YouTube",
     twitter: "X / Twitter",
     telegram: "Telegram",
-    maps: "Directions / Maps",
-    custom: "Link"
+    maps: "Directions / Office",
+    custom: "Link",
   };
   return map[type] || "Link";
 }
 
-function getDisplayValue(type: string, rawVal: string, label: string): string {
+function getDisplayValue(type: string, rawVal?: string | null, label?: string | null): string {
   if (!rawVal) return label || "";
   const val = rawVal.trim();
   if (type === "phone" || type === "whatsapp") return val;
@@ -215,9 +219,8 @@ function getLinkIconSvg(type: string, size = 18): string {
     case "telegram":
       return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
     case "maps":
-      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
     case "directions":
-      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>`;
+      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
     case "calendar":
       return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
     case "share":
@@ -236,20 +239,20 @@ export function resolveCustomerLinks(card: ResolvedCustomerCard) {
   const custom = card.customSettings;
   if (custom && Array.isArray(custom.links) && custom.links.length > 0) {
     return custom.links
-      .filter(l => l && l.enabled !== false)
+      .filter((l) => l && l.enabled !== false)
       .map((l, idx) => ({
         type: (l.type || "").toLowerCase(),
         label: l.label || getDefaultLabel((l.type || "").toLowerCase()),
         value: l.value || "",
         order: typeof l.order === "number" ? l.order : idx,
       }))
-      .filter(l => formatLinkDestination(l.type, l.value) !== null)
+      .filter((l) => formatLinkDestination(l.type, l.value) !== null)
       .sort((a, b) => a.order - b.order);
   }
 
   const list: Array<{ type: string; label: string; value: string; order: number }> = [];
   if (card.phone) {
-    list.push({ type: "phone", label: "Call", value: card.phone, order: 0 });
+    list.push({ type: "phone", label: "Call Directly", value: card.phone, order: 0 });
   }
   if (card.whatsapp) {
     list.push({ type: "whatsapp", label: "WhatsApp", value: card.whatsapp, order: 1 });
@@ -273,8 +276,7 @@ export function resolveCustomerLinks(card: ResolvedCustomerCard) {
   return list;
 }
 
-export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?: boolean } = {}): string {
-  const design: CardDesignDefinition = resolveCardDesign(card.cardDesign);
+export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDefinition): string {
   const name = card.fullName || "Ambros Studio Member";
   const role = card.designation || "";
   const company = card.company || "";
@@ -283,13 +285,12 @@ export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?
   const whatsapp = card.whatsapp || "";
   const address = card.address || "";
   const avatarUrl = card.avatarUrl || "";
-
   const custom = card.customSettings || {};
   const industryData = (custom.industry && custom.industry.data) ? custom.industry.data : {};
 
   const links = resolveCustomerLinks(card);
-  const contactLinks = links.filter(l => !SOCIAL_TYPES.has(l.type));
-  const socialLinks = links.filter(l => SOCIAL_TYPES.has(l.type));
+  const contactLinks = links.filter((l) => !SOCIAL_TYPES.has(l.type));
+  const socialLinks = links.filter((l) => SOCIAL_TYPES.has(l.type));
 
   const initials = getInitials(name);
   const avatarHtml = avatarUrl
@@ -301,218 +302,259 @@ export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?
          <span class="profile-avatar-initials">${escapeHtml(initials)}</span>
        </div>`;
 
-  let inner = "";
+  let html = "";
 
-  // 1. Header
+  // =========================================================================
+  // 1. HEADER (Tailored per Canonical Design Identity)
+  // =========================================================================
   if (design.id === "atelier") {
-    inner += `
+    html += `
       <header style="text-align: center; margin-bottom: 20px;">
         ${avatarHtml}
-        <p style="font-size: 13px; font-family: sans-serif; opacity: 0.7; margin-bottom: 4px; margin-top: 12px;">Hello, I'm</p>
+        <p style="font-size: 13px; font-family: var(--app-font); opacity: 0.7; margin-bottom: 4px; margin-top: 12px; text-align: center;">Hello, I'm</p>
         <h1 class="profile-name">${escapeHtml(name)}</h1>
         <div style="text-align: center; margin: 10px 0;">
           <span class="fashion-tag">${escapeHtml(role || "Fashion designer & stylist")}</span>
         </div>
         ${company ? `<p class="profile-company">${escapeHtml(company)}</p>` : ""}
+        ${bio ? `<p class="profile-bio" style="font-family: var(--app-font);">${escapeHtml(bio)}</p>` : ""}
       </header>
     `;
-  } else if (design.category === "business") {
-    inner += `
+  } else if (design.id === "care-plus") {
+    html += `
       <header style="text-align: center; margin-bottom: 20px;">
         ${avatarHtml}
-        <h1 class="profile-name">${escapeHtml(company || name)}</h1>
-        ${company && name ? `<p class="profile-designation">${escapeHtml(name)}${role ? ' · ' + escapeHtml(role) : ''}</p>` : (role ? `<p class="profile-designation">${escapeHtml(role)}</p>` : "")}
+        <h1 class="profile-name">${escapeHtml(name)}</h1>
+        <p class="profile-designation">${escapeHtml(role || "Consultant Dermatologist & Physician")}</p>
+        <div style="text-align: center; margin: 6px 0 14px;">
+          <span class="doctor-specialty-pill">${escapeHtml(company || "Clinical Dermatology & Aesthetics")}</span>
+        </div>
         ${bio ? `<p class="profile-bio">${escapeHtml(bio)}</p>` : ""}
-        <div style="text-align: center;">
-          <span class="status-pill">
-            <span class="status-dot"></span>
-            <span>Open now</span>
-          </span>
+      </header>
+    `;
+  } else if (design.id === "skyline") {
+    const badgesHtml = (Array.isArray(industryData.badges) && industryData.badges.length > 0)
+      ? industryData.badges.map((b: string) => `<span class="badge-pill">${escapeHtml(b)}</span>`).join("")
+      : `<span class="badge-pill">Demo RERA · Sample</span><span class="badge-pill">English · Hindi</span><span class="badge-pill">Property Advisory</span>`;
+
+    html += `
+      <header style="text-align: center; margin-bottom: 20px;">
+        ${avatarHtml}
+        <h1 class="profile-name">${escapeHtml(name)}</h1>
+        <p class="profile-designation">${escapeHtml(role || "Senior Property Consultant")}</p>
+        ${company ? `<p class="profile-company">${escapeHtml(company)}</p>` : ""}
+        <div class="badges-row">
+          ${badgesHtml}
         </div>
       </header>
     `;
+  } else if (design.id === "roast-and-co") {
+    const cafeBadgesHtml = (Array.isArray(industryData.badges) && industryData.badges.length > 0)
+      ? industryData.badges.map((b: string) => `<span class="cafe-badge">${escapeHtml(b)}</span>`).join("")
+      : `<span class="cafe-badge">• Open · till 10pm</span><span class="cafe-badge">★ 4.8</span><span class="cafe-badge">Free Wi-Fi</span>`;
+
+    html += `
+      <header style="text-align: center; margin-bottom: 20px;">
+        ${avatarHtml}
+        <h1 class="profile-name">${escapeHtml(company || name)}</h1>
+        <p class="profile-designation" style="opacity: 0.85;">${escapeHtml(bio || role || "Small-batch coffee and fresh bakes, all day.")}</p>
+        <div class="cafe-badges">
+          ${cafeBadgesHtml}
+        </div>
+      </header>
+    `;
+  } else if (design.category === "business") {
+    html += `
+      <header style="text-align: center; margin-bottom: 20px;">
+        ${avatarHtml}
+        <h1 class="profile-name">${escapeHtml(company || name)}</h1>
+        ${company && name ? `<p class="profile-designation">${escapeHtml(name)}${role ? " · " + escapeHtml(role) : ""}</p>` : (role ? `<p class="profile-designation">${escapeHtml(role)}</p>` : "")}
+        <div style="text-align: center;">
+          <span class="status-pill">
+            <span class="status-dot"></span>
+            <span>Open now · closes 8 pm</span>
+          </span>
+        </div>
+        ${bio ? `<p class="profile-bio">${escapeHtml(bio)}</p>` : ""}
+      </header>
+    `;
   } else {
-    inner += `
+    // Personal Collection
+    html += `
       <header style="text-align: center; margin-bottom: 18px;">
         ${avatarHtml}
         <h1 class="profile-name">${escapeHtml(name)}</h1>
         ${role ? `<p class="profile-designation">${escapeHtml(role)}</p>` : ""}
         ${company ? `<p class="profile-company">${escapeHtml(company)}</p>` : ""}
-        ${bio ? `<p class="profile-bio">${escapeHtml(bio)}</p>` : ""}
       </header>
     `;
-  }
 
-  // 2. Industry Specials Optional Modules
-  if (design.id === "skyline") {
-    const stats = industryData.stats || (industryData.homesSold ? [
-      { num: industryData.homesSold, label: "Homes sold" },
-      { num: industryData.dealsClosed, label: "Deals closed" },
-      { num: industryData.experience, label: "Experience" }
-    ] : null);
-
-    if (stats && Array.isArray(stats) && stats.length > 0) {
-      inner += `<div class="stats-row">`;
-      stats.slice(0, 3).forEach((s: any) => {
-        inner += `<div><div class="stat-num">${escapeHtml(s.num || s.value || "")}</div><div class="stat-label">${escapeHtml(s.label || "")}</div></div>`;
-      });
-      inner += `</div>`;
-    }
-
-    const listings = Array.isArray(industryData.listings) ? industryData.listings : [];
-    if (listings.length > 0) {
-      inner += `<h2 class="section-title">Featured Listings</h2>`;
-      listings.forEach((item: any) => {
-        inner += `
-          <div class="listing-card" style="padding: 12px 14px;">
-            ${item.tag ? `<span class="listing-tag">${escapeHtml(item.tag)}</span>` : ""}
-            <div style="font-size: 15px; font-weight: 700; color: #38bdf8; margin-bottom: 2px;">${escapeHtml(item.price || "")}</div>
-            <div style="font-size: 13px; font-weight: 600;">${escapeHtml(item.title || item.type || "")}</div>
-            <div style="font-size: 11.5px; opacity: 0.7;">${escapeHtml(item.location || "")}</div>
+    // Structured About Card for luxury / editorial personal designs
+    if (bio) {
+      if (["noir-gold", "emerald-ivory", "neon-pulse", "mono-studio"].includes(design.id)) {
+        html += `
+          <div class="about-card">
+            <div class="card-subtitle">About</div>
+            <p class="profile-bio">${escapeHtml(bio)}</p>
           </div>
         `;
-      });
+      } else {
+        html += `<p class="profile-bio" style="margin-bottom: 20px;">${escapeHtml(bio)}</p>`;
+      }
     }
+  }
 
-    inner += `
-      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta">
+  // =========================================================================
+  // 2. STATS ROW (Personal Consultant / Real Estate Designs)
+  // =========================================================================
+  if (["emerald-ivory", "neon-pulse", "mono-studio"].includes(design.id)) {
+    const stats = Array.isArray(industryData.stats) ? industryData.stats : [
+      { num: "12+", label: "Years Exp." },
+      { num: "340+", label: "Clients" },
+      { num: "4.9 ★", label: "Satisfaction" },
+    ];
+    html += `<div class="stats-row">`;
+    stats.slice(0, 3).forEach((s: any) => {
+      html += `<div><div class="stat-num">${escapeHtml(s.num || s.value || "")}</div><div class="stat-label">${escapeHtml(s.label || "")}</div></div>`;
+    });
+    html += `</div>`;
+  }
+
+  // =========================================================================
+  // 3. SPECIALIZED CTA BUTTONS
+  // =========================================================================
+  const waDest = whatsapp ? `https://wa.me/${cleanDigits(whatsapp)}` : "";
+  const phoneDest = phone ? `tel:${cleanPhone(phone)}` : "";
+  const mapsDest = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : "";
+
+  if (design.id === "skyline") {
+    html += `
+      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta" style="margin-bottom: 12px;">
         ${getLinkIconSvg("calendar", 16)}
         <span>Book a site visit</span>
       </button>
-    `;
-  }
-
-  if (design.id === "atelier") {
-    const services = Array.isArray(industryData.services) ? industryData.services : [];
-    if (services.length > 0) {
-      inner += `<div class="fashion-services">`;
-      services.forEach((s: any) => {
-        inner += `
-          <div class="fashion-service-row">
-            <span style="font-weight: 600;">${escapeHtml(s.name || s.title || "")}</span>
-            <span style="opacity: 0.7;">${escapeHtml(s.subtitle || s.price || "")}</span>
-          </div>
-        `;
-      });
-      inner += `</div>`;
-    }
-
-    inner += `
-      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta">
-        <span>Book a fitting</span>
-      </button>
-    `;
-  }
-
-  if (design.id === "care-plus") {
-    if (industryData.nextSlot) {
-      inner += `
-        <div class="slot-card">
-          ${getLinkIconSvg("calendar", 22)}
-          <div>
-            <div class="slot-title">Next Available</div>
-            <div class="slot-val">${escapeHtml(industryData.nextSlot)}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    const treatments = Array.isArray(industryData.treatments) ? industryData.treatments : [];
-    if (treatments.length > 0) {
-      inner += `<h2 class="section-title">Specialties</h2><div class="tags-cloud">`;
-      treatments.forEach((t: string) => {
-        inner += `<span class="tag-chip">${escapeHtml(t)}</span>`;
-      });
-      inner += `</div>`;
-    }
-
-    if (industryData.timings) {
-      inner += `
-        <div class="timings-card">
-          <div style="font-weight: 700; margin-bottom: 6px;">Clinic Timings</div>
-          <div>${escapeHtml(industryData.timings)}</div>
-        </div>
-      `;
-    }
-
-    inner += `
-      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta">
-        ${getLinkIconSvg("calendar", 16)}
-        <span>Book appointment</span>
-      </button>
-    `;
-  }
-
-  if (design.id === "roast-and-co") {
-    inner += `
-      <div class="cafe-badges">
-        <span class="cafe-badge">• Open · till 10pm</span>
-        <span class="cafe-badge">★ 4.7</span>
-        <span class="cafe-badge">Free Wi-Fi</span>
-      </div>
-    `;
-
-    const menu = Array.isArray(industryData.menu) ? industryData.menu : [];
-    if (menu.length > 0) {
-      inner += `<div class="menu-card"><h2 class="section-title" style="margin-bottom: 8px;">Menu</h2>`;
-      menu.forEach((item: any) => {
-        inner += `
-          <div class="menu-item">
-            <div>
-              <span style="font-weight: 600;">${escapeHtml(item.name || "")}</span>
-              ${item.popular ? `<span style="font-size: 10px; background: #d4a373; color: #1b140e; padding: 2px 6px; border-radius: 999px; font-weight: 700; margin-left: 6px;">Popular</span>` : ""}
-            </div>
-            <span style="font-weight: 700;">${escapeHtml(item.price || "")}</span>
-          </div>
-        `;
-      });
-      inner += `</div>`;
-    }
-
-    if (industryData.loyalty) {
-      inner += `
-        <div class="loyalty-box">
-          <div style="font-size: 12px; font-weight: 700; color: #d4a373; text-transform: uppercase;">Loyalty Card</div>
-          <div style="font-size: 13.5px; font-weight: 600; margin-top: 4px;">${escapeHtml(industryData.loyalty)}</div>
-        </div>
-      `;
-    }
-  }
-
-  // 3. CTA Action Buttons
-  if (design.category === "business") {
-    const waDest = whatsapp ? `https://wa.me/${cleanDigits(whatsapp)}` : "";
-    const phoneDest = phone ? `tel:${cleanPhone(phone)}` : "";
-    const mapsDest = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : "";
-
-    inner += `
-      <div class="cta-actions-trio">
+      <div class="cta-actions-row">
         ${phoneDest ? `
-          <a href="${phoneDest}" class="cta-btn cta-btn-primary" aria-label="Call business">
+          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call consultant">
             ${getLinkIconSvg("phone", 15)}
             <span>Call</span>
           </a>` : `
-          <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn" aria-label="Save contact">
+          <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
+            ${getLinkIconSvg("contact", 15)}
+            <span>Save contact</span>
+          </button>`
+        }
+        <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
+          ${getLinkIconSvg("contact", 15)}
+          <span>Save contact</span>
+        </button>
+      </div>
+    `;
+  } else if (design.id === "atelier") {
+    html += `
+      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta" style="margin-bottom: 12px;">
+        ${getLinkIconSvg("calendar", 16)}
+        <span>Book a fitting</span>
+      </button>
+      <div class="cta-actions-row">
+        ${phoneDest ? `
+          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call studio">
+            ${getLinkIconSvg("phone", 15)}
+            <span>Call studio</span>
+          </a>` : `
+          <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
+            ${getLinkIconSvg("contact", 15)}
+            <span>Save contact</span>
+          </button>`
+        }
+        <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
+          ${getLinkIconSvg("contact", 15)}
+          <span>Save contact</span>
+        </button>
+      </div>
+    `;
+  } else if (design.id === "care-plus") {
+    html += `
+      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta" style="margin-bottom: 12px;">
+        ${getLinkIconSvg("calendar", 16)}
+        <span>Book appointment</span>
+      </button>
+      <div class="cta-actions-row">
+        ${phoneDest ? `
+          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call clinic">
+            ${getLinkIconSvg("phone", 15)}
+            <span>Call clinic</span>
+          </a>` : `
+          <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
+            ${getLinkIconSvg("contact", 15)}
+            <span>Save contact</span>
+          </button>`
+        }
+        <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
+          ${getLinkIconSvg("contact", 15)}
+          <span>Save contact</span>
+        </button>
+      </div>
+    `;
+  } else if (design.id === "roast-and-co") {
+    html += `
+      <div class="cta-actions-row">
+        ${waDest ? `
+          <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-primary" aria-label="Order on WhatsApp">
+            ${getLinkIconSvg("whatsapp", 16)}
+            <span>Order on WhatsApp</span>
+          </a>` : `
+          <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn">
+            ${getLinkIconSvg("contact", 16)}
+            <span>Save contact</span>
+          </button>`
+        }
+        ${mapsDest ? `
+          <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">
+            ${getLinkIconSvg("directions", 16)}
+            <span>Directions</span>
+          </a>` : (phoneDest ? `
+          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call cafe">
+            ${getLinkIconSvg("phone", 16)}
+            <span>Call cafe</span>
+          </a>` : `
+          <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">
+            ${getLinkIconSvg("share", 16)}
+            <span>Share</span>
+          </button>`)
+        }
+      </div>
+    `;
+  } else if (design.category === "business") {
+    // 3-Trio Quick Action Buttons
+    html += `
+      <div class="cta-actions-trio">
+        ${phoneDest ? `
+          <a href="${phoneDest}" class="cta-btn cta-btn-primary" aria-label="Call">
+            ${getLinkIconSvg("phone", 15)}
+            <span>Call</span>
+          </a>` : `
+          <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn">
             ${getLinkIconSvg("contact", 15)}
             <span>Save</span>
           </button>`
         }
         ${waDest ? `
-          <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Chat on WhatsApp">
+          <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="WhatsApp">
             ${getLinkIconSvg("whatsapp", 15)}
             <span>WhatsApp</span>
           </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn" aria-label="Share card">
+          <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">
             ${getLinkIconSvg("share", 15)}
             <span>Share</span>
           </button>`
         }
         ${mapsDest ? `
-          <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Get directions">
+          <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">
             ${getLinkIconSvg("directions", 15)}
             <span>Directions</span>
           </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn" aria-label="Show QR code">
+          <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn">
             ${getLinkIconSvg("qr", 15)}
             <span>QR Code</span>
           </button>`
@@ -520,16 +562,17 @@ export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?
       </div>
     `;
   } else {
-    inner += `
+    // 2-Pair Action Row for Personal Designs
+    html += `
       <div class="cta-actions-row">
-        <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn" aria-label="Save contact to phone">
+        <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn" aria-label="Save contact">
           ${getLinkIconSvg("contact", 16)}
           <span>${escapeHtml(design.ctaStyle.primaryText || "Save Contact")}</span>
         </button>
-        ${whatsapp ? `
-          <a href="https://wa.me/${cleanDigits(whatsapp)}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Chat on WhatsApp">
+        ${waDest ? `
+          <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="WhatsApp me">
             ${getLinkIconSvg("whatsapp", 16)}
-            <span>WhatsApp</span>
+            <span>WhatsApp me</span>
           </a>` : `
           <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn" aria-label="Share card">
             ${getLinkIconSvg("share", 16)}
@@ -540,34 +583,270 @@ export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?
     `;
   }
 
-  // 4. Bento Grid (Design 10 only)
+  // =========================================================================
+  // 4. INDUSTRY & DESIGN SPECIALIZED MODULES
+  // =========================================================================
+
+  // A. Skyline (Real Estate Suite)
+  if (design.id === "skyline") {
+    const stats = Array.isArray(industryData.stats) ? industryData.stats : [
+      { num: "320+", label: "Homes sold" },
+      { num: "₹450Cr", label: "Deals closed" },
+      { num: "9 yrs", label: "Experience" },
+    ];
+    html += `<div class="stats-row">`;
+    stats.slice(0, 3).forEach((s: any) => {
+      html += `<div><div class="stat-num">${escapeHtml(s.num || s.value || "")}</div><div class="stat-label">${escapeHtml(s.label || "")}</div></div>`;
+    });
+    html += `</div>`;
+
+    if (bio) {
+      html += `
+        <div class="about-card">
+          <div class="card-subtitle">About me</div>
+          <p class="profile-bio">${escapeHtml(bio)}</p>
+        </div>
+      `;
+    }
+
+    const listings = Array.isArray(industryData.listings) && industryData.listings.length > 0 ? industryData.listings : [
+      { tag: "For sale", price: "₹1.85 Cr", title: "3 BHK · 1,450 sq ft", location: "VIP Road, Vesu, Surat", pills: ["Sea view", "2 parking", "Ready to move"] },
+      { tag: "New launch", price: "₹96 Lac", title: "2 BHK · 920 sq ft", location: "Althan Canal Corridor, Surat", pills: ["Gym", "Clubhouse", "RERA approved"] },
+      { tag: "For rent", price: "₹55k / mo", title: "3 BHK · 1,600 sq ft", location: "City Light Hub, Surat", pills: ["Furnished", "Near metro", "Pet friendly"] },
+      { tag: "Premium villa", price: "₹2.4 Cr", title: "4 BHK · 3,200 sq ft", location: "Dumas Resort Road, Surat", pills: ["Private garden", "Pool", "Gated society"] },
+    ];
+
+    html += `<h2 class="section-title">Featured Listings</h2>`;
+    listings.forEach((item: any) => {
+      html += `
+        <div class="listing-card">
+          ${item.tag ? `<span class="listing-tag">${escapeHtml(item.tag)}</span>` : ""}
+          <div class="listing-price">${escapeHtml(item.price || "")}</div>
+          <div class="listing-title">${escapeHtml(item.title || item.type || "")}</div>
+          <div class="listing-loc">${escapeHtml(item.location || "")}</div>
+          ${Array.isArray(item.pills) ? `
+            <div class="listing-pills">
+              ${item.pills.map((p: string) => `<span class="listing-pill">${escapeHtml(p)}</span>`).join("")}
+            </div>` : ""}
+        </div>
+      `;
+    });
+
+    html += `
+      <h2 class="section-title" style="margin-top: 18px;">How I can help</h2>
+      <div class="advisory-grid">
+        <div class="advisory-card"><div class="advisory-num">1</div><div class="advisory-title">Buy a home</div><div class="advisory-desc">Shortlist, visit, and negotiate</div></div>
+        <div class="advisory-card"><div class="advisory-num">2</div><div class="advisory-title">Sell property</div><div class="advisory-desc">Right price, faster closing</div></div>
+        <div class="advisory-card"><div class="advisory-num">3</div><div class="advisory-title">Rent & lease</div><div class="advisory-desc">Verified tenants & owners</div></div>
+        <div class="advisory-card"><div class="advisory-num">4</div><div class="advisory-title">Investments</div><div class="advisory-desc">High-growth areas & yields</div></div>
+      </div>
+
+      <h2 class="section-title">Sample Client Feedback</h2>
+      <div class="reviews-list">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Found us the ideal sea-facing residence in two weeks and handled paperwork seamlessly."</div>
+          <div class="review-author">Sample Buyer · Bandra</div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Handled our penthouse transaction with complete discretion, clear valuations, and weekly updates."</div>
+          <div class="review-author">Sample Client · Surat</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // B. Atelier (Fashion Lookbook & Services)
+  if (design.id === "atelier") {
+    html += `
+      <div class="lookbook-grid">
+        <div class="lookbook-box lookbook-terracotta">
+          <div class="lookbook-title">Spring Edit '26</div>
+          <div class="lookbook-sub">Hand-spun silks</div>
+        </div>
+        <div class="lookbook-box lookbook-charcoal">
+          <div class="lookbook-title">Bespoke Studio</div>
+          <div class="lookbook-sub">Tailored to measure</div>
+        </div>
+      </div>
+    `;
+
+    const services = Array.isArray(industryData.services) && industryData.services.length > 0 ? industryData.services : [
+      { name: "Bridal Couture", subtitle: "by appointment" },
+      { name: "Custom Tailoring", subtitle: "from 7 days" },
+      { name: "Personal Styling", subtitle: "1:1 sessions" },
+      { name: "Festive Edit", subtitle: "new seasonal" },
+    ];
+
+    html += `<div class="fashion-services">`;
+    services.forEach((s: any) => {
+      html += `
+        <div class="fashion-service-row">
+          <span style="font-weight: 600;">${escapeHtml(s.name || s.title || "")}</span>
+          <span style="opacity: 0.7;">${escapeHtml(s.subtitle || s.price || "")}</span>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  // C. Care Plus (Healthcare Slot & Clinic Timings)
+  if (design.id === "care-plus") {
+    const nextSlot = industryData.nextSlot || "Today, 4:00 pm";
+    html += `
+      <div class="slot-card">
+        ${getLinkIconSvg("calendar", 22)}
+        <div>
+          <div class="slot-title">Next Available Consultation</div>
+          <div class="slot-val">${escapeHtml(nextSlot)}</div>
+        </div>
+      </div>
+    `;
+
+    const treatments = Array.isArray(industryData.treatments) && industryData.treatments.length > 0 ? industryData.treatments : [
+      "Acne & Scars", "Hair Fall Therapy", "Skin Rejuvenation", "Eczema Care", "Laser Aesthetics", "Allergy Screening",
+    ];
+
+    html += `<h2 class="section-title">Specialties Treated</h2><div class="tags-cloud">`;
+    treatments.forEach((t: string) => {
+      html += `<span class="tag-chip">${escapeHtml(t)}</span>`;
+    });
+    html += `</div>`;
+
+    const timings = industryData.timings || "Mon – Fri: 10:00 am – 2:00 pm, 5:00 – 8:00 pm · Sat: 10:00 am – 2:00 pm";
+    html += `
+      <div class="timings-card">
+        <div style="font-weight: 700; margin-bottom: 8px;">Clinic Timings</div>
+        <div style="opacity: 0.9; line-height: 1.5;">${escapeHtml(timings)}</div>
+      </div>
+    `;
+  }
+
+  // D. Roast & Co. (Cafe Menu & Loyalty)
+  if (design.id === "roast-and-co") {
+    const menu = Array.isArray(industryData.menu) && industryData.menu.length > 0 ? industryData.menu : [
+      { name: "Flat White", sub: "Double shot, silky microfoam", price: "₹190", popular: true },
+      { name: "Cappuccino", sub: "Classic balance, velvety foam", price: "₹170" },
+      { name: "Specialty Cold Brew", sub: "Steeped 18 hours, citrus notes", price: "₹210", popular: true },
+      { name: "Artisan Pour Over", sub: "Single-origin, roasted in-house", price: "₹180" },
+    ];
+
+    html += `
+      <div class="menu-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h2 class="section-title" style="margin-bottom: 0;">Signature Menu</h2>
+          <div class="menu-tabs">
+            <span class="menu-tab active">Coffee</span>
+            <span class="menu-tab">Cold</span>
+            <span class="menu-tab">Bites</span>
+          </div>
+        </div>
+    `;
+    menu.forEach((item: any) => {
+      html += `
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">
+              ${escapeHtml(item.name || "")}
+              ${item.popular ? `<span class="menu-item-popular">Popular</span>` : ""}
+            </div>
+            ${item.sub ? `<div class="menu-item-sub">${escapeHtml(item.sub)}</div>` : ""}
+          </div>
+          <div class="menu-item-price">${escapeHtml(item.price || "")}</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+
+    const loyalty = industryData.loyalty || "Collect 8 stamps, get a free specialty beverage: 8 to go";
+    html += `
+      <div class="loyalty-box">
+        <div class="loyalty-title">Roastery Stamp Card</div>
+        <div class="loyalty-desc">${escapeHtml(loyalty)}</div>
+      </div>
+    `;
+  }
+
+  // E. Bento Grid (Design 10 4-Tile Experience)
   if (design.id === "bento-grid") {
-    inner += `
+    html += `
       <div class="bento-tile-row">
         ${phone ? `
           <a href="tel:${cleanPhone(phone)}" class="bento-tile bento-tile-coral">
             <span class="bento-tile-title">Call us</span>
             <span class="bento-tile-main">${escapeHtml(phone)}</span>
-          </a>` : ""}
+          </a>` : `
+          <div class="bento-tile bento-tile-coral">
+            <span class="bento-tile-title">Call us</span>
+            <span class="bento-tile-main">Tap below</span>
+          </div>`
+        }
         ${whatsapp ? `
           <a href="https://wa.me/${cleanDigits(whatsapp)}" target="_blank" rel="noopener noreferrer" class="bento-tile bento-tile-sun">
             <span class="bento-tile-title">WhatsApp</span>
             <span class="bento-tile-main">Instant Reply</span>
-          </a>` : ""}
+          </a>` : `
+          <div class="bento-tile bento-tile-sun">
+            <span class="bento-tile-title">WhatsApp</span>
+            <span class="bento-tile-main">Online</span>
+          </div>`
+        }
+      </div>
+      <div class="bento-tile-row">
+        <div class="bento-tile bento-tile-lavender">
+          <span class="bento-tile-title">Client Rating</span>
+          <span class="bento-tile-main">4.9 ★ (320+ Reviews)</span>
+        </div>
+        <div class="bento-tile-row-mint bento-tile bento-tile-mint">
+          <span class="bento-tile-title">Working Hours</span>
+          <span class="bento-tile-main">Mon–Sat: 9am–8pm</span>
+        </div>
+      </div>
+      <h2 class="section-title">What we do</h2>
+      <div class="services-grid">
+        <div class="service-card">Digital Architecture</div>
+        <div class="service-card">NFC Business Cards</div>
+        <div class="service-card">Brand Direction</div>
+        <div class="service-card">Performance Systems</div>
       </div>
     `;
   }
 
-  // 5. Contact List
+  // F. Business Hubs (Classic Navy, Fresh Mint, Bold Pop, Glass Aurora, Luxe Foil)
+  if (["classic-navy", "fresh-mint", "bold-pop", "glass-aurora", "luxe-foil"].includes(design.id)) {
+    html += `
+      <h2 class="section-title">What we do</h2>
+      <div class="services-grid">
+        <div class="service-card">Consultation</div>
+        <div class="service-card">Installation</div>
+        <div class="service-card">Maintenance</div>
+        <div class="service-card">Custom Orders</div>
+        <div class="service-card">Home Delivery</div>
+        <div class="service-card">Corporate Plans</div>
+      </div>
+
+      <div class="hours-table">
+        <h2 class="section-title" style="margin-bottom: 8px;">Opening Hours</h2>
+        <div class="hours-row"><span>Mon – Fri</span><span>9:00 am – 8:00 pm</span></div>
+        <div class="hours-row"><span>Saturday</span><span>10:00 am – 6:00 pm</span></div>
+        <div class="hours-row"><span>Sunday</span><span style="opacity: 0.65;">Closed</span></div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // 5. CONTACT & DYNAMIC LINKS LIST
+  // =========================================================================
   if (contactLinks.length > 0) {
-    inner += `<h2 class="section-title">Get in touch</h2><div class="contact-list">`;
-    contactLinks.forEach(link => {
+    html += `<h2 class="section-title">Get in touch</h2><div class="contact-list">`;
+    contactLinks.forEach((link) => {
       const dest = formatLinkDestination(link.type, link.value);
       if (!dest) return;
       const isExternal = link.type !== "phone" && link.type !== "email";
       const displayVal = getDisplayValue(link.type, link.value, link.label);
 
-      inner += `
+      html += `
         <a href="${dest}" class="contact-row" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""} aria-label="${escapeHtml(link.label)}">
           <div class="contact-row-left">
             <div class="contact-row-icon" aria-hidden="true">
@@ -584,77 +863,93 @@ export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?
         </a>
       `;
     });
-    inner += `</div>`;
+    html += `</div>`;
   }
 
-  // 6. Social Grid
+  // =========================================================================
+  // 6. SOCIAL MEDIA GRID
+  // =========================================================================
   if (socialLinks.length > 0) {
-    inner += `<h2 class="section-title">Connect</h2><div class="social-grid">`;
-    socialLinks.forEach(link => {
+    html += `<h2 class="section-title">Connect</h2><div class="social-grid">`;
+    socialLinks.forEach((link) => {
       const dest = formatLinkDestination(link.type, link.value);
       if (!dest) return;
-      inner += `
+      html += `
         <a href="${dest}" target="_blank" rel="noopener noreferrer" class="social-item" aria-label="${escapeHtml(link.label)}">
           ${getLinkIconSvg(link.type, 20)}
           <span>${escapeHtml(link.label)}</span>
         </a>
       `;
     });
-    inner += `</div>`;
+    html += `</div>`;
   }
 
-  // 7. Secondary Actions (Show QR / Share)
-  inner += `
-    <div style="display: flex; justify-content: center; gap: 12px; margin-top: 10px;">
-      <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn" style="min-width: 130px; font-size: 12px;" aria-label="Show scannable QR Code">
+  // =========================================================================
+  // 7. SECONDARY QUICK ACTIONS (QR + Share)
+  // =========================================================================
+  html += `
+    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+      <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn" style="min-width: 130px; font-size: 12.5px;" aria-label="Show scannable QR Code">
         ${getLinkIconSvg("qr", 15)}
         <span>Show QR</span>
       </button>
-      <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn" style="min-width: 130px; font-size: 12px;" aria-label="Share digital card">
+      <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn" style="min-width: 130px; font-size: 12.5px;" aria-label="Share digital card">
         ${getLinkIconSvg("share", 15)}
         <span>Share Card</span>
       </button>
     </div>
   `;
 
-  // 8. Footer
-  inner += `
+  // =========================================================================
+  // 8. BRAND WATERMARK FOOTER
+  // =========================================================================
+  html += `
     <footer class="card-footer">
-      <a href="https://www.ambrosstudio.space" target="_blank" rel="noopener noreferrer">
+      <a href="https://ambrosstudio.com" target="_blank" rel="noopener noreferrer">
         Ambros Studio &bull; Digital Identity
       </a>
     </footer>
   `;
 
-  const metaTitle = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
-  const metaDesc = bio || `Digital business card for ${name}.`;
+  return html;
+}
 
-  const appearance = custom.appearance || {};
-  const primaryColor = appearance.primaryColor || design.theme.primaryColor;
-  const bgColor = appearance.backgroundColor || design.theme.backgroundColor;
-  const textColor = appearance.textColor || design.theme.textColor;
+export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?: boolean } = {}): string {
+  const design = resolveCardDesign(card.cardDesign);
+  const name = card.fullName || "Ambros Studio";
+  const role = card.designation || "";
+  const company = card.company || "";
+  const desc = card.description || "";
+  const title = `${name} — ${role ? role + " | " : ""}${company || "Ambros Studio"}`;
+
+  const appearance = (card.customSettings && card.customSettings.appearance) ? card.customSettings.appearance : {};
+  // Avoid leaking Mint Haven default pastel colors into non-mint canonical designs
+  const isDefaultMint = (appearance.backgroundColor === "#faf6ee" || appearance.primaryColor === "#10b981") && design.id !== "mint-haven";
+  const primaryColor = (!isDefaultMint && appearance.primaryColor) ? appearance.primaryColor : design.theme.primaryColor;
+  const bgColor = (!isDefaultMint && appearance.backgroundColor) ? appearance.backgroundColor : design.theme.backgroundColor;
+  const textColor = (!isDefaultMint && appearance.textColor) ? appearance.textColor : design.theme.textColor;
   const fontFamily = appearance.fontFamily || design.theme.fontFamily;
 
   const fontQuery = design.theme.fontUrl ? `<link rel="stylesheet" href="${design.theme.fontUrl}">` : "";
+  const innerBody = renderCardBody(card, design);
 
   return `<!DOCTYPE html>
 <html lang="en" class="theme-${design.id}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>${escapeHtml(metaTitle)}</title>
-  <meta name="description" content="${escapeHtml(metaDesc)}">
-  <link rel="canonical" href="https://www.ambrosstudio.space/c/${encodeURIComponent(card.profileSlug)}">
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(desc || title)}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   ${fontQuery}
   <link rel="stylesheet" href="/cards/card-themes.css">
   <style id="__THEME_OVERRIDES__">
     :root {
-      ${primaryColor ? `--card-primary: ${primaryColor};` : ''}
-      ${bgColor ? `--card-background: ${bgColor};` : ''}
-      ${textColor ? `--card-text: ${textColor};` : ''}
-      ${fontFamily ? `--card-font: '${fontFamily}', system-ui, sans-serif;` : ''}
+      ${primaryColor ? `--card-primary: ${primaryColor};` : ""}
+      ${bgColor ? `--card-background: ${bgColor};` : ""}
+      ${textColor ? `--card-text: ${textColor};` : ""}
+      ${fontFamily ? `--card-font: '${fontFamily}', system-ui, sans-serif;` : ""}
     }
   </style>
   <script src="/cards/qrcode.js"></script>
@@ -671,7 +966,7 @@ export function renderCardHtml(card: ResolvedCustomerCard, options: { isPreview?
         ADMIN PREVIEW &bull; ${escapeHtml(design.name)} (${card.is_active !== false ? '<span style="color: #34d399;">Active</span>' : '<span style="color: #fbbf24;">Inactive</span>'})
       </div>
     ` : ""}
-    ${inner}
+    ${innerBody}
   </main>
 
   <!-- Reusable Shared QR Modal -->

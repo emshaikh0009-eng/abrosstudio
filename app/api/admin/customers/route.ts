@@ -188,6 +188,7 @@ export async function POST(request: Request) {
       .replace(/^www\./i, "")
       .replace(/^ambros\.studio\/?/i, "")
       .replace(/^ambrosstudio\.space\/?/i, "")
+      .replace(/^ambrosstudio\.com\/?/i, "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");

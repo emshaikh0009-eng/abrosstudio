@@ -1,6 +1,6 @@
 /* ==============================================================================
    Ambros Studio — Universal Digital Card Design System Stylesheet
-   Contains All 16 Canonical Designs from PDF Portfolio:
+   Contains All 16 Canonical Designs from Portfolio:
      1. Mint Haven       2. Evergreen       3. Noir Gold         4. Emerald Ivory
      5. Neon Pulse       6. Mono Studio     7. Classic Navy      8. Fresh Mint
      9. Bold Pop        10. Bento Grid     11. Glass Aurora     12. Luxe Foil
@@ -66,10 +66,10 @@ button, a, input, select {
   overflow-x: hidden;
 }
 
-/* Profile Avatar / Initials Universal */
+/* Universal Profile Avatar / Initials */
 .profile-avatar-circle {
-  width: 84px;
-  height: 84px;
+  width: 86px;
+  height: 86px;
   border-radius: 50%;
   margin: 0 auto 16px;
   display: flex;
@@ -79,6 +79,8 @@ button, a, input, select {
   font-weight: 700;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
+  background: #ffffff;
 }
 
 .profile-avatar-img {
@@ -88,7 +90,7 @@ button, a, input, select {
   display: block;
 }
 
-/* Typography Hierarchy */
+/* Universal Typography Hierarchy */
 .profile-name {
   font-size: 24px;
   font-weight: 700;
@@ -102,8 +104,9 @@ button, a, input, select {
   font-size: 14px;
   font-weight: 500;
   text-align: center;
-  opacity: 0.85;
-  margin-bottom: 2px;
+  opacity: 0.88;
+  margin-bottom: 3px;
+  line-height: 1.35;
 }
 
 .profile-company {
@@ -116,20 +119,43 @@ button, a, input, select {
 
 .profile-bio {
   font-size: 13.5px;
-  line-height: 1.55;
+  line-height: 1.6;
   text-align: center;
-  margin: 0 auto 20px;
+  margin: 0 auto;
   max-width: 340px;
   opacity: 0.88;
+}
+
+/* Universal About Card */
+.about-card {
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.about-card .card-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  opacity: 0.75;
+}
+
+.about-card .profile-bio {
+  text-align: center;
+  margin: 0;
+  max-width: 100%;
 }
 
 /* Quick Action CTA Buttons Row */
 .cta-actions-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .cta-actions-trio {
@@ -137,23 +163,31 @@ button, a, input, select {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   width: 100%;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .cta-btn {
-  padding: 10px 14px;
+  padding: 11px 14px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
   border: none;
-  transition: all 0.2s ease;
+  transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
   white-space: nowrap;
+}
+
+.cta-btn:hover {
+  transform: translateY(-1px);
+}
+
+.cta-btn:active {
+  transform: translateY(0);
 }
 
 .cta-btn:focus-visible {
@@ -173,7 +207,7 @@ button, a, input, select {
   gap: 6px;
   font-size: 11.5px;
   font-weight: 600;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 999px;
   margin: 0 auto 16px;
 }
@@ -185,6 +219,22 @@ button, a, input, select {
   background: #10b981;
 }
 
+.badges-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0 auto 16px;
+}
+
+.badge-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
 /* Universal Section Titles */
 .section-title {
   font-size: 12px;
@@ -192,7 +242,7 @@ button, a, input, select {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 12px;
-  opacity: 0.7;
+  opacity: 0.72;
 }
 
 /* Universal Contact & Link List */
@@ -211,7 +261,7 @@ button, a, input, select {
   padding: 12px 16px;
   border-radius: 14px;
   text-decoration: none;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   color: inherit;
 }
 
@@ -227,8 +277,8 @@ button, a, input, select {
 }
 
 .contact-row-icon {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -259,7 +309,7 @@ button, a, input, select {
 /* Social Grid */
 .social-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
   gap: 8px;
   width: 100%;
   margin-bottom: 24px;
@@ -270,14 +320,14 @@ button, a, input, select {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px 6px;
+  padding: 12px 8px;
   border-radius: 12px;
   text-decoration: none;
   color: inherit;
   font-size: 11px;
   font-weight: 600;
   gap: 6px;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .social-item:hover {
@@ -308,14 +358,16 @@ button, a, input, select {
 }
 
 .theme-mint-haven .profile-avatar-circle {
-  background: #fef3c7;
-  color: #92400e;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  background: #ecfdf5;
+  color: #047857;
+  border: 2px solid #a7f3d0;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
 }
 
 .theme-mint-haven .cta-btn-primary {
   background: #10b981;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 
 .theme-mint-haven .cta-btn-primary:hover {
@@ -326,11 +378,12 @@ button, a, input, select {
   background: #ffffff;
   color: #1e293b;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .theme-mint-haven .contact-row {
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
@@ -342,6 +395,7 @@ button, a, input, select {
 .theme-mint-haven .social-item {
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
 /* ==============================================================================
@@ -355,11 +409,14 @@ button, a, input, select {
 .theme-evergreen .profile-avatar-circle {
   background: #1b3a2f;
   color: #ffffff;
+  border: 2px solid #2d5a49;
+  box-shadow: 0 4px 14px rgba(27, 58, 47, 0.15);
 }
 
 .theme-evergreen .cta-btn-primary {
   background: #1b3a2f;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(27, 58, 47, 0.25);
 }
 
 .theme-evergreen .cta-btn-primary:hover {
@@ -367,14 +424,14 @@ button, a, input, select {
 }
 
 .theme-evergreen .cta-btn-secondary {
-  background: #f3f4f6;
-  color: #111827;
-  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  color: #1b3a2f;
+  border: 1.5px solid #1b3a2f;
 }
 
 .theme-evergreen .contact-row {
-  background: #fafafa;
-  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
 .theme-evergreen .contact-row-icon {
@@ -383,8 +440,8 @@ button, a, input, select {
 }
 
 .theme-evergreen .social-item {
-  background: #fafafa;
-  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
 /* ==============================================================================
@@ -399,7 +456,7 @@ button, a, input, select {
   background: #141722;
   color: #dfb76c;
   border: 2px solid #dfb76c;
-  box-shadow: 0 0 16px rgba(223, 183, 108, 0.25);
+  box-shadow: 0 0 22px rgba(223, 183, 108, 0.35);
 }
 
 .theme-noir-gold .profile-name {
@@ -408,13 +465,24 @@ button, a, input, select {
 
 .theme-noir-gold .profile-designation {
   color: #dfb76c;
+  font-weight: 600;
+}
+
+.theme-noir-gold .about-card {
+  background: #141722;
+  border: 1px solid rgba(223, 183, 108, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.theme-noir-gold .about-card .card-subtitle {
+  color: #dfb76c;
 }
 
 .theme-noir-gold .cta-btn-primary {
   background: linear-gradient(135deg, #dfb76c, #c59d53);
   color: #0b0d13;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(223, 183, 108, 0.3);
+  box-shadow: 0 4px 16px rgba(223, 183, 108, 0.35);
 }
 
 .theme-noir-gold .cta-btn-primary:hover {
@@ -422,17 +490,9 @@ button, a, input, select {
 }
 
 .theme-noir-gold .cta-btn-secondary {
-  background: #161a25;
-  color: #f8fafc;
-  border: 1px solid rgba(223, 183, 108, 0.35);
-}
-
-.theme-noir-gold .card-surface {
   background: #141722;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 16px;
+  color: #f8fafc;
+  border: 1px solid rgba(223, 183, 108, 0.45);
 }
 
 .theme-noir-gold .contact-row {
@@ -440,8 +500,12 @@ button, a, input, select {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.theme-noir-gold .contact-row:hover {
+  border-color: rgba(223, 183, 108, 0.3);
+}
+
 .theme-noir-gold .contact-row-icon {
-  background: rgba(223, 183, 108, 0.12);
+  background: rgba(223, 183, 108, 0.15);
   color: #dfb76c;
 }
 
@@ -462,11 +526,12 @@ button, a, input, select {
   background: #0f382c;
   color: #faf7f2;
   border: 2px solid #ffffff;
-  box-shadow: 0 4px 12px rgba(15, 56, 44, 0.15);
+  box-shadow: 0 4px 14px rgba(15, 56, 44, 0.2);
 }
 
 .theme-emerald-ivory .profile-designation {
-  color: #1d5a47;
+  color: #0f382c;
+  font-weight: 600;
 }
 
 .theme-emerald-ivory .stats-row {
@@ -477,25 +542,37 @@ button, a, input, select {
   border: 1px solid #ebe5dc;
   border-radius: 14px;
   padding: 12px 8px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .theme-emerald-ivory .stat-num {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #0f382c;
 }
 
 .theme-emerald-ivory .stat-label {
-  font-size: 10.5px;
-  opacity: 0.65;
+  font-size: 11px;
+  opacity: 0.68;
   font-weight: 500;
+}
+
+.theme-emerald-ivory .about-card {
+  background: #ffffff;
+  border: 1px solid #ebe5dc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.theme-emerald-ivory .about-card .card-subtitle {
+  color: #0f382c;
 }
 
 .theme-emerald-ivory .cta-btn-primary {
   background: #0f382c;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 56, 44, 0.25);
 }
 
 .theme-emerald-ivory .cta-btn-primary:hover {
@@ -511,10 +588,11 @@ button, a, input, select {
 .theme-emerald-ivory .contact-row {
   background: #ffffff;
   border: 1px solid #ebe5dc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .theme-emerald-ivory .contact-row-icon {
-  background: rgba(15, 56, 44, 0.09);
+  background: rgba(15, 56, 44, 0.1);
   color: #0f382c;
 }
 
@@ -533,16 +611,21 @@ button, a, input, select {
 
 .theme-neon-pulse .profile-avatar-circle {
   background: #131428;
-  color: #a855f7;
+  color: #06b6d4;
   border: 2px solid transparent;
   background-image: linear-gradient(#131428, #131428), linear-gradient(135deg, #8b5cf6, #06b6d4);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.35);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.45);
+}
+
+.theme-neon-pulse .profile-name {
+  color: #ffffff;
 }
 
 .theme-neon-pulse .profile-designation {
-  color: #a78bfa;
+  color: #38bdf8;
+  font-weight: 600;
 }
 
 .theme-neon-pulse .stats-row {
@@ -550,28 +633,37 @@ button, a, input, select {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(139, 92, 246, 0.25);
+  border: 1px solid rgba(139, 92, 246, 0.3);
   border-radius: 14px;
   padding: 12px 8px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   text-align: center;
 }
 
 .theme-neon-pulse .stat-num {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #06b6d4;
 }
 
 .theme-neon-pulse .stat-label {
-  font-size: 10.5px;
-  opacity: 0.7;
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+.theme-neon-pulse .about-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.theme-neon-pulse .about-card .card-subtitle {
+  color: #a78bfa;
 }
 
 .theme-neon-pulse .cta-btn-primary {
   background: linear-gradient(135deg, #7c3aed, #06b6d4);
   color: #ffffff;
-  box-shadow: 0 4px 18px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 18px rgba(124, 58, 237, 0.45);
 }
 
 .theme-neon-pulse .cta-btn-primary:hover {
@@ -581,46 +673,46 @@ button, a, input, select {
 .theme-neon-pulse .cta-btn-secondary {
   background: rgba(255, 255, 255, 0.05);
   color: #f1f5f9;
-  border: 1px solid rgba(6, 182, 212, 0.35);
+  border: 1px solid rgba(6, 182, 212, 0.45);
 }
 
 .theme-neon-pulse .contact-row {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+}
+
+.theme-neon-pulse .contact-row:hover {
+  border-color: rgba(6, 182, 212, 0.5);
 }
 
 .theme-neon-pulse .contact-row-icon {
-  background: rgba(139, 92, 246, 0.15);
+  background: rgba(139, 92, 246, 0.2);
   color: #a78bfa;
 }
 
 .theme-neon-pulse .social-item {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(139, 92, 246, 0.22);
 }
 
 /* ==============================================================================
-   DESIGN 6 — MONO STUDIO (Pure black and white, sharp corners)
+   DESIGN 6 — MONO STUDIO (Pure black and white, sharp editorial corners)
    ============================================================================== */
 .theme-mono-studio {
   background-color: #ffffff;
   color: #000000;
 }
 
-.theme-mono-studio *,
-.theme-mono-studio .cta-btn,
-.theme-mono-studio .contact-row,
-.theme-mono-studio .social-item,
-.theme-mono-studio .stats-row {
+.theme-mono-studio .viewport-wrapper *:not(.qr-modal-backdrop *):not(.card-toast *) {
   border-radius: 0 !important;
 }
 
 .theme-mono-studio .profile-avatar-circle {
-  border-radius: 0 !important;
   background: #000000;
   color: #ffffff;
-  width: 80px;
-  height: 80px;
+  width: 84px;
+  height: 84px;
+  border: 2px solid #000000;
 }
 
 .theme-mono-studio .profile-name {
@@ -632,7 +724,7 @@ button, a, input, select {
 .theme-mono-studio .profile-designation {
   text-transform: uppercase;
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   font-weight: 700;
   color: #404040;
 }
@@ -641,29 +733,42 @@ button, a, input, select {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border: 1px solid #000000;
-  padding: 10px 4px;
-  margin-bottom: 20px;
+  padding: 12px 6px;
+  margin-bottom: 18px;
   text-align: center;
 }
 
 .theme-mono-studio .stat-num {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .theme-mono-studio .stat-label {
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.theme-mono-studio .about-card {
+  border: 1px solid #000000;
+  background: #ffffff;
+  margin-bottom: 18px;
+}
+
+.theme-mono-studio .about-card .card-subtitle {
+  color: #000000;
+  letter-spacing: 0.12em;
 }
 
 .theme-mono-studio .cta-btn-primary {
   background: #000000;
   color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   font-size: 12px;
   font-weight: 700;
+  border: 1.5px solid #000000;
 }
 
 .theme-mono-studio .cta-btn-secondary {
@@ -671,7 +776,7 @@ button, a, input, select {
   color: #000000;
   border: 1.5px solid #000000;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   font-size: 12px;
   font-weight: 700;
 }
@@ -679,7 +784,6 @@ button, a, input, select {
 .theme-mono-studio .contact-row {
   background: #ffffff;
   border: 1px solid #000000;
-  margin-bottom: -1px;
 }
 
 .theme-mono-studio .contact-row-icon {
@@ -693,7 +797,7 @@ button, a, input, select {
 }
 
 /* ==============================================================================
-   DESIGN 7 — CLASSIC NAVY (Navy and gold, trusted feel)
+   DESIGN 7 — CLASSIC NAVY (Navy and gold authoritative corporate feel)
    ============================================================================== */
 .theme-classic-navy {
   background-color: #0c172a;
@@ -704,31 +808,41 @@ button, a, input, select {
   background: #1e293b;
   color: #d4af37;
   border: 2px solid #d4af37;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.25);
+}
+
+.theme-classic-navy .profile-name {
+  color: #ffffff;
+}
+
+.theme-classic-navy .profile-designation {
+  color: #d4af37;
 }
 
 .theme-classic-navy .status-pill {
   background: rgba(212, 175, 55, 0.12);
   color: #d4af37;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.35);
 }
 
 .theme-classic-navy .cta-btn-primary {
   background: #d4af37;
   color: #0c172a;
   font-weight: 700;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 .theme-classic-navy .cta-btn-secondary {
   background: #1e293b;
   color: #f8fafc;
-  border: 1px solid rgba(212, 175, 55, 0.35);
+  border: 1px solid rgba(212, 175, 55, 0.4);
 }
 
 .theme-classic-navy .services-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .theme-classic-navy .service-card {
@@ -744,7 +858,7 @@ button, a, input, select {
 .theme-classic-navy .hours-table {
   background: #132238;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 22px;
 }
@@ -753,7 +867,7 @@ button, a, input, select {
   display: flex;
   justify-content: space-between;
   font-size: 12.5px;
-  padding: 4px 0;
+  padding: 5px 0;
   opacity: 0.9;
 }
 
@@ -763,8 +877,13 @@ button, a, input, select {
 }
 
 .theme-classic-navy .contact-row-icon {
-  background: rgba(212, 175, 55, 0.12);
+  background: rgba(212, 175, 55, 0.14);
   color: #d4af37;
+}
+
+.theme-classic-navy .social-item {
+  background: #132238;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ==============================================================================
@@ -778,6 +897,8 @@ button, a, input, select {
 .theme-fresh-mint .profile-avatar-circle {
   background: #0d9488;
   color: #ffffff;
+  border: 2px solid #99f6e4;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.2);
 }
 
 .theme-fresh-mint .status-pill {
@@ -789,6 +910,7 @@ button, a, input, select {
 .theme-fresh-mint .cta-btn-primary {
   background: #0d9488;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
 }
 
 .theme-fresh-mint .cta-btn-secondary {
@@ -801,7 +923,7 @@ button, a, input, select {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .theme-fresh-mint .service-card {
@@ -817,7 +939,7 @@ button, a, input, select {
 .theme-fresh-mint .hours-table {
   background: #ffffff;
   border: 1px solid #d1fae5;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 22px;
 }
@@ -826,7 +948,7 @@ button, a, input, select {
   display: flex;
   justify-content: space-between;
   font-size: 12.5px;
-  padding: 4px 0;
+  padding: 5px 0;
 }
 
 .theme-fresh-mint .contact-row {
@@ -837,6 +959,11 @@ button, a, input, select {
 .theme-fresh-mint .contact-row-icon {
   background: #ccfbf1;
   color: #0d9488;
+}
+
+.theme-fresh-mint .social-item {
+  background: #ffffff;
+  border: 1px solid #d1fae5;
 }
 
 /* ==============================================================================
@@ -850,17 +977,20 @@ button, a, input, select {
 .theme-bold-pop .profile-avatar-circle {
   background: #000000;
   color: #ffdd00;
-  border: 2px solid #000000;
+  border: 2.5px solid #000000;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
 .theme-bold-pop .profile-name {
   font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
 .theme-bold-pop .status-pill {
   background: #ffffff;
   color: #000000;
   border: 2px solid #000000;
+  font-weight: 700;
 }
 
 .theme-bold-pop .cta-btn-primary {
@@ -881,7 +1011,7 @@ button, a, input, select {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .theme-bold-pop .service-card {
@@ -897,7 +1027,7 @@ button, a, input, select {
 .theme-bold-pop .hours-table {
   background: #ffffff;
   border: 2px solid #000000;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 22px;
 }
@@ -906,8 +1036,8 @@ button, a, input, select {
   display: flex;
   justify-content: space-between;
   font-size: 12.5px;
-  font-weight: 600;
-  padding: 4px 0;
+  font-weight: 700;
+  padding: 5px 0;
 }
 
 .theme-bold-pop .contact-row {
@@ -920,6 +1050,11 @@ button, a, input, select {
   color: #ffdd00;
 }
 
+.theme-bold-pop .social-item {
+  background: #ffffff;
+  border: 2px solid #000000;
+}
+
 /* ==============================================================================
    DESIGN 10 — BENTO GRID (Colorful tiles, playful and modern)
    ============================================================================== */
@@ -930,27 +1065,33 @@ button, a, input, select {
 
 .theme-bento-grid .profile-avatar-circle {
   background: #ffffff;
-  color: #6366f1;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  color: #4f46e5;
+  border: 2px solid #ede9fe;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15);
 }
 
 .theme-bento-grid .bento-tile-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .theme-bento-grid .bento-tile {
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 16px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   text-decoration: none;
   color: inherit;
-  min-height: 90px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  min-height: 94px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease;
+}
+
+.theme-bento-grid .bento-tile:hover {
+  transform: translateY(-2px);
 }
 
 .theme-bento-grid .bento-tile-coral {
@@ -968,11 +1109,6 @@ button, a, input, select {
   color: #5b21b6;
 }
 
-.theme-bento-grid .bento-tile-white {
-  background: #ffffff;
-  color: #1e1b4b;
-}
-
 .theme-bento-grid .bento-tile-mint {
   background: #dcfce7;
   color: #166534;
@@ -982,7 +1118,7 @@ button, a, input, select {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   opacity: 0.8;
 }
 
@@ -991,9 +1127,27 @@ button, a, input, select {
   font-weight: 700;
 }
 
-.theme-bento-grid .contact-row {
+.theme-bento-grid .services-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.theme-bento-grid .service-card {
   background: #ffffff;
   border-radius: 14px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.theme-bento-grid .contact-row {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .theme-bento-grid .contact-row-icon {
@@ -1001,12 +1155,18 @@ button, a, input, select {
   color: #6d28d9;
 }
 
+.theme-bento-grid .social-item {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
 /* ==============================================================================
-   DESIGN 11 — GLASS AURORA (Frosted glass over a gradient)
+   DESIGN 11 — GLASS AURORA (Frosted glass over radiant gradient mesh)
    ============================================================================== */
 .theme-glass-aurora {
-  background: radial-gradient(circle at 20% 20%, #2e1065 0%, #0b0d1e 70%),
-              radial-gradient(circle at 80% 80%, #0e7490 0%, transparent 60%);
+  background: radial-gradient(circle at 15% 15%, #2e1065 0%, #0b0d1e 70%),
+              radial-gradient(circle at 85% 85%, #0e7490 0%, transparent 60%);
   background-color: #0b0d1e;
   color: #f8fafc;
 }
@@ -1014,51 +1174,87 @@ button, a, input, select {
 .theme-glass-aurora .profile-avatar-circle {
   background: rgba(255, 255, 255, 0.08);
   color: #38bdf8;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+}
+
+.theme-glass-aurora .status-pill {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .theme-glass-aurora .glass-panel {
   background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
 }
 
 .theme-glass-aurora .cta-btn-primary {
-  background: rgba(56, 189, 248, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(56, 189, 248, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: #ffffff;
-  border: 1px solid rgba(56, 189, 248, 0.5);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25);
 }
 
 .theme-glass-aurora .cta-btn-secondary {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.theme-glass-aurora .contact-row {
+.theme-glass-aurora .services-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.theme-glass-aurora .service-card {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.theme-glass-aurora .contact-row {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .theme-glass-aurora .contact-row-icon {
-  background: rgba(56, 189, 248, 0.15);
+  background: rgba(56, 189, 248, 0.18);
   color: #38bdf8;
 }
 
+.theme-glass-aurora .social-item {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
 /* ==============================================================================
-   DESIGN 12 — LUXE FOIL (Black with gold foil lettering)
+   DESIGN 12 — LUXE FOIL (Matte black with gold foil lettering)
    ============================================================================== */
 .theme-luxe-foil {
   background-color: #080808;
@@ -1068,14 +1264,15 @@ button, a, input, select {
 .theme-luxe-foil .profile-avatar-circle {
   background: #111111;
   color: #d4af37;
-  border: 1.5px solid rgba(212, 175, 55, 0.5);
-  box-shadow: 0 0 14px rgba(212, 175, 55, 0.15);
+  border: 1.5px solid rgba(212, 175, 55, 0.65);
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.2);
 }
 
 .theme-luxe-foil .profile-name {
   background: linear-gradient(135deg, #f5d77f 0%, #d4af37 60%, #aa771c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: #d4af37;
   letter-spacing: 0.02em;
 }
 
@@ -1083,20 +1280,46 @@ button, a, input, select {
   color: #d4af37;
 }
 
+.theme-luxe-foil .status-pill {
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+}
+
 .theme-luxe-foil .cta-btn-primary {
   background: #141414;
   color: #d4af37;
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 .theme-luxe-foil .cta-btn-primary:hover {
-  background: #1c1c1c;
+  background: #1e1e1e;
+  border-color: #d4af37;
 }
 
 .theme-luxe-foil .cta-btn-secondary {
   background: #141414;
   color: #f5f5f5;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.theme-luxe-foil .services-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.theme-luxe-foil .service-card {
+  background: #111111;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: center;
 }
 
 .theme-luxe-foil .contact-row {
@@ -1104,13 +1327,22 @@ button, a, input, select {
   border: 1px solid rgba(212, 175, 55, 0.25);
 }
 
+.theme-luxe-foil .contact-row:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
 .theme-luxe-foil .contact-row-icon {
-  background: rgba(212, 175, 55, 0.1);
+  background: rgba(212, 175, 55, 0.12);
   color: #d4af37;
 }
 
+.theme-luxe-foil .social-item {
+  background: #111111;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
 /* ==============================================================================
-   DESIGN 13 — SKYLINE (Real Estate: Listings, Stats, Site visits)
+   DESIGN 13 — SKYLINE (Real Estate: Listings, Stats, Advisory, Site Visits)
    ============================================================================== */
 .theme-skyline {
   background-color: #0d1526;
@@ -1121,6 +1353,13 @@ button, a, input, select {
   background: #1e293b;
   color: #38bdf8;
   border: 2px solid #2563eb;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+}
+
+.theme-skyline .badge-pill {
+  background: rgba(37, 99, 235, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(37, 99, 235, 0.35);
 }
 
 .theme-skyline .stats-row {
@@ -1128,29 +1367,34 @@ button, a, input, select {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   background: #152238;
-  border: 1px solid rgba(37, 99, 235, 0.25);
-  border-radius: 12px;
-  padding: 12px 8px;
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  border-radius: 14px;
+  padding: 14px 8px;
   margin-bottom: 20px;
   text-align: center;
 }
 
 .theme-skyline .stat-num {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #38bdf8;
 }
 
 .theme-skyline .stat-label {
-  font-size: 10px;
-  opacity: 0.7;
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+.theme-skyline .about-card {
+  background: #152238;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .theme-skyline .listing-card {
   background: #152238;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 14px;
-  overflow: hidden;
+  padding: 14px 16px;
   margin-bottom: 12px;
 }
 
@@ -1166,9 +1410,116 @@ button, a, input, select {
   margin-bottom: 6px;
 }
 
+.theme-skyline .listing-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 2px;
+}
+
+.theme-skyline .listing-title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.theme-skyline .listing-loc {
+  font-size: 11.5px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.theme-skyline .listing-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.theme-skyline .listing-pill {
+  font-size: 10.5px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 3px 8px;
+  border-radius: 6px;
+  opacity: 0.85;
+}
+
+.theme-skyline .advisory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.theme-skyline .advisory-card {
+  background: #152238;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.theme-skyline .advisory-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.theme-skyline .advisory-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.theme-skyline .advisory-desc {
+  font-size: 11px;
+  opacity: 0.7;
+  line-height: 1.35;
+}
+
+.theme-skyline .reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.theme-skyline .review-card {
+  background: #152238;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.theme-skyline .review-stars {
+  color: #fbbf24;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.theme-skyline .review-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+.theme-skyline .review-author {
+  font-size: 11px;
+  opacity: 0.65;
+  font-weight: 600;
+}
+
 .theme-skyline .cta-btn-primary {
   background: #2563eb;
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 }
 
 .theme-skyline .cta-btn-primary:hover {
@@ -1176,7 +1527,7 @@ button, a, input, select {
 }
 
 .theme-skyline .cta-btn-secondary {
-  background: #1e293b;
+  background: #152238;
   color: #f8fafc;
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -1187,12 +1538,17 @@ button, a, input, select {
 }
 
 .theme-skyline .contact-row-icon {
-  background: rgba(37, 99, 235, 0.15);
+  background: rgba(37, 99, 235, 0.18);
   color: #38bdf8;
 }
 
+.theme-skyline .social-item {
+  background: #152238;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* ==============================================================================
-   DESIGN 14 — ATELIER (Fashion: Lookbook, Services, Fittings)
+   DESIGN 14 — ATELIER (Fashion: Haute Couture, Lookbook, Services, Fittings)
    ============================================================================== */
 .theme-atelier {
   background-color: #faf7f2;
@@ -1203,20 +1559,22 @@ button, a, input, select {
 .theme-atelier .profile-name {
   font-size: 28px;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .theme-atelier .profile-avatar-circle {
   background: #1c1917;
   color: #faf7f2;
+  border: 2px solid #e7dfd5;
 }
 
 .theme-atelier .fashion-tag {
   background: #1c1917;
   color: #ffffff;
   font-family: var(--app-font);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 4px 12px;
+  padding: 4px 14px;
   border-radius: 999px;
   display: inline-block;
   margin: 0 auto 16px;
@@ -1226,27 +1584,48 @@ button, a, input, select {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
+  font-family: var(--app-font);
 }
 
 .theme-atelier .lookbook-box {
-  height: 120px;
-  border-radius: 12px;
-  background: #e7dfd5;
+  height: 124px;
+  border-radius: 14px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.theme-atelier .lookbook-terracotta {
+  background: linear-gradient(135deg, #e0533c, #c8432d);
+  color: #ffffff;
+}
+
+.theme-atelier .lookbook-charcoal {
+  background: #1c1917;
+  color: #faf7f2;
+}
+
+.theme-atelier .lookbook-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.theme-atelier .lookbook-sub {
+  font-size: 10.5px;
   opacity: 0.8;
-  overflow: hidden;
 }
 
 .theme-atelier .fashion-services {
   border-top: 1px solid #e7dfd5;
   border-bottom: 1px solid #e7dfd5;
   padding: 12px 0;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
   font-family: var(--app-font);
 }
 
@@ -1262,6 +1641,11 @@ button, a, input, select {
   color: #ffffff;
   font-family: var(--app-font);
   font-weight: 600;
+  box-shadow: 0 4px 14px rgba(224, 83, 60, 0.3);
+}
+
+.theme-atelier .cta-btn-primary:hover {
+  background: #c8432d;
 }
 
 .theme-atelier .cta-btn-secondary {
@@ -1278,12 +1662,18 @@ button, a, input, select {
 }
 
 .theme-atelier .contact-row-icon {
-  background: rgba(224, 83, 60, 0.1);
+  background: rgba(224, 83, 60, 0.12);
   color: #e0533c;
 }
 
+.theme-atelier .social-item {
+  background: #ffffff;
+  border: 1px solid #ebe5dc;
+  font-family: var(--app-font);
+}
+
 /* ==============================================================================
-   DESIGN 15 — CARE PLUS (Healthcare: Next Slot, Timings, Emergency)
+   DESIGN 15 — CARE PLUS (Healthcare: Next Slot, Timings, Appointments)
    ============================================================================== */
 .theme-care-plus {
   background-color: #f8fbfc;
@@ -1293,6 +1683,19 @@ button, a, input, select {
 .theme-care-plus .profile-avatar-circle {
   background: #0d9488;
   color: #ffffff;
+  border: 2px solid #ccfbf1;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.2);
+}
+
+.theme-care-plus .doctor-specialty-pill {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 999px;
+  display: inline-block;
+  margin: 0 auto 16px;
 }
 
 .theme-care-plus .slot-card {
@@ -1303,7 +1706,7 @@ button, a, input, select {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   color: #065f46;
 }
 
@@ -1328,11 +1731,12 @@ button, a, input, select {
 .theme-care-plus .tag-chip {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 500;
-  color: #475569;
+  color: #334155;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
 }
 
 .theme-care-plus .timings-card {
@@ -1342,11 +1746,19 @@ button, a, input, select {
   padding: 14px 16px;
   margin-bottom: 22px;
   font-size: 12.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.theme-care-plus .timings-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
 }
 
 .theme-care-plus .cta-btn-primary {
   background: #0d9488;
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.25);
 }
 
 .theme-care-plus .cta-btn-primary:hover {
@@ -1369,8 +1781,13 @@ button, a, input, select {
   color: #0d9488;
 }
 
+.theme-care-plus .social-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
 /* ==============================================================================
-   DESIGN 16 — ROAST & CO. (Cafe: Menu, Wi-Fi, Loyalty Card)
+   DESIGN 16 — ROAST & CO. (Cafe: Menu, Wi-Fi, Loyalty Card, WhatsApp Ordering)
    ============================================================================== */
 .theme-roast-and-co {
   background-color: #1b140e;
@@ -1378,9 +1795,10 @@ button, a, input, select {
 }
 
 .theme-roast-and-co .profile-avatar-circle {
-  background: #3e2723;
+  background: #281d15;
   color: #d4a373;
   border: 2px solid #d4a373;
+  box-shadow: 0 4px 14px rgba(212, 163, 115, 0.2);
 }
 
 .theme-roast-and-co .cafe-badges {
@@ -1394,7 +1812,7 @@ button, a, input, select {
 .theme-roast-and-co .cafe-badge {
   background: rgba(212, 163, 115, 0.15);
   color: #d4a373;
-  border: 1px solid rgba(212, 163, 115, 0.3);
+  border: 1px solid rgba(212, 163, 115, 0.35);
   font-size: 11px;
   font-weight: 600;
   padding: 4px 10px;
@@ -1403,39 +1821,109 @@ button, a, input, select {
 
 .theme-roast-and-co .menu-card {
   background: #281d15;
-  border: 1px solid rgba(212, 163, 115, 0.2);
+  border: 1px solid rgba(212, 163, 115, 0.22);
   border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 20px;
+}
+
+.theme-roast-and-co .menu-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.theme-roast-and-co .menu-tab {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.15);
+  color: #d4a373;
+}
+
+.theme-roast-and-co .menu-tab.active {
+  background: #d4a373;
+  color: #1b140e;
 }
 
 .theme-roast-and-co .menu-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 13px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.theme-roast-and-co .menu-item:last-child {
+  border-bottom: none;
+}
+
+.theme-roast-and-co .menu-item-name {
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.theme-roast-and-co .menu-item-sub {
+  font-size: 11px;
+  opacity: 0.65;
+  margin-top: 2px;
+}
+
+.theme-roast-and-co .menu-item-popular {
+  font-size: 10px;
+  background: #d4a373;
+  color: #1b140e;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.theme-roast-and-co .menu-item-price {
+  font-weight: 700;
+  font-size: 14px;
+  color: #d4a373;
 }
 
 .theme-roast-and-co .loyalty-box {
   background: #281d15;
-  border: 1px dashed #d4a373;
+  border: 1.5px dashed #d4a373;
   border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 22px;
   text-align: center;
 }
 
+.theme-roast-and-co .loyalty-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d4a373;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.theme-roast-and-co .loyalty-desc {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
 .theme-roast-and-co .cta-btn-primary {
   background: #25d366;
   color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+}
+
+.theme-roast-and-co .cta-btn-primary:hover {
+  filter: brightness(1.08);
 }
 
 .theme-roast-and-co .cta-btn-secondary {
   background: #281d15;
   color: #f5ebe0;
-  border: 1px solid rgba(212, 163, 115, 0.3);
+  border: 1px solid rgba(212, 163, 115, 0.35);
 }
 
 .theme-roast-and-co .contact-row {
@@ -1444,8 +1932,13 @@ button, a, input, select {
 }
 
 .theme-roast-and-co .contact-row-icon {
-  background: rgba(212, 163, 115, 0.15);
+  background: rgba(212, 163, 115, 0.16);
   color: #d4a373;
+}
+
+.theme-roast-and-co .social-item {
+  background: #281d15;
+  border: 1px solid rgba(212, 163, 115, 0.2);
 }
 
 /* ==============================================================================
@@ -1454,7 +1947,7 @@ button, a, input, select {
 .qr-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -1479,7 +1972,7 @@ button, a, input, select {
   width: 100%;
   border-radius: 20px;
   padding: 28px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   text-align: center;
   position: relative;
@@ -1529,7 +2022,7 @@ button, a, input, select {
   font-size: 12.5px;
   font-weight: 600;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   gap: 8px;

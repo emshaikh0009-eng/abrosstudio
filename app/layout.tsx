@@ -20,7 +20,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ambrosstudio.space'),
+  metadataBase: new URL('https://ambrosstudio.com'),
   title: {
     default: 'Ambros Studio | Premium Digital Studio & Web Design in Surat, Gujarat',
     template: '%s',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: 'Ambros Studio | Premium Digital Studio & Web Design in Surat, Gujarat',
     description:
       'Ambros Studio is a premier digital studio based in Surat, Gujarat. We build custom high-converting websites, ROI-driven Meta ads, and luxury metal NFC business cards.',
-    url: 'https://ambrosstudio.space',
+    url: 'https://ambrosstudio.com',
     siteName: 'Ambros Studio',
     locale: 'en_IN',
     type: 'website',

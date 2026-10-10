@@ -265,14 +265,14 @@
     <div class="device-header">
       <h2 class="device-title" id="activeDesignTitle">Mint Haven</h2>
       <p class="device-subtitle" id="activeDesignDesc">Warm, friendly pastel layout with soft rounded cards and organic touch.</p>
-      <a href="/cards/preview.html?design=mint-haven&slug=ambros-studio" target="_blank" class="btn-card-direct" id="btnOpenDirect">
+      <a href="/cards/preview.html?design=mint-haven" target="_blank" class="btn-card-direct" id="btnOpenDirect">
         <span>Open full screen in new tab</span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
       </a>
     </div>
 
     <div class="mockup-frame">
-      <iframe src="/cards/preview.html?design=mint-haven&slug=ambros-studio" id="mockupIframe" class="mockup-screen" title="Digital Business Card Preview" loading="eager"></iframe>
+      <iframe src="/cards/preview.html?design=mint-haven" id="mockupIframe" class="mockup-screen" title="Digital Business Card Preview" loading="eager"></iframe>
     </div>
   </main>
 
@@ -340,8 +340,8 @@
 
       if (titleEl) titleEl.textContent = d.name + ' (' + d.categoryLabel + ')';
       if (descEl) descEl.textContent = d.description;
-      if (directEl) directEl.href = '/cards/preview.html?design=' + encodeURIComponent(d.id) + '&slug=ambros-studio';
-      if (iframeEl) iframeEl.src = '/cards/preview.html?design=' + encodeURIComponent(d.id) + '&slug=ambros-studio';
+      if (directEl) directEl.href = '/cards/preview.html?design=' + encodeURIComponent(d.id);
+      if (iframeEl) iframeEl.src = '/cards/preview.html?design=' + encodeURIComponent(d.id);
     }
 
     renderPills();

@@ -100,19 +100,25 @@
         } catch (err) {
           console.warn('Preview: could not fetch customer by ID:', err);
         }
-      } else if (slug && slug !== 'ambros' && slug !== 'ambros-studio') {
-        try {
-          var res = await fetch('/api/cards/' + encodeURIComponent(slug), {
-            headers: { 'Accept': 'application/json' }
-          });
-          if (res.ok) {
-            var json = await res.json();
-            if (json && json.card) {
-              customerRecord = json.card;
+      } else if (slug) {
+        if (slug === 'ambros' || slug === 'ambros-studio') {
+          customerRecord = (registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER)
+            ? JSON.parse(JSON.stringify(registry.AUTHORITATIVE_AMBROS_CUSTOMER))
+            : null;
+        } else {
+          try {
+            var res = await fetch('/api/cards/' + encodeURIComponent(slug), {
+              headers: { 'Accept': 'application/json' }
+            });
+            if (res.ok) {
+              var json = await res.json();
+              if (json && json.card) {
+                customerRecord = json.card;
+              }
             }
+          } catch (err) {
+            console.warn('Preview: could not fetch customer by slug:', err);
           }
-        } catch (err) {
-          console.warn('Preview: could not fetch customer by slug:', err);
         }
       }
 
@@ -120,81 +126,35 @@
       if (customerRecord) {
         baseRecord = customerRecord;
         baseRecord.cardDesign = design.id;
-      } else {
-        baseRecord = (registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER)
-          ? JSON.parse(JSON.stringify(registry.AUTHORITATIVE_AMBROS_CUSTOMER))
-          : {
-              fullName: 'Ambros Studio',
-              designation: 'Creative & Digital Team',
-              company: 'Ambros Studio',
-              description: 'Bespoke websites, high-impact digital campaigns, and luxury contactless NFC business cards crafted with purpose.',
-              phone: '+91 91577 78915',
-              whatsapp: '919157778915',
-              email: 'ambrosstudioltd@gmail.com',
-              website: 'https://www.ambrosstudio.space',
-              address: '3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017',
-              socialInstagram: 'https://www.instagram.com/ambros.studio',
-              socialLinkedIn: 'https://linkedin.com/company/ambrosstudio',
-              cardDesign: design.id,
-              profileSlug: 'ambros-studio',
-              avatarUrl: '/assets/ambros-logo-light.png',
-              is_active: true,
-              customSettings: {
-                appearance: {
-                  primaryColor: '#10b981',
-                  backgroundColor: '#faf6ee',
-                  textColor: '#1e293b',
-                  fontFamily: 'Plus Jakarta Sans'
-                },
-                links: [
-                  { id: '1', type: 'phone', label: 'Call Studio', value: '+91 91577 78915', enabled: true, order: 0 },
-                  { id: '2', type: 'whatsapp', label: 'Chat on WhatsApp', value: '919157778915', enabled: true, order: 1 },
-                  { id: '3', type: 'email', label: 'Email Team', value: 'ambrosstudioltd@gmail.com', enabled: true, order: 2 },
-                  { id: '4', type: 'website', label: 'Visit Website', value: 'https://www.ambrosstudio.space', enabled: true, order: 3 },
-                  { id: '5', type: 'instagram', label: 'Instagram', value: 'https://www.instagram.com/ambros.studio', enabled: true, order: 4 },
-                  { id: '6', type: 'linkedin', label: 'LinkedIn', value: 'https://linkedin.com/company/ambrosstudio', enabled: true, order: 5 }
-                ]
-              }
-            };
-
-        baseRecord.cardDesign = design.id;
         if (!baseRecord.customSettings) baseRecord.customSettings = {};
         if (!baseRecord.customSettings.appearance) baseRecord.customSettings.appearance = {};
-        baseRecord.customSettings.appearance.primaryColor = design.theme.primaryColor;
-        baseRecord.customSettings.appearance.backgroundColor = design.theme.backgroundColor;
-        baseRecord.customSettings.appearance.textColor = design.theme.textColor;
-        baseRecord.customSettings.appearance.fontFamily = design.theme.fontFamily;
-
-        // Apply industry special presets if relevant to the design
-        baseRecord.customSettings.industry = {
-          type: design.industryModule || 'general',
-          data: design.id === 'skyline' ? {
-            stats: [{ num: '320+', label: 'Homes sold' }, { num: '₹450Cr', label: 'Deals closed' }, { num: '9 yrs', label: 'Experience' }],
-            listings: [
-              { tag: 'For sale', price: '₹1.85 Cr', title: '3 BHK · 1,450 sq ft', location: 'VIP Road, Vesu, Surat' },
-              { tag: 'New launch', price: '₹96 Lac', title: '2 BHK · 920 sq ft', location: 'Althan Canal Corridor, Surat' }
-            ]
-          } : (design.id === 'atelier' ? {
-            services: [
-              { name: 'Bespoke Couture', subtitle: 'by appointment' },
-              { name: 'Custom Tailoring', subtitle: 'from 7 days' },
-              { name: 'Brand Identity', subtitle: '1:1 sessions' },
-              { name: 'Digital Edit', subtitle: 'new every season' }
-            ]
-          } : (design.id === 'care-plus' ? {
-            nextSlot: 'Today, 4:00 pm',
-            treatments: ['NFC Integration', 'Web Systems', 'Meta Ad Audits', 'Brand Identity', 'Performance Tuning'],
-            timings: 'Mon – Sat: 10:00 am – 7:30 pm'
-          } : (design.id === 'roast-and-co' ? {
-            menu: [
-              { name: 'Flat White', price: '₹190', popular: true },
-              { name: 'Cappuccino', price: '₹170' },
-              { name: 'Specialty Cold Brew', price: '₹210', popular: true },
-              { name: 'Pour Over', price: '₹180' }
-            ],
-            loyalty: 'Collect 8 stamps, get a free drink: 8 to go'
-          } : {})))
-        };
+        if (!baseRecord.customSettings.appearance.primaryColor) baseRecord.customSettings.appearance.primaryColor = design.theme.primaryColor;
+        if (!baseRecord.customSettings.appearance.backgroundColor) baseRecord.customSettings.appearance.backgroundColor = design.theme.backgroundColor;
+        if (!baseRecord.customSettings.appearance.textColor) baseRecord.customSettings.appearance.textColor = design.theme.textColor;
+        if (!baseRecord.customSettings.appearance.fontFamily) baseRecord.customSettings.appearance.fontFamily = design.theme.fontFamily;
+      } else {
+        baseRecord = (registry && typeof registry.getDemoProfile === 'function')
+          ? registry.getDemoProfile(design.id)
+          : (registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER)
+            ? JSON.parse(JSON.stringify(registry.AUTHORITATIVE_AMBROS_CUSTOMER))
+            : {
+                fullName: 'Ambros Studio',
+                designation: 'Creative & Digital Team',
+                company: 'Ambros Studio',
+                description: 'Bespoke websites, high-impact digital campaigns, and luxury contactless NFC business cards crafted with purpose.',
+                phone: '+91 91577 78915',
+                whatsapp: '919157778915',
+                email: 'ambrosstudioltd@gmail.com',
+                website: 'https://ambrosstudio.com',
+                address: '3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017',
+                socialInstagram: 'https://www.instagram.com/ambros.studio',
+                socialLinkedIn: 'https://linkedin.com/company/ambrosstudio',
+                cardDesign: design.id,
+                profileSlug: 'ambros-studio',
+                avatarUrl: '/assets/ambros-logo-light.png',
+                is_active: true
+              };
+        baseRecord.cardDesign = design.id;
       }
 
       var viewport = document.getElementById('cardViewport');

@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
       })(),
       publicUrl: `/c/${slug}`,
-      profileLink: `https://www.ambrosstudio.space/c/${slug}`,
+      profileLink: `https://ambrosstudio.com/c/${slug}`,
       profileSlug: slug,
       createdDate: formattedDate,
       cardUrl: `/cards/preview.html?design=${encodeURIComponent(resolvedDesign.id)}&slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}`
@@ -732,7 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canonicalSlug = (slug || '').trim().toLowerCase();
     const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
       ? window.location.origin
-      : 'https://www.ambrosstudio.space';
+      : 'https://ambrosstudio.com';
 
     const publicUrl = canonicalSlug
       ? `${origin}/c/${encodeURIComponent(canonicalSlug)}`
@@ -1157,7 +1157,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.closest('.btn-card-preview')) {
           e.stopPropagation();
           const dId = card.getAttribute('data-design-id');
-          openCardPreviewModal(dId);
+          const hasForm = Boolean((custFullNameInput && custFullNameInput.value.trim()) || (custDesignationInput && custDesignationInput.value.trim()));
+          openCardPreviewModal(dId, { mode: hasForm ? 'customer' : 'demo' });
           return;
         }
 
@@ -1170,7 +1171,8 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const dId = btn.getAttribute('data-design-id');
-        openCardPreviewModal(dId);
+        const hasForm = Boolean((custFullNameInput && custFullNameInput.value.trim()) || (custDesignationInput && custDesignationInput.value.trim()));
+        openCardPreviewModal(dId, { mode: hasForm ? 'customer' : 'demo' });
       });
     });
   }
@@ -1258,7 +1260,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const rawInstagram = custInstagram ? custInstagram.value.trim() : '';
     const rawLinkedIn = custLinkedIn ? custLinkedIn.value.trim() : '';
 
-    const authAmbros = (window.CARD_DESIGN_REGISTRY && window.CARD_DESIGN_REGISTRY.AUTHORITATIVE_AMBROS_CUSTOMER) || {};
+    const registry = window.CARD_DESIGN_REGISTRY;
+    const demoProfile = (registry && typeof registry.getDemoProfile === 'function')
+      ? registry.getDemoProfile(design.id)
+      : ((registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER) || {});
 
     // Check if there is actual customer data in the editor
     const hasFormInput = Boolean(
@@ -1269,21 +1274,23 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // If form has user data, render ONLY that customer's real data (no demo address or demo links leaked)
-    // If form is completely empty (showroom browsing), use the authoritative Ambros Studio showcase profile
-    const fullName = hasFormInput ? (rawName || 'Client Profile') : (authAmbros.fullName || 'Ambros Studio');
-    const designation = hasFormInput ? rawRole : (authAmbros.designation || 'Creative & Digital Team');
-    const company = hasFormInput ? rawCompany : (authAmbros.company || 'Ambros Studio');
-    const phone = hasFormInput ? rawPhone : (authAmbros.phone || '+91 91577 78915');
-    const whatsapp = hasFormInput ? (rawWhatsApp || (rawPhone ? rawPhone.replace(/[^0-9]/g, '') : '')) : (authAmbros.whatsapp || '919157778915');
-    const email = hasFormInput ? rawEmail : (authAmbros.email || 'ambrosstudioltd@gmail.com');
-    const website = hasFormInput ? rawWebsite : (authAmbros.website || 'https://www.ambrosstudio.space');
-    const address = hasFormInput ? rawAddress : (authAmbros.address || '3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017');
-    const description = hasFormInput ? rawDesc : (authAmbros.description || 'Bespoke websites, high-impact digital campaigns, and luxury contactless NFC business cards crafted with purpose.');
-    const avatarUrl = currentUploadedAvatar || (hasFormInput ? '' : (authAmbros.avatarUrl || '/assets/ambros-logo-light.png'));
+    // If form is completely empty, use the canonical design-specific demo profile
+    const fullName = hasFormInput ? (rawName || 'Client Profile') : (demoProfile.fullName || 'Ambros Studio');
+    const designation = hasFormInput ? rawRole : (demoProfile.designation || '');
+    const company = hasFormInput ? rawCompany : (demoProfile.company || '');
+    const phone = hasFormInput ? rawPhone : (demoProfile.phone || '+91 91577 78915');
+    const whatsapp = hasFormInput ? (rawWhatsApp || (rawPhone ? rawPhone.replace(/[^0-9]/g, '') : '')) : (demoProfile.whatsapp || '919157778915');
+    const email = hasFormInput ? rawEmail : (demoProfile.email || 'ambrosstudioltd@gmail.com');
+    const website = hasFormInput ? rawWebsite : (demoProfile.website || 'https://ambrosstudio.com');
+    const address = hasFormInput ? rawAddress : (demoProfile.address || '');
+    const description = hasFormInput ? rawDesc : (demoProfile.description || '');
+    const avatarUrl = currentUploadedAvatar || (hasFormInput ? '' : (demoProfile.avatarUrl || ''));
 
     let links = [];
     if (Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0) {
       links = currentCustomLinks;
+    } else if (!hasFormInput && demoProfile.customSettings && Array.isArray(demoProfile.customSettings.links)) {
+      links = demoProfile.customSettings.links;
     } else if (!hasFormInput) {
       links = [
         { id: '1', type: 'phone', label: 'Call Studio', value: phone, enabled: true, order: 0 },
@@ -1305,38 +1312,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let industryData = {};
-    if (design.id === 'skyline') {
+    if (!hasFormInput && demoProfile.customSettings && demoProfile.customSettings.industry && demoProfile.customSettings.industry.data) {
+      industryData = demoProfile.customSettings.industry.data;
+    } else if (design.id === 'skyline') {
       industryData = {
-        stats: [{ num: '320+', label: 'Homes sold' }, { num: '₹450Cr', label: 'Deals closed' }, { num: '9 yrs', label: 'Experience' }],
+        badges: ['Demo RERA · Sample Profile', 'English · Hindi · Gujarati', 'Bandra · Worli · Althan'],
+        stats: [{ num: '140+', label: 'Homes Sold' }, { num: '₹320Cr', label: 'Closed Value' }, { num: '9+ Yrs', label: 'Experience' }],
         listings: [
-          { tag: 'For sale', price: '₹1.85 Cr', title: '3 BHK · 1,450 sq ft', location: 'VIP Road, Vesu, Surat' },
-          { tag: 'New launch', price: '₹96 Lac', title: '2 BHK · 920 sq ft', location: 'Althan Canal Corridor, Surat' }
+          { tag: 'Sample Exclusive', price: '₹3.40 Cr', title: '3 BHK Sea-View Residence', location: 'Bandra West, Mumbai · 1,650 sq ft', pills: ['Sea view', '2 parking', 'Ready to move'] },
+          { tag: 'Sample New Launch', price: '₹1.85 Cr', title: '2 BHK Garden Penthouse', location: 'VIP Road Corridor, Surat · 1,220 sq ft', pills: ['Clubhouse', 'Pool', 'Sample RERA'] }
         ]
       };
     } else if (design.id === 'atelier') {
       industryData = {
         services: [
-          { name: 'Bespoke Couture', subtitle: 'by appointment' },
-          { name: 'Custom Tailoring', subtitle: 'from 7 days' },
-          { name: 'Brand Identity', subtitle: '1:1 sessions' },
-          { name: 'Digital Edit', subtitle: 'new every season' }
+          { name: 'Bespoke Couture', subtitle: 'Handcrafted embroidery' },
+          { name: 'Bridal Trousseau', subtitle: 'Full fitting suite' },
+          { name: 'Red Carpet Styling', subtitle: '1:1 Consultations' },
+          { name: 'Runway Edit', subtitle: 'Limited capsule' }
         ]
       };
     } else if (design.id === 'care-plus') {
       industryData = {
-        nextSlot: 'Today, 4:00 pm',
-        treatments: ['NFC Integration', 'Web Systems', 'Meta Ad Audits', 'Brand Identity', 'Performance Tuning'],
-        timings: 'Mon – Sat: 10:00 am – 7:30 pm'
+        nextSlot: 'Sample Slot: Today, 4:30 PM (Demo)',
+        treatments: ['Clinical Dermatology', 'Laser Resurfacing', 'Hair Restoration', 'Anti-Pigmentation'],
+        timings: 'Mon – Sat: 10:00 am – 7:30 pm (Sample Schedule)'
       };
     } else if (design.id === 'roast-and-co') {
       industryData = {
+        badges: ['Sample Open · Till 10 PM', '★ 4.8 Sample Rating', 'Free Gigabit Wi-Fi'],
         menu: [
           { name: 'Flat White', price: '₹190', popular: true },
           { name: 'Cappuccino', price: '₹170' },
           { name: 'Specialty Cold Brew', price: '₹210', popular: true },
-          { name: 'Pour Over', price: '₹180' }
+          { name: 'Manual Pour-Over', price: '₹180' }
         ],
-        loyalty: 'Collect 8 stamps, get a free drink: 8 to go'
+        loyalty: 'Sample Loyalty: Collect 8 stamps, get 1 free brew'
       };
     }
 
@@ -1353,7 +1364,7 @@ document.addEventListener('DOMContentLoaded', () => {
       socialInstagram: rawInstagram,
       socialLinkedIn: rawLinkedIn,
       cardDesign: design.id,
-      profileSlug: (fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')) || 'ambros-studio',
+      profileSlug: (fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')) || 'sample-profile',
       avatarUrl: avatarUrl,
       is_active: true,
       customSettings: {
@@ -1376,22 +1387,35 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  function openCardPreviewModal(designNameOrId) {
+  function openCardPreviewModal(designNameOrId, options) {
     if (!adminCardPreviewModal) return;
+    options = options || {};
     const registry = window.CARD_DESIGN_REGISTRY;
     const renderer = window.CARD_RENDERER;
     const resolved = registry ? registry.resolveCardDesign(designNameOrId) : { id: 'mint-haven', name: 'Mint Haven', category: 'personal' };
     modalActiveDesign = resolved.name;
 
+    const isDemoMode = options.mode === 'demo' || (!options.mode && options.isDemo);
+
     if (previewModalDesignName) previewModalDesignName.textContent = resolved.name;
     if (previewModalCategoryBadge) {
       previewModalCategoryBadge.textContent = resolved.industryModule ? `Industry: ${resolved.industryModule}` : resolved.category;
     }
+    if (previewModalSubtitle) {
+      previewModalSubtitle.textContent = isDemoMode
+        ? 'Design Showroom: Fictional sample profile & industry layout.'
+        : 'Rendered using current customer form data.';
+    }
     if (previewFooterDesignInfo) {
-      previewFooterDesignInfo.innerHTML = `Design: <strong>${escapeHtml(resolved.name)}</strong> &bull; ${escapeHtml(resolved.categoryLabel || resolved.category)} &bull; ${escapeHtml(resolved.badge || '')}`;
+      previewFooterDesignInfo.innerHTML = `Design: <strong>${escapeHtml(resolved.name)}</strong> &bull; ${escapeHtml(resolved.categoryLabel || resolved.category)} &bull; ${escapeHtml(resolved.badge || '')} ${isDemoMode ? '<span style="color:#38bdf8;margin-left:8px;font-size:11px;">[Showroom Demo]</span>' : '<span style="color:#34d399;margin-left:8px;font-size:11px;">[Customer Data]</span>'}`;
     }
 
-    const customerPayload = buildCustomerPreviewPayload(resolved);
+    let customerPayload;
+    if (isDemoMode && registry && typeof registry.getDemoProfile === 'function') {
+      customerPayload = registry.getDemoProfile(resolved.id);
+    } else {
+      customerPayload = buildCustomerPreviewPayload(resolved);
+    }
 
     if (previewModalIframe) {
       const renderFn = renderer && (renderer.renderCardHtml || renderer.renderCompleteCardHtml);
@@ -1437,7 +1461,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnPreviewCurrentCustomerDesign) {
     btnPreviewCurrentCustomerDesign.addEventListener('click', () => {
-      openCardPreviewModal(selectedDesign);
+      openCardPreviewModal(selectedDesign, { mode: 'customer' });
     });
   }
 
@@ -1508,7 +1532,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showroomCardsGrid.querySelectorAll('.btn-showroom-preview').forEach(btn => {
       btn.addEventListener('click', () => {
         const dId = btn.getAttribute('data-design-id');
-        openCardPreviewModal(dId);
+        openCardPreviewModal(dId, { mode: 'demo' });
       });
     });
 
@@ -1586,7 +1610,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socialInstagram: instagram,
         socialLinkedIn: linkedIn,
         design: selectedDesign,
-        profileLink: `https://www.ambrosstudio.space/c/${slug}`,
+        profileLink: `https://ambrosstudio.com/c/${slug}`,
         profileSlug: slug,
         avatar_url: currentUploadedAvatar,
         custom_settings: {

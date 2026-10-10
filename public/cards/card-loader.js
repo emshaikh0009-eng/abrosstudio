@@ -136,7 +136,7 @@
     const slug = card.profileSlug || card.profile_slug || '';
     const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
       ? window.location.origin
-      : 'https://www.ambrosstudio.space';
+      : 'https://ambrosstudio.com';
     return slug ? `${origin}/c/${encodeURIComponent(slug)}` : window.location.href;
   }
 
