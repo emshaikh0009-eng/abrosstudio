@@ -1324,7 +1324,7 @@ export const CANONICAL_DEMO_PROFILES: Record<string, any> = {
     website: "https://ambrosstudio.com/c/raftcon/brochure",
     address: "Surat, Gujarat, India",
     cardDesign: "raftcon-luxury",
-    profileSlug: "raftcon",
+    profileSlug: "tabrezqureshi",
     avatarUrl: "/assets/brochures/raftcon-brand-logo.png",
     is_active: true,
     customSettings: {

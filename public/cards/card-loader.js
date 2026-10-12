@@ -137,6 +137,9 @@
     const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
       ? window.location.origin
       : 'https://ambrosstudio.com';
+    if (slug === 'tabrezqureshi' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/tabrezqureshi'))) {
+      return `${origin}/tabrezqureshi`;
+    }
     return slug ? `${origin}/c/${encodeURIComponent(slug)}` : window.location.href;
   }
 

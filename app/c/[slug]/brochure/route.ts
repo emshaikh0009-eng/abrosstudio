@@ -82,7 +82,7 @@ function renderUnavailableHtml(title = "Brochure Unavailable", message = "No bro
     </div>
     <h1>${title}</h1>
     <p>${message}</p>
-    <a href="/c/raftcon" class="btn-home">
+    <a href="/tabrezqureshi" class="btn-home">
       &larr; Back to Raftcon Profile
     </a>
   </div>
@@ -110,7 +110,7 @@ function renderRaftconBrochureHtml(cacheBuster: number): string {
   <!-- Top Sticky Navigation Bar (Strictly No Download Button) -->
   <header class="viewer-navbar" role="banner">
     <div class="nav-left">
-      <a href="/c/raftcon" class="btn-back" title="Return to Raftcon Digital Business Card">
+      <a href="/tabrezqureshi" class="btn-back" title="Return to Raftcon Digital Business Card">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
@@ -221,7 +221,7 @@ export async function GET(
     const sanitizedSlug = typeof slug === "string" ? slug.trim().toLowerCase().slice(0, 100) : "";
 
     // If requesting the Raftcon brochure
-    if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction") {
+    if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction" || sanitizedSlug === "tabrezqureshi") {
       const now = Date.now();
       const html = renderRaftconBrochureHtml(now);
       return new Response(html, {

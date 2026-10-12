@@ -10,6 +10,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/admin") ||
     pathname.startsWith("/cards") ||
     pathname.startsWith("/c/") ||
+    pathname.startsWith("/tabrezqureshi") ||
     pathname.startsWith("/api/cards") ||
     pathname.startsWith("/assets") ||
     pathname.includes(".")
