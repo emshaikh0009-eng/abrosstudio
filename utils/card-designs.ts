@@ -566,6 +566,39 @@ export const CARD_DESIGNS: Record<string, CardDesignDefinition> = {
       text: '#f5ebe0',
       style: 'wf-roast-and-co'
     }
+  },
+
+  'raftcon-luxury': {
+    id: 'raftcon-luxury',
+    name: 'Raftcon Luxury',
+    category: 'industry',
+    categoryLabel: 'Industry · Construction & Infrastructure',
+    badge: 'Design 17',
+    description: 'High-end dark graphite and champagne-gold corporate profile with dual contacts, engineering metrics, services, and project showcase.',
+    theme: {
+      baseMode: 'dark',
+      primaryColor: '#ffe0b5',
+      backgroundColor: '#1f1e1c',
+      textColor: '#f3ede2',
+      accentColor: '#a08d73',
+      fontFamily: 'Plus Jakarta Sans',
+      fontUrl: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
+    },
+    layoutType: 'industry-special',
+    industryModule: 'construction' as any,
+    supportedSections: ['raftcon-header', 'contact-duo', 'actions-grid', 'about-raftcon', 'metrics-grid', 'services-pills', 'projects-list', 'safety-mission', 'cta-brochure'],
+    ctaStyle: {
+      primaryText: 'Save Contact',
+      primaryStyle: 'gold-solid-pill',
+      secondaryText: 'View Brochure',
+      secondaryStyle: 'gold-outline-pill'
+    },
+    wireframe: {
+      bg: '#1f1e1c',
+      accent: '#ffe0b5',
+      text: '#f3ede2',
+      style: 'wf-raftcon-luxury'
+    }
   }
 };
 
@@ -593,7 +626,8 @@ export function resolveCardDesign(rawNameOrId?: string | null): CardDesignDefini
     return matchByName;
   }
 
-  // Legacy aliases
+  // Legacy aliases & Raftcon shortcuts
+  if (clean === 'raftcon' || clean === 'raftcon-luxury' || clean === 'raftcon-construction') return CARD_DESIGNS['raftcon-luxury'];
   if (clean === 'design-1' || clean === 'mint') return CARD_DESIGNS['mint-haven'];
   if (clean === 'design-2' || clean === 'evergreen') return CARD_DESIGNS['evergreen'];
   if (clean === 'roast' || clean === 'roast-co') return CARD_DESIGNS['roast-and-co'];
@@ -1277,8 +1311,86 @@ export const CANONICAL_DEMO_PROFILES: Record<string, any> = {
         { id: "5", type: "maps", label: "Find the Brew Bar", value: "VIP Gallaria Corridor, Althan, Surat", enabled: true, order: 4 }
       ]
     }
+  },
+
+  'raftcon-luxury': {
+    fullName: "Raftcon Construction",
+    designation: "Civil Engineering & Infrastructure",
+    company: "Raftcon Construction",
+    description: "Since 1990, Raftcon has grown into a fully integrated civil engineering company, building industrial, commercial and residential complexes, housing colonies, turnkey projects and chemical plants.",
+    phone: "+91 99675 22999",
+    whatsapp: "919967522999",
+    email: "raftconconstruction@gmail.com",
+    website: "https://ambrosstudio.com/c/raftcon/brochure",
+    address: "Surat, Gujarat, India",
+    cardDesign: "raftcon-luxury",
+    profileSlug: "raftcon",
+    avatarUrl: "/assets/brochures/raftcon-brand-logo.png",
+    is_active: true,
+    customSettings: {
+      appearance: {
+        primaryColor: "#ffe0b5",
+        backgroundColor: "#1f1e1c",
+        textColor: "#f3ede2",
+        fontFamily: "Plus Jakarta Sans"
+      },
+      industry: {
+        type: "construction",
+        data: {
+          tagline: "Crafting Quality, Constructing Futures",
+          contacts: [
+            { name: "Ghulamsarwar Qureshi", phone: "(+91) 99675-22999", rawPhone: "+919967522999" },
+            { name: "Tabrez Qureshi", phone: "(+91) 90040-00567", rawPhone: "+919004000567" }
+          ],
+          officePhone: "+91 99675 22999",
+          rawOfficePhone: "+919967522999",
+          metrics: [
+            { value: "33+", label: "Completed projects" },
+            { value: "07", label: "Cities" },
+            { value: "01", label: "Ongoing project" },
+            { value: "96%", label: "Customer retention" }
+          ],
+          heroMetric: { value: "35+ Years", label: "Of experience" },
+          services: [
+            "Industrial construction",
+            "Industrial sheds",
+            "Commercial complexes",
+            "Residential projects",
+            "Housing societies",
+            "Property redevelopment",
+            "Showrooms & workshops",
+            "Godowns & warehouses",
+            "Medical & educational",
+            "Agricultural sheds",
+            "Cattle & poultry farms"
+          ],
+          servicesSummary: "One team for architectural and structural design, RCC, masonry, electrical, plumbing, flooring and interiors.",
+          projects: [
+            { name: "Kataria Motors", meta: "Piplod, Surat · 2009" },
+            { name: "Ashwarath Complex", meta: "Ahmedabad · 2010" },
+            { name: "SMT N.M.P Pharmacy College", meta: "Educational · 2014" },
+            { name: "Shiv Residency", meta: "Haldharu · 2023" },
+            { name: "La Ceremony Banquet", meta: "Restaurant & banquet · 2025" }
+          ],
+          safety: "Safety is everyone's responsibility. Our goal is zero incidents and injuries, for our team and the public.",
+          mission: "A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build.",
+          footerQuote: "Lets make success stories together",
+          brochureUrl: "/c/raftcon/brochure"
+        }
+      },
+      links: [
+        { id: "1", type: "phone", label: "Call Office", value: "+91 99675 22999", enabled: true, order: 0 },
+        { id: "2", type: "whatsapp", label: "WhatsApp", value: "919967522999", enabled: true, order: 1 },
+        { id: "3", type: "email", label: "Email", value: "raftconconstruction@gmail.com", enabled: true, order: 2 }
+      ]
+    }
   }
 };
+
+/**
+ * Single Authoritative Raftcon Profile Payload
+ */
+export const AUTHORITATIVE_RAFTCON_CUSTOMER = CANONICAL_DEMO_PROFILES['raftcon-luxury'];
 
 /**
  * Returns the coherent fictional demo profile for any design.

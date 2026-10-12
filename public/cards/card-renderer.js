@@ -253,10 +253,243 @@
     return list;
   }
 
+  function renderRaftconLuxuryBody(card) {
+    const custom = card.customSettings || card.custom_settings || {};
+    const ind = (custom.industry && custom.industry.data) ? custom.industry.data : {};
+    const contacts = Array.isArray(ind.contacts) ? ind.contacts : [
+      { name: 'Ghulamsarwar Qureshi', phone: '(+91) 99675-22999', rawPhone: '+919967522999' },
+      { name: 'Tabrez Qureshi', phone: '(+91) 90040-00567', rawPhone: '+919004000567' }
+    ];
+    const metrics = Array.isArray(ind.metrics) ? ind.metrics : [
+      { value: '33+', label: 'Completed projects' },
+      { value: '07', label: 'Cities' },
+      { value: '01', label: 'Ongoing project' },
+      { value: '96%', label: 'Customer retention' }
+    ];
+    const heroMetric = ind.heroMetric || { value: '35+ Years', label: 'Of experience' };
+    const services = Array.isArray(ind.services) ? ind.services : [
+      'Industrial construction', 'Industrial sheds', 'Commercial complexes',
+      'Residential projects', 'Housing societies', 'Property redevelopment',
+      'Showrooms & workshops', 'Godowns & warehouses', 'Medical & educational',
+      'Agricultural sheds', 'Cattle & poultry farms'
+    ];
+    const servicesSummary = ind.servicesSummary || 'One team for architectural and structural design, RCC, masonry, electrical, plumbing, flooring and interiors.';
+    const projects = Array.isArray(ind.projects) ? ind.projects : [
+      { name: 'Kataria Motors', meta: 'Piplod, Surat · 2009' },
+      { name: 'Ashwarath Complex', meta: 'Ahmedabad · 2010' },
+      { name: 'SMT N.M.P Pharmacy College', meta: 'Educational · 2014' },
+      { name: 'Shiv Residency', meta: 'Haldharu · 2023' },
+      { name: 'La Ceremony Banquet', meta: 'Restaurant & banquet · 2025' }
+    ];
+    const safetyText = ind.safety || 'Safety is everyone\'s responsibility. Our goal is zero incidents and injuries, for our team and the public.';
+    const missionText = ind.mission || 'A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build.';
+    const footerQuote = ind.footerQuote || 'Lets make success stories together';
+    const brochureUrl = ind.brochureUrl || '/c/raftcon/brochure';
+    const officePhone = ind.officePhone || '(+91) 99675-22999';
+    const rawOfficePhone = ind.rawOfficePhone || '+919967522999';
+    const emailVal = card.email || 'raftconconstruction@gmail.com';
+    const waVal = card.whatsapp || card.whatsapp_number || '919967522999';
+
+    let html = `
+      <!-- Raftcon Approved Brand Header -->
+      <header class="raftcon-header raftcon-reveal">
+        <img src="/assets/brochures/raftcon-brand-logo.png" alt="Raftcon Construction &amp; Developer — Crafting Quality, Constructing Futures" class="raftcon-brand-logo-img" />
+      </header>
+
+      <!-- Contact Section -->
+      <div class="raftcon-reveal">
+        <div class="raftcon-section-eyebrow">C O N T A C T</div>
+        <div class="raftcon-contact-list">
+    `;
+
+    contacts.forEach((c) => {
+      const rawNum = c.rawPhone || c.phone.replace(/[^0-9+]/g, '');
+      html += `
+          <div class="raftcon-contact-card">
+            <div class="raftcon-contact-meta">
+              <span class="raftcon-contact-name">${escapeHtml(c.name)}</span>
+              <span class="raftcon-contact-phone">${escapeHtml(c.phone)}</span>
+            </div>
+            <a href="tel:${rawNum}" class="raftcon-call-circle" aria-label="Call ${escapeHtml(c.name)}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f1e1c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </a>
+          </div>
+      `;
+    });
+
+    html += `
+        </div>
+
+        <!-- Action Buttons Row 1: WhatsApp + Email -->
+        <div class="raftcon-actions-duo">
+          <a href="https://wa.me/${waVal.replace(/\D/g, '')}" target="_blank" rel="noopener noreferrer" class="raftcon-action-btn" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+            <span>WhatsApp</span>
+          </a>
+          <a href="mailto:${escapeHtml(emailVal)}" class="raftcon-action-btn" aria-label="Email">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>Email</span>
+          </a>
+        </div>
+
+        <!-- Action Button Row 2: Call office -->
+        <a href="tel:${rawOfficePhone}" class="raftcon-action-btn raftcon-action-full" aria-label="Call office">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          <span>Call office</span>
+        </a>
+
+        <!-- Primary CTAs: Save Contact + View Brochure -->
+        <button type="button" class="raftcon-btn-primary" id="saveContactBtn" aria-label="Save Contact">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="20" y1="8" x2="20" y2="14"></line>
+            <line x1="23" y1="11" x2="17" y2="11"></line>
+          </svg>
+          <span>Save Contact</span>
+        </button>
+
+        <a href="${escapeHtml(brochureUrl)}" class="raftcon-btn-outline" aria-label="View Brochure">
+          <span>View Brochure</span>
+        </a>
+      </div>
+
+      <!-- About Raftcon Section -->
+      <div class="raftcon-reveal">
+        <h2 class="raftcon-section-title">About Raftcon</h2>
+        <p class="raftcon-about-p">
+          Since 1990, Raftcon has grown into a fully integrated civil engineering company, building industrial, commercial and residential complexes, housing colonies, turnkey projects and chemical plants.
+        </p>
+      </div>
+
+      <!-- Metrics Section -->
+      <div class="raftcon-reveal">
+        <div class="raftcon-metrics-grid">
+    `;
+
+    metrics.forEach((m) => {
+      html += `
+          <div class="raftcon-metric-card">
+            <div class="raftcon-metric-num">${escapeHtml(m.value)}</div>
+            <div class="raftcon-metric-label">${escapeHtml(m.label)}</div>
+          </div>
+      `;
+    });
+
+    html += `
+        </div>
+
+        <!-- Hero Metric: 35+ Years Of experience -->
+        <div class="raftcon-hero-metric-card">
+          <div class="raftcon-hero-metric-num">${escapeHtml(heroMetric.value)}</div>
+          <div class="raftcon-hero-metric-label">${escapeHtml(heroMetric.label)}</div>
+        </div>
+      </div>
+
+      <!-- SERVICES Section -->
+      <div class="raftcon-reveal">
+        <div class="raftcon-section-eyebrow">S E R V I C E S</div>
+        <div class="raftcon-services-cloud">
+    `;
+
+    services.forEach((s) => {
+      html += `<span class="raftcon-service-chip">${escapeHtml(s)}</span>`;
+    });
+
+    html += `
+        </div>
+        <p class="raftcon-services-footer-desc">${escapeHtml(servicesSummary)}</p>
+      </div>
+
+      <!-- Projects Section -->
+      <div class="raftcon-reveal">
+        <h2 class="raftcon-section-title">Projects</h2>
+        <div class="raftcon-projects-list">
+    `;
+
+    projects.forEach((p) => {
+      html += `
+          <div class="raftcon-project-item">
+            <div class="raftcon-project-icon" aria-hidden="true">
+              <svg width="22" height="26" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 112 L 10 8 L 52 22 L 52 36" stroke="#ffe0b5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M 30 112 L 30 36 L 70 36 C 88 36, 88 84, 70 84 L 46 84 M 58 84 L 84 112" stroke="#ffe0b5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="raftcon-project-info">
+              <div class="raftcon-project-name">${escapeHtml(p.name)}</div>
+              <div class="raftcon-project-meta">${escapeHtml(p.meta)}</div>
+            </div>
+          </div>
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+
+      <!-- Safety First Card -->
+      <div class="raftcon-info-box raftcon-reveal">
+        <div class="raftcon-info-title">Safety First</div>
+        <p class="raftcon-info-text">${escapeHtml(safetyText)}</p>
+      </div>
+
+      <!-- Our Mission Card -->
+      <div class="raftcon-info-box raftcon-reveal">
+        <div class="raftcon-info-title">Our Mission</div>
+        <p class="raftcon-info-text">${escapeHtml(missionText)}</p>
+      </div>
+
+      <!-- Bottom CTA & Footer Section -->
+      <div class="raftcon-reveal">
+        <a href="${escapeHtml(brochureUrl)}" class="raftcon-btn-primary" style="margin-top: 14px; text-decoration: none;" aria-label="View Brochure">
+          <span>View Brochure</span>
+        </a>
+
+        <!-- Footer Tagline Quote -->
+        <div class="raftcon-bottom-quote">${escapeHtml(footerQuote)}</div>
+
+        <!-- Quick Utilities (QR + Share) -->
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 24px;">
+          <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn" style="min-width: 130px; font-size: 12.5px; background: #18191e; color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.1);" aria-label="Show QR Code">
+            ${getLinkIconSvg('qr', 15)}
+            <span>Show QR</span>
+          </button>
+          <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn" style="min-width: 130px; font-size: 12.5px; background: #18191e; color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.1);" aria-label="Share profile">
+            ${getLinkIconSvg('share', 15)}
+            <span>Share Profile</span>
+          </button>
+        </div>
+
+        <!-- Brand Watermark Footer -->
+        <footer class="card-footer" style="margin-top: 24px;">
+          <a href="https://ambrosstudio.com" target="_blank" rel="noopener noreferrer">
+            Ambros Studio &bull; Digital Identity
+          </a>
+        </footer>
+      </div>
+    `;
+
+    return html;
+  }
+
   /**
    * Generates the entire inner HTML for a card based on design definition and customer object.
    */
   function renderCardBody(card, design) {
+    if (design.id === 'raftcon-luxury') {
+      return renderRaftconLuxuryBody(card);
+    }
+
     const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';

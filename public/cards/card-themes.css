@@ -2037,3 +2037,402 @@ button, a, input, select {
   opacity: 1;
   pointer-events: auto;
 }
+
+/* ==============================================================================
+   DESIGN 17 — RAFTCON LUXURY (Civil Engineering & Construction Profile)
+   Reference: Raftcon_Digital_Profile_Final.pdf
+   ============================================================================== */
+/* ==============================================================================
+   DESIGN 17 — RAFTCON LUXURY (Civil Engineering & Construction Profile)
+   Reference: Raftcon_Digital_Profile_Final.pdf (Sampled Palette & Layout)
+   ============================================================================== */
+.theme-raftcon-luxury {
+  background-color: #1f1e1c !important;
+  color: #f3ede2;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.theme-raftcon-luxury .viewport-wrapper {
+  max-width: 414px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  background-color: #1f1e1c;
+  box-sizing: border-box;
+}
+
+/* 1. Header with Full Approved Logo */
+.theme-raftcon-luxury .raftcon-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.theme-raftcon-luxury .raftcon-brand-logo-img {
+  max-width: 290px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* 2. Section Eyebrow Labels (C O N T A C T, S E R V I C E S) */
+.theme-raftcon-luxury .raftcon-section-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: #a08d73;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+/* 3. Contact Cards */
+.theme-raftcon-luxury .raftcon-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.theme-raftcon-luxury .raftcon-contact-card {
+  background: #262420;
+  border: 1px solid #34302b;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.theme-raftcon-luxury .raftcon-contact-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+}
+
+.theme-raftcon-luxury .raftcon-contact-name {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #ffe0b5;
+  line-height: 1.2;
+}
+
+.theme-raftcon-luxury .raftcon-contact-phone {
+  font-size: 13.5px;
+  color: #f3ede2;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.theme-raftcon-luxury .raftcon-call-circle {
+  min-height: 38px;
+  min-width: 38px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffe0b5;
+  color: #1f1e1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.theme-raftcon-luxury .raftcon-call-circle:hover {
+  background: #f7d29e;
+  transform: scale(1.05);
+}
+
+/* 4. Action Buttons (WhatsApp, Email, Call office) */
+.theme-raftcon-luxury .raftcon-actions-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.theme-raftcon-luxury .raftcon-action-btn {
+  background: #262420;
+  border: 1px solid #34302b;
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #f3ede2;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-raftcon-luxury .raftcon-action-btn:hover {
+  background: #2f2c27;
+  border-color: #4a4339;
+}
+
+.theme-raftcon-luxury .raftcon-action-full {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+/* 5. Primary CTA Buttons (Save Contact + View Brochure) */
+.theme-raftcon-luxury .raftcon-btn-primary {
+  width: 100%;
+  background: #ffe0b5;
+  color: #1f1e1c;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+.theme-raftcon-luxury .raftcon-btn-primary:hover {
+  background: #f7d29e;
+}
+
+.theme-raftcon-luxury .raftcon-btn-outline {
+  width: 100%;
+  background: transparent;
+  color: #ffe0b5;
+  border: 1px solid #ffe0b5;
+  border-radius: 12px;
+  padding: 13px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.theme-raftcon-luxury .raftcon-btn-outline:hover {
+  background: rgba(255, 224, 181, 0.1);
+}
+
+/* 6. Section Headings & About */
+.theme-raftcon-luxury .raftcon-section-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffe0b5;
+  text-align: left;
+  margin: 0 0 14px 0;
+  line-height: 1.2;
+}
+
+.theme-raftcon-luxury .raftcon-about-p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #c8bfb0;
+  text-align: left;
+  margin: 0 0 24px 0;
+}
+
+/* 7. Metrics 2x2 Grid */
+.theme-raftcon-luxury .raftcon-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.theme-raftcon-luxury .raftcon-metric-card {
+  background: #262420;
+  border: 1px solid #34302b;
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: left;
+}
+
+.theme-raftcon-luxury .raftcon-metric-num {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffe0b5;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.theme-raftcon-luxury .raftcon-metric-label {
+  font-size: 12.5px;
+  color: #a08d73;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* 8. Hero Metric Card */
+.theme-raftcon-luxury .raftcon-hero-metric-card {
+  background: #ffe0b5;
+  color: #1f1e1c;
+  border-radius: 14px;
+  padding: 20px 20px;
+  margin-bottom: 36px;
+  text-align: left;
+}
+
+.theme-raftcon-luxury .raftcon-hero-metric-num {
+  font-size: 34px;
+  font-weight: 700;
+  color: #1f1e1c;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.theme-raftcon-luxury .raftcon-hero-metric-label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1f1e1c;
+}
+
+/* 9. Services Cloud */
+.theme-raftcon-luxury .raftcon-services-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.theme-raftcon-luxury .raftcon-service-chip {
+  background: #262420;
+  border: 1px solid #3d3830;
+  border-radius: 9999px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: #f3ede2;
+  white-space: nowrap;
+}
+
+.theme-raftcon-luxury .raftcon-services-footer-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #a08d73;
+  text-align: left;
+  margin: 0 0 36px 0;
+}
+
+/* 10. Projects List */
+.theme-raftcon-luxury .raftcon-projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.theme-raftcon-luxury .raftcon-project-item {
+  background: #262420;
+  border: 1px solid #34302b;
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+}
+
+.theme-raftcon-luxury .raftcon-project-icon {
+  width: 24px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffe0b5;
+}
+
+.theme-raftcon-luxury .raftcon-project-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.theme-raftcon-luxury .raftcon-project-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f3ede2;
+  line-height: 1.2;
+}
+
+.theme-raftcon-luxury .raftcon-project-meta {
+  font-size: 12.5px;
+  color: #a08d73;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* 11. Safety & Mission Cards */
+.theme-raftcon-luxury .raftcon-info-box {
+  background: #262420;
+  border: 1px solid #34302b;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.theme-raftcon-luxury .raftcon-info-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffe0b5;
+  margin-bottom: 6px;
+}
+
+.theme-raftcon-luxury .raftcon-info-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #c8bfb0;
+  margin: 0;
+}
+
+/* 12. Footer Quote & Discrete Utilities */
+.theme-raftcon-luxury .raftcon-bottom-quote {
+  font-size: 12.5px;
+  color: #a08d73;
+  text-align: center;
+  margin: 24px 0 16px;
+  font-weight: 400;
+}
+
+/* 13. Subtle Scroll Reveal Animation */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-raftcon-luxury .raftcon-reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  .theme-raftcon-luxury .raftcon-reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
+

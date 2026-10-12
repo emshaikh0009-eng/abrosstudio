@@ -1,5 +1,5 @@
 import { createAnonymousClient } from "@/utils/supabase/server";
-import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, getDemoProfile } from "@/utils/card-designs";
+import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, AUTHORITATIVE_RAFTCON_CUSTOMER, getDemoProfile } from "@/utils/card-designs";
 import { renderCardHtml, ResolvedCustomerCard } from "@/utils/card-renderer";
 
 function renderUnavailableHtml(title = "Card Unavailable", message = "This digital business card is currently inactive or does not exist."): string {
@@ -145,6 +145,23 @@ export async function GET(
     }
 
     if (error || !data || !Array.isArray(data) || data.length === 0) {
+      if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction") {
+        const activeDesignId = designParam
+          ? resolveCardDesign(designParam).id
+          : "raftcon-luxury";
+        const html = renderCardHtml({
+          ...AUTHORITATIVE_RAFTCON_CUSTOMER,
+          cardDesign: activeDesignId,
+        });
+        return new Response(html, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "public, max-age=0, must-revalidate",
+          },
+        });
+      }
+
       if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {
         const activeDesignId = designParam
           ? resolveCardDesign(designParam).id
