@@ -384,3 +384,96 @@ export async function GET(
     );
   }
 }
+
+// DELETE /api/admin/customers/[id] — safely delete a customer record (protected by RLS & admin check)
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    // Validate that id is a valid positive integer string
+    if (!id || !/^\d+$/.test(id)) {
+      return NextResponse.json(
+        { error: "Invalid customer ID." },
+        { status: 400 }
+      );
+    }
+
+    const cookieStore = await cookies();
+    const supabase = createClient(cookieStore);
+
+    // Verify session & admin role explicitly before delete
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: "Unauthorized access to admin resource." },
+        { status: 401 }
+      );
+    }
+
+    const { data: adminRecord, error: adminError } = await supabase
+      .from("admin_users")
+      .select("id, role, is_active")
+      .eq("id", user.id)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (adminError || !adminRecord) {
+      return NextResponse.json(
+        { error: "Forbidden: Account is not an authorized administrator." },
+        { status: 403 }
+      );
+    }
+
+    // Check if customer exists first
+    const { data: existingCustomer, error: findError } = await supabase
+      .from("customers")
+      .select("id, full_name, profile_slug")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (findError) {
+      console.error("DELETE /api/admin/customers/[id] find error:", findError.message);
+      return NextResponse.json(
+        { error: "Failed to query customer before deletion." },
+        { status: 500 }
+      );
+    }
+
+    if (!existingCustomer) {
+      return NextResponse.json(
+        { error: "Customer record not found." },
+        { status: 404 }
+      );
+    }
+
+    // Perform deletion with RLS enforcement
+    const { error: deleteError } = await supabase
+      .from("customers")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) {
+      console.error("DELETE /api/admin/customers/[id] delete error:", deleteError.message);
+      return NextResponse.json(
+        { error: "Failed to delete customer record." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Customer "${existingCustomer.full_name}" (ID: ${id}) deleted successfully.`,
+      deletedId: id,
+    });
+  } catch (err: any) {
+    console.error("DELETE /api/admin/customers/[id] unexpected error:", err?.message);
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 }
+    );
+  }
+}
+

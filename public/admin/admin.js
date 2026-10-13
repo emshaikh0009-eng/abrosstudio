@@ -341,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-edit-customer" data-id="${c.id}" title="Edit customer profile">Edit</button>
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Copy canonical public card link">Link</button>
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Share digital card">Share</button>
+            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-delete-customer" data-id="${c.id}" data-name="${escapeHtml(c.name)}" data-slug="${escapeHtml(slug)}" title="Delete customer" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.25);">Delete</button>
           </div>
         </td>
       `;
@@ -412,6 +413,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </button>
             <button type="button" class="icon-action-btn btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Share Digital Card" aria-label="Share ${escapeHtml(c.name)} card">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
+            <button type="button" class="icon-action-btn btn-delete-customer" data-id="${c.id}" data-name="${escapeHtml(c.name)}" data-slug="${escapeHtml(slug)}" title="Delete Customer" aria-label="Delete ${escapeHtml(c.name)}" style="color: #ef4444;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
             </button>
           </div>
         </td>
@@ -570,6 +574,96 @@ document.addEventListener('DOMContentLoaded', () => {
           this.disabled = false;
         }
       };
+    });
+
+    // Delete Customer Action Handlers
+    document.querySelectorAll('.btn-delete-customer').forEach(btn => {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        const custId = this.getAttribute('data-id');
+        const custName = this.getAttribute('data-name');
+        const custSlug = this.getAttribute('data-slug');
+        if (custId) {
+          openDeleteCustomerModal(custId, custName, custSlug);
+        }
+      };
+    });
+  }
+
+  // -------------------------------------------------------------
+  // Delete Customer Confirmation Modal Controller
+  // -------------------------------------------------------------
+  const customerDeleteModal = document.getElementById('customerDeleteModal');
+  const deleteCustomerTargetName = document.getElementById('deleteCustomerTargetName');
+  const deleteCustomerIdVal = document.getElementById('deleteCustomerIdVal');
+  const deleteCustomerSlugVal = document.getElementById('deleteCustomerSlugVal');
+  const btnCloseDeleteModal = document.getElementById('btnCloseDeleteModal');
+  const btnCancelDeleteModal = document.getElementById('btnCancelDeleteModal');
+  const btnConfirmDeleteCustomer = document.getElementById('btnConfirmDeleteCustomer');
+  const btnConfirmDeleteText = document.getElementById('btnConfirmDeleteText');
+  const btnConfirmDeleteSpinner = document.getElementById('btnConfirmDeleteSpinner');
+  let customerPendingDelete = null;
+
+  function openDeleteCustomerModal(id, name, slug) {
+    if (!customerDeleteModal) return;
+    customerPendingDelete = { id, name, slug };
+    if (deleteCustomerTargetName) deleteCustomerTargetName.textContent = name || 'Customer';
+    if (deleteCustomerIdVal) deleteCustomerIdVal.textContent = id || '—';
+    if (deleteCustomerSlugVal) deleteCustomerSlugVal.textContent = slug || '—';
+    if (btnConfirmDeleteCustomer) btnConfirmDeleteCustomer.disabled = false;
+    if (btnConfirmDeleteText) btnConfirmDeleteText.textContent = 'Delete Customer';
+    if (btnConfirmDeleteSpinner) btnConfirmDeleteSpinner.style.display = 'none';
+
+    customerDeleteModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDeleteCustomerModal() {
+    if (!customerDeleteModal) return;
+    customerDeleteModal.style.display = 'none';
+    document.body.style.overflow = '';
+    customerPendingDelete = null;
+  }
+
+  if (btnCloseDeleteModal) btnCloseDeleteModal.addEventListener('click', closeDeleteCustomerModal);
+  if (btnCancelDeleteModal) btnCancelDeleteModal.addEventListener('click', closeDeleteCustomerModal);
+  if (customerDeleteModal) {
+    customerDeleteModal.addEventListener('click', (e) => {
+      if (e.target === customerDeleteModal) closeDeleteCustomerModal();
+    });
+  }
+
+  if (btnConfirmDeleteCustomer) {
+    btnConfirmDeleteCustomer.addEventListener('click', async () => {
+      if (!customerPendingDelete || !customerPendingDelete.id) return;
+      const { id, name } = customerPendingDelete;
+
+      btnConfirmDeleteCustomer.disabled = true;
+      if (btnConfirmDeleteText) btnConfirmDeleteText.textContent = 'Deleting...';
+      if (btnConfirmDeleteSpinner) btnConfirmDeleteSpinner.style.display = 'inline-block';
+
+      try {
+        const res = await apiFetch(`/api/admin/customers/${id}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showAdminToast(`Customer "${name}" deleted successfully.`);
+          closeDeleteCustomerModal();
+          await loadCustomers();
+        } else {
+          showAdminToast(data.error || 'Failed to delete customer record.');
+          btnConfirmDeleteCustomer.disabled = false;
+          if (btnConfirmDeleteText) btnConfirmDeleteText.textContent = 'Delete Customer';
+          if (btnConfirmDeleteSpinner) btnConfirmDeleteSpinner.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Delete customer error:', err);
+        showAdminToast('Network error while deleting customer.');
+        btnConfirmDeleteCustomer.disabled = false;
+        if (btnConfirmDeleteText) btnConfirmDeleteText.textContent = 'Delete Customer';
+        if (btnConfirmDeleteSpinner) btnConfirmDeleteSpinner.style.display = 'none';
+      }
     });
   }
 
@@ -985,7 +1079,23 @@ document.addEventListener('DOMContentLoaded', () => {
     currentBackImageUrl = cardImages.backUrl || '';
     if (typeof updateCardImagePreviews === 'function') updateCardImagePreviews();
 
-    // 8. Open the Form Tab
+    // 8. Raftcon Luxury project customization
+    const isRaftcon = customer.design === 'Raftcon Luxury' || 
+                      customer.designId === 'raftcon-luxury' || 
+                      (customer.customSettings?.industry?.type === 'raftcon-construction');
+    const raftconCard = document.getElementById('raftconProjectCard');
+    if (raftconCard) {
+      if (isRaftcon) {
+        raftconCard.style.display = 'block';
+        if (typeof populateRaftconForm === 'function') {
+          populateRaftconForm(customer);
+        }
+      } else {
+        raftconCard.style.display = 'none';
+      }
+    }
+
+    // 9. Open the Form Tab
     navigateToTab('add-customer');
     showAdminToast(`Editing ${customer.name} (Existing Record)`);
   }
@@ -1002,6 +1112,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (saveCustomerBtn) {
       saveCustomerBtn.innerHTML = `<span>Save Customer</span>`;
+    }
+
+    // Reset Raftcon Luxury Customization
+    const raftconCard = document.getElementById('raftconProjectCard');
+    if (raftconCard) raftconCard.style.display = 'none';
+    if (typeof resetRaftconForm === 'function') {
+      resetRaftconForm();
     }
 
     // Clear fields
@@ -1231,6 +1348,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (custTextColor && !custTextColor.value.trim() && custTextColorPicker) {
         custTextColorPicker.value = resolved.theme.textColor || '#1e293b';
         custTextColor.placeholder = resolved.theme.textColor || '#1e293b';
+      }
+    }
+
+    // Toggle Raftcon Construction Project Customization Card
+    const isRaftcon = (resolved.id === 'raftcon-luxury' || resolved.name === 'Raftcon Luxury');
+    const raftconCard = document.getElementById('raftconProjectCard');
+    if (raftconCard) {
+      if (isRaftcon) {
+        raftconCard.style.display = 'block';
+        if (typeof isRaftconInitialized === 'function' && !isRaftconInitialized()) {
+          populateRaftconForm(null);
+        }
+      } else {
+        raftconCard.style.display = 'none';
       }
     }
 
@@ -1597,6 +1728,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const existing = currentEditingCustomerId ? customers.find(c => String(c.id) === String(currentEditingCustomerId)) : null;
       const slug = (existing && existing.profileSlug) ? existing.profileSlug : (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
 
+      const isRaftconDesign = (selectedDesign === 'Raftcon Luxury') || 
+        (existing && (existing.design === 'Raftcon Luxury' || existing.designId === 'raftcon-luxury')) ||
+        (document.getElementById('raftconProjectCard') && document.getElementById('raftconProjectCard').style.display !== 'none');
+
+      let industryPayload = null;
+      if (isRaftconDesign && typeof collectRaftconIndustryData === 'function') {
+        industryPayload = collectRaftconIndustryData();
+      } else if (existing && existing.customSettings && existing.customSettings.industry) {
+        industryPayload = existing.customSettings.industry;
+      }
+
       const payload = {
         name,
         role,
@@ -1614,7 +1756,7 @@ document.addEventListener('DOMContentLoaded', () => {
         profileSlug: slug,
         avatar_url: currentUploadedAvatar,
         custom_settings: {
-          ...(existing && existing.customSettings && existing.customSettings.industry ? { industry: existing.customSettings.industry } : {}),
+          ...(industryPayload ? { industry: industryPayload } : {}),
           appearance: {
             primaryColor: custPrimaryColor ? custPrimaryColor.value.trim() : '',
             backgroundColor: custBgColor ? custBgColor.value.trim() : '',
@@ -2267,6 +2409,362 @@ document.addEventListener('DOMContentLoaded', () => {
       renderCustomLinks();
       showAdminToast(addedCount > 0 ? `Imported ${addedCount} contact links` : 'All filled contact links are already present');
     });
+  }
+
+  // -------------------------------------------------------------
+  // Raftcon Luxury Customization Controller
+  // -------------------------------------------------------------
+  const DEFAULT_RAFTCON_INDUSTRY = {
+    tagline: "Crafting Quality, Constructing Futures",
+    officePhone: "(+91) 99675-22999",
+    rawOfficePhone: "+919967522999",
+    contacts: [
+      { name: "Ghulamsarwar Qureshi", phone: "(+91) 99675-22999", rawPhone: "+919967522999", role: "Partner" },
+      { name: "Tabrez Qureshi", phone: "(+91) 90040-00567", rawPhone: "+919004000567", role: "Executive" }
+    ],
+    heroMetric: { value: "35+ Years", label: "Of experience" },
+    metrics: [
+      { value: "33+", label: "Completed projects" },
+      { value: "07", label: "Cities" },
+      { value: "01", label: "Ongoing project" },
+      { value: "96%", label: "Customer retention" }
+    ],
+    services: [
+      "Industrial construction", "Industrial sheds", "Commercial complexes",
+      "Residential projects", "Housing societies", "Property redevelopment",
+      "Showrooms & workshops", "Godowns & warehouses", "Medical & educational",
+      "Agricultural sheds", "Cattle & poultry farms"
+    ],
+    servicesSummary: "One team for architectural and structural design, RCC, masonry, electrical, plumbing, flooring and interiors.",
+    projects: [
+      { name: "Kataria Motors", meta: "Piplod, Surat · 2009" },
+      { name: "Ashwarath Complex", meta: "Ahmedabad · 2010" },
+      { name: "SMT N.M.P Pharmacy College", meta: "Educational · 2014" },
+      { name: "Shiv Residency", meta: "Haldharu · 2023" },
+      { name: "La Ceremony Banquet", meta: "Restaurant & banquet · 2025" }
+    ],
+    safety: "Safety is everyone's responsibility. Our goal is zero incidents and injuries, for our team and the public.",
+    mission: "A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build.",
+    footerQuote: "Lets make success stories together",
+    brochureUrl: "/c/raftcon/brochure"
+  };
+
+  let currentRaftconContacts = [];
+  let currentRaftconMetrics = [];
+  let currentRaftconServices = [];
+  let currentRaftconProjects = [];
+
+  function isRaftconInitialized() {
+    return currentRaftconContacts.length > 0 || currentRaftconServices.length > 0;
+  }
+
+  function renderRaftconContacts() {
+    const container = document.getElementById('raftconContactsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (currentRaftconContacts.length === 0) {
+      container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); padding: 8px 0;">No contacts added yet. Click "+ Add Contact" above.</div>';
+      return;
+    }
+
+    currentRaftconContacts.forEach((contact, idx) => {
+      const card = document.createElement('div');
+      card.style.cssText = 'display: flex; gap: 8px; align-items: center; background: #f8fafc; border: 1px solid var(--border-light); padding: 8px 10px; border-radius: var(--radius-sm);';
+      card.innerHTML = `
+        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+          <input type="text" class="form-input" placeholder="Name (e.g. Tabrez Qureshi)" value="${escapeHtml(contact.name || '')}" style="font-size: 12px; padding: 6px 8px;" data-field="name">
+          <input type="text" class="form-input" placeholder="Display Phone" value="${escapeHtml(contact.phone || '')}" style="font-size: 12px; padding: 6px 8px;" data-field="phone">
+          <input type="text" class="form-input" placeholder="Dial / Raw (+91...)" value="${escapeHtml(contact.rawPhone || contact.phone || '')}" style="font-size: 12px; padding: 6px 8px;" data-field="rawPhone">
+        </div>
+        <button type="button" class="link-btn-icon delete" title="Remove Contact" style="color: #ef4444; flex-shrink: 0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      `;
+
+      card.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const field = e.target.getAttribute('data-field');
+          if (field) currentRaftconContacts[idx][field] = e.target.value;
+        });
+      });
+
+      card.querySelector('.delete').addEventListener('click', () => {
+        currentRaftconContacts.splice(idx, 1);
+        renderRaftconContacts();
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  function renderRaftconMetrics() {
+    const container = document.getElementById('raftconMetricsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (currentRaftconMetrics.length === 0) {
+      container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); padding: 6px 0;">No grid metrics added yet. Click "+ Add Metric" above.</div>';
+      return;
+    }
+
+    currentRaftconMetrics.forEach((metric, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+      row.innerHTML = `
+        <input type="text" class="form-input" placeholder="Value (e.g. 33+)" value="${escapeHtml(metric.value || '')}" style="font-size: 12px; padding: 6px 8px; width: 110px; flex-shrink: 0;" data-field="value">
+        <input type="text" class="form-input" placeholder="Label (e.g. Completed projects)" value="${escapeHtml(metric.label || '')}" style="font-size: 12px; padding: 6px 8px; flex: 1;" data-field="label">
+        <button type="button" class="link-btn-icon delete" title="Remove Metric" style="color: #ef4444; flex-shrink: 0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      `;
+
+      row.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const field = e.target.getAttribute('data-field');
+          if (field) currentRaftconMetrics[idx][field] = e.target.value;
+        });
+      });
+
+      row.querySelector('.delete').addEventListener('click', () => {
+        currentRaftconMetrics.splice(idx, 1);
+        renderRaftconMetrics();
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  function renderRaftconServices() {
+    const list = document.getElementById('raftconServicesList');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (currentRaftconServices.length === 0) {
+      list.innerHTML = '<span style="font-size: 12px; color: var(--text-muted);">No services listed. Enter a service above and click Add.</span>';
+      return;
+    }
+
+    currentRaftconServices.forEach((svc, idx) => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'display: inline-flex; align-items: center; gap: 5px; background: #e2e8f0; color: #1e293b; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 500;';
+      chip.innerHTML = `
+        <span>${escapeHtml(svc)}</span>
+        <button type="button" style="border: none; background: transparent; cursor: pointer; color: #64748b; font-weight: bold; font-size: 14px; line-height: 1; padding: 0 2px;" title="Remove service">&times;</button>
+      `;
+      chip.querySelector('button').addEventListener('click', () => {
+        currentRaftconServices.splice(idx, 1);
+        renderRaftconServices();
+      });
+      list.appendChild(chip);
+    });
+  }
+
+  function renderRaftconProjects() {
+    const container = document.getElementById('raftconProjectsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (currentRaftconProjects.length === 0) {
+      container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); padding: 8px 0;">No portfolio projects added yet. Click "+ Add Project" above.</div>';
+      return;
+    }
+
+    currentRaftconProjects.forEach((proj, idx) => {
+      const item = document.createElement('div');
+      item.style.cssText = 'display: flex; gap: 8px; align-items: center; background: #f8fafc; border: 1px solid var(--border-light); padding: 8px 10px; border-radius: var(--radius-sm);';
+      item.innerHTML = `
+        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1.5fr; gap: 6px;">
+          <input type="text" class="form-input" placeholder="Project Name" value="${escapeHtml(proj.name || '')}" style="font-size: 12px; padding: 6px 8px;" data-field="name">
+          <input type="text" class="form-input" placeholder="Details (e.g. Surat · 2024 or Turnkey RCC)" value="${escapeHtml(proj.meta || '')}" style="font-size: 12px; padding: 6px 8px;" data-field="meta">
+        </div>
+        <button type="button" class="link-btn-icon delete" title="Remove Project" style="color: #ef4444; flex-shrink: 0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      `;
+
+      item.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const field = e.target.getAttribute('data-field');
+          if (field) currentRaftconProjects[idx][field] = e.target.value;
+        });
+      });
+
+      item.querySelector('.delete').addEventListener('click', () => {
+        currentRaftconProjects.splice(idx, 1);
+        renderRaftconProjects();
+      });
+
+      container.appendChild(item);
+    });
+  }
+
+  // Hook up Raftcon Add Buttons
+  const btnAddRaftconContact = document.getElementById('btnAddRaftconContact');
+  if (btnAddRaftconContact) {
+    btnAddRaftconContact.addEventListener('click', () => {
+      currentRaftconContacts.push({ name: '', phone: '', rawPhone: '' });
+      renderRaftconContacts();
+    });
+  }
+
+  const btnAddRaftconMetric = document.getElementById('btnAddRaftconMetric');
+  if (btnAddRaftconMetric) {
+    btnAddRaftconMetric.addEventListener('click', () => {
+      currentRaftconMetrics.push({ value: '', label: '' });
+      renderRaftconMetrics();
+    });
+  }
+
+  const btnAddRaftconService = document.getElementById('btnAddRaftconService');
+  const newRaftconServiceInput = document.getElementById('newRaftconServiceInput');
+  function addServiceFromInput() {
+    if (!newRaftconServiceInput) return;
+    const val = newRaftconServiceInput.value.trim();
+    if (val && !currentRaftconServices.includes(val)) {
+      currentRaftconServices.push(val);
+      newRaftconServiceInput.value = '';
+      renderRaftconServices();
+    }
+  }
+  if (btnAddRaftconService) {
+    btnAddRaftconService.addEventListener('click', addServiceFromInput);
+  }
+  if (newRaftconServiceInput) {
+    newRaftconServiceInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addServiceFromInput();
+      }
+    });
+  }
+
+  const btnAddRaftconProject = document.getElementById('btnAddRaftconProject');
+  if (btnAddRaftconProject) {
+    btnAddRaftconProject.addEventListener('click', () => {
+      currentRaftconProjects.push({ name: '', meta: '' });
+      renderRaftconProjects();
+    });
+  }
+
+  function populateRaftconForm(customer) {
+    const custom = customer?.customSettings || {};
+    const indData = (custom.industry && custom.industry.data) ? custom.industry.data : {};
+
+    const raftconTagline = document.getElementById('raftconTagline');
+    if (raftconTagline) raftconTagline.value = indData.tagline || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.tagline);
+
+    const raftconOfficePhone = document.getElementById('raftconOfficePhone');
+    if (raftconOfficePhone) raftconOfficePhone.value = indData.officePhone || indData.office_phone || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.officePhone);
+
+    const raftconRawOfficePhone = document.getElementById('raftconRawOfficePhone');
+    if (raftconRawOfficePhone) raftconRawOfficePhone.value = indData.rawOfficePhone || indData.office_phone_raw || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.rawOfficePhone);
+
+    const rawContacts = Array.isArray(indData.contacts) && indData.contacts.length > 0
+      ? indData.contacts
+      : (customer ? [] : DEFAULT_RAFTCON_INDUSTRY.contacts);
+    currentRaftconContacts = rawContacts.map(c => ({
+      name: c.name || '',
+      phone: c.phone || c.phone_display || '',
+      rawPhone: c.rawPhone || c.phone_raw || c.phone || '',
+      role: c.role || ''
+    }));
+    renderRaftconContacts();
+
+    const hero = indData.heroMetric || indData.hero_metric || (customer ? {} : DEFAULT_RAFTCON_INDUSTRY.heroMetric);
+    const raftconHeroMetricValue = document.getElementById('raftconHeroMetricValue');
+    if (raftconHeroMetricValue) raftconHeroMetricValue.value = hero.value || '';
+    const raftconHeroMetricLabel = document.getElementById('raftconHeroMetricLabel');
+    if (raftconHeroMetricLabel) raftconHeroMetricLabel.value = hero.label || '';
+
+    const rawMetrics = Array.isArray(indData.metrics) && indData.metrics.length > 0
+      ? indData.metrics
+      : (customer ? [] : DEFAULT_RAFTCON_INDUSTRY.metrics);
+    currentRaftconMetrics = rawMetrics.map(m => ({
+      value: m.value || '',
+      label: m.label || ''
+    }));
+    renderRaftconMetrics();
+
+    const rawServices = Array.isArray(indData.services) && indData.services.length > 0
+      ? indData.services
+      : (customer ? [] : DEFAULT_RAFTCON_INDUSTRY.services);
+    currentRaftconServices = [...rawServices];
+    renderRaftconServices();
+
+    const raftconServicesSummary = document.getElementById('raftconServicesSummary');
+    if (raftconServicesSummary) raftconServicesSummary.value = indData.servicesSummary || indData.services_summary || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.servicesSummary);
+
+    let rawProjects = customer ? [] : DEFAULT_RAFTCON_INDUSTRY.projects;
+    if (Array.isArray(indData.projects) && indData.projects.length > 0) {
+      rawProjects = indData.projects;
+    } else if (Array.isArray(indData.portfolio_projects) && indData.portfolio_projects.length > 0) {
+      rawProjects = indData.portfolio_projects.map(p => ({
+        name: p.name || '',
+        meta: [p.category, p.description].filter(Boolean).join(' · ')
+      }));
+    }
+    currentRaftconProjects = rawProjects.map(p => ({
+      name: p.name || '',
+      meta: p.meta || p.description || ''
+    }));
+    renderRaftconProjects();
+
+    const raftconSafetyText = document.getElementById('raftconSafetyText');
+    if (raftconSafetyText) raftconSafetyText.value = indData.safety || indData.safety_policy || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.safety);
+
+    const raftconMissionText = document.getElementById('raftconMissionText');
+    if (raftconMissionText) raftconMissionText.value = indData.mission || indData.mission_statement || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.mission);
+
+    const raftconFooterQuote = document.getElementById('raftconFooterQuote');
+    if (raftconFooterQuote) raftconFooterQuote.value = indData.footerQuote || indData.footer_quote || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.footerQuote);
+
+    const raftconBrochureUrl = document.getElementById('raftconBrochureUrl');
+    if (raftconBrochureUrl) raftconBrochureUrl.value = indData.brochureUrl || indData.brochure_viewer_url || (customer ? '' : DEFAULT_RAFTCON_INDUSTRY.brochureUrl);
+  }
+
+  function resetRaftconForm() {
+    const ids = [
+      'raftconTagline', 'raftconOfficePhone', 'raftconRawOfficePhone',
+      'raftconHeroMetricValue', 'raftconHeroMetricLabel', 'raftconServicesSummary',
+      'raftconSafetyText', 'raftconMissionText', 'raftconFooterQuote', 'raftconBrochureUrl'
+    ];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    currentRaftconContacts = [];
+    currentRaftconMetrics = [];
+    currentRaftconServices = [];
+    currentRaftconProjects = [];
+    renderRaftconContacts();
+    renderRaftconMetrics();
+    renderRaftconServices();
+    renderRaftconProjects();
+  }
+
+  function collectRaftconIndustryData() {
+    return {
+      type: 'raftcon-construction',
+      data: {
+        tagline: document.getElementById('raftconTagline')?.value.trim() || '',
+        officePhone: document.getElementById('raftconOfficePhone')?.value.trim() || '',
+        rawOfficePhone: document.getElementById('raftconRawOfficePhone')?.value.trim() || '',
+        contacts: currentRaftconContacts.filter(c => c.name || c.phone),
+        heroMetric: {
+          value: document.getElementById('raftconHeroMetricValue')?.value.trim() || '',
+          label: document.getElementById('raftconHeroMetricLabel')?.value.trim() || '',
+        },
+        metrics: currentRaftconMetrics.filter(m => m.value || m.label),
+        services: currentRaftconServices.filter(Boolean),
+        servicesSummary: document.getElementById('raftconServicesSummary')?.value.trim() || '',
+        projects: currentRaftconProjects.filter(p => p.name || p.meta),
+        safety: document.getElementById('raftconSafetyText')?.value.trim() || '',
+        mission: document.getElementById('raftconMissionText')?.value.trim() || '',
+        footerQuote: document.getElementById('raftconFooterQuote')?.value.trim() || '',
+        brochureUrl: document.getElementById('raftconBrochureUrl')?.value.trim() || '',
+      }
+    };
   }
 
   // Global Header Search

@@ -316,7 +316,7 @@ function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
   let html = `
     <!-- Raftcon Approved Brand Header -->
     <header class="raftcon-header raftcon-reveal">
-      <img src="/assets/brochures/raftcon-brand-logo.png" alt="Raftcon Construction &amp; Developer — Crafting Quality, Constructing Futures" class="raftcon-brand-logo-img" />
+      <img src="${escapeHtml(card.avatarUrl || '/assets/brochures/raftcon-brand-logo.png')}" alt="${escapeHtml(card.fullName || 'Raftcon Construction')} — Crafting Quality, Constructing Futures" class="raftcon-brand-logo-img" />
     </header>
 
     <!-- Contact Section -->
@@ -326,12 +326,13 @@ function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
   `;
 
   contacts.forEach((c: any) => {
-    const rawNum = c.rawPhone || c.phone.replace(/[^0-9+]/g, '');
+    const displayPhone = c.phone || c.phone_display || '';
+    const rawNum = c.rawPhone || displayPhone.replace(/[^0-9+]/g, '');
     html += `
         <div class="raftcon-contact-card">
           <div class="raftcon-contact-meta">
-            <span class="raftcon-contact-name">${escapeHtml(c.name)}</span>
-            <span class="raftcon-contact-phone">${escapeHtml(c.phone)}</span>
+            <span class="raftcon-contact-name">${escapeHtml(c.name || '')}</span>
+            <span class="raftcon-contact-phone">${escapeHtml(displayPhone)}</span>
           </div>
           <a href="tel:${rawNum}" class="raftcon-call-circle" aria-label="Call ${escapeHtml(c.name)}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f1e1c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -388,9 +389,9 @@ function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
 
     <!-- About Raftcon Section -->
     <div class="raftcon-reveal">
-      <h2 class="raftcon-section-title">About Raftcon</h2>
+      <h2 class="raftcon-section-title">About ${escapeHtml(card.fullName ? card.fullName.replace(/\s*(?:Construction|Developer|Pvt|Ltd).*$/i, '') || card.fullName : 'Raftcon')}</h2>
       <p class="raftcon-about-p">
-        Since 1990, Raftcon has grown into a fully integrated civil engineering company, building industrial, commercial and residential complexes, housing colonies, turnkey projects and chemical plants.
+        ${escapeHtml(card.description || "Since 1990, Raftcon has grown into a fully integrated civil engineering company, building industrial, commercial and residential complexes, housing colonies, turnkey projects and chemical plants.")}
       </p>
     </div>
 

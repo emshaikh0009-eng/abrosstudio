@@ -671,6 +671,139 @@
 
               </div>
 
+              <!-- 5. Raftcon Construction & Projects Customization Card (Shown for Raftcon Luxury) -->
+              <div class="form-card" id="raftconProjectCard" style="display: none;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                  <h2 class="form-section-title" style="margin: 0;">Raftcon Project &amp; Infrastructure Details</h2>
+                  <span class="badge-design" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">Raftcon Luxury</span>
+                </div>
+                <p class="form-section-sub">Public-facing brand tagline, multi-contact directory, metrics, services, and portfolio showcase.</p>
+
+                <!-- Tagline & Office Phones -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="form-group">
+                    <label for="raftconTagline" class="form-label">Company / Project Tagline</label>
+                    <input type="text" id="raftconTagline" class="form-input" placeholder="e.g. Crafting Quality, Constructing Futures">
+                  </div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="raftconOfficePhone" class="form-label">Office Phone (Display)</label>
+                      <input type="text" id="raftconOfficePhone" class="form-input" placeholder="(+91) 99675-22999">
+                    </div>
+                    <div class="form-group">
+                      <label for="raftconRawOfficePhone" class="form-label">Office Phone (Dial / Raw)</label>
+                      <input type="text" id="raftconRawOfficePhone" class="form-input" placeholder="+919967522999">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Key Contacts (Repeatable list) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">Key Contact Persons</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Partners / engineers displayed with dedicated call circles (e.g. Ghulamsarwar &amp; Tabrez Qureshi).</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnAddRaftconContact">
+                      <span>+ Add Contact</span>
+                    </button>
+                  </div>
+                  <div id="raftconContactsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Hero Metric & Engineering Metrics -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading">Hero &amp; Engineering Metrics</div>
+                  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Highlights displayed in the gold statistics grid.</p>
+                  <div class="form-row-2col" style="margin-bottom: 12px;">
+                    <div class="form-group">
+                      <label for="raftconHeroMetricValue" class="form-label">Hero Metric Value</label>
+                      <input type="text" id="raftconHeroMetricValue" class="form-input" placeholder="35+ Years">
+                    </div>
+                    <div class="form-group">
+                      <label for="raftconHeroMetricLabel" class="form-label">Hero Metric Label</label>
+                      <input type="text" id="raftconHeroMetricLabel" class="form-input" placeholder="Of experience">
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 12px; font-weight: 600; color: var(--text-headline);">Grid Metrics</span>
+                    <button type="button" class="btn btn-white btn-xs" id="btnAddRaftconMetric">
+                      <span>+ Add Metric</span>
+                    </button>
+                  </div>
+                  <div id="raftconMetricsContainer" style="display: flex; flex-direction: column; gap: 6px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Services & Scope of Work -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div>
+                      <div class="customization-subheading">Services &amp; Specialisations</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Interactive services cloud shown on profile.</p>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                      <input type="text" id="newRaftconServiceInput" class="form-input" placeholder="e.g. Turnkey projects" style="font-size: 12px; padding: 4px 8px; width: 170px;">
+                      <button type="button" class="btn btn-white btn-sm" id="btnAddRaftconService">
+                        <span>Add</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div id="raftconServicesList" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; min-height: 36px; padding: 8px; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm);">
+                    <!-- Rendered chips -->
+                  </div>
+                  <div class="form-group" style="margin-top: 10px;">
+                    <label for="raftconServicesSummary" class="form-label">Services Scope / Summary</label>
+                    <textarea id="raftconServicesSummary" class="form-textarea" placeholder="One team for architectural and structural design, RCC, masonry, electrical, plumbing, flooring and interiors." style="min-height: 56px;"></textarea>
+                  </div>
+                </div>
+
+                <!-- Portfolio Projects -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">Showcase Projects</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Major landmark builds displayed in project cards.</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnAddRaftconProject">
+                      <span>+ Add Project</span>
+                    </button>
+                  </div>
+                  <div id="raftconProjectsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Safety, Mission, Footer Quote & Brochure Reference -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="form-group">
+                    <label for="raftconSafetyText" class="form-label">Safety First Policy</label>
+                    <textarea id="raftconSafetyText" class="form-textarea" placeholder="Safety is everyone's responsibility. Our goal is zero incidents and injuries, for our team and the public." style="min-height: 50px;"></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="raftconMissionText" class="form-label">Our Mission Statement</label>
+                    <textarea id="raftconMissionText" class="form-textarea" placeholder="A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build." style="min-height: 50px;"></textarea>
+                  </div>
+
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="raftconFooterQuote" class="form-label">Footer Tagline Quote</label>
+                      <input type="text" id="raftconFooterQuote" class="form-input" placeholder="Lets make success stories together">
+                    </div>
+                    <div class="form-group">
+                      <label for="raftconBrochureUrl" class="form-label">Official Brochure Viewer URL</label>
+                      <input type="text" id="raftconBrochureUrl" class="form-input" placeholder="/c/raftcon/brochure">
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
               <!-- Form Action Buttons -->
               <div class="form-actions-bar">
                 <button type="button" class="btn btn-white" id="cancelAddCustomer">Cancel</button>
@@ -985,6 +1118,41 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: Confirm Delete Customer -->
+  <div id="customerDeleteModal" class="custom-modal-backdrop" style="display: none;">
+    <div class="custom-modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" style="max-width: 440px;">
+      <div class="custom-modal-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.15);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          </div>
+          <h3 class="custom-modal-title" id="deleteModalTitle" style="color: #991b1b;">Delete Customer</h3>
+        </div>
+        <button type="button" class="link-btn-icon" id="btnCloseDeleteModal" aria-label="Close delete modal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="font-size: 13.5px; color: var(--text-headline); line-height: 1.5; margin: 0;">
+          Are you sure you want to permanently delete <strong id="deleteCustomerTargetName">Customer</strong>?
+        </p>
+        <p style="font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.5;">
+          This will remove their profile from the database and make their public digital card link inactive. This action cannot be undone.
+        </p>
+        <div id="deleteCustomerMetaBox" style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 12px; color: var(--text-muted);">
+          ID: <span id="deleteCustomerIdVal" style="font-weight: 600; color: var(--text-headline);">—</span> &bull; Slug: <span id="deleteCustomerSlugVal" style="font-family: monospace; color: var(--text-headline);">—</span>
+        </div>
+      </div>
+      <div class="custom-modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn btn-white btn-sm" id="btnCancelDeleteModal">Cancel</button>
+        <button type="button" class="btn btn-sm" id="btnConfirmDeleteCustomer" style="background: #dc2626; color: #ffffff; border: 1px solid #b91c1c; font-weight: 600;">
+          <span id="btnConfirmDeleteText">Delete Customer</span>
+          <span class="btn-spinner" id="btnConfirmDeleteSpinner" style="display: none; border-color: #fff; border-top-color: transparent;" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
   </div>
 
