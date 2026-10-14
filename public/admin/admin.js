@@ -2833,6 +2833,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Detect password recovery redirect on /admin
+  try {
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    if (
+      hash.includes('type=recovery') ||
+      search.includes('type=recovery') ||
+      (search.includes('token_hash=') && search.includes('recovery'))
+    ) {
+      window.location.replace('/admin/reset-password' + search + hash);
+      return;
+    }
+  } catch (e) {
+    console.warn('Recovery redirect detection error:', e);
+  }
+
   // Check for reset=success parameter in URL on load
   try {
     const urlParams = new URLSearchParams(window.location.search);

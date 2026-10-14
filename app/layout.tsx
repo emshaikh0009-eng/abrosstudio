@@ -100,6 +100,31 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sora.variable} ${inter.variable}`}>
+      <head>
+        {/* Seamless redirect if Supabase password-recovery token lands on root or general pages */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var h = window.location.hash || '';
+                  var s = window.location.search || '';
+                  var p = window.location.pathname || '';
+                  if (p !== '/admin/reset-password' && p !== '/admin/reset-password/') {
+                    if (
+                      h.indexOf('type=recovery') !== -1 ||
+                      s.indexOf('type=recovery') !== -1 ||
+                      (s.indexOf('token_hash=') !== -1 && s.indexOf('recovery') !== -1)
+                    ) {
+                      window.location.replace('/admin/reset-password' + s + h);
+                    }
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="antialiased">
         <ScrollObserver />
         <Header />
