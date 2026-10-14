@@ -15,6 +15,14 @@ const nextConfig = {
         destination: '/admin/index.html',
       },
       {
+        source: '/admin/reset-password',
+        destination: '/admin/reset-password.html',
+      },
+      {
+        source: '/admin/reset-password/',
+        destination: '/admin/reset-password.html',
+      },
+      {
         source: '/admin.css',
         destination: '/admin/admin.css',
       },

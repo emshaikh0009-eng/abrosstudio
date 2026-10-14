@@ -146,11 +146,21 @@ export async function GET(
 
     if (error || !data || !Array.isArray(data) || data.length === 0) {
       if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction" || sanitizedSlug === "tabrezqureshi") {
-        const redirectUrl = new URL("/tabrezqureshi", request.url);
-        if (designParam) {
-          redirectUrl.searchParams.set("design", designParam);
-        }
-        return Response.redirect(redirectUrl, 308);
+        const activeDesignId = designParam
+          ? resolveCardDesign(designParam).id
+          : resolveCardDesign(AUTHORITATIVE_RAFTCON_CUSTOMER.cardDesign).id;
+        const html = renderCardHtml({
+          ...AUTHORITATIVE_RAFTCON_CUSTOMER,
+          cardDesign: activeDesignId,
+          profileSlug: "tabrezqureshi",
+        });
+        return new Response(html, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "public, max-age=0, must-revalidate",
+          },
+        });
       }
 
       if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {

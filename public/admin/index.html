@@ -32,13 +32,13 @@
         </div>
 
         <div class="login-header-group">
-          <h2 class="login-title">Admin Portal Sign In</h2>
-          <p class="login-subtitle">Secure access to digital cards & client profile management</p>
+          <h2 class="login-title" id="loginCardTitle">Admin Portal Sign In</h2>
+          <p class="login-subtitle" id="loginCardSubtitle">Secure access to digital cards & client profile management</p>
         </div>
 
         <!-- Alert Message Container -->
         <div id="loginAlert" class="login-alert" style="display: none;" role="alert">
-          <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg class="alert-icon" id="loginAlertIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -74,6 +74,7 @@
           <div class="login-field-group">
             <div class="login-label-row">
               <label for="loginPassword" class="login-field-label">Password</label>
+              <button type="button" class="login-forgot-link" id="btnShowForgotModal">Forgot Password?</button>
             </div>
             <div class="login-input-wrapper">
               <svg class="login-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -104,6 +105,44 @@
           <button type="submit" class="btn btn-gold login-submit-btn" id="loginSubmitBtn">
             <span class="btn-text" id="loginSubmitText">Sign In to Admin Panel</span>
             <span class="btn-spinner" id="loginSubmitSpinner" style="display: none;" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <!-- Forgot Password Form (Toggled via "Forgot Password?" link) -->
+        <form id="adminForgotForm" class="login-form" style="display: none;" novalidate>
+          <div class="login-field-group">
+            <label for="forgotEmail" class="login-field-label">Administrator Email</label>
+            <div class="login-input-wrapper">
+              <svg class="login-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input 
+                type="email" 
+                id="forgotEmail" 
+                name="forgotEmail" 
+                class="login-field-input" 
+                placeholder="ambrosstudioltd@gmail.com" 
+                autocomplete="email" 
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                inputmode="email"
+                required
+              >
+            </div>
+            <p class="login-field-help" style="font-size: 12.5px; color: #a1a1aa; margin: 4px 0 0 0; line-height: 1.4;">
+              Enter your email to receive a secure password reset link.
+            </p>
+          </div>
+
+          <button type="submit" class="btn btn-gold login-submit-btn" id="forgotSubmitBtn">
+            <span class="btn-text" id="forgotSubmitText">Send Reset Link</span>
+            <span class="btn-spinner" id="forgotSubmitSpinner" style="display: none;" aria-hidden="true"></span>
+          </button>
+
+          <button type="button" class="btn btn-ghost login-back-btn" id="btnBackToLogin" style="width: 100%; color: #d4d4d8; font-size: 13.5px; padding: 10px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease;">
+            &larr; Back to Sign In
           </button>
         </form>
 

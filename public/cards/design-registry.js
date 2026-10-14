@@ -85,12 +85,12 @@
       description: 'Refined dark card with metallic gold ring, charcoal surfaces, and executive typography.',
       theme: {
         baseMode: 'dark',
-        primaryColor: '#dfb76c',
-        backgroundColor: '#0b0d13',
-        textColor: '#f8fafc',
-        accentColor: '#c59d53',
-        fontFamily: 'Plus Jakarta Sans',
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
+        primaryColor: '#d9b062',
+        backgroundColor: '#0b0d12',
+        textColor: '#f2ede2',
+        accentColor: '#b8955a',
+        fontFamily: 'Libre Baskerville',
+        fontUrl: 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;500;600&display=swap'
       },
       layoutType: 'personal-stack',
       ctaStyle: {
@@ -100,9 +100,9 @@
         secondaryStyle: 'gold-outline'
       },
       wireframe: {
-        bg: '#0b0d13',
-        accent: '#dfb76c',
-        text: '#ffffff',
+        bg: '#0b0d12',
+        accent: '#d9b062',
+        text: '#f2ede2',
         style: 'wf-noir-gold'
       }
     },
@@ -675,27 +675,49 @@
 
     'noir-gold': {
       fullName: 'Alexander Sterling',
-      designation: 'Managing Director · Private Advisory',
-      company: 'Sterling & Vance Partners',
-      description: 'Advising enterprise leadership and family offices on cross-border transactions, private capital, and legacy strategy.',
-      phone: '+91 98200 34567',
-      whatsapp: '919820034567',
-      email: 'alexander@sterlingvance.demo',
-      website: 'https://sterlingvance.demo',
-      address: 'Financial Center, Mumbai',
-      socialInstagram: 'https://instagram.com/sterlingvance.demo',
-      socialLinkedIn: 'https://linkedin.com/in/alexandersterling-demo',
+      designation: 'Founder & CEO',
+      company: 'Your Business',
+      description: 'I help clients grow with simple, reliable service. Save my details to your phone or reach me in one tap.',
+      phone: '+91 98765 43210',
+      whatsapp: '919876543210',
+      email: 'hello@yourbusiness.com',
+      website: 'https://www.yourbusiness.com',
+      address: 'Your Office, 4th Floor, Your Road, Your City 395001',
+      socialLinkedIn: 'https://linkedin.com',
+      socialInstagram: 'https://instagram.com',
       cardDesign: 'noir-gold',
       profileSlug: 'demo-noir-gold',
       avatarUrl: '',
       is_active: true,
       customSettings: {
-        appearance: { primaryColor: '#dfb76c', backgroundColor: '#0b0d13', textColor: '#f8fafc', fontFamily: 'Plus Jakarta Sans' },
+        appearance: { primaryColor: '#d9b062', backgroundColor: '#0b0d12', textColor: '#f2ede2', fontFamily: 'Libre Baskerville' },
+        industry: {
+          type: 'personal',
+          data: {
+            status: 'Available today, 10 am to 6 pm',
+            stats: [
+              { num: '12+', label: 'Years' },
+              { num: '340', label: 'Clients' },
+              { num: '4.9', label: 'Rating' }
+            ],
+            services: [
+              { name: 'Business consulting', sub: '1:1 sessions' },
+              { name: 'Growth strategy', sub: 'Quarterly plans' },
+              { name: 'Team workshops', sub: 'Half or full day' },
+              { name: 'Ongoing advisory', sub: 'Monthly retainer' }
+            ],
+            reviews: [
+              { quote: 'Clear advice, no jargon. Our revenue grew within two quarters.', author: 'Client Name, Company' },
+              { quote: 'Always reachable and always prepared. A rare combination.', author: 'Client Name, Company' },
+              { quote: 'Our team finally has a plan everyone understands.', author: 'Client Name, Company' }
+            ]
+          }
+        },
         links: [
-          { id: '1', type: 'phone', label: 'Executive Line', value: '+91 98200 34567', enabled: true, order: 0 },
-          { id: '2', type: 'whatsapp', label: 'WhatsApp Direct', value: '919820034567', enabled: true, order: 1 },
-          { id: '3', type: 'email', label: 'Confidential Email', value: 'alexander@sterlingvance.demo', enabled: true, order: 2 },
-          { id: '4', type: 'website', label: 'Advisory Overview', value: 'https://sterlingvance.demo', enabled: true, order: 3 }
+          { id: '1', type: 'email', label: 'Email', value: 'hello@yourbusiness.com', enabled: true, order: 0 },
+          { id: '2', type: 'phone', label: 'Call', value: '+91 98765 43210', enabled: true, order: 1 },
+          { id: '3', type: 'whatsapp', label: 'WhatsApp', value: '919876543210', enabled: true, order: 2 },
+          { id: '4', type: 'website', label: 'Website', value: 'https://www.yourbusiness.com', enabled: true, order: 3 }
         ]
       }
     },

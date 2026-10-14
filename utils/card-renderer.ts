@@ -78,6 +78,11 @@ function cleanPhone(val?: string | null): string {
   return String(val).replace(/[^0-9+]/g, "");
 }
 
+function cleanDisplayUrl(val?: string | null): string {
+  if (!val) return "";
+  return String(val).trim().replace(/^https?:\/\//i, "").replace(/\/$/, "");
+}
+
 function formatLinkDestination(type: string, rawValue?: string | null): string | null {
   if (!rawValue || typeof rawValue !== "string") return null;
   const val = rawValue.trim();
@@ -235,15 +240,19 @@ function getLinkIconSvg(type: string, size = 18): string {
 
 const SOCIAL_TYPES = new Set(["instagram", "facebook", "linkedin", "youtube", "twitter"]);
 
+function hasText(val?: string | null): boolean {
+  return typeof val === "string" && val.trim().length > 0;
+}
+
 export function resolveCustomerLinks(card: ResolvedCustomerCard) {
   const custom = card.customSettings;
   if (custom && Array.isArray(custom.links) && custom.links.length > 0) {
     return custom.links
-      .filter((l) => l && l.enabled !== false)
+      .filter((l) => l && l.enabled !== false && hasText(l.value))
       .map((l, idx) => ({
         type: (l.type || "").toLowerCase(),
-        label: l.label || getDefaultLabel((l.type || "").toLowerCase()),
-        value: l.value || "",
+        label: hasText(l.label) ? l.label!.trim() : getDefaultLabel((l.type || "").toLowerCase()),
+        value: (l.value || "").trim(),
         order: typeof l.order === "number" ? l.order : idx,
       }))
       .filter((l) => formatLinkDestination(l.type, l.value) !== null)
@@ -251,26 +260,26 @@ export function resolveCustomerLinks(card: ResolvedCustomerCard) {
   }
 
   const list: Array<{ type: string; label: string; value: string; order: number }> = [];
-  if (card.phone) {
-    list.push({ type: "phone", label: "Call Directly", value: card.phone, order: 0 });
+  if (hasText(card.phone)) {
+    list.push({ type: "phone", label: "Phone", value: card.phone!.trim(), order: 0 });
   }
-  if (card.whatsapp) {
-    list.push({ type: "whatsapp", label: "WhatsApp", value: card.whatsapp, order: 1 });
+  if (hasText(card.whatsapp)) {
+    list.push({ type: "whatsapp", label: "WhatsApp", value: card.whatsapp!.trim(), order: 1 });
   }
-  if (card.email) {
-    list.push({ type: "email", label: "Email", value: card.email, order: 2 });
+  if (hasText(card.email)) {
+    list.push({ type: "email", label: "Email", value: card.email!.trim(), order: 2 });
   }
-  if (card.website) {
-    list.push({ type: "website", label: "Website", value: card.website, order: 3 });
+  if (hasText(card.website)) {
+    list.push({ type: "website", label: "Website", value: card.website!.trim(), order: 3 });
   }
-  if (card.socialInstagram) {
-    list.push({ type: "instagram", label: "Instagram", value: card.socialInstagram, order: 4 });
+  if (hasText(card.socialInstagram)) {
+    list.push({ type: "instagram", label: "Instagram", value: card.socialInstagram!.trim(), order: 4 });
   }
-  if (card.socialLinkedIn) {
-    list.push({ type: "linkedin", label: "LinkedIn", value: card.socialLinkedIn, order: 5 });
+  if (hasText(card.socialLinkedIn)) {
+    list.push({ type: "linkedin", label: "LinkedIn", value: card.socialLinkedIn!.trim(), order: 5 });
   }
-  if (card.address) {
-    list.push({ type: "maps", label: "Directions", value: card.address, order: 6 });
+  if (hasText(card.address)) {
+    list.push({ type: "maps", label: "Directions", value: card.address!.trim(), order: 6 });
   }
 
   return list;
@@ -278,100 +287,117 @@ export function resolveCustomerLinks(card: ResolvedCustomerCard) {
 
 function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
   const custom = card.customSettings || {};
-  const ind = (custom.industry && custom.industry.data) ? custom.industry.data : {};
-  const contacts = Array.isArray(ind.contacts) ? ind.contacts : [
-    { name: "Ghulamsarwar Qureshi", phone: "(+91) 99675-22999", rawPhone: "+919967522999" },
-    { name: "Tabrez Qureshi", phone: "(+91) 90040-00567", rawPhone: "+919004000567" }
-  ];
-  const metrics = Array.isArray(ind.metrics) ? ind.metrics : [
-    { value: "33+", label: "Completed projects" },
-    { value: "07", label: "Cities" },
-    { value: "01", label: "Ongoing project" },
-    { value: "96%", label: "Customer retention" }
-  ];
-  const heroMetric = ind.heroMetric || { value: "35+ Years", label: "Of experience" };
-  const services = Array.isArray(ind.services) ? ind.services : [
-    "Industrial construction", "Industrial sheds", "Commercial complexes",
-    "Residential projects", "Housing societies", "Property redevelopment",
-    "Showrooms & workshops", "Godowns & warehouses", "Medical & educational",
-    "Agricultural sheds", "Cattle & poultry farms"
-  ];
-  const servicesSummary = ind.servicesSummary || "One team for architectural and structural design, RCC, masonry, electrical, plumbing, flooring and interiors.";
-  const projects = Array.isArray(ind.projects) ? ind.projects : [
-    { name: "Kataria Motors", meta: "Piplod, Surat · 2009" },
-    { name: "Ashwarath Complex", meta: "Ahmedabad · 2010" },
-    { name: "SMT N.M.P Pharmacy College", meta: "Educational · 2014" },
-    { name: "Shiv Residency", meta: "Haldharu · 2023" },
-    { name: "La Ceremony Banquet", meta: "Restaurant & banquet · 2025" }
-  ];
-  const safetyText = ind.safety || "Safety is everyone's responsibility. Our goal is zero incidents and injuries, for our team and the public.";
-  const missionText = ind.mission || "A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build.";
-  const footerQuote = ind.footerQuote || "Lets make success stories together";
-  const brochureUrl = ind.brochureUrl || "/c/raftcon/brochure";
-  const officePhone = ind.officePhone || "(+91) 99675-22999";
-  const rawOfficePhone = ind.rawOfficePhone || "+919967522999";
-  const emailVal = card.email || "raftconconstruction@gmail.com";
-  const waVal = card.whatsapp || "919967522999";
+  const ind = (custom.industry && custom.industry.data && typeof custom.industry.data === "object") ? custom.industry.data : {};
+  
+  const name = hasText(card.fullName) ? card.fullName!.trim() : "";
+  const phone = hasText(card.phone) ? card.phone!.trim() : "";
+  const whatsapp = hasText(card.whatsapp) ? card.whatsapp!.trim() : "";
+  const email = hasText(card.email) ? card.email!.trim() : "";
+  const bio = hasText(card.description) ? card.description!.trim() : "";
+
+  // Contacts
+  let contacts: any[] = [];
+  if (Array.isArray(ind.contacts) && ind.contacts.length > 0) {
+    contacts = ind.contacts.filter((c: any) => c && (hasText(c.name) || hasText(c.phone) || hasText(c.phone_display)));
+  } else if (name || phone) {
+    contacts = [{
+      name: name || "Contact",
+      phone: phone,
+      rawPhone: phone ? cleanPhone(phone) : ""
+    }];
+  }
+
+  const metrics = Array.isArray(ind.metrics) ? ind.metrics.filter((m: any) => m && hasText(m.value)) : [];
+  const heroMetric = (ind.heroMetric && hasText(ind.heroMetric.value)) ? ind.heroMetric : null;
+  const services = Array.isArray(ind.services) ? ind.services.filter(hasText) : [];
+  const servicesSummary = hasText(ind.servicesSummary) ? ind.servicesSummary.trim() : "";
+  const projects = Array.isArray(ind.projects) ? ind.projects.filter((p: any) => p && hasText(p.name)) : [];
+  const safetyText = hasText(ind.safety) ? ind.safety.trim() : "";
+  const missionText = hasText(ind.mission) ? ind.mission.trim() : "";
+  const footerQuote = hasText(ind.footerQuote) ? ind.footerQuote.trim() : "";
+  const brochureUrl = hasText(ind.brochureUrl) ? ind.brochureUrl.trim() : "";
+  const officePhone = hasText(ind.officePhone) ? ind.officePhone.trim() : phone;
+  const rawOfficePhone = officePhone ? cleanPhone(officePhone) : "";
+  const waDest = whatsapp ? cleanDigits(whatsapp) : "";
 
   let html = `
     <!-- Raftcon Approved Brand Header -->
     <header class="raftcon-header raftcon-reveal">
-      <img src="${escapeHtml(card.avatarUrl || '/assets/brochures/raftcon-brand-logo.png')}" alt="${escapeHtml(card.fullName || 'Raftcon Construction')} — Crafting Quality, Constructing Futures" class="raftcon-brand-logo-img" />
+      <img src="${escapeHtml(card.avatarUrl || '/assets/brochures/raftcon-brand-logo.png')}" alt="${escapeHtml(name || 'Raftcon Construction')}" class="raftcon-brand-logo-img" />
     </header>
-
-    <!-- Contact Section -->
-    <div class="raftcon-reveal">
-      <div class="raftcon-section-eyebrow">C O N T A C T</div>
-      <div class="raftcon-contact-list">
   `;
 
-  contacts.forEach((c: any) => {
-    const displayPhone = c.phone || c.phone_display || '';
-    const rawNum = c.rawPhone || displayPhone.replace(/[^0-9+]/g, '');
+  // Contact Section (Only render if there are contacts or actions)
+  if (contacts.length > 0 || waDest || email || rawOfficePhone) {
     html += `
-        <div class="raftcon-contact-card">
-          <div class="raftcon-contact-meta">
-            <span class="raftcon-contact-name">${escapeHtml(c.name || '')}</span>
-            <span class="raftcon-contact-phone">${escapeHtml(displayPhone)}</span>
-          </div>
-          <a href="tel:${rawNum}" class="raftcon-call-circle" aria-label="Call ${escapeHtml(c.name)}">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f1e1c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
-          </a>
-        </div>
+      <div class="raftcon-reveal">
+        <div class="raftcon-section-eyebrow">C O N T A C T</div>
+        <div class="raftcon-contact-list">
     `;
-  });
 
-  html += `
-      </div>
+    contacts.forEach((c: any) => {
+      const displayPhone = c.phone || c.phone_display || "";
+      const rawNum = c.rawPhone || cleanPhone(displayPhone);
+      html += `
+          <div class="raftcon-contact-card">
+            <div class="raftcon-contact-meta">
+              <span class="raftcon-contact-name">${escapeHtml(c.name || "")}</span>
+              ${displayPhone ? `<span class="raftcon-contact-phone">${escapeHtml(displayPhone)}</span>` : ""}
+            </div>
+            ${rawNum ? `
+              <a href="tel:${rawNum}" class="raftcon-call-circle" aria-label="Call ${escapeHtml(c.name)}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f1e1c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+              </a>
+            ` : ""}
+          </div>
+      `;
+    });
 
-      <!-- Action Buttons Row 1: WhatsApp + Email -->
-      <div class="raftcon-actions-duo">
-        <a href="https://wa.me/${waVal.replace(/\D/g, '')}" target="_blank" rel="noopener noreferrer" class="raftcon-action-btn" aria-label="WhatsApp">
+    html += `</div>`;
+
+    // Action buttons duo: WhatsApp + Email
+    if (waDest || email) {
+      html += `<div class="raftcon-actions-duo">`;
+      if (waDest) {
+        html += `
+          <a href="https://wa.me/${waDest}" target="_blank" rel="noopener noreferrer" class="raftcon-action-btn" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+            <span>WhatsApp</span>
+          </a>
+        `;
+      }
+      if (email) {
+        html += `
+          <a href="mailto:${escapeHtml(email)}" class="raftcon-action-btn" aria-label="Email">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>Email</span>
+          </a>
+        `;
+      }
+      html += `</div>`;
+    }
+
+    // Call office button
+    if (rawOfficePhone && contacts.length > 1) {
+      html += `
+        <a href="tel:${rawOfficePhone}" class="raftcon-action-btn raftcon-action-full" aria-label="Call office">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
           </svg>
-          <span>WhatsApp</span>
+          <span>Call office</span>
         </a>
-        <a href="mailto:${escapeHtml(emailVal)}" class="raftcon-action-btn" aria-label="Email">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-            <polyline points="22,6 12,13 2,6"></polyline>
-          </svg>
-          <span>Email</span>
-        </a>
-      </div>
+      `;
+    }
 
-      <!-- Action Button Row 2: Call office -->
-      <a href="tel:${rawOfficePhone}" class="raftcon-action-btn raftcon-action-full" aria-label="Call office">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-        </svg>
-        <span>Call office</span>
-      </a>
-
-      <!-- Primary CTAs: Save Contact + View Brochure -->
+    // Primary CTAs: Save Contact + (Optional View Brochure)
+    html += `
       <button type="button" class="raftcon-btn-primary" id="saveContactBtn" aria-label="Save Contact">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -381,67 +407,82 @@ function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
         </svg>
         <span>Save Contact</span>
       </button>
-
-      <a href="${escapeHtml(brochureUrl)}" class="raftcon-btn-outline" aria-label="View Brochure">
-        <span>View Brochure</span>
-      </a>
-    </div>
-
-    <!-- About Raftcon Section -->
-    <div class="raftcon-reveal">
-      <h2 class="raftcon-section-title">About ${escapeHtml(card.fullName ? card.fullName.replace(/\s*(?:Construction|Developer|Pvt|Ltd).*$/i, '') || card.fullName : 'Raftcon')}</h2>
-      <p class="raftcon-about-p">
-        ${escapeHtml(card.description || "Since 1990, Raftcon has grown into a fully integrated civil engineering company, building industrial, commercial and residential complexes, housing colonies, turnkey projects and chemical plants.")}
-      </p>
-    </div>
-
-    <!-- Metrics Section -->
-    <div class="raftcon-reveal">
-      <div class="raftcon-metrics-grid">
-  `;
-
-  metrics.forEach((m: any) => {
-    html += `
-        <div class="raftcon-metric-card">
-          <div class="raftcon-metric-num">${escapeHtml(m.value)}</div>
-          <div class="raftcon-metric-label">${escapeHtml(m.label)}</div>
-        </div>
     `;
-  });
 
-  html += `
-      </div>
+    if (brochureUrl) {
+      html += `
+        <a href="${escapeHtml(brochureUrl)}" class="raftcon-btn-outline" aria-label="View Brochure">
+          <span>View Brochure</span>
+        </a>
+      `;
+    }
 
-      <!-- Hero Metric: 35+ Years Of experience -->
-      <div class="raftcon-hero-metric-card">
-        <div class="raftcon-hero-metric-num">${escapeHtml(heroMetric.value)}</div>
-        <div class="raftcon-hero-metric-label">${escapeHtml(heroMetric.label)}</div>
-      </div>
-    </div>
+    html += `</div>`;
+  }
 
-    <!-- SERVICES Section -->
-    <div class="raftcon-reveal">
-      <div class="raftcon-section-eyebrow">S E R V I C E S</div>
-      <div class="raftcon-services-cloud">
-  `;
-
-  services.forEach((s: string) => {
-    html += `<span class="raftcon-service-chip">${escapeHtml(s)}</span>`;
-  });
-
-  html += `
-      </div>
-      <p class="raftcon-services-footer-desc">${escapeHtml(servicesSummary)}</p>
-    </div>
-
-    <!-- Projects Section -->
-    <div class="raftcon-reveal">
-      <h2 class="raftcon-section-title">Projects</h2>
-      <div class="raftcon-projects-list">
-  `;
-
-  projects.forEach((p: any) => {
+  // About Raftcon Section (Only render if bio exists)
+  if (bio) {
+    const aboutTitle = name ? name.replace(/\s*(?:Construction|Developer|Pvt|Ltd).*$/i, "") || name : "Company";
     html += `
+      <div class="raftcon-reveal">
+        <h2 class="raftcon-section-title">About ${escapeHtml(aboutTitle)}</h2>
+        <p class="raftcon-about-p">${escapeHtml(bio)}</p>
+      </div>
+    `;
+  }
+
+  // Metrics Section (Only render if metrics exist)
+  if (metrics.length > 0 || heroMetric) {
+    html += `<div class="raftcon-reveal">`;
+    if (metrics.length > 0) {
+      html += `<div class="raftcon-metrics-grid">`;
+      metrics.forEach((m: any) => {
+        html += `
+          <div class="raftcon-metric-card">
+            <div class="raftcon-metric-num">${escapeHtml(m.value)}</div>
+            <div class="raftcon-metric-label">${escapeHtml(m.label || "")}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+    if (heroMetric) {
+      html += `
+        <div class="raftcon-hero-metric-card">
+          <div class="raftcon-hero-metric-num">${escapeHtml(heroMetric.value)}</div>
+          <div class="raftcon-hero-metric-label">${escapeHtml(heroMetric.label || "")}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  // Services Section (Only render if services exist)
+  if (services.length > 0) {
+    html += `
+      <div class="raftcon-reveal">
+        <div class="raftcon-section-eyebrow">S E R V I C E S</div>
+        <div class="raftcon-services-cloud">
+    `;
+    services.forEach((s: string) => {
+      html += `<span class="raftcon-service-chip">${escapeHtml(s)}</span>`;
+    });
+    html += `</div>`;
+    if (servicesSummary) {
+      html += `<p class="raftcon-services-footer-desc">${escapeHtml(servicesSummary)}</p>`;
+    }
+    html += `</div>`;
+  }
+
+  // Projects Section (Only render if projects exist)
+  if (projects.length > 0) {
+    html += `
+      <div class="raftcon-reveal">
+        <h2 class="raftcon-section-title">Projects</h2>
+        <div class="raftcon-projects-list">
+    `;
+    projects.forEach((p: any) => {
+      html += `
         <div class="raftcon-project-item">
           <div class="raftcon-project-icon" aria-hidden="true">
             <svg width="22" height="26" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -451,38 +492,48 @@ function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
           </div>
           <div class="raftcon-project-info">
             <div class="raftcon-project-name">${escapeHtml(p.name)}</div>
-            <div class="raftcon-project-meta">${escapeHtml(p.meta)}</div>
+            ${p.meta ? `<div class="raftcon-project-meta">${escapeHtml(p.meta)}</div>` : ""}
           </div>
         </div>
-    `;
-  });
+      `;
+    });
+    html += `</div></div>`;
+  }
 
-  html += `
+  // Safety First (Only if safetyText)
+  if (safetyText) {
+    html += `
+      <div class="raftcon-info-box raftcon-reveal">
+        <div class="raftcon-info-title">Safety First</div>
+        <p class="raftcon-info-text">${escapeHtml(safetyText)}</p>
       </div>
-    </div>
+    `;
+  }
 
-    <!-- Safety First Card -->
-    <div class="raftcon-info-box raftcon-reveal">
-      <div class="raftcon-info-title">Safety First</div>
-      <p class="raftcon-info-text">${escapeHtml(safetyText)}</p>
-    </div>
+  // Mission (Only if missionText)
+  if (missionText) {
+    html += `
+      <div class="raftcon-info-box raftcon-reveal">
+        <div class="raftcon-info-title">Our Mission</div>
+        <p class="raftcon-info-text">${escapeHtml(missionText)}</p>
+      </div>
+    `;
+  }
 
-    <!-- Our Mission Card -->
-    <div class="raftcon-info-box raftcon-reveal">
-      <div class="raftcon-info-title">Our Mission</div>
-      <p class="raftcon-info-text">${escapeHtml(missionText)}</p>
-    </div>
-
-    <!-- Bottom CTA & Footer Section -->
-    <div class="raftcon-reveal">
+  // Bottom CTA & Footer
+  html += `<div class="raftcon-reveal">`;
+  if (brochureUrl) {
+    html += `
       <a href="${escapeHtml(brochureUrl)}" class="raftcon-btn-primary" style="margin-top: 14px; text-decoration: none;" aria-label="View Brochure">
         <span>View Brochure</span>
       </a>
+    `;
+  }
+  if (footerQuote) {
+    html += `<div class="raftcon-bottom-quote">${escapeHtml(footerQuote)}</div>`;
+  }
 
-      <!-- Footer Tagline Quote -->
-      <div class="raftcon-bottom-quote">${escapeHtml(footerQuote)}</div>
-
-      <!-- Quick Utilities (QR + Share) -->
+  html += `
       <div style="display: flex; justify-content: center; gap: 10px; margin-top: 24px;">
         <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn" style="min-width: 130px; font-size: 12.5px; background: #18191e; color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.1);" aria-label="Show QR Code">
           ${getLinkIconSvg("qr", 15)}
@@ -494,7 +545,6 @@ function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
         </button>
       </div>
 
-      <!-- Brand Watermark Footer -->
       <footer class="card-footer" style="margin-top: 24px;">
         <a href="https://ambrosstudio.com" target="_blank" rel="noopener noreferrer">
           Ambros Studio &bull; Digital Identity
@@ -506,21 +556,318 @@ function renderRaftconLuxuryBody(card: ResolvedCustomerCard): string {
   return html;
 }
 
+function renderNoirGoldBody(card: ResolvedCustomerCard): string {
+  const name = hasText(card.fullName) ? card.fullName!.trim() : "";
+  const role = hasText(card.designation) ? card.designation!.trim() : "";
+  const company = hasText(card.company) ? card.company!.trim() : "";
+  const bio = hasText(card.description) ? card.description!.trim() : "";
+  const phone = hasText(card.phone) ? card.phone!.trim() : "";
+  const whatsapp = hasText(card.whatsapp) ? card.whatsapp!.trim() : "";
+  const email = hasText(card.email) ? card.email!.trim() : "";
+  const website = hasText(card.website) ? card.website!.trim() : "";
+  const address = hasText(card.address) ? card.address!.trim() : "";
+  const avatarUrl = hasText(card.avatarUrl) ? card.avatarUrl!.trim() : "";
+  const custom = (card.customSettings && typeof card.customSettings === "object") ? card.customSettings : {};
+  const ind = (custom.industry && custom.industry.data && typeof custom.industry.data === "object")
+    ? custom.industry.data
+    : ((custom as any).industryData && typeof (custom as any).industryData === "object" ? (custom as any).industryData : {});
+
+  let html = "";
+
+  // 1. Mandatory Hero strip with diagonal line pattern
+  html += `<div class="hero" aria-hidden="true"></div>`;
+
+  // 2. Profile ID Header
+  html += `<header class="id">`;
+  html += `  <div class="ring">`;
+  if (avatarUrl) {
+    html += `    <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(name || "Profile photo")}">`;
+  } else {
+    html += `    ${escapeHtml(getInitials(name || "YN"))}`;
+  }
+  html += `  </div>`;
+
+  if (name) {
+    html += `  <h1>${escapeHtml(name)}</h1>`;
+  }
+
+  const roleText = [role, company].filter(Boolean).join(", ");
+  if (roleText) {
+    html += `  <p class="role">${escapeHtml(roleText)}</p>`;
+  }
+
+  const statusText = hasText(ind.status)
+    ? ind.status.trim()
+    : (hasText(ind.availability) ? ind.availability.trim() : (hasText(ind.hours) ? ind.hours.trim() : ""));
+  if (statusText) {
+    html += `  <span class="status"><i></i>${escapeHtml(statusText)}</span>`;
+  }
+  html += `</header>`;
+
+  // 3. Primary Action Button (Add to contacts)
+  html += `
+  <div class="actions">
+    <button type="button" class="btn gold" id="saveContactBtn">Add to contacts</button>
+  </div>
+  `;
+
+  // 4. About Section (only if bio has text)
+  if (bio) {
+    html += `
+  <section>
+    <h2>About</h2>
+    <div class="tile"><p>${escapeHtml(bio)}</p></div>
+  </section>
+    `;
+  }
+
+  // 5. Stats Section (only if valid stats exist)
+  if (Array.isArray(ind.stats) && ind.stats.length > 0 && ind.stats.some((s: any) => s && hasText(s.num || s.value))) {
+    const validStats = ind.stats.filter((s: any) => s && hasText(s.num || s.value)).slice(0, 3);
+    html += `
+  <section>
+    <div class="stats">
+      ${validStats.map((s: any) => `<div><b>${escapeHtml(s.num || s.value || "")}</b><span>${escapeHtml(s.label || "")}</span></div>`).join("")}
+    </div>
+  </section>
+    `;
+  }
+
+  // 6. Get in touch Section (only if valid contact rows exist)
+  const contactRows: string[] = [];
+
+  if (email) {
+    contactRows.push(`
+      <a class="row" href="mailto:${escapeHtml(email)}">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        <span><small>Email</small>${escapeHtml(email)}</span><span class="go">Write</span>
+      </a>
+    `);
+  }
+
+  if (phone) {
+    contactRows.push(`
+      <a class="row" href="tel:${cleanPhone(phone)}">
+        <svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+        <span><small>Call</small>${escapeHtml(phone)}</span><span class="go">Call</span>
+      </a>
+    `);
+  }
+
+  if (whatsapp) {
+    contactRows.push(`
+      <a class="row" href="https://wa.me/${cleanDigits(whatsapp)}" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/></svg>
+        <span><small>WhatsApp</small>Chat on WhatsApp</span><span class="go">Chat</span>
+      </a>
+    `);
+  }
+
+  if (website) {
+    const webDest = formatLinkDestination("website", website);
+    if (webDest) {
+      contactRows.push(`
+        <a class="row" href="${webDest}" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+          <span><small>Website</small>${escapeHtml(cleanDisplayUrl(website))}</span><span class="go">Visit</span>
+        </a>
+      `);
+    }
+  }
+
+  // Support additional custom contact links if defined in customSettings.links
+  if (Array.isArray(custom.links)) {
+    custom.links.forEach((l: any) => {
+      if (!l || l.enabled === false || !hasText(l.value)) return;
+      const type = (l.type || "").toLowerCase();
+      if (["email", "phone", "whatsapp", "website", "instagram", "linkedin", "twitter", "youtube", "facebook", "github"].includes(type)) return;
+      const dest = formatLinkDestination(type, l.value);
+      if (!dest) return;
+      const label = hasText(l.label) ? l.label.trim() : "Link";
+      const display = getDisplayValue(type, l.value, label);
+      contactRows.push(`
+        <a class="row" href="${dest}" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+          <span><small>${escapeHtml(label)}</small>${escapeHtml(display)}</span><span class="go">Open</span>
+        </a>
+      `);
+    });
+  }
+
+  if (contactRows.length > 0) {
+    html += `
+  <section>
+    <h2>Get in touch</h2>
+    <div class="rows">
+      ${contactRows.join("")}
+    </div>
+  </section>
+    `;
+  }
+
+  // 7. Services Section (only if valid services exist)
+  if (Array.isArray(ind.services) && ind.services.length > 0) {
+    const validServices = ind.services.filter((s: any) => {
+      if (typeof s === "string") return hasText(s);
+      return s && (hasText(s.name) || hasText(s.title));
+    });
+
+    if (validServices.length > 0) {
+      html += `
+  <section>
+    <h2>Our services</h2>
+    <div class="tile svc">
+      ${validServices.map((s: any) => {
+        const title = typeof s === "string" ? s : (s.name || s.title || "");
+        const detail = typeof s === "object" ? (s.sub || s.detail || s.price || "") : "";
+        return `<div><em>${escapeHtml(title)}</em>${detail ? `<span>${escapeHtml(detail)}</span>` : ""}</div>`;
+      }).join("")}
+    </div>
+  </section>
+      `;
+    }
+  }
+
+  // 8. Kind words Section (only if valid testimonials exist)
+  const rawReviews = Array.isArray(ind.reviews) ? ind.reviews : (Array.isArray(ind.testimonials) ? ind.testimonials : []);
+  const validReviews = rawReviews.filter((r: any) => r && (hasText(r.quote) || hasText(r.text) || hasText(r.comment)));
+  if (validReviews.length > 0) {
+    html += `
+  <section>
+    <h2>Kind words</h2>
+    <div class="quotes">
+      ${validReviews.map((r: any) => {
+        const qText = r.quote || r.text || r.comment || "";
+        const author = r.author || r.name || r.client || "";
+        const companyText = r.company || "";
+        const footerText = [author, companyText].filter(Boolean).join(", ");
+        return `<div class="quote"><p>${escapeHtml(qText)}</p>${footerText ? `<footer>${escapeHtml(footerText)}</footer>` : ""}</div>`;
+      }).join("")}
+    </div>
+  </section>
+    `;
+  }
+
+  // 9. Find me Section (only if address exists)
+  if (address) {
+    html += `
+  <section>
+    <h2>Find me</h2>
+    <div class="tile">
+      <div class="map" aria-hidden="true"><div class="pin"></div></div>
+      <p>${escapeHtml(address)}</p>
+      <div class="actions" style="padding:14px 0 0">
+        <a class="btn gold" href="https://maps.google.com/?q=${encodeURIComponent(address)}" target="_blank" rel="noopener noreferrer">Get directions</a>
+      </div>
+    </div>
+  </section>
+    `;
+  }
+
+  // 10. Social Links (only if valid social links exist)
+  const socialItems: string[] = [];
+
+  const addSocial = (dest: string | null, label: string, svgPath: string) => {
+    if (!dest) return;
+    socialItems.push(`
+      <a href="${dest}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(label)}">
+        <svg viewBox="0 0 24 24"><path d="${svgPath}"/></svg>
+      </a>
+    `);
+  };
+
+  if (hasText(card.socialLinkedIn)) {
+    addSocial(
+      formatLinkDestination("linkedin", card.socialLinkedIn),
+      "LinkedIn",
+      "M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4v11H3zM9.5 9.5h3.8v1.6c.6-1 1.9-1.9 3.8-1.9 3.6 0 4.4 2.300 4.400 5.400v5.900h-4v-5.300c0-1.300 0-2.900-1.800-2.900s-2.200 1.400-2.200 2.800v5.400h-4z"
+    );
+  }
+
+  if (hasText(card.socialInstagram)) {
+    addSocial(
+      formatLinkDestination("instagram", card.socialInstagram),
+      "Instagram",
+      "M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm5 3.500a4.500 4.500 0 1 1 0 9 4.500 4.500 0 0 1 0-9zm0 2a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5zm5.200-3.200a1.100 1.100 0 1 1 0 2.200 1.100 1.100 0 0 1 0-2.200z"
+    );
+  }
+
+  const twitterVal = (card as any).socialTwitter || (card as any).socialX;
+  if (hasText(twitterVal)) {
+    addSocial(
+      formatLinkDestination("twitter", twitterVal),
+      "X",
+      "M17.800 3h3.200l-7 8 8.200 10.500h-6.400l-5-6.500-5.700 6.500H1.900l7.500-8.600L1.500 3h6.600l4.500 5.900zm-1.100 16.600h1.800L7 4.800H5.100z"
+    );
+  }
+
+  const youtubeVal = (card as any).socialYoutube;
+  if (hasText(youtubeVal)) {
+    addSocial(
+      formatLinkDestination("youtube", youtubeVal),
+      "YouTube",
+      "M22 8.200a3 3 0 0 0-2.100-2.100C18 5.600 12 5.600 12 5.600s-6 0-7.900.5A3 3 0 0 0 2 8.200C1.500 10.100 1.500 12 1.500 12s0 1.900.5 3.800a3 3 0 0 0 2.100 2.100c1.900.5 7.900.5 7.900.5s6 0 7.900-.5a3 3 0 0 0 2.100-2.100c.5-1.900.5-3.800.5-3.800s0-1.900-.5-3.800zM10 15V9l5.200 3z"
+    );
+  }
+
+  if (Array.isArray(custom.links)) {
+    custom.links.forEach((l: any) => {
+      if (!l || l.enabled === false || !hasText(l.value)) return;
+      const type = (l.type || "").toLowerCase();
+      if (type === "linkedin" && !card.socialLinkedIn) {
+        addSocial(formatLinkDestination("linkedin", l.value), "LinkedIn", "M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4v11H3zM9.5 9.5h3.8v1.6c.6-1 1.9-1.9 3.8-1.9 3.6 0 4.4 2.300 4.400 5.400v5.900h-4v-5.300c0-1.300 0-2.900-1.800-2.900s-2.200 1.400-2.200 2.800v5.400h-4z");
+      } else if (type === "instagram" && !card.socialInstagram) {
+        addSocial(formatLinkDestination("instagram", l.value), "Instagram", "M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm5 3.500a4.500 4.500 0 1 1 0 9 4.500 4.500 0 0 1 0-9zm0 2a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5zm5.200-3.200a1.100 1.100 0 1 1 0 2.200 1.100 1.100 0 0 1 0-2.200z");
+      } else if ((type === "twitter" || type === "x") && !twitterVal) {
+        addSocial(formatLinkDestination("twitter", l.value), "X", "M17.800 3h3.200l-7 8 8.200 10.500h-6.400l-5-6.500-5.700 6.500H1.900l7.500-8.600L1.500 3h6.600l4.500 5.900zm-1.100 16.600h1.800L7 4.800H5.100z");
+      } else if (type === "youtube" && !youtubeVal) {
+        addSocial(formatLinkDestination("youtube", l.value), "YouTube", "M22 8.200a3 3 0 0 0-2.100-2.100C18 5.600 12 5.600 12 5.600s-6 0-7.900.5A3 3 0 0 0 2 8.200C1.500 10.100 1.500 12 1.500 12s0 1.900.5 3.800a3 3 0 0 0 2.100 2.100c1.900.5 7.900.5 7.900.5s6 0 7.900-.5a3 3 0 0 0 2.100-2.100c.5-1.900.5-3.800.5-3.800s0-1.900-.5-3.800zM10 15V9l5.200 3z");
+      }
+    });
+  }
+
+  if (socialItems.length > 0) {
+    html += `
+  <nav class="social" aria-label="Social profiles">
+    ${socialItems.join("")}
+  </nav>
+    `;
+  }
+
+  // 11. Share actions
+  html += `
+  <div class="share">
+    <button type="button" class="btn ghost" id="shareCardBtn" style="flex:none;padding:12px 24px">Share card</button>
+    <button type="button" class="btn gold" id="showQrBtn" style="flex:none;padding:12px 24px">Share QR</button>
+  </div>
+  `;
+
+  // 12. Ambros Studio Brand Watermark Footer
+  html += `
+  <footer class="f">Digital card by Ambros Studio</footer>
+  `;
+
+  return html;
+}
+
 export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDefinition): string {
+  if (design.id === "noir-gold") {
+    return renderNoirGoldBody(card);
+  }
   if (design.id === "raftcon-luxury") {
     return renderRaftconLuxuryBody(card);
   }
 
-  const name = card.fullName || "Ambros Studio Member";
-  const role = card.designation || "";
-  const company = card.company || "";
-  const bio = card.description || "";
-  const phone = card.phone || "";
-  const whatsapp = card.whatsapp || "";
-  const address = card.address || "";
-  const avatarUrl = card.avatarUrl || "";
+  const name = hasText(card.fullName) ? card.fullName!.trim() : "";
+  const role = hasText(card.designation) ? card.designation!.trim() : "";
+  const company = hasText(card.company) ? card.company!.trim() : "";
+  const bio = hasText(card.description) ? card.description!.trim() : "";
+  const phone = hasText(card.phone) ? card.phone!.trim() : "";
+  const whatsapp = hasText(card.whatsapp) ? card.whatsapp!.trim() : "";
+  const address = hasText(card.address) ? card.address!.trim() : "";
+  const avatarUrl = hasText(card.avatarUrl) ? card.avatarUrl!.trim() : "";
   const custom = card.customSettings || {};
-  const industryData = (custom.industry && custom.industry.data) ? custom.industry.data : {};
+  const industryData = (custom.industry && custom.industry.data && typeof custom.industry.data === "object") ? custom.industry.data : {};
 
   const links = resolveCustomerLinks(card);
   const contactLinks = links.filter((l) => !SOCIAL_TYPES.has(l.type));
@@ -530,11 +877,13 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
   const avatarHtml = avatarUrl
     ? `<div class="profile-avatar-circle" aria-label="${escapeHtml(name)}">
          <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(name)}" class="profile-avatar-img" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
-         <span class="profile-avatar-initials" style="display: none;">${escapeHtml(initials)}</span>
+         ${initials ? `<span class="profile-avatar-initials" style="display: none;">${escapeHtml(initials)}</span>` : ""}
        </div>`
-    : `<div class="profile-avatar-circle" aria-label="${escapeHtml(name)}">
-         <span class="profile-avatar-initials">${escapeHtml(initials)}</span>
-       </div>`;
+    : (initials
+      ? `<div class="profile-avatar-circle" aria-label="${escapeHtml(name)}">
+           <span class="profile-avatar-initials">${escapeHtml(initials)}</span>
+         </div>`
+      : "");
 
   let html = "";
 
@@ -545,11 +894,15 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
     html += `
       <header style="text-align: center; margin-bottom: 20px;">
         ${avatarHtml}
-        <p style="font-size: 13px; font-family: var(--app-font); opacity: 0.7; margin-bottom: 4px; margin-top: 12px; text-align: center;">Hello, I'm</p>
-        <h1 class="profile-name">${escapeHtml(name)}</h1>
-        <div style="text-align: center; margin: 10px 0;">
-          <span class="fashion-tag">${escapeHtml(role || "Fashion designer & stylist")}</span>
-        </div>
+        ${name ? `
+          <p style="font-size: 13px; font-family: var(--app-font); opacity: 0.7; margin-bottom: 4px; margin-top: 12px; text-align: center;">Hello, I'm</p>
+          <h1 class="profile-name">${escapeHtml(name)}</h1>
+        ` : ""}
+        ${role ? `
+          <div style="text-align: center; margin: 10px 0;">
+            <span class="fashion-tag">${escapeHtml(role)}</span>
+          </div>
+        ` : ""}
         ${company ? `<p class="profile-company">${escapeHtml(company)}</p>` : ""}
         ${bio ? `<p class="profile-bio" style="font-family: var(--app-font);">${escapeHtml(bio)}</p>` : ""}
       </header>
@@ -558,57 +911,69 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
     html += `
       <header style="text-align: center; margin-bottom: 20px;">
         ${avatarHtml}
-        <h1 class="profile-name">${escapeHtml(name)}</h1>
-        <p class="profile-designation">${escapeHtml(role || "Consultant Dermatologist & Physician")}</p>
-        <div style="text-align: center; margin: 6px 0 14px;">
-          <span class="doctor-specialty-pill">${escapeHtml(company || "Clinical Dermatology & Aesthetics")}</span>
-        </div>
+        ${name ? `<h1 class="profile-name">${escapeHtml(name)}</h1>` : ""}
+        ${role ? `<p class="profile-designation">${escapeHtml(role)}</p>` : ""}
+        ${company ? `
+          <div style="text-align: center; margin: 6px 0 14px;">
+            <span class="doctor-specialty-pill">${escapeHtml(company)}</span>
+          </div>
+        ` : ""}
         ${bio ? `<p class="profile-bio">${escapeHtml(bio)}</p>` : ""}
       </header>
     `;
   } else if (design.id === "skyline") {
-    const badgesHtml = (Array.isArray(industryData.badges) && industryData.badges.length > 0)
-      ? industryData.badges.map((b: string) => `<span class="badge-pill">${escapeHtml(b)}</span>`).join("")
-      : `<span class="badge-pill">Demo RERA · Sample</span><span class="badge-pill">English · Hindi</span><span class="badge-pill">Property Advisory</span>`;
+    const hasBadges = Array.isArray(industryData.badges) && industryData.badges.some(hasText);
+    const badgesHtml = hasBadges
+      ? industryData.badges.filter(hasText).map((b: string) => `<span class="badge-pill">${escapeHtml(b)}</span>`).join("")
+      : "";
 
     html += `
       <header style="text-align: center; margin-bottom: 20px;">
         ${avatarHtml}
-        <h1 class="profile-name">${escapeHtml(name)}</h1>
-        <p class="profile-designation">${escapeHtml(role || "Senior Property Consultant")}</p>
+        ${name ? `<h1 class="profile-name">${escapeHtml(name)}</h1>` : ""}
+        ${role ? `<p class="profile-designation">${escapeHtml(role)}</p>` : ""}
         ${company ? `<p class="profile-company">${escapeHtml(company)}</p>` : ""}
-        <div class="badges-row">
-          ${badgesHtml}
-        </div>
+        ${badgesHtml ? `<div class="badges-row">${badgesHtml}</div>` : ""}
+        ${bio ? `<p class="profile-bio" style="margin-top: 12px;">${escapeHtml(bio)}</p>` : ""}
       </header>
     `;
   } else if (design.id === "roast-and-co") {
-    const cafeBadgesHtml = (Array.isArray(industryData.badges) && industryData.badges.length > 0)
-      ? industryData.badges.map((b: string) => `<span class="cafe-badge">${escapeHtml(b)}</span>`).join("")
-      : `<span class="cafe-badge">• Open · till 10pm</span><span class="cafe-badge">★ 4.8</span><span class="cafe-badge">Free Wi-Fi</span>`;
+    const hasCafeBadges = Array.isArray(industryData.badges) && industryData.badges.some(hasText);
+    const cafeBadgesHtml = hasCafeBadges
+      ? industryData.badges.filter(hasText).map((b: string) => `<span class="cafe-badge">${escapeHtml(b)}</span>`).join("")
+      : "";
+    const mainTitle = company || name;
+    const subTitle = (company && name) ? name : role;
 
     html += `
       <header style="text-align: center; margin-bottom: 20px;">
         ${avatarHtml}
-        <h1 class="profile-name">${escapeHtml(company || name)}</h1>
-        <p class="profile-designation" style="opacity: 0.85;">${escapeHtml(bio || role || "Small-batch coffee and fresh bakes, all day.")}</p>
-        <div class="cafe-badges">
-          ${cafeBadgesHtml}
-        </div>
+        ${mainTitle ? `<h1 class="profile-name">${escapeHtml(mainTitle)}</h1>` : ""}
+        ${subTitle ? `<p class="profile-designation" style="opacity: 0.85;">${escapeHtml(subTitle)}</p>` : ""}
+        ${cafeBadgesHtml ? `<div class="cafe-badges">${cafeBadgesHtml}</div>` : ""}
+        ${bio ? `<p class="profile-bio">${escapeHtml(bio)}</p>` : ""}
       </header>
     `;
   } else if (design.category === "business") {
+    const bizTitle = company || name;
+    const bizSub = (company && name)
+      ? `${escapeHtml(name)}${role ? " &bull; " + escapeHtml(role) : ""}`
+      : (role ? escapeHtml(role) : "");
+    const statusText = hasText(industryData.status) ? industryData.status.trim() : (hasText(industryData.hours) ? industryData.hours.trim() : "");
+
     html += `
       <header style="text-align: center; margin-bottom: 20px;">
         ${avatarHtml}
-        <h1 class="profile-name">${escapeHtml(company || name)}</h1>
-        ${company && name ? `<p class="profile-designation">${escapeHtml(name)}${role ? " · " + escapeHtml(role) : ""}</p>` : (role ? `<p class="profile-designation">${escapeHtml(role)}</p>` : "")}
-        <div style="text-align: center;">
-          <span class="status-pill">
-            <span class="status-dot"></span>
-            <span>Open now · closes 8 pm</span>
-          </span>
-        </div>
+        ${bizTitle ? `<h1 class="profile-name">${escapeHtml(bizTitle)}</h1>` : ""}
+        ${bizSub ? `<p class="profile-designation">${bizSub}</p>` : ""}
+        ${statusText ? `
+          <div style="text-align: center;">
+            <span class="status-pill">
+              <span class="status-dot"></span>
+              <span>${escapeHtml(statusText)}</span>
+            </span>
+          </div>
+        ` : ""}
         ${bio ? `<p class="profile-bio">${escapeHtml(bio)}</p>` : ""}
       </header>
     `;
@@ -617,13 +982,12 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
     html += `
       <header style="text-align: center; margin-bottom: 18px;">
         ${avatarHtml}
-        <h1 class="profile-name">${escapeHtml(name)}</h1>
+        ${name ? `<h1 class="profile-name">${escapeHtml(name)}</h1>` : ""}
         ${role ? `<p class="profile-designation">${escapeHtml(role)}</p>` : ""}
         ${company ? `<p class="profile-company">${escapeHtml(company)}</p>` : ""}
       </header>
     `;
 
-    // Structured About Card for luxury / editorial personal designs
     if (bio) {
       if (["noir-gold", "emerald-ivory", "neon-pulse", "mono-studio"].includes(design.id)) {
         html += `
@@ -642,16 +1006,15 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
   // 2. STATS ROW (Personal Consultant / Real Estate Designs)
   // =========================================================================
   if (["emerald-ivory", "neon-pulse", "mono-studio"].includes(design.id)) {
-    const stats = Array.isArray(industryData.stats) ? industryData.stats : [
-      { num: "12+", label: "Years Exp." },
-      { num: "340+", label: "Clients" },
-      { num: "4.9 ★", label: "Satisfaction" },
-    ];
-    html += `<div class="stats-row">`;
-    stats.slice(0, 3).forEach((s: any) => {
-      html += `<div><div class="stat-num">${escapeHtml(s.num || s.value || "")}</div><div class="stat-label">${escapeHtml(s.label || "")}</div></div>`;
-    });
-    html += `</div>`;
+    if (Array.isArray(industryData.stats) && industryData.stats.length > 0 && industryData.stats.some((s: any) => s && hasText(s.num || s.value))) {
+      html += `<div class="stats-row">`;
+      industryData.stats.slice(0, 3).forEach((s: any) => {
+        if (s && hasText(s.num || s.value)) {
+          html += `<div><div class="stat-num">${escapeHtml(s.num || s.value || "")}</div><div class="stat-label">${escapeHtml(s.label || "")}</div></div>`;
+        }
+      });
+      html += `</div>`;
+    }
   }
 
   // =========================================================================
@@ -661,140 +1024,146 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
   const phoneDest = phone ? `tel:${cleanPhone(phone)}` : "";
   const mapsDest = address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : "";
 
-  if (design.id === "skyline") {
-    html += `
-      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta" style="margin-bottom: 12px;">
-        ${getLinkIconSvg("calendar", 16)}
-        <span>Book a site visit</span>
-      </button>
-      <div class="cta-actions-row">
-        ${phoneDest ? `
-          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call consultant">
-            ${getLinkIconSvg("phone", 15)}
-            <span>Call</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
-            ${getLinkIconSvg("contact", 15)}
-            <span>Save contact</span>
-          </button>`
-        }
-        <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
-          ${getLinkIconSvg("contact", 15)}
-          <span>Save contact</span>
-        </button>
-      </div>
-    `;
-  } else if (design.id === "atelier") {
-    html += `
-      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta" style="margin-bottom: 12px;">
-        ${getLinkIconSvg("calendar", 16)}
-        <span>Book a fitting</span>
-      </button>
-      <div class="cta-actions-row">
-        ${phoneDest ? `
-          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call studio">
-            ${getLinkIconSvg("phone", 15)}
-            <span>Call studio</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
-            ${getLinkIconSvg("contact", 15)}
-            <span>Save contact</span>
-          </button>`
-        }
-        <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
-          ${getLinkIconSvg("contact", 15)}
-          <span>Save contact</span>
-        </button>
-      </div>
-    `;
-  } else if (design.id === "care-plus") {
-    html += `
-      <button type="button" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta" style="margin-bottom: 12px;">
-        ${getLinkIconSvg("calendar", 16)}
-        <span>Book appointment</span>
-      </button>
-      <div class="cta-actions-row">
-        ${phoneDest ? `
-          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call clinic">
-            ${getLinkIconSvg("phone", 15)}
-            <span>Call clinic</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
-            ${getLinkIconSvg("contact", 15)}
-            <span>Save contact</span>
-          </button>`
-        }
-        <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
-          ${getLinkIconSvg("contact", 15)}
-          <span>Save contact</span>
-        </button>
-      </div>
-    `;
+  if (design.id === "skyline" || design.id === "atelier" || design.id === "care-plus") {
+    const bookingUrl = hasText(industryData.bookingUrl) ? formatLinkDestination("website", industryData.bookingUrl) : null;
+    if (bookingUrl) {
+      const defaultLabel = design.id === "skyline" ? "Book a site visit" : (design.id === "atelier" ? "Book a fitting" : "Book appointment");
+      const bookingLabel = industryData.bookingLabel || defaultLabel;
+      html += `
+        <a href="${bookingUrl}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-primary cta-btn-full" id="btnIndustryCta" style="margin-bottom: 12px;">
+          ${getLinkIconSvg("calendar", 16)}
+          <span>${escapeHtml(bookingLabel)}</span>
+        </a>
+      `;
+    }
+
+    const secActions: Array<{ html: string }> = [];
+    if (phoneDest) {
+      secActions.push({
+        html: `<a href="${phoneDest}" class="cta-btn cta-btn-primary" aria-label="Call">${getLinkIconSvg("phone", 15)}<span>Call</span></a>`
+      });
+    }
+    if (waDest && secActions.length < 2) {
+      secActions.push({
+        html: `<a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="WhatsApp">${getLinkIconSvg("whatsapp", 15)}<span>WhatsApp</span></a>`
+      });
+    }
+    if (mapsDest && secActions.length < 2) {
+      secActions.push({
+        html: `<a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">${getLinkIconSvg("directions", 15)}<span>Directions</span></a>`
+      });
+    }
+    if (secActions.length < 2) {
+      secActions.push({
+        html: `<button type="button" class="cta-btn ${secActions.length === 0 ? 'cta-btn-primary' : 'cta-btn-secondary'}" id="saveContactBtn">${getLinkIconSvg("contact", 15)}<span>Save Contact</span></button>`
+      });
+    }
+    if (secActions.length < 2) {
+      secActions.push({
+        html: `<button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">${getLinkIconSvg("share", 15)}<span>Share</span></button>`
+      });
+    }
+
+    html += `<div class="cta-actions-row">${secActions.map(a => a.html).join("")}</div>`;
   } else if (design.id === "roast-and-co") {
-    html += `
-      <div class="cta-actions-row">
-        ${waDest ? `
-          <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-primary" aria-label="Order on WhatsApp">
-            ${getLinkIconSvg("whatsapp", 16)}
-            <span>Order on WhatsApp</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn">
-            ${getLinkIconSvg("contact", 16)}
-            <span>Save contact</span>
-          </button>`
-        }
-        ${mapsDest ? `
-          <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">
-            ${getLinkIconSvg("directions", 16)}
-            <span>Directions</span>
-          </a>` : (phoneDest ? `
-          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call cafe">
-            ${getLinkIconSvg("phone", 16)}
-            <span>Call cafe</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">
-            ${getLinkIconSvg("share", 16)}
-            <span>Share</span>
-          </button>`)
-        }
-      </div>
-    `;
+    html += `<div class="cta-actions-row">`;
+    if (waDest) {
+      html += `
+        <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-primary" aria-label="Order on WhatsApp">
+          ${getLinkIconSvg("whatsapp", 16)}
+          <span>Order on WhatsApp</span>
+        </a>
+      `;
+    } else {
+      html += `
+        <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn">
+          ${getLinkIconSvg("contact", 16)}
+          <span>Save Contact</span>
+        </button>
+      `;
+    }
+
+    if (mapsDest) {
+      html += `
+        <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">
+          ${getLinkIconSvg("directions", 16)}
+          <span>Directions</span>
+        </a>
+      `;
+    } else if (phoneDest) {
+      html += `
+        <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call">
+          ${getLinkIconSvg("phone", 16)}
+          <span>Call</span>
+        </a>
+      `;
+    } else {
+      html += `
+        <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">
+          ${getLinkIconSvg("share", 16)}
+          <span>Share</span>
+        </button>
+      `;
+    }
+    html += `</div>`;
   } else if (design.category === "business") {
     // 3-Trio Quick Action Buttons
-    html += `
-      <div class="cta-actions-trio">
-        ${phoneDest ? `
-          <a href="${phoneDest}" class="cta-btn cta-btn-primary" aria-label="Call">
-            ${getLinkIconSvg("phone", 15)}
-            <span>Call</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn">
-            ${getLinkIconSvg("contact", 15)}
-            <span>Save</span>
-          </button>`
-        }
-        ${waDest ? `
-          <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="WhatsApp">
-            ${getLinkIconSvg("whatsapp", 15)}
-            <span>WhatsApp</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">
-            ${getLinkIconSvg("share", 15)}
-            <span>Share</span>
-          </button>`
-        }
-        ${mapsDest ? `
-          <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">
-            ${getLinkIconSvg("directions", 15)}
-            <span>Directions</span>
-          </a>` : `
-          <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn">
-            ${getLinkIconSvg("qr", 15)}
-            <span>QR Code</span>
-          </button>`
-        }
-      </div>
-    `;
+    html += `<div class="cta-actions-trio">`;
+    if (phoneDest) {
+      html += `
+        <a href="${phoneDest}" class="cta-btn cta-btn-primary" aria-label="Call">
+          ${getLinkIconSvg("phone", 15)}
+          <span>Call</span>
+        </a>
+      `;
+    } else {
+      html += `
+        <button type="button" class="cta-btn cta-btn-primary" id="saveContactBtn">
+          ${getLinkIconSvg("contact", 15)}
+          <span>Save</span>
+        </button>
+      `;
+    }
+
+    if (waDest) {
+      html += `
+        <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="WhatsApp">
+          ${getLinkIconSvg("whatsapp", 15)}
+          <span>WhatsApp</span>
+        </a>
+      `;
+    } else if (phoneDest) {
+      html += `
+        <button type="button" class="cta-btn cta-btn-secondary" id="saveContactBtn">
+          ${getLinkIconSvg("contact", 15)}
+          <span>Save</span>
+        </button>
+      `;
+    } else {
+      html += `
+        <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">
+          ${getLinkIconSvg("share", 15)}
+          <span>Share</span>
+        </button>
+      `;
+    }
+
+    if (mapsDest) {
+      html += `
+        <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">
+          ${getLinkIconSvg("directions", 15)}
+          <span>Directions</span>
+        </a>
+      `;
+    } else {
+      html += `
+        <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn">
+          ${getLinkIconSvg("share", 15)}
+          <span>Share</span>
+        </button>
+      `;
+    }
+    html += `</div>`;
   } else {
     // 2-Pair Action Row for Personal Designs
     html += `
@@ -807,11 +1176,19 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
           <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="WhatsApp me">
             ${getLinkIconSvg("whatsapp", 16)}
             <span>WhatsApp me</span>
+          </a>` : (phoneDest ? `
+          <a href="${phoneDest}" class="cta-btn cta-btn-secondary" aria-label="Call directly">
+            ${getLinkIconSvg("phone", 16)}
+            <span>Call directly</span>
+          </a>` : (mapsDest ? `
+          <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn-secondary" aria-label="Directions">
+            ${getLinkIconSvg("directions", 16)}
+            <span>Directions</span>
           </a>` : `
           <button type="button" class="cta-btn cta-btn-secondary" id="shareCardBtn" aria-label="Share card">
             ${getLinkIconSvg("share", 16)}
             <span>Share</span>
-          </button>`
+          </button>`))
         }
       </div>
     `;
@@ -823,254 +1200,277 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
 
   // A. Skyline (Real Estate Suite)
   if (design.id === "skyline") {
-    const stats = Array.isArray(industryData.stats) ? industryData.stats : [
-      { num: "320+", label: "Homes sold" },
-      { num: "₹450Cr", label: "Deals closed" },
-      { num: "9 yrs", label: "Experience" },
-    ];
-    html += `<div class="stats-row">`;
-    stats.slice(0, 3).forEach((s: any) => {
-      html += `<div><div class="stat-num">${escapeHtml(s.num || s.value || "")}</div><div class="stat-label">${escapeHtml(s.label || "")}</div></div>`;
-    });
-    html += `</div>`;
-
-    if (bio) {
-      html += `
-        <div class="about-card">
-          <div class="card-subtitle">About me</div>
-          <p class="profile-bio">${escapeHtml(bio)}</p>
-        </div>
-      `;
+    if (Array.isArray(industryData.stats) && industryData.stats.length > 0 && industryData.stats.some((s: any) => s && hasText(s.num || s.value))) {
+      html += `<div class="stats-row">`;
+      industryData.stats.slice(0, 3).forEach((s: any) => {
+        if (s && hasText(s.num || s.value)) {
+          html += `<div><div class="stat-num">${escapeHtml(s.num || s.value || "")}</div><div class="stat-label">${escapeHtml(s.label || "")}</div></div>`;
+        }
+      });
+      html += `</div>`;
     }
 
-    const listings = Array.isArray(industryData.listings) && industryData.listings.length > 0 ? industryData.listings : [
-      { tag: "For sale", price: "₹1.85 Cr", title: "3 BHK · 1,450 sq ft", location: "VIP Road, Vesu, Surat", pills: ["Sea view", "2 parking", "Ready to move"] },
-      { tag: "New launch", price: "₹96 Lac", title: "2 BHK · 920 sq ft", location: "Althan Canal Corridor, Surat", pills: ["Gym", "Clubhouse", "RERA approved"] },
-      { tag: "For rent", price: "₹55k / mo", title: "3 BHK · 1,600 sq ft", location: "City Light Hub, Surat", pills: ["Furnished", "Near metro", "Pet friendly"] },
-      { tag: "Premium villa", price: "₹2.4 Cr", title: "4 BHK · 3,200 sq ft", location: "Dumas Resort Road, Surat", pills: ["Private garden", "Pool", "Gated society"] },
-    ];
+    if (Array.isArray(industryData.listings) && industryData.listings.length > 0) {
+      html += `<h2 class="section-title">Featured Listings</h2>`;
+      industryData.listings.forEach((item: any) => {
+        if (!item || !hasText(item.title || item.price || item.name)) return;
+        html += `
+          <div class="listing-card">
+            ${item.tag ? `<span class="listing-tag">${escapeHtml(item.tag)}</span>` : ""}
+            ${item.price ? `<div class="listing-price">${escapeHtml(item.price)}</div>` : ""}
+            <div class="listing-title">${escapeHtml(item.title || item.name || "")}</div>
+            ${item.location ? `<div class="listing-loc">${escapeHtml(item.location)}</div>` : ""}
+            ${Array.isArray(item.pills) && item.pills.length > 0 ? `
+              <div class="listing-pills">
+                ${item.pills.map((p: string) => `<span class="listing-pill">${escapeHtml(p)}</span>`).join("")}
+              </div>` : ""}
+          </div>
+        `;
+      });
+    }
 
-    html += `<h2 class="section-title">Featured Listings</h2>`;
-    listings.forEach((item: any) => {
-      html += `
-        <div class="listing-card">
-          ${item.tag ? `<span class="listing-tag">${escapeHtml(item.tag)}</span>` : ""}
-          <div class="listing-price">${escapeHtml(item.price || "")}</div>
-          <div class="listing-title">${escapeHtml(item.title || item.type || "")}</div>
-          <div class="listing-loc">${escapeHtml(item.location || "")}</div>
-          ${Array.isArray(item.pills) ? `
-            <div class="listing-pills">
-              ${item.pills.map((p: string) => `<span class="listing-pill">${escapeHtml(p)}</span>`).join("")}
-            </div>` : ""}
-        </div>
-      `;
-    });
+    if (Array.isArray(industryData.advisory) && industryData.advisory.length > 0) {
+      html += `<h2 class="section-title" style="margin-top: 18px;">How I can help</h2><div class="advisory-grid">`;
+      industryData.advisory.forEach((adv: any, idx: number) => {
+        html += `
+          <div class="advisory-card">
+            <div class="advisory-num">${idx + 1}</div>
+            <div class="advisory-title">${escapeHtml(adv.title || "")}</div>
+            ${adv.desc ? `<div class="advisory-desc">${escapeHtml(adv.desc)}</div>` : ""}
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
 
-    html += `
-      <h2 class="section-title" style="margin-top: 18px;">How I can help</h2>
-      <div class="advisory-grid">
-        <div class="advisory-card"><div class="advisory-num">1</div><div class="advisory-title">Buy a home</div><div class="advisory-desc">Shortlist, visit, and negotiate</div></div>
-        <div class="advisory-card"><div class="advisory-num">2</div><div class="advisory-title">Sell property</div><div class="advisory-desc">Right price, faster closing</div></div>
-        <div class="advisory-card"><div class="advisory-num">3</div><div class="advisory-title">Rent & lease</div><div class="advisory-desc">Verified tenants & owners</div></div>
-        <div class="advisory-card"><div class="advisory-num">4</div><div class="advisory-title">Investments</div><div class="advisory-desc">High-growth areas & yields</div></div>
-      </div>
-
-      <h2 class="section-title">Sample Client Feedback</h2>
-      <div class="reviews-list">
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Found us the ideal sea-facing residence in two weeks and handled paperwork seamlessly."</div>
-          <div class="review-author">Sample Buyer · Bandra</div>
-        </div>
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Handled our penthouse transaction with complete discretion, clear valuations, and weekly updates."</div>
-          <div class="review-author">Sample Client · Surat</div>
-        </div>
-      </div>
-    `;
+    if (Array.isArray(industryData.reviews) && industryData.reviews.length > 0) {
+      html += `<h2 class="section-title">Client Feedback</h2><div class="reviews-list">`;
+      industryData.reviews.forEach((rev: any) => {
+        html += `
+          <div class="review-card">
+            <div class="review-stars">${escapeHtml(rev.stars || "★★★★★")}</div>
+            <div class="review-text">${escapeHtml(rev.text || "")}</div>
+            ${rev.author ? `<div class="review-author">${escapeHtml(rev.author)}</div>` : ""}
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
   }
 
   // B. Atelier (Fashion Lookbook & Services)
   if (design.id === "atelier") {
-    html += `
-      <div class="lookbook-grid">
-        <div class="lookbook-box lookbook-terracotta">
-          <div class="lookbook-title">Spring Edit '26</div>
-          <div class="lookbook-sub">Hand-spun silks</div>
-        </div>
-        <div class="lookbook-box lookbook-charcoal">
-          <div class="lookbook-title">Bespoke Studio</div>
-          <div class="lookbook-sub">Tailored to measure</div>
-        </div>
-      </div>
-    `;
+    if (Array.isArray(industryData.lookbook) && industryData.lookbook.length > 0) {
+      html += `<div class="lookbook-grid">`;
+      industryData.lookbook.slice(0, 2).forEach((lb: any, idx: number) => {
+        const cls = idx === 0 ? "lookbook-terracotta" : "lookbook-charcoal";
+        html += `
+          <div class="lookbook-box ${cls}">
+            <div class="lookbook-title">${escapeHtml(lb.title || "")}</div>
+            ${lb.sub ? `<div class="lookbook-sub">${escapeHtml(lb.sub)}</div>` : ""}
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
 
-    const services = Array.isArray(industryData.services) && industryData.services.length > 0 ? industryData.services : [
-      { name: "Bridal Couture", subtitle: "by appointment" },
-      { name: "Custom Tailoring", subtitle: "from 7 days" },
-      { name: "Personal Styling", subtitle: "1:1 sessions" },
-      { name: "Festive Edit", subtitle: "new seasonal" },
-    ];
-
-    html += `<div class="fashion-services">`;
-    services.forEach((s: any) => {
-      html += `
-        <div class="fashion-service-row">
-          <span style="font-weight: 600;">${escapeHtml(s.name || s.title || "")}</span>
-          <span style="opacity: 0.7;">${escapeHtml(s.subtitle || s.price || "")}</span>
-        </div>
-      `;
-    });
-    html += `</div>`;
+    if (Array.isArray(industryData.services) && industryData.services.length > 0) {
+      html += `<div class="fashion-services">`;
+      industryData.services.forEach((s: any) => {
+        html += `
+          <div class="fashion-service-row">
+            <span style="font-weight: 600;">${escapeHtml(s.name || s.title || "")}</span>
+            <span style="opacity: 0.7;">${escapeHtml(s.subtitle || s.price || "")}</span>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
   }
 
   // C. Care Plus (Healthcare Slot & Clinic Timings)
   if (design.id === "care-plus") {
-    const nextSlot = industryData.nextSlot || "Today, 4:00 pm";
-    html += `
-      <div class="slot-card">
-        ${getLinkIconSvg("calendar", 22)}
-        <div>
-          <div class="slot-title">Next Available Consultation</div>
-          <div class="slot-val">${escapeHtml(nextSlot)}</div>
+    if (hasText(industryData.nextSlot)) {
+      html += `
+        <div class="slot-card">
+          ${getLinkIconSvg("calendar", 22)}
+          <div>
+            <div class="slot-title">Next Available Consultation</div>
+            <div class="slot-val">${escapeHtml(industryData.nextSlot.trim())}</div>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
 
-    const treatments = Array.isArray(industryData.treatments) && industryData.treatments.length > 0 ? industryData.treatments : [
-      "Acne & Scars", "Hair Fall Therapy", "Skin Rejuvenation", "Eczema Care", "Laser Aesthetics", "Allergy Screening",
-    ];
+    if (Array.isArray(industryData.treatments) && industryData.treatments.length > 0) {
+      html += `<h2 class="section-title">Specialties Treated</h2><div class="tags-cloud">`;
+      industryData.treatments.forEach((t: string) => {
+        if (hasText(t)) {
+          html += `<span class="tag-chip">${escapeHtml(t)}</span>`;
+        }
+      });
+      html += `</div>`;
+    }
 
-    html += `<h2 class="section-title">Specialties Treated</h2><div class="tags-cloud">`;
-    treatments.forEach((t: string) => {
-      html += `<span class="tag-chip">${escapeHtml(t)}</span>`;
-    });
-    html += `</div>`;
-
-    const timings = industryData.timings || "Mon – Fri: 10:00 am – 2:00 pm, 5:00 – 8:00 pm · Sat: 10:00 am – 2:00 pm";
-    html += `
-      <div class="timings-card">
-        <div style="font-weight: 700; margin-bottom: 8px;">Clinic Timings</div>
-        <div style="opacity: 0.9; line-height: 1.5;">${escapeHtml(timings)}</div>
-      </div>
-    `;
+    if (hasText(industryData.timings)) {
+      html += `
+        <div class="timings-card">
+          <div style="font-weight: 700; margin-bottom: 8px;">Clinic Timings</div>
+          <div style="opacity: 0.9; line-height: 1.5;">${escapeHtml(industryData.timings.trim())}</div>
+        </div>
+      `;
+    }
   }
 
   // D. Roast & Co. (Cafe Menu & Loyalty)
   if (design.id === "roast-and-co") {
-    const menu = Array.isArray(industryData.menu) && industryData.menu.length > 0 ? industryData.menu : [
-      { name: "Flat White", sub: "Double shot, silky microfoam", price: "₹190", popular: true },
-      { name: "Cappuccino", sub: "Classic balance, velvety foam", price: "₹170" },
-      { name: "Specialty Cold Brew", sub: "Steeped 18 hours, citrus notes", price: "₹210", popular: true },
-      { name: "Artisan Pour Over", sub: "Single-origin, roasted in-house", price: "₹180" },
-    ];
-
-    html += `
-      <div class="menu-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h2 class="section-title" style="margin-bottom: 0;">Signature Menu</h2>
-          <div class="menu-tabs">
-            <span class="menu-tab active">Coffee</span>
-            <span class="menu-tab">Cold</span>
-            <span class="menu-tab">Bites</span>
-          </div>
-        </div>
-    `;
-    menu.forEach((item: any) => {
+    if (Array.isArray(industryData.menu) && industryData.menu.length > 0) {
       html += `
-        <div class="menu-item">
-          <div>
-            <div class="menu-item-name">
-              ${escapeHtml(item.name || "")}
-              ${item.popular ? `<span class="menu-item-popular">Popular</span>` : ""}
-            </div>
-            ${item.sub ? `<div class="menu-item-sub">${escapeHtml(item.sub)}</div>` : ""}
+        <div class="menu-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h2 class="section-title" style="margin-bottom: 0;">Signature Menu</h2>
           </div>
-          <div class="menu-item-price">${escapeHtml(item.price || "")}</div>
+      `;
+      industryData.menu.forEach((item: any) => {
+        html += `
+          <div class="menu-item">
+            <div>
+              <div class="menu-item-name">
+                ${escapeHtml(item.name || "")}
+                ${item.popular ? `<span class="menu-item-popular">Popular</span>` : ""}
+              </div>
+              ${item.sub ? `<div class="menu-item-sub">${escapeHtml(item.sub)}</div>` : ""}
+            </div>
+            ${item.price ? `<div class="menu-item-price">${escapeHtml(item.price)}</div>` : ""}
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    if (hasText(industryData.loyalty)) {
+      html += `
+        <div class="loyalty-box">
+          <div class="loyalty-title">Roastery Stamp Card</div>
+          <div class="loyalty-desc">${escapeHtml(industryData.loyalty.trim())}</div>
         </div>
       `;
-    });
-    html += `</div>`;
-
-    const loyalty = industryData.loyalty || "Collect 8 stamps, get a free specialty beverage: 8 to go";
-    html += `
-      <div class="loyalty-box">
-        <div class="loyalty-title">Roastery Stamp Card</div>
-        <div class="loyalty-desc">${escapeHtml(loyalty)}</div>
-      </div>
-    `;
+    }
   }
 
-  // E. Bento Grid (Design 10 4-Tile Experience)
+  // E. Bento Grid (Modular Dynamic Experience)
   if (design.id === "bento-grid") {
-    html += `
-      <div class="bento-tile-row">
-        ${phone ? `
-          <a href="tel:${cleanPhone(phone)}" class="bento-tile bento-tile-coral">
-            <span class="bento-tile-title">Call us</span>
-            <span class="bento-tile-main">${escapeHtml(phone)}</span>
-          </a>` : `
-          <div class="bento-tile bento-tile-coral">
-            <span class="bento-tile-title">Call us</span>
-            <span class="bento-tile-main">Tap below</span>
-          </div>`
-        }
-        ${whatsapp ? `
-          <a href="https://wa.me/${cleanDigits(whatsapp)}" target="_blank" rel="noopener noreferrer" class="bento-tile bento-tile-sun">
-            <span class="bento-tile-title">WhatsApp</span>
-            <span class="bento-tile-main">Instant Reply</span>
-          </a>` : `
-          <div class="bento-tile bento-tile-sun">
-            <span class="bento-tile-title">WhatsApp</span>
-            <span class="bento-tile-main">Online</span>
-          </div>`
-        }
-      </div>
-      <div class="bento-tile-row">
+    const bentoTiles: string[] = [];
+
+    if (phoneDest) {
+      bentoTiles.push(`
+        <a href="${phoneDest}" class="bento-tile bento-tile-coral" aria-label="Call us">
+          <span class="bento-tile-title">Call us</span>
+          <span class="bento-tile-main">${escapeHtml(phone)}</span>
+        </a>
+      `);
+    }
+
+    if (waDest) {
+      bentoTiles.push(`
+        <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="bento-tile bento-tile-sun" aria-label="WhatsApp">
+          <span class="bento-tile-title">WhatsApp</span>
+          <span class="bento-tile-main">Instant Reply</span>
+        </a>
+      `);
+    }
+
+    if (mapsDest) {
+      bentoTiles.push(`
+        <a href="${mapsDest}" target="_blank" rel="noopener noreferrer" class="bento-tile bento-tile-mint" aria-label="Location">
+          <span class="bento-tile-title">Location</span>
+          <span class="bento-tile-main">${escapeHtml(address)}</span>
+        </a>
+      `);
+    }
+
+    if (hasText(industryData.rating) || hasText(industryData.clientRating)) {
+      const ratingText = industryData.rating || industryData.clientRating;
+      bentoTiles.push(`
         <div class="bento-tile bento-tile-lavender">
           <span class="bento-tile-title">Client Rating</span>
-          <span class="bento-tile-main">4.9 ★ (320+ Reviews)</span>
+          <span class="bento-tile-main">${escapeHtml(ratingText)}</span>
         </div>
-        <div class="bento-tile-row-mint bento-tile bento-tile-mint">
+      `);
+    }
+
+    if (hasText(industryData.hours) || hasText(industryData.workingHours)) {
+      const hoursText = industryData.hours || industryData.workingHours;
+      bentoTiles.push(`
+        <div class="bento-tile bento-tile-mint">
           <span class="bento-tile-title">Working Hours</span>
-          <span class="bento-tile-main">Mon–Sat: 9am–8pm</span>
+          <span class="bento-tile-main">${escapeHtml(hoursText)}</span>
         </div>
-      </div>
-      <h2 class="section-title">What we do</h2>
-      <div class="services-grid">
-        <div class="service-card">Digital Architecture</div>
-        <div class="service-card">NFC Business Cards</div>
-        <div class="service-card">Brand Direction</div>
-        <div class="service-card">Performance Systems</div>
-      </div>
-    `;
+      `);
+    }
+
+    if (bentoTiles.length === 1) {
+      bentoTiles.push(`
+        <button type="button" class="bento-tile bento-tile-lavender" id="saveContactBtn" aria-label="Save Contact" style="cursor: pointer; text-align: left; border: none;">
+          <span class="bento-tile-title">Contact Card</span>
+          <span class="bento-tile-main">Save Contact</span>
+        </button>
+      `);
+    }
+
+    if (bentoTiles.length > 0) {
+      for (let i = 0; i < bentoTiles.length; i += 2) {
+        html += `<div class="bento-tile-row">`;
+        html += bentoTiles[i];
+        if (bentoTiles[i + 1]) {
+          html += bentoTiles[i + 1];
+        }
+        html += `</div>`;
+      }
+    }
+
+    if (Array.isArray(industryData.services) && industryData.services.length > 0) {
+      html += `<h2 class="section-title">What we do</h2><div class="services-grid">`;
+      industryData.services.forEach((s: any) => {
+        const txt = typeof s === "string" ? s : (s.name || s.title || "");
+        if (hasText(txt)) {
+          html += `<div class="service-card">${escapeHtml(txt)}</div>`;
+        }
+      });
+      html += `</div>`;
+    }
   }
 
   // F. Business Hubs (Classic Navy, Fresh Mint, Bold Pop, Glass Aurora, Luxe Foil)
   if (["classic-navy", "fresh-mint", "bold-pop", "glass-aurora", "luxe-foil"].includes(design.id)) {
-    html += `
-      <h2 class="section-title">What we do</h2>
-      <div class="services-grid">
-        <div class="service-card">Consultation</div>
-        <div class="service-card">Installation</div>
-        <div class="service-card">Maintenance</div>
-        <div class="service-card">Custom Orders</div>
-        <div class="service-card">Home Delivery</div>
-        <div class="service-card">Corporate Plans</div>
-      </div>
+    const bizServices = Array.isArray(industryData.services) ? industryData.services : [];
+    if (bizServices.length > 0) {
+      html += `<h2 class="section-title">What we do</h2><div class="services-grid">`;
+      bizServices.forEach((s: any) => {
+        const txt = typeof s === "string" ? s : (s.name || s.title || "");
+        if (hasText(txt)) {
+          html += `<div class="service-card">${escapeHtml(txt)}</div>`;
+        }
+      });
+      html += `</div>`;
+    }
 
-      <div class="hours-table">
-        <h2 class="section-title" style="margin-bottom: 8px;">Opening Hours</h2>
-        <div class="hours-row"><span>Mon – Fri</span><span>9:00 am – 8:00 pm</span></div>
-        <div class="hours-row"><span>Saturday</span><span>10:00 am – 6:00 pm</span></div>
-        <div class="hours-row"><span>Sunday</span><span style="opacity: 0.65;">Closed</span></div>
-      </div>
-    `;
+    const bizHours = Array.isArray(industryData.hours) ? industryData.hours : (hasText(industryData.hours) ? [industryData.hours] : []);
+    if (bizHours.length > 0) {
+      html += `<div class="hours-table"><h2 class="section-title" style="margin-bottom: 8px;">Opening Hours</h2>`;
+      bizHours.forEach((h: any) => {
+        if (typeof h === "string") {
+          html += `<div class="hours-row"><span>Hours</span><span>${escapeHtml(h)}</span></div>`;
+        } else if (h && typeof h === "object") {
+          html += `<div class="hours-row"><span>${escapeHtml(h.days || h.label || "")}</span><span>${escapeHtml(h.time || h.value || "")}</span></div>`;
+        }
+      });
+      html += `</div>`;
+    }
   }
 
   // =========================================================================
-  // 5. CONTACT & DYNAMIC LINKS LIST
+  // 5. CONTACT & DYNAMIC LINKS LIST (Get in touch)
   // =========================================================================
   if (contactLinks.length > 0) {
     html += `<h2 class="section-title">Get in touch</h2><div class="contact-list">`;
@@ -1101,7 +1501,7 @@ export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDef
   }
 
   // =========================================================================
-  // 6. SOCIAL MEDIA GRID
+  // 6. SOCIAL MEDIA GRID (Connect)
   // =========================================================================
   if (socialLinks.length > 0) {
     html += `<h2 class="section-title">Connect</h2><div class="social-grid">`;

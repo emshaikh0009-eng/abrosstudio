@@ -445,73 +445,501 @@ button, a, input, select {
 }
 
 /* ==============================================================================
-   DESIGN 3 — NOIR GOLD (Refined dark card with gold ring)
+/* ==============================================================================
+   DESIGN 3 — NOIR GOLD (Exact Recreation from noir-gold.html & PDF Brochure)
    ============================================================================== */
 .theme-noir-gold {
-  background-color: #0b0d13;
-  color: #f8fafc;
+  --bg: #0b0d12;
+  --card: #10141c;
+  --panel: #171c27;
+  --line: #262d3b;
+  --gold: #d9b062;
+  --gold-soft: #b8955a;
+  --text: #f2ede2;
+  --muted: #9aa1b0;
+  --serif: 'Libre Baskerville', Baskerville, Georgia, 'Times New Roman', serif;
+  --sans: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ng-bg: #0b0d12;
+  --ng-card: #10141c;
+  --ng-panel: #171c27;
+  --ng-line: #262d3b;
+  --ng-gold: #d9b062;
+  --ng-gold-soft: #b8955a;
+  --ng-text: #f2ede2;
+  --ng-muted: #9aa1b0;
+  --ng-serif: 'Libre Baskerville', Baskerville, Georgia, 'Times New Roman', serif;
+  --ng-sans: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: #0b0d12 !important;
+  color: #f2ede2;
+  font-family: var(--ng-sans);
 }
 
-.theme-noir-gold .profile-avatar-circle {
-  background: #141722;
-  color: #dfb76c;
-  border: 2px solid #dfb76c;
-  box-shadow: 0 0 22px rgba(223, 183, 108, 0.35);
+html.theme-noir-gold {
+  background: #0b0d12 !important;
 }
 
-.theme-noir-gold .profile-name {
-  color: #ffffff;
+body.theme-noir-gold {
+  font-family: var(--ng-sans);
+  color: var(--ng-text);
+  background: var(--ng-bg) !important;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+  margin: 0;
 }
 
-.theme-noir-gold .profile-designation {
-  color: #dfb76c;
+.theme-noir-gold a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.theme-noir-gold button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+
+.theme-noir-gold :focus-visible {
+  outline: 2px solid var(--ng-gold);
+  outline-offset: 2px;
+}
+
+/* Card container & Viewport Wrapper */
+.theme-noir-gold .viewport-wrapper {
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--ng-card);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  display: block;
+  box-sizing: border-box;
+}
+
+@media (min-width: 480px) {
+  .theme-noir-gold .viewport-wrapper {
+    margin: 24px auto;
+    border-radius: 12px;
+    border: 1px solid var(--ng-line);
+    min-height: 0;
+  }
+}
+
+/* Hero: dark navy strip with subtle diagonal pattern */
+.theme-noir-gold .hero {
+  height: 150px;
+  background:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, .035) 0 2px, transparent 2px 14px),
+    linear-gradient(180deg, #1a2133, #10141c);
+}
+
+/* Profile ID Header */
+.theme-noir-gold .id {
+  margin-top: -62px;
+  text-align: center;
+  padding: 0 22px;
+}
+
+/* Circular avatar with gold border & double outline ring */
+.theme-noir-gold .ring {
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  margin: 0 auto;
+  border: 1.5px solid var(--ng-gold);
+  background: var(--ng-card);
+  display: grid;
+  place-items: center;
+  font: 400 36px/1 var(--ng-serif);
+  color: var(--ng-gold);
+  letter-spacing: 2px;
+  box-shadow: 0 0 0 7px var(--ng-card), 0 0 0 8px var(--ng-line);
+  overflow: hidden;
+}
+
+.theme-noir-gold .ring img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.theme-noir-gold h1 {
+  font: 700 25px/1.2 var(--ng-serif);
+  margin-top: 20px;
+  color: var(--ng-text);
+  margin-bottom: 0;
+}
+
+.theme-noir-gold .role {
+  color: var(--ng-muted);
+  font-size: 15px;
+  margin-top: 6px;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+.theme-noir-gold .status {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--ng-muted);
+}
+
+.theme-noir-gold .status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #35d07f;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Primary actions */
+.theme-noir-gold .actions {
+  display: flex;
+  gap: 10px;
+  padding: 20px 22px 0;
+}
+
+.theme-noir-gold .btn {
+  flex: 1;
+  padding: 14px 12px;
+  border-radius: 4px;
+  font-size: 15px;
   font-weight: 600;
+  text-align: center;
+  transition: transform .15s, background .2s;
+  font-family: var(--ng-sans);
+  cursor: pointer;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.theme-noir-gold .about-card {
-  background: #141722;
-  border: 1px solid rgba(223, 183, 108, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+.theme-noir-gold .btn:active {
+  transform: scale(.97);
 }
 
-.theme-noir-gold .about-card .card-subtitle {
-  color: #dfb76c;
+.theme-noir-gold .btn.gold {
+  background: var(--ng-gold);
+  color: #1a1405;
 }
 
-.theme-noir-gold .cta-btn-primary {
-  background: linear-gradient(135deg, #dfb76c, #c59d53);
-  color: #0b0d13;
-  font-weight: 700;
-  box-shadow: 0 4px 16px rgba(223, 183, 108, 0.35);
+.theme-noir-gold .btn.gold:hover {
+  background: #e6c075;
 }
 
-.theme-noir-gold .cta-btn-primary:hover {
-  filter: brightness(1.08);
+.theme-noir-gold .btn.ghost {
+  border: 1px solid var(--ng-line);
+  background: var(--ng-card);
+  color: var(--ng-text);
 }
 
-.theme-noir-gold .cta-btn-secondary {
-  background: #141722;
-  color: #f8fafc;
-  border: 1px solid rgba(223, 183, 108, 0.45);
+.theme-noir-gold .btn.ghost:hover {
+  border-color: var(--ng-gold-soft);
 }
 
-.theme-noir-gold .contact-row {
-  background: #141722;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Sections & Typography */
+.theme-noir-gold section {
+  padding: 26px 22px 0;
 }
 
-.theme-noir-gold .contact-row:hover {
-  border-color: rgba(223, 183, 108, 0.3);
+.theme-noir-gold h2 {
+  font: 700 17px/1.2 var(--ng-serif);
+  color: var(--ng-gold);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ng-line);
 }
 
-.theme-noir-gold .contact-row-icon {
-  background: rgba(223, 183, 108, 0.15);
-  color: #dfb76c;
+.theme-noir-gold .tile {
+  background: var(--ng-panel);
+  border: 1px solid var(--ng-line);
+  border-radius: 6px;
+  padding: 16px;
 }
 
-.theme-noir-gold .social-item {
-  background: #141722;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.theme-noir-gold .tile p {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: #d6d2c8;
+  margin: 0;
+}
+
+/* Stats */
+.theme-noir-gold .stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-block: 1px solid var(--ng-gold-soft);
+}
+
+.theme-noir-gold .stats div {
+  text-align: center;
+  padding: 16px 6px;
+}
+
+.theme-noir-gold .stats div + div {
+  border-left: 1px solid var(--ng-line);
+}
+
+.theme-noir-gold .stats b {
+  display: block;
+  font: 400 24px/1 var(--ng-serif);
+  color: var(--ng-text);
+}
+
+.theme-noir-gold .stats span {
+  font-size: 13px;
+  color: var(--ng-muted);
+}
+
+/* Contact rows */
+.theme-noir-gold .rows {
+  display: grid;
+}
+
+.theme-noir-gold .row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 2px;
+  border-bottom: 1px solid var(--ng-line);
+  font-size: 15.5px;
+  transition: background .2s;
+  color: inherit;
+  text-decoration: none;
+}
+
+.theme-noir-gold .row:hover {
+  background: rgba(217, 176, 98, .05);
+}
+
+.theme-noir-gold .row svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  stroke: var(--ng-gold);
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-noir-gold .row > span:not(.go) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.theme-noir-gold .row small {
+  display: block;
+  color: var(--ng-muted);
+  font-size: 12.5px;
+}
+
+.theme-noir-gold .row .go {
+  margin-left: auto;
+  color: var(--ng-gold-soft);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* Services */
+.theme-noir-gold .svc {
+  display: grid;
+  gap: 0;
+}
+
+.theme-noir-gold .svc div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--ng-line);
+  font-size: 15px;
+}
+
+.theme-noir-gold .svc div:last-child {
+  border: 0;
+}
+
+.theme-noir-gold .svc em {
+  font: 400 15px/1.3 var(--ng-serif);
+  font-style: normal;
+  color: var(--ng-text);
+}
+
+.theme-noir-gold .svc span {
+  color: var(--ng-muted);
+  font-size: 13.5px;
+  text-align: right;
+}
+
+/* Testimonials */
+.theme-noir-gold .quotes {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin: 0 -22px;
+  padding: 0 22px 4px;
+  scrollbar-width: none;
+}
+
+.theme-noir-gold .quotes::-webkit-scrollbar {
+  display: none;
+}
+
+.theme-noir-gold .quote {
+  flex: 0 0 82%;
+  scroll-snap-align: center;
+  background: var(--ng-panel);
+  border: 1px solid var(--ng-line);
+  border-radius: 6px;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.theme-noir-gold .quote p {
+  font: italic 400 15px/1.6 var(--ng-serif);
+  color: var(--ng-text);
+  margin: 0;
+}
+
+.theme-noir-gold .quote footer {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ng-muted);
+}
+
+/* Map / Location */
+.theme-noir-gold .map {
+  height: 120px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  border: 1px solid var(--ng-line);
+  background:
+    linear-gradient(90deg, transparent 49%, rgba(217, 176, 98, .18) 49% 51%, transparent 51%),
+    linear-gradient(0deg, transparent 60%, rgba(217, 176, 98, .14) 60% 62%, transparent 62%),
+    repeating-linear-gradient(0deg, #141a26 0 22px, #111622 22px 44px);
+  display: grid;
+  place-items: center;
+}
+
+.theme-noir-gold .pin {
+  width: 16px;
+  height: 16px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--ng-gold);
+  box-shadow: 0 0 0 6px rgba(217, 176, 98, .2);
+}
+
+/* Social & Share */
+.theme-noir-gold .social {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px 22px 0;
+}
+
+.theme-noir-gold .social a {
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  border: 1px solid var(--ng-line);
+  display: grid;
+  place-items: center;
+  color: var(--ng-gold);
+  transition: border-color .2s;
+  text-decoration: none;
+}
+
+.theme-noir-gold .social svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.theme-noir-gold .social a:hover {
+  border-color: var(--ng-gold);
+}
+
+.theme-noir-gold .share {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px 22px 0;
+}
+
+.theme-noir-gold footer.f {
+  text-align: center;
+  color: var(--ng-muted);
+  font-size: 12.5px;
+  padding: 26px 22px 30px;
+}
+
+/* Toast */
+.theme-noir-gold .card-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 20px);
+  background: var(--ng-gold);
+  color: #1a1405;
+  padding: 10px 18px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: .25s;
+  z-index: 9999;
+}
+
+.theme-noir-gold .card-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.theme-noir-gold .card-toast svg {
+  stroke: #1a1405;
+}
+
+/* QR Modal styling matching Noir Gold dialog */
+.theme-noir-gold .qr-modal-card {
+  border: 1px solid var(--ng-gold-soft);
+  border-radius: 8px;
+  background: var(--ng-card);
+  color: var(--ng-text);
+  padding: 24px;
+  width: min(340px, 92vw);
+  margin: auto;
+}
+
+.theme-noir-gold .qr-modal-card h3 {
+  font-family: var(--ng-serif);
+  color: var(--ng-gold);
+}
+
+.theme-noir-gold .qr-canvas-wrap {
+  background: #fff;
+  border-radius: 4px;
+  padding: 14px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
 }
 
 /* ==============================================================================

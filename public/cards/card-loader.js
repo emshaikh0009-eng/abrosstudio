@@ -301,8 +301,8 @@
   }
 
   function attachCardActions(card) {
-    // 1. Save Contact
-    const saveBtn = document.getElementById('saveContactBtn');
+    // 1. Save Contact (supports standard saveContactBtn and noir-gold save)
+    const saveBtn = document.getElementById('saveContactBtn') || document.getElementById('save');
     if (saveBtn) {
       saveBtn.onclick = function (e) {
         e.preventDefault();
@@ -335,8 +335,8 @@
       };
     }
 
-    // 2. Share
-    const shareBtn = document.getElementById('shareCardBtn');
+    // 2. Share (supports standard shareCardBtn and noir-gold share)
+    const shareBtn = document.getElementById('shareCardBtn') || document.getElementById('share');
     if (shareBtn) {
       shareBtn.onclick = function(e) {
         e.preventDefault();
@@ -344,8 +344,8 @@
       };
     }
 
-    // 3. QR Modal
-    const showQrBtn = document.getElementById('showQrBtn');
+    // 3. QR Modal (supports standard showQrBtn and noir-gold qrbtn)
+    const showQrBtn = document.getElementById('showQrBtn') || document.getElementById('qrbtn');
     if (showQrBtn) {
       showQrBtn.onclick = function(e) {
         e.preventDefault();
@@ -434,7 +434,7 @@
 
     applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
 
-    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
+    const name = card.fullName || card.full_name || card.name || '';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
 
@@ -473,7 +473,7 @@
   function hydrateLegacyDesign1(card, isPreview) {
     applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
 
-    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
+    const name = card.fullName || card.full_name || card.name || '';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
     const bio = card.description || '';
@@ -600,7 +600,7 @@
   function hydrateLegacyDesign2(card, isPreview) {
     applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
 
-    const name = card.fullName || card.full_name || card.name || 'Ambros Studio Member';
+    const name = card.fullName || card.full_name || card.name || '';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
     const bio = card.description || '';

@@ -1392,9 +1392,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const rawLinkedIn = custLinkedIn ? custLinkedIn.value.trim() : '';
 
     const registry = window.CARD_DESIGN_REGISTRY;
-    const demoProfile = (registry && typeof registry.getDemoProfile === 'function')
-      ? registry.getDemoProfile(design.id)
-      : ((registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER) || {});
 
     // Check if there is actual customer data in the editor
     const hasFormInput = Boolean(
@@ -1404,82 +1401,78 @@ document.addEventListener('DOMContentLoaded', () => {
       (Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0)
     );
 
-    // If form has user data, render ONLY that customer's real data (no demo address or demo links leaked)
-    // If form is completely empty, use the canonical design-specific demo profile
-    const fullName = hasFormInput ? (rawName || 'Client Profile') : (demoProfile.fullName || 'Ambros Studio');
-    const designation = hasFormInput ? rawRole : (demoProfile.designation || '');
-    const company = hasFormInput ? rawCompany : (demoProfile.company || '');
-    const phone = hasFormInput ? rawPhone : (demoProfile.phone || '+91 91577 78915');
-    const whatsapp = hasFormInput ? (rawWhatsApp || (rawPhone ? rawPhone.replace(/[^0-9]/g, '') : '')) : (demoProfile.whatsapp || '919157778915');
-    const email = hasFormInput ? rawEmail : (demoProfile.email || 'ambrosstudioltd@gmail.com');
-    const website = hasFormInput ? rawWebsite : (demoProfile.website || 'https://ambrosstudio.com');
-    const address = hasFormInput ? rawAddress : (demoProfile.address || '');
-    const description = hasFormInput ? rawDesc : (demoProfile.description || '');
-    const avatarUrl = currentUploadedAvatar || (hasFormInput ? '' : (demoProfile.avatarUrl || ''));
-
+    let fullName = '';
+    let designation = '';
+    let company = '';
+    let phone = '';
+    let whatsapp = '';
+    let email = '';
+    let website = '';
+    let address = '';
+    let description = '';
+    let avatarUrl = '';
+    let socialInstagram = '';
+    let socialLinkedIn = '';
     let links = [];
-    if (Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0) {
-      links = currentCustomLinks;
-    } else if (!hasFormInput && demoProfile.customSettings && Array.isArray(demoProfile.customSettings.links)) {
-      links = demoProfile.customSettings.links;
-    } else if (!hasFormInput) {
-      links = [
-        { id: '1', type: 'phone', label: 'Call Studio', value: phone, enabled: true, order: 0 },
-        { id: '2', type: 'whatsapp', label: 'Chat on WhatsApp', value: whatsapp, enabled: true, order: 1 },
-        { id: '3', type: 'email', label: 'Email Team', value: email, enabled: true, order: 2 },
-        { id: '4', type: 'website', label: 'Visit Website', value: website, enabled: true, order: 3 },
-        { id: '5', type: 'instagram', label: 'Instagram', value: rawInstagram || 'https://www.instagram.com/ambros.studio', enabled: true, order: 4 },
-        { id: '6', type: 'linkedin', label: 'LinkedIn', value: rawLinkedIn || 'https://linkedin.com/company/ambrosstudio', enabled: true, order: 5 }
-      ];
-    } else {
-      let order = 0;
-      if (phone) links.push({ id: `link_${++order}`, type: 'phone', label: 'Phone', value: phone, enabled: true, order });
-      if (whatsapp) links.push({ id: `link_${++order}`, type: 'whatsapp', label: 'WhatsApp', value: whatsapp, enabled: true, order });
-      if (email) links.push({ id: `link_${++order}`, type: 'email', label: 'Email', value: email, enabled: true, order });
-      if (website) links.push({ id: `link_${++order}`, type: 'website', label: 'Website', value: website, enabled: true, order });
-      if (rawInstagram) links.push({ id: `link_${++order}`, type: 'instagram', label: 'Instagram', value: rawInstagram, enabled: true, order });
-      if (rawLinkedIn) links.push({ id: `link_${++order}`, type: 'linkedin', label: 'LinkedIn', value: rawLinkedIn, enabled: true, order });
-      if (address) links.push({ id: `link_${++order}`, type: 'maps', label: 'Directions', value: address, enabled: true, order });
-    }
-
     let industryData = {};
-    if (!hasFormInput && demoProfile.customSettings && demoProfile.customSettings.industry && demoProfile.customSettings.industry.data) {
-      industryData = demoProfile.customSettings.industry.data;
-    } else if (design.id === 'skyline') {
-      industryData = {
-        badges: ['Demo RERA · Sample Profile', 'English · Hindi · Gujarati', 'Bandra · Worli · Althan'],
-        stats: [{ num: '140+', label: 'Homes Sold' }, { num: '₹320Cr', label: 'Closed Value' }, { num: '9+ Yrs', label: 'Experience' }],
-        listings: [
-          { tag: 'Sample Exclusive', price: '₹3.40 Cr', title: '3 BHK Sea-View Residence', location: 'Bandra West, Mumbai · 1,650 sq ft', pills: ['Sea view', '2 parking', 'Ready to move'] },
-          { tag: 'Sample New Launch', price: '₹1.85 Cr', title: '2 BHK Garden Penthouse', location: 'VIP Road Corridor, Surat · 1,220 sq ft', pills: ['Clubhouse', 'Pool', 'Sample RERA'] }
-        ]
-      };
-    } else if (design.id === 'atelier') {
-      industryData = {
-        services: [
-          { name: 'Bespoke Couture', subtitle: 'Handcrafted embroidery' },
-          { name: 'Bridal Trousseau', subtitle: 'Full fitting suite' },
-          { name: 'Red Carpet Styling', subtitle: '1:1 Consultations' },
-          { name: 'Runway Edit', subtitle: 'Limited capsule' }
-        ]
-      };
-    } else if (design.id === 'care-plus') {
-      industryData = {
-        nextSlot: 'Sample Slot: Today, 4:30 PM (Demo)',
-        treatments: ['Clinical Dermatology', 'Laser Resurfacing', 'Hair Restoration', 'Anti-Pigmentation'],
-        timings: 'Mon – Sat: 10:00 am – 7:30 pm (Sample Schedule)'
-      };
-    } else if (design.id === 'roast-and-co') {
-      industryData = {
-        badges: ['Sample Open · Till 10 PM', '★ 4.8 Sample Rating', 'Free Gigabit Wi-Fi'],
-        menu: [
-          { name: 'Flat White', price: '₹190', popular: true },
-          { name: 'Cappuccino', price: '₹170' },
-          { name: 'Specialty Cold Brew', price: '₹210', popular: true },
-          { name: 'Manual Pour-Over', price: '₹180' }
-        ],
-        loyalty: 'Sample Loyalty: Collect 8 stamps, get 1 free brew'
-      };
+
+    if (hasFormInput) {
+      // Customer Mode: ONLY actual customer data, zero dummy fallback!
+      fullName = rawName;
+      designation = rawRole;
+      company = rawCompany;
+      phone = rawPhone;
+      whatsapp = rawWhatsApp;
+      email = rawEmail;
+      website = rawWebsite;
+      address = rawAddress;
+      description = rawDesc;
+      avatarUrl = currentUploadedAvatar || '';
+      socialInstagram = rawInstagram;
+      socialLinkedIn = rawLinkedIn;
+
+      if (Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0) {
+        links = currentCustomLinks.filter(l => l && l.enabled !== false && l.value && l.value.trim());
+      } else {
+        let order = 0;
+        if (phone) links.push({ id: `link_${++order}`, type: 'phone', label: 'Phone', value: phone, enabled: true, order });
+        if (whatsapp) links.push({ id: `link_${++order}`, type: 'whatsapp', label: 'WhatsApp', value: whatsapp, enabled: true, order });
+        if (email) links.push({ id: `link_${++order}`, type: 'email', label: 'Email', value: email, enabled: true, order });
+        if (website) links.push({ id: `link_${++order}`, type: 'website', label: 'Website', value: website, enabled: true, order });
+        if (rawInstagram) links.push({ id: `link_${++order}`, type: 'instagram', label: 'Instagram', value: rawInstagram, enabled: true, order });
+        if (rawLinkedIn) links.push({ id: `link_${++order}`, type: 'linkedin', label: 'LinkedIn', value: rawLinkedIn, enabled: true, order });
+        if (address) links.push({ id: `link_${++order}`, type: 'maps', label: 'Directions', value: address, enabled: true, order });
+      }
+
+      if (design.id === 'raftcon-luxury' && typeof collectRaftconIndustryData === 'function') {
+        const coll = collectRaftconIndustryData();
+        if (coll && coll.data) industryData = coll.data;
+      }
+    } else {
+      // Empty editor fallback for showroom template preview
+      const demoProfile = (registry && typeof registry.getDemoProfile === 'function')
+        ? registry.getDemoProfile(design.id)
+        : ((registry && registry.AUTHORITATIVE_AMBROS_CUSTOMER) || {});
+
+      fullName = demoProfile.fullName || 'Ambros Studio';
+      designation = demoProfile.designation || '';
+      company = demoProfile.company || '';
+      phone = demoProfile.phone || '';
+      whatsapp = demoProfile.whatsapp || '';
+      email = demoProfile.email || '';
+      website = demoProfile.website || '';
+      address = demoProfile.address || '';
+      description = demoProfile.description || '';
+      avatarUrl = demoProfile.avatarUrl || '';
+      socialInstagram = demoProfile.socialInstagram || '';
+      socialLinkedIn = demoProfile.socialLinkedIn || '';
+
+      if (demoProfile.customSettings && Array.isArray(demoProfile.customSettings.links)) {
+        links = demoProfile.customSettings.links;
+      }
+      if (demoProfile.customSettings && demoProfile.customSettings.industry && demoProfile.customSettings.industry.data) {
+        industryData = demoProfile.customSettings.industry.data;
+      }
     }
 
     return {
@@ -1492,8 +1485,8 @@ document.addEventListener('DOMContentLoaded', () => {
       website,
       address,
       description,
-      socialInstagram: rawInstagram,
-      socialLinkedIn: rawLinkedIn,
+      socialInstagram,
+      socialLinkedIn,
       cardDesign: design.id,
       profileSlug: (fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')) || 'sample-profile',
       avatarUrl: avatarUrl,
@@ -2793,14 +2786,41 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginSubmitSpinner = document.getElementById('loginSubmitSpinner');
   const loginAlert = document.getElementById('loginAlert');
   const loginAlertMessage = document.getElementById('loginAlertMessage');
+  const loginAlertIcon = document.getElementById('loginAlertIcon');
   const loginPasswordToggle = document.getElementById('loginPasswordToggle');
   const pwdEyeIcon = document.getElementById('pwdEyeIcon');
   const adminUserName = document.getElementById('adminUserName');
   const adminUserAvatar = document.getElementById('adminUserAvatar');
 
+  // Forgot password elements
+  const loginCardTitle = document.getElementById('loginCardTitle');
+  const loginCardSubtitle = document.getElementById('loginCardSubtitle');
+  const btnShowForgotModal = document.getElementById('btnShowForgotModal');
+  const adminForgotForm = document.getElementById('adminForgotForm');
+  const forgotEmailInput = document.getElementById('forgotEmail');
+  const forgotSubmitBtn = document.getElementById('forgotSubmitBtn');
+  const forgotSubmitText = document.getElementById('forgotSubmitText');
+  const forgotSubmitSpinner = document.getElementById('forgotSubmitSpinner');
+  const btnBackToLogin = document.getElementById('btnBackToLogin');
+
   // Helper to show/hide login alert
   function showLoginError(msg) {
     if (loginAlert && loginAlertMessage) {
+      loginAlert.classList.remove('login-alert-success');
+      if (loginAlertIcon) {
+        loginAlertIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+      }
+      loginAlertMessage.textContent = msg;
+      loginAlert.style.display = 'flex';
+    }
+  }
+
+  function showLoginSuccess(msg) {
+    if (loginAlert && loginAlertMessage) {
+      loginAlert.classList.add('login-alert-success');
+      if (loginAlertIcon) {
+        loginAlertIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+      }
       loginAlertMessage.textContent = msg;
       loginAlert.style.display = 'flex';
     }
@@ -2809,7 +2829,100 @@ document.addEventListener('DOMContentLoaded', () => {
   function hideLoginError() {
     if (loginAlert) {
       loginAlert.style.display = 'none';
+      loginAlert.classList.remove('login-alert-success');
     }
+  }
+
+  // Check for reset=success parameter in URL on load
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('reset') === 'success') {
+      showLoginSuccess('Your password has been successfully reset! Please sign in with your new password.');
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  } catch (e) {
+    console.warn('URL reset param parse error:', e);
+  }
+
+  // Forgot Password View Toggle
+  if (btnShowForgotModal) {
+    btnShowForgotModal.addEventListener('click', (e) => {
+      e.preventDefault();
+      hideLoginError();
+      if (loginCardTitle) loginCardTitle.textContent = 'Reset Password';
+      if (loginCardSubtitle) loginCardSubtitle.textContent = 'Enter your email to receive a password recovery link';
+      if (loginForm) loginForm.style.display = 'none';
+      if (adminForgotForm) adminForgotForm.style.display = 'flex';
+      if (forgotEmailInput) {
+        if (loginEmailInput && loginEmailInput.value) {
+          forgotEmailInput.value = loginEmailInput.value;
+        }
+        forgotEmailInput.focus();
+      }
+    });
+  }
+
+  if (btnBackToLogin) {
+    btnBackToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      hideLoginError();
+      if (loginCardTitle) loginCardTitle.textContent = 'Admin Portal Sign In';
+      if (loginCardSubtitle) loginCardSubtitle.textContent = 'Secure access to digital cards & client profile management';
+      if (adminForgotForm) adminForgotForm.style.display = 'none';
+      if (loginForm) loginForm.style.display = 'flex';
+      if (loginEmailInput && forgotEmailInput && forgotEmailInput.value) {
+        loginEmailInput.value = forgotEmailInput.value;
+      }
+      if (loginPasswordInput) loginPasswordInput.focus();
+    });
+  }
+
+  // Handle Forgot Password Form Submission
+  if (adminForgotForm) {
+    adminForgotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideLoginError();
+
+      const email = (forgotEmailInput?.value || '').trim().toLowerCase();
+      if (!email) {
+        showLoginError('Please enter your administrator email address.');
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showLoginError('Please enter a valid email address format.');
+        return;
+      }
+
+      if (forgotSubmitBtn) forgotSubmitBtn.disabled = true;
+      if (forgotSubmitText) forgotSubmitText.textContent = 'Sending reset link...';
+      if (forgotSubmitSpinner) forgotSubmitSpinner.style.display = 'inline-block';
+
+      try {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showLoginSuccess(data.message || 'Password reset link sent! Please check your email inbox and spam folder.');
+        } else {
+          showLoginError(data.error || 'Failed to send password reset email. Please try again.');
+        }
+      } catch (err) {
+        console.error('Forgot password request error:', err);
+        showLoginError('Network or server error while sending reset link. Please try again.');
+      } finally {
+        if (forgotSubmitBtn) forgotSubmitBtn.disabled = false;
+        if (forgotSubmitText) forgotSubmitText.textContent = 'Send Reset Link';
+        if (forgotSubmitSpinner) forgotSubmitSpinner.style.display = 'none';
+      }
+    });
   }
 
   // Toggle password visibility
