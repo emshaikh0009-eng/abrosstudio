@@ -843,6 +843,355 @@
 
               </div>
 
+              <!-- 6. ATG Study Abroad Customization Card (Shown for ATG Study Abroad) -->
+              <div class="form-card" id="atgStudyAbroadCard" style="display: none;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                  <h2 class="form-section-title" style="margin: 0;">ATG Study Abroad Customization</h2>
+                  <span class="badge-design" style="background: #ecfccb; color: #3f6212; border: 1px solid #bef264;">Design 18 &bull; Study Abroad</span>
+                </div>
+                <p class="form-section-sub">Education consultancy branding, metrics, study destinations, test preparation, free guides, and contact channels.</p>
+
+                <!-- Tagline & About ATG -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Identity &amp; Story</div>
+                  <div class="form-group">
+                    <label for="atgTagline" class="form-label">Profile Tagline (Italicized)</label>
+                    <input type="text" id="atgTagline" class="form-input" placeholder="On a mission, with a vision">
+                  </div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="atgAboutTitle" class="form-label">About Section Heading</label>
+                      <input type="text" id="atgAboutTitle" class="form-input" placeholder="About ATG Study Abroad">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="atgAboutText" class="form-label">About ATG Description</label>
+                    <textarea id="atgAboutText" class="form-textarea" placeholder="Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa." style="min-height: 64px;"></textarea>
+                  </div>
+                </div>
+
+                <!-- Key Metrics (3 Stat Columns) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Key Performance Metrics</div>
+                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                    <div>
+                      <label for="atgMetric1Val" class="form-label" style="font-size: 11px;">Metric 1 Number</label>
+                      <input type="text" id="atgMetric1Val" class="form-input" placeholder="4,000+">
+                      <label for="atgMetric1Lbl" class="form-label" style="font-size: 11px; margin-top: 4px;">Metric 1 Label</label>
+                      <input type="text" id="atgMetric1Lbl" class="form-input" placeholder="Students guided">
+                    </div>
+                    <div>
+                      <label for="atgMetric2Val" class="form-label" style="font-size: 11px;">Metric 2 Number</label>
+                      <input type="text" id="atgMetric2Val" class="form-input" placeholder="5+">
+                      <label for="atgMetric2Lbl" class="form-label" style="font-size: 11px; margin-top: 4px;">Metric 2 Label</label>
+                      <input type="text" id="atgMetric2Lbl" class="form-input" placeholder="Study destinations">
+                    </div>
+                    <div>
+                      <label for="atgMetric3Val" class="form-label" style="font-size: 11px;">Metric 3 Number</label>
+                      <input type="text" id="atgMetric3Val" class="form-input" placeholder="5+">
+                      <label for="atgMetric3Lbl" class="form-label" style="font-size: 11px; margin-top: 4px;">Metric 3 Label</label>
+                      <input type="text" id="atgMetric3Lbl" class="form-input" placeholder="Test prep courses">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons (Lime + Black) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Primary Guidance CTAs</div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="atgCtaPrimaryText" class="form-label">Primary Lime CTA Text</label>
+                      <input type="text" id="atgCtaPrimaryText" class="form-input" placeholder="Find out which country suits you">
+                    </div>
+                    <div class="form-group">
+                      <label for="atgCtaPrimaryUrl" class="form-label">Primary Lime CTA URL (Optional)</label>
+                      <input type="text" id="atgCtaPrimaryUrl" class="form-input" placeholder="Leave empty for WhatsApp guidance link">
+                    </div>
+                  </div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="atgCtaWhatsAppText" class="form-label">WhatsApp Button Text</label>
+                      <input type="text" id="atgCtaWhatsAppText" class="form-input" placeholder="Chat on WhatsApp for instant guidance">
+                    </div>
+                    <div class="form-group">
+                      <label for="atgCtaWhatsAppUrl" class="form-label">WhatsApp Button URL (Optional)</label>
+                      <input type="text" id="atgCtaWhatsAppUrl" class="form-input" placeholder="Leave empty for customer WhatsApp link">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Popular Study Destinations (Repeatable) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">Study Destinations</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Country badges, programs, and direct inquiry actions.</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnAddAtgDestination">
+                      <span>+ Add Country</span>
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <label for="atgDestinationsTitle" class="form-label">Section Title</label>
+                    <input type="text" id="atgDestinationsTitle" class="form-input" placeholder="Popular study destinations">
+                  </div>
+                  <div id="atgDestinationsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Test Preparation & Coaching -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Test Preparation &amp; Batches</div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="atgTestPrepTitle" class="form-label">Section Title</label>
+                      <input type="text" id="atgTestPrepTitle" class="form-input" placeholder="Test preparation">
+                    </div>
+                    <div class="form-group">
+                      <label for="atgCoachingHeading" class="form-label">Coaching Heading</label>
+                      <input type="text" id="atgCoachingHeading" class="form-input" placeholder="Book a coaching class for">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="atgCoachingCourses" class="form-label">Course Tags (Comma separated)</label>
+                    <input type="text" id="atgCoachingCourses" class="form-input" placeholder="IELTS, PTE, CELPIP, TOEFL, GRE">
+                  </div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="atgCoachingCtaText" class="form-label">Coaching Button Text</label>
+                      <input type="text" id="atgCoachingCtaText" class="form-input" placeholder="Book coaching class">
+                    </div>
+                    <div class="form-group">
+                      <label for="atgCoachingCtaUrl" class="form-label">Coaching Button URL</label>
+                      <input type="text" id="atgCoachingCtaUrl" class="form-input" placeholder="Optional URL or auto WhatsApp link">
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin: 12px 0 6px;">
+                    <span style="font-size: 12.5px; font-weight: 600; color: var(--text-headline);">Upcoming Batches &amp; Programs</span>
+                    <button type="button" class="btn btn-white btn-xs" id="btnAddAtgBatch">+ Add Batch</button>
+                  </div>
+                  <div id="atgBatchesContainer" style="display: flex; flex-direction: column; gap: 6px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Free Guides -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">Free Guides &amp; Resources</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Downloadable lead magnets, masterbooks, and guides.</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnAddAtgGuide">
+                      <span>+ Add Guide</span>
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <label for="atgFreeGuidesTitle" class="form-label">Section Title</label>
+                    <input type="text" id="atgFreeGuidesTitle" class="form-input" placeholder="Free guides">
+                  </div>
+                  <div id="atgGuidesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Section Visibility Controls -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Section Visibility Toggles</div>
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12.5px;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="atgVisStats" checked> <span>Key Metrics Bar</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="atgVisDestinations" checked> <span>Popular Destinations</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="atgVisTestPrep" checked> <span>Test Preparation</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="atgVisGuides" checked> <span>Free Guides</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="atgVisAbout" checked> <span>About ATG</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="atgVisContact" checked> <span>Get in touch</span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- 7. Spice Route Restaurant Customization Card (Shown for Spice Route) -->
+              <div class="form-card" id="spiceRouteCard" style="display: none;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                  <h2 class="form-section-title" style="margin: 0;">Spice Route Restaurant Customization</h2>
+                  <span class="badge-design" style="background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa;">Design 19 &bull; Restaurant</span>
+                </div>
+                <p class="form-section-sub">Dining identity, header badges, chef's signature menu, veg/non-veg tags, dining options, hours, and guest reviews.</p>
+
+                <!-- Brand & Header -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Restaurant Branding</div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="spiceOverline" class="form-label">Header Overline</label>
+                      <input type="text" id="spiceOverline" class="form-input" placeholder="— Family restaurant —">
+                    </div>
+                    <div class="form-group">
+                      <label for="spiceRestaurantName" class="form-label">Restaurant Display Name</label>
+                      <input type="text" id="spiceRestaurantName" class="form-input" placeholder="Spice Route">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="spiceTagline" class="form-label">Tagline / Food Description</label>
+                    <input type="text" id="spiceTagline" class="form-input" placeholder="Slow-cooked Gujarati and North Indian food, made fresh every day.">
+                  </div>
+                  <div class="form-group">
+                    <label for="spiceBadges" class="form-label">Header Badges (Comma separated)</label>
+                    <input type="text" id="spiceBadges" class="form-input" placeholder="Open till 11 pm, ★ 4.5, Family seating">
+                  </div>
+                </div>
+
+                <!-- 2x2 Quick Action Buttons -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">2x2 Quick Actions</div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                      <label for="spiceAction1Label" class="form-label" style="font-size: 11px;">Action 1 (Terracotta) Label</label>
+                      <input type="text" id="spiceAction1Label" class="form-input" placeholder="View menu">
+                      <label for="spiceAction1Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 1 URL</label>
+                      <input type="text" id="spiceAction1Url" class="form-input" placeholder="#menu">
+                    </div>
+                    <div>
+                      <label for="spiceAction2Label" class="form-label" style="font-size: 11px;">Action 2 (White) Label</label>
+                      <input type="text" id="spiceAction2Label" class="form-input" placeholder="Book a table">
+                      <label for="spiceAction2Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 2 URL</label>
+                      <input type="text" id="spiceAction2Url" class="form-input" placeholder="WhatsApp or table booking link">
+                    </div>
+                    <div>
+                      <label for="spiceAction3Label" class="form-label" style="font-size: 11px;">Action 3 (Black) Label</label>
+                      <input type="text" id="spiceAction3Label" class="form-input" placeholder="Order on WhatsApp">
+                      <label for="spiceAction3Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 3 URL</label>
+                      <input type="text" id="spiceAction3Url" class="form-input" placeholder="WhatsApp ordering link">
+                    </div>
+                    <div>
+                      <label for="spiceAction4Label" class="form-label" style="font-size: 11px;">Action 4 (White) Label</label>
+                      <input type="text" id="spiceAction4Label" class="form-input" placeholder="Directions">
+                      <label for="spiceAction4Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 4 URL</label>
+                      <input type="text" id="spiceAction4Url" class="form-input" placeholder="Google Maps link">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chef's Signatures Menu (Repeatable) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">Chef's Signatures Menu</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Dishes, descriptions, prices, and veg / non-veg dietary dots.</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnAddSpiceMenuItem">
+                      <span>+ Add Dish</span>
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <label for="spiceMenuTitle" class="form-label">Menu Section Title</label>
+                    <input type="text" id="spiceMenuTitle" class="form-input" placeholder="Chef's signatures">
+                  </div>
+                  <div id="spiceMenuContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Dining Options (Chips) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Dining Options</div>
+                  <div class="form-row-2col">
+                    <div class="form-group">
+                      <label for="spiceDiningOptionsTitle" class="form-label">Section Title</label>
+                      <input type="text" id="spiceDiningOptionsTitle" class="form-input" placeholder="Dining options">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="spiceDiningOptions" class="form-label">Options (Comma separated tags)</label>
+                    <input type="text" id="spiceDiningOptions" class="form-input" placeholder="Dine-in, Takeaway, Home delivery, Family seating, Private events, Parking">
+                  </div>
+                </div>
+
+                <!-- Opening Hours & Notice -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">Opening Hours &amp; Reservation Notice</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Operating shifts, timings, and advance booking policies.</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnAddSpiceHour">
+                      <span>+ Add Shift</span>
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <label for="spiceHoursTitle" class="form-label">Section Title</label>
+                    <input type="text" id="spiceHoursTitle" class="form-input" placeholder="Opening hours">
+                  </div>
+                  <div id="spiceHoursContainer" style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                  <div class="form-group" style="margin-top: 10px;">
+                    <label for="spiceHoursNotice" class="form-label">Advance Booking Notice</label>
+                    <input type="text" id="spiceHoursNotice" class="form-input" placeholder="Tables for six or more: please book a day ahead.">
+                  </div>
+                </div>
+
+                <!-- Guest Reviews (Repeatable) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading">Guest Reviews</div>
+                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Customer testimonials displayed in quotes carousel.</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnAddSpiceReview">
+                      <span>+ Add Review</span>
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <label for="spiceReviewsTitle" class="form-label">Section Title</label>
+                    <input type="text" id="spiceReviewsTitle" class="form-input" placeholder="Guest reviews">
+                  </div>
+                  <div id="spiceReviewsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Section Visibility Controls -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div class="customization-subheading" style="margin-bottom: 8px;">Section Visibility Toggles</div>
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12.5px;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="spiceVisQuickActions" checked> <span>Quick Actions (2x2)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="spiceVisMenu" checked> <span>Chef's Signatures</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="spiceVisDiningOptions" checked> <span>Dining Options</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="spiceVisHours" checked> <span>Opening Hours</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="spiceVisReviews" checked> <span>Guest Reviews</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="spiceVisContact" checked> <span>Get in touch</span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
               <!-- Form Action Buttons -->
               <div class="form-actions-bar">
                 <button type="button" class="btn btn-white" id="cancelAddCustomer">Cancel</button>
@@ -863,13 +1212,13 @@
                     <h2 class="form-section-title" style="margin: 0;">Digital Card Design</h2>
                     <span class="badge-design-selected" id="selectedDesignDisplayBadge">Mint Haven</span>
                   </div>
-                  <p class="form-section-sub">Choose how this customer's digital identity will look (16 curated designs from portfolio).</p>
+                  <p class="form-section-sub">Choose how this customer's digital identity will look (19 curated designs from portfolio).</p>
                 </div>
 
-                <!-- Category Filter Tabs: All (16), Personal (6), Business (6), Industry (4) -->
+                <!-- Category Filter Tabs: All (19), Personal (6), Business (6), Industry (7) -->
                 <div class="design-category-tabs" role="tablist" aria-label="Design Categories">
                   <button type="button" class="design-cat-btn active" data-category="all">
-                    <span>All</span> <span class="cat-count">16</span>
+                    <span>All</span> <span class="cat-count">19</span>
                   </button>
                   <button type="button" class="design-cat-btn" data-category="personal">
                     <span>Personal</span> <span class="cat-count">6</span>
@@ -878,11 +1227,11 @@
                     <span>Business</span> <span class="cat-count">6</span>
                   </button>
                   <button type="button" class="design-cat-btn" data-category="industry">
-                    <span>Industry</span> <span class="cat-count">4</span>
+                    <span>Industry</span> <span class="cat-count">7</span>
                   </button>
                 </div>
 
-                <!-- Dynamic 16-Design Grid (populated by admin.js from CARD_DESIGN_REGISTRY) -->
+                <!-- Dynamic 19-Design Grid (populated by admin.js from CARD_DESIGN_REGISTRY) -->
                 <div class="admin-design-gallery-grid" id="adminDesignGalleryGrid" role="radiogroup" aria-label="Select card design">
                   <!-- Generated dynamically from CARD_DESIGN_REGISTRY.ALL_DESIGNS -->
                 </div>
@@ -896,7 +1245,7 @@
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                     <span>Preview Live with Customer Data</span>
                   </button>
-                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" id="btnPreviewChosenDesign" title="Open Full 16-Design Showcase" style="padding: 0 10px;">
+                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" id="btnPreviewChosenDesign" title="Open Full 19-Design Showcase" style="padding: 0 10px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
                   </a>
                 </div>

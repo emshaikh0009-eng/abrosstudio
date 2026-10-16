@@ -1,6 +1,7 @@
 import { createAnonymousClient } from "@/utils/supabase/server";
-import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, AUTHORITATIVE_RAFTCON_CUSTOMER, getDemoProfile } from "@/utils/card-designs";
+import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, AUTHORITATIVE_RAFTCON_CUSTOMER, AUTHORITATIVE_ATG_CUSTOMER, AUTHORITATIVE_SPICE_ROUTE_CUSTOMER, getDemoProfile } from "@/utils/card-designs";
 import { renderCardHtml, ResolvedCustomerCard } from "@/utils/card-renderer";
+import { getCachedProfileHtml, setCachedProfileHtml } from "@/utils/card-cache";
 
 function renderUnavailableHtml(title = "Card Unavailable", message = "This digital business card is currently inactive or does not exist."): string {
   return `<!DOCTYPE html>
@@ -94,6 +95,8 @@ function renderUnavailableHtml(title = "Card Unavailable", message = "This digit
 </html>`;
 }
 
+const PUBLIC_PROFILE_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-while-revalidate=300";
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
@@ -105,12 +108,28 @@ export async function GET(
     if (!sanitizedSlug) {
       return new Response(renderUnavailableHtml("Invalid Link", "No profile slug was provided."), {
         status: 404,
-        headers: { "Content-Type": "text/html; charset=utf-8" },
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "public, max-age=10, must-revalidate",
+        },
       });
     }
 
     const requestUrl = new URL(request.url);
     const designParam = requestUrl.searchParams.get("design");
+
+    // 0. High-speed in-memory cache lookup (<1ms response time)
+    const cachedHtml = getCachedProfileHtml(sanitizedSlug, designParam);
+    if (cachedHtml) {
+      return new Response(cachedHtml, {
+        status: 200,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+          "X-Ambros-Cache": "HIT",
+        },
+      });
+    }
 
     if (sanitizedSlug === "demo") {
       const demoCard = getDemoProfile(designParam || "mint-haven");
@@ -119,12 +138,12 @@ export async function GET(
         status: 200,
         headers: {
           "Content-Type": "text/html; charset=utf-8",
-          "Cache-Control": "public, max-age=0, must-revalidate",
+          "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
         },
       });
     }
 
-    // Pure anonymous client with zero session/cookie state
+    // Pure anonymous client with zero session/cookie state (reusing TLS keep-alive socket)
     const supabase = createAnonymousClient();
 
     // 1. Exact slug match
@@ -154,11 +173,13 @@ export async function GET(
           cardDesign: activeDesignId,
           profileSlug: "tabrezqureshi",
         });
+        setCachedProfileHtml(sanitizedSlug, designParam, html, activeDesignId);
         return new Response(html, {
           status: 200,
           headers: {
             "Content-Type": "text/html; charset=utf-8",
-            "Cache-Control": "public, max-age=0, must-revalidate",
+            "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+            "X-Ambros-Cache": "MISS",
           },
         });
       }
@@ -171,11 +192,53 @@ export async function GET(
           ...AUTHORITATIVE_AMBROS_CUSTOMER,
           cardDesign: activeDesignId,
         });
+        setCachedProfileHtml(sanitizedSlug, designParam, html, activeDesignId);
         return new Response(html, {
           status: 200,
           headers: {
             "Content-Type": "text/html; charset=utf-8",
-            "Cache-Control": "public, max-age=0, must-revalidate",
+            "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+            "X-Ambros-Cache": "MISS",
+          },
+        });
+      }
+
+      if (sanitizedSlug === "atgstudyabroad" || sanitizedSlug === "atg-study-abroad" || sanitizedSlug === "aamirshaikh") {
+        const activeDesignId = designParam
+          ? resolveCardDesign(designParam).id
+          : resolveCardDesign(AUTHORITATIVE_ATG_CUSTOMER.cardDesign).id;
+        const html = renderCardHtml({
+          ...AUTHORITATIVE_ATG_CUSTOMER,
+          cardDesign: activeDesignId,
+          profileSlug: sanitizedSlug,
+        });
+        setCachedProfileHtml(sanitizedSlug, designParam, html, activeDesignId);
+        return new Response(html, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+            "X-Ambros-Cache": "MISS",
+          },
+        });
+      }
+
+      if (sanitizedSlug === "spiceroute" || sanitizedSlug === "spice-route") {
+        const activeDesignId = designParam
+          ? resolveCardDesign(designParam).id
+          : resolveCardDesign(AUTHORITATIVE_SPICE_ROUTE_CUSTOMER.cardDesign).id;
+        const html = renderCardHtml({
+          ...AUTHORITATIVE_SPICE_ROUTE_CUSTOMER,
+          cardDesign: activeDesignId,
+          profileSlug: sanitizedSlug,
+        });
+        setCachedProfileHtml(sanitizedSlug, designParam, html, activeDesignId);
+        return new Response(html, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+            "X-Ambros-Cache": "MISS",
           },
         });
       }
@@ -215,19 +278,24 @@ export async function GET(
 
     // Render HTML dynamically from the single authoritative customer payload
     const html = renderCardHtml(cardData);
+    setCachedProfileHtml(sanitizedSlug, designParam, html, resolvedDesign.id);
 
     return new Response(html, {
       status: 200,
       headers: {
         "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+        "X-Ambros-Cache": "MISS",
       },
     });
   } catch (err: any) {
     console.error("GET /c/[slug] error:", err?.message);
     return new Response(renderUnavailableHtml("Server Error", "An unexpected error occurred while loading this digital business card."), {
       status: 500,
-      headers: { "Content-Type": "text/html; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-store",
+      },
     });
   }
 }

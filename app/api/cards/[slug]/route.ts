@@ -94,6 +94,10 @@ export async function GET(
         avatarUrl: card.avatar_url || card.profile_image_url || "",
         customSettings: card.custom_settings || null,
       },
+    }, {
+      headers: {
+        "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
+      },
     });
   } catch (err: any) {
     console.error("GET /api/cards/[slug] unexpected error:", err?.message);

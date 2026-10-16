@@ -30,13 +30,19 @@ export const createClient = (cookieStore: Awaited<ReturnType<typeof cookies>>) =
   );
 };
 
-// Pure anonymous Supabase client with zero session/cookie state for public digital business card queries
+// Pure anonymous Supabase client with zero session/cookie state for public digital business card queries.
+// Reused as a singleton to allow HTTP/TLS keep-alive connection reuse across requests.
+let globalAnonymousClient: any = null;
+
 export const createAnonymousClient = () => {
-  return createSupabaseClient(supabaseUrl!, supabaseKey!, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  });
+  if (!globalAnonymousClient) {
+    globalAnonymousClient = createSupabaseClient(supabaseUrl!, supabaseKey!, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+  }
+  return globalAnonymousClient;
 };
 

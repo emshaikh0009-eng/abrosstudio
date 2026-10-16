@@ -1,10 +1,26 @@
 import { renderCardHtml, ResolvedCustomerCard } from "@/utils/card-renderer";
 import { AUTHORITATIVE_RAFTCON_CUSTOMER, resolveCardDesign } from "@/utils/card-designs";
 import { createAnonymousClient } from "@/utils/supabase/server";
+import { getCachedProfileHtml, setCachedProfileHtml } from "@/utils/card-cache";
+
+const PUBLIC_PROFILE_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-while-revalidate=300";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const designParam = requestUrl.searchParams.get("design");
+
+  // 0. High-speed in-memory cache lookup (<1ms response time)
+  const cachedHtml = getCachedProfileHtml("tabrezqureshi", designParam);
+  if (cachedHtml) {
+    return new Response(cachedHtml, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+        "X-Ambros-Cache": "HIT",
+      },
+    });
+  }
 
   let cardData: ResolvedCustomerCard = {
     ...AUTHORITATIVE_RAFTCON_CUSTOMER,
@@ -48,12 +64,14 @@ export async function GET(request: Request) {
   }
 
   const html = renderCardHtml(cardData);
+  setCachedProfileHtml("tabrezqureshi", designParam, html, cardData.cardDesign || "raftcon-luxury");
 
   return new Response(html, {
     status: 200,
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "public, max-age=0, must-revalidate",
+      "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+      "X-Ambros-Cache": "MISS",
     },
   });
 }

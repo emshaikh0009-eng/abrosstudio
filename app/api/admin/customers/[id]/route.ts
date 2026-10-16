@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { invalidateCustomerCache } from "@/utils/card-cache";
 
 function sanitizeText(val: any, maxLength = 255): string {
   if (typeof val !== "string") return "";
@@ -300,6 +301,12 @@ export async function PATCH(
       );
     }
 
+    // Instantly invalidate public profile cache for freshness
+    if (data.profile_slug) invalidateCustomerCache(data.profile_slug);
+    if (updates.profile_slug && updates.profile_slug !== data.profile_slug) {
+      invalidateCustomerCache(updates.profile_slug);
+    }
+
     return NextResponse.json({
       success: true,
       customer: data,
@@ -461,6 +468,10 @@ export async function DELETE(
         { error: "Failed to delete customer record." },
         { status: 500 }
       );
+    }
+
+    if (existingCustomer.profile_slug) {
+      invalidateCustomerCache(existingCustomer.profile_slug);
     }
 
     return NextResponse.json({

@@ -545,6 +545,68 @@
         text: '#f3ede2',
         style: 'wf-raftcon-luxury'
       }
+    },
+
+    'atg-study-abroad': {
+      id: 'atg-study-abroad',
+      name: 'ATG Study Abroad',
+      category: 'industry',
+      categoryLabel: 'Industry · Study Abroad',
+      badge: 'Design 18',
+      description: 'International study consultancy card with destinations directory, test prep coaching classes, and guide downloads.',
+      theme: {
+        baseMode: 'light',
+        primaryColor: '#82be00',
+        backgroundColor: '#f6f7f3',
+        textColor: '#111827',
+        accentColor: '#161a16',
+        fontFamily: 'Playfair Display',
+        fontUrl: 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap'
+      },
+      layoutType: 'industry-special',
+      ctaStyle: {
+        primaryText: 'Find out which country suits you',
+        primaryStyle: 'lime-solid',
+        secondaryText: 'Chat on WhatsApp for instant guidance',
+        secondaryStyle: 'dark-solid'
+      },
+      wireframe: {
+        bg: '#f6f7f3',
+        accent: '#82be00',
+        text: '#111827',
+        style: 'wf-atg-study-abroad'
+      }
+    },
+
+    'spice-route': {
+      id: 'spice-route',
+      name: 'Spice Route Restaurant',
+      category: 'industry',
+      categoryLabel: 'Industry · Restaurant',
+      badge: 'Design 19',
+      description: 'Warm espresso and terracotta family restaurant identity featuring chef signatures, dining amenities, operating hours, and guest reviews.',
+      theme: {
+        baseMode: 'light',
+        primaryColor: '#c04c24',
+        backgroundColor: '#eae3d7',
+        textColor: '#1f1915',
+        accentColor: '#231815',
+        fontFamily: 'Playfair Display',
+        fontUrl: 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap'
+      },
+      layoutType: 'industry-special',
+      ctaStyle: {
+        primaryText: 'View menu',
+        primaryStyle: 'terracotta-solid',
+        secondaryText: 'Book a table',
+        secondaryStyle: 'white-bordered'
+      },
+      wireframe: {
+        bg: '#eae3d7',
+        accent: '#c04c24',
+        text: '#1f1915',
+        style: 'wf-spice-route'
+      }
     }
   };
 
@@ -563,6 +625,8 @@
     }
 
     if (clean === 'raftcon' || clean === 'raftcon-luxury' || clean === 'raftcon-construction') return CARD_DESIGNS['raftcon-luxury'];
+    if (clean === 'atg' || clean === 'atg-study-abroad' || clean === 'atgstudyabroad' || clean === 'atg-study' || clean === 'study-abroad') return CARD_DESIGNS['atg-study-abroad'];
+    if (clean === 'spice-route' || clean === 'spiceroute' || clean === 'spice-route-restaurant' || clean === 'spicerouterestaurant' || clean === 'restaurant') return CARD_DESIGNS['spice-route'];
     if (clean === 'design-1' || clean === 'mint') return CARD_DESIGNS['mint-haven'];
     if (clean === 'design-2' || clean === 'evergreen') return CARD_DESIGNS['evergreen'];
     if (clean === 'roast' || clean === 'roast-co') return CARD_DESIGNS['roast-and-co'];
@@ -1329,10 +1393,158 @@
           { id: '3', type: 'email', label: 'Email', value: 'raftconconstruction@gmail.com', enabled: true, order: 2 }
         ]
       }
+    },
+
+    'atg-study-abroad': {
+      fullName: 'Aamir Shaikh',
+      designation: 'Founder, ATG Study Abroad',
+      company: 'ATG Study Abroad',
+      description: 'Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa.',
+      phone: '+91 98989 79548',
+      whatsapp: '919898979548',
+      email: 'info@atgstudyabroad.com',
+      website: 'https://atgstudyabroad.com',
+      address: 'Surat & Ahmedabad, Gujarat',
+      socialInstagram: 'https://instagram.com/atgstudyabroad',
+      socialLinkedIn: 'https://linkedin.com/company/atgstudyabroad',
+      cardDesign: 'atg-study-abroad',
+      profileSlug: 'atgstudyabroad',
+      avatarUrl: '',
+      is_active: true,
+      customSettings: {
+        appearance: {
+          primaryColor: '#82be00',
+          backgroundColor: '#f6f7f3',
+          textColor: '#111827',
+          fontFamily: 'Playfair Display'
+        },
+        industry: {
+          type: 'study-abroad',
+          data: {
+            tagline: 'On a mission, with a vision',
+            metrics: [
+              { value: '4,000+', label: 'Students guided' },
+              { value: '5+', label: 'Study destinations' },
+              { value: '5+', label: 'Test prep courses' }
+            ],
+            ctaPrimary: {
+              text: 'Find out which country suits you',
+              url: 'https://wa.me/919898979548?text=Hi%2C%20I%20want%20to%20find%20out%20which%20country%20suits%20me%20for%20study%20abroad'
+            },
+            ctaWhatsApp: {
+              text: 'Chat on WhatsApp for instant guidance',
+              url: 'https://wa.me/919898979548'
+            },
+            destinationsTitle: 'Popular study destinations',
+            destinations: [
+              { code: 'CA', title: 'Study in Canada', sub: 'Courses, eligibility and intakes', url: 'https://wa.me/919898979548?text=Tell%20me%20about%20Study%20in%20Canada' },
+              { code: 'UK', title: 'Study in the UK', sub: 'Top universities and scholarships', url: 'https://wa.me/919898979548?text=Tell%20me%20about%20Study%20in%20the%20UK' },
+              { code: 'AU', title: 'Study in Australia', sub: 'Eligibility, courses and universities', url: 'https://wa.me/919898979548?text=Tell%20me%20about%20Study%20in%20Australia' },
+              { code: 'EU', title: 'Study in Europe', sub: 'Low-tuition and English programs', url: 'https://wa.me/919898979548?text=Tell%20me%20about%20Study%20in%20Europe' },
+              { code: 'AE', title: 'Study in Dubai', sub: 'Programs and admissions', url: 'https://wa.me/919898979548?text=Tell%20me%20about%20Study%20in%20Dubai' }
+            ],
+            testPrepTitle: 'Test preparation',
+            coachingHeading: 'Book a coaching class for',
+            coachingCourses: ['IELTS', 'PTE', 'CELPIP', 'TOEFL', 'GRE'],
+            coachingCta: {
+              text: 'Book coaching class',
+              url: 'https://wa.me/919898979548?text=I%20would%20like%20to%20book%20a%20test%20prep%20coaching%20class'
+            },
+            testPrepBatches: [
+              { title: 'Basic English class', sub: 'Join the next batch', url: 'https://wa.me/919898979548?text=Inquiry%20for%20Basic%20English%20class' },
+              { title: 'Study + Work', sub: 'Russia, Singapore, Mauritius, Canada', url: 'https://wa.me/919898979548?text=Inquiry%20for%20Study%20and%20Work%20programs' }
+            ],
+            freeGuidesTitle: 'Free guides',
+            freeGuides: [
+              { title: '7 things to get right before you apply abroad', sub: 'Free guide', buttonText: 'Download', url: 'https://wa.me/919898979548?text=Please%20send%20me%20the%20Free%20Guide:%207%20things%20to%20get%20right%20before%20you%20apply%20abroad' },
+              { title: 'CELPIP Writing Masterbook', sub: 'Task strategies', buttonText: 'Download', url: 'https://wa.me/919898979548?text=Please%20send%20me%20the%20CELPIP%20Writing%20Masterbook' }
+            ],
+            aboutTitle: 'About ATG Study Abroad',
+            aboutText: 'Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa.',
+            contactTitle: 'Get in touch'
+          }
+        },
+        links: [
+          { id: '1', type: 'phone', label: 'Call', value: '+91 98989 79548', enabled: true, order: 0 },
+          { id: '2', type: 'whatsapp', label: 'WhatsApp', value: '919898979548', enabled: true, order: 1 },
+          { id: '3', type: 'email', label: 'Email', value: 'info@atgstudyabroad.com', enabled: true, order: 2 },
+          { id: '4', type: 'instagram', label: 'Instagram', value: '@atgstudyabroad', enabled: true, order: 3 }
+        ]
+      }
+    },
+
+    'spice-route': {
+      fullName: 'Spice Route',
+      designation: 'Family restaurant',
+      company: 'Spice Route Restaurant',
+      description: 'Slow-cooked Gujarati and North Indian food, made fresh every day.',
+      phone: '+91 98765 43210',
+      whatsapp: '919876543210',
+      email: 'hello@spiceroute.com',
+      website: 'https://spiceroute.com',
+      address: 'Surat, Gujarat',
+      socialInstagram: 'https://instagram.com/spiceroute',
+      socialLinkedIn: 'https://linkedin.com/company/spiceroute',
+      cardDesign: 'spice-route',
+      profileSlug: 'spiceroute',
+      avatarUrl: '',
+      is_active: true,
+      customSettings: {
+        appearance: {
+          primaryColor: '#c04c24',
+          backgroundColor: '#eae3d7',
+          textColor: '#1f1915',
+          fontFamily: 'Playfair Display'
+        },
+        industry: {
+          type: 'restaurant',
+          data: {
+            overline: 'Family restaurant',
+            restaurantName: 'Spice Route',
+            tagline: 'Slow-cooked Gujarati and North Indian food, made fresh every day.',
+            badges: ['Open till 11 pm', '★ 4.5', 'Family seating'],
+            quickActions: [
+              { label: 'View menu', type: 'menu', url: '#menu' },
+              { label: 'Book a table', type: 'book', url: 'https://wa.me/919876543210?text=I%20would%20like%20to%20book%20a%20table%20at%20Spice%20Route' },
+              { label: 'Order on WhatsApp', type: 'whatsapp', url: 'https://wa.me/919876543210?text=Hi%2C%20I%20want%20to%20place%20a%20food%20order' },
+              { label: 'Directions', type: 'directions', url: 'https://maps.google.com/?q=Spice+Route+Restaurant' }
+            ],
+            menuTitle: 'Chef\'s signatures',
+            menuItems: [
+              { name: 'Paneer Lababdar', desc: 'Creamy tomato gravy, house butter', price: '₹320', isVeg: true },
+              { name: 'Dal Tadka Special', desc: 'Smoked and finished with ghee', price: '₹220', isVeg: true },
+              { name: 'Chicken Dum Biryani', desc: 'Slow-cooked, served with raita', price: '₹360', isVeg: false },
+              { name: 'Kesar Phirni', desc: 'Saffron, set in clay', price: '₹140', isVeg: true }
+            ],
+            diningOptionsTitle: 'Dining options',
+            diningOptions: ['Dine-in', 'Takeaway', 'Home delivery', 'Family seating', 'Private events', 'Parking'],
+            hoursTitle: 'Opening hours',
+            hoursList: [
+              { label: 'Lunch', time: '12 pm to 3 pm' },
+              { label: 'Dinner', time: '7 pm to 11 pm' },
+              { label: 'Saturday and Sunday', time: '12 pm to 11:30 pm' }
+            ],
+            hoursNotice: 'Tables for six or more: please book a day ahead.',
+            reviewsTitle: 'Guest reviews',
+            reviews: [
+              { quote: 'Food tastes like home. The dal tadka is the best in the city.', author: 'Guest Name' },
+              { quote: 'Warm service and delicious family dining experience.', author: 'Guest Name' }
+            ],
+            contactTitle: 'Get in touch'
+          }
+        },
+        links: [
+          { id: '1', type: 'phone', label: 'Call', value: '+91 98765 43210', enabled: true, order: 0 },
+          { id: '2', type: 'instagram', label: 'Instagram', value: '@spiceroute', enabled: true, order: 1 },
+          { id: '3', type: 'email', label: 'Email', value: 'hello@spiceroute.com', enabled: true, order: 2 }
+        ]
+      }
     }
   };
 
   var AUTHORITATIVE_RAFTCON_CUSTOMER = CANONICAL_DEMO_PROFILES['raftcon-luxury'];
+  var AUTHORITATIVE_ATG_CUSTOMER = CANONICAL_DEMO_PROFILES['atg-study-abroad'];
+  var AUTHORITATIVE_SPICE_ROUTE_CUSTOMER = CANONICAL_DEMO_PROFILES['spice-route'];
 
   function getDemoProfile(rawNameOrId) {
     var design = resolveCardDesign(rawNameOrId);
@@ -1349,6 +1561,8 @@
     getDesignsByCategory: getDesignsByCategory,
     AUTHORITATIVE_AMBROS_CUSTOMER: AUTHORITATIVE_AMBROS_CUSTOMER,
     AUTHORITATIVE_RAFTCON_CUSTOMER: AUTHORITATIVE_RAFTCON_CUSTOMER,
+    AUTHORITATIVE_ATG_CUSTOMER: AUTHORITATIVE_ATG_CUSTOMER,
+    AUTHORITATIVE_SPICE_ROUTE_CUSTOMER: AUTHORITATIVE_SPICE_ROUTE_CUSTOMER,
     CANONICAL_DEMO_PROFILES: CANONICAL_DEMO_PROFILES,
     getDemoProfile: getDemoProfile
   };

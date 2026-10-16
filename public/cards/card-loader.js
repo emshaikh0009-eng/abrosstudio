@@ -66,16 +66,19 @@
     document.head.appendChild(link);
   }
 
-  function applyCustomAppearance(appearance) {
+  function applyCustomAppearance(appearance, designId) {
     if (!appearance || typeof appearance !== 'object') return;
 
-    if (appearance.primaryColor && isValidHex(appearance.primaryColor)) {
+    // Avoid leaking Mint Haven default pastel colors (#faf6ee, #10b981) into non-mint designs
+    const isDefaultMint = (appearance.backgroundColor === '#faf6ee' || appearance.primaryColor === '#10b981') && designId !== 'mint-haven';
+
+    if (!isDefaultMint && appearance.primaryColor && isValidHex(appearance.primaryColor)) {
       document.documentElement.style.setProperty('--card-primary', appearance.primaryColor.trim());
     }
-    if (appearance.backgroundColor && isValidHex(appearance.backgroundColor)) {
+    if (!isDefaultMint && appearance.backgroundColor && isValidHex(appearance.backgroundColor)) {
       document.documentElement.style.setProperty('--card-background', appearance.backgroundColor.trim());
     }
-    if (appearance.textColor && isValidHex(appearance.textColor)) {
+    if (!isDefaultMint && appearance.textColor && isValidHex(appearance.textColor)) {
       document.documentElement.style.setProperty('--card-text', appearance.textColor.trim());
     }
 
@@ -221,7 +224,9 @@
     if (urlTextEl) urlTextEl.textContent = canonicalUrl;
 
     const container = document.getElementById('qrModalCanvasContainer');
-    if (container && typeof qrcode !== 'undefined') {
+
+    function renderQr() {
+      if (!container || typeof qrcode === 'undefined') return;
       try {
         const qr = qrcode(0, 'M');
         qr.addData(canonicalUrl);
@@ -271,6 +276,15 @@
       } catch (err) {
         console.error('Error rendering QR code:', err);
       }
+    }
+
+    if (typeof qrcode === 'undefined') {
+      const s = document.createElement('script');
+      s.src = '/cards/qrcode.js';
+      s.onload = renderQr;
+      document.body.appendChild(s);
+    } else {
+      renderQr();
     }
 
     const copyBtn = document.getElementById('qrCopyLinkBtn');
@@ -430,33 +444,53 @@
   function hydrateUniversal(card, isPreview) {
     const registry = window.CARD_DESIGN_REGISTRY;
     const renderer = window.CARD_RENDERER;
-    const design = registry ? registry.resolveCardDesign(card.cardDesign || card.card_design) : { id: 'mint-haven', name: 'Mint Haven' };
+    const existingTheme = (document.body.className || document.documentElement.className || '').match(/theme-([a-z0-9-]+)/)?.[1];
+    const rawDesignId = card.cardDesign || card.card_design || existingTheme;
+    const design = (registry && typeof registry.resolveCardDesign === 'function')
+      ? registry.resolveCardDesign(rawDesignId)
+      : { id: rawDesignId || existingTheme || 'mint-haven', name: rawDesignId || existingTheme || 'Mint Haven' };
 
-    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
+    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null, design.id);
 
     const name = card.fullName || card.full_name || card.name || '';
     const role = card.designation || card.role || '';
     const company = card.company || card.company_name || '';
 
-    document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
+    if (name) {
+      document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
+    }
 
-    // Update body theme classes
-    document.documentElement.className = `theme-${design.id}`;
-    document.body.className = `theme-${design.id}`;
+    // Ensure theme classes on html and body match design.id cleanly without clobbering
+    if (design && design.id) {
+      const themeClass = `theme-${design.id}`;
+      if (!document.documentElement.classList.contains(themeClass)) {
+        Array.from(document.documentElement.classList)
+          .filter(c => c.startsWith('theme-'))
+          .forEach(c => document.documentElement.classList.remove(c));
+        document.documentElement.classList.add(themeClass);
+      }
+      if (!document.body.classList.contains(themeClass)) {
+        Array.from(document.body.classList)
+          .filter(c => c.startsWith('theme-'))
+          .forEach(c => document.body.classList.remove(c));
+        document.body.classList.add(themeClass);
+      }
+    }
 
     // If viewport wrapper exists and needs body rendering (e.g. preview mode or dynamic fetch)
     const viewport = document.getElementById('cardViewport') || document.querySelector('main.viewport-wrapper');
-    if (viewport && renderer && typeof renderer.renderCardBody === 'function') {
-      let previewBanner = '';
-      if (isPreview) {
-        const isActive = card.is_active !== false;
-        previewBanner = `
-          <div style="background: #0f172a; color: #f8fafc; font-size: 11.5px; font-weight: 700; text-align: center; padding: 8px 14px; border-radius: 8px; margin-bottom: 14px; border: 1px solid #334155;">
-            ADMIN PREVIEW &bull; ${escapeHtml(design.name)} (${isActive ? '<span style="color: #34d399;">Active</span>' : '<span style="color: #fbbf24;">Inactive</span>'})
-          </div>
-        `;
-      }
+    const isAlreadyRendered = viewport && viewport.children && viewport.children.length > 0 && !viewport.querySelector('#cardSkeleton');
+
+    if (viewport && isPreview && renderer && typeof renderer.renderCardBody === 'function') {
+      const isActive = card.is_active !== false;
+      const previewBanner = `
+        <div style="background: #0f172a; color: #f8fafc; font-size: 11.5px; font-weight: 700; text-align: center; padding: 8px 14px; border-radius: 8px; margin-bottom: 14px; border: 1px solid #334155;">
+          ADMIN PREVIEW &bull; ${escapeHtml(design.name)} (${isActive ? '<span style="color: #34d399;">Active</span>' : '<span style="color: #fbbf24;">Inactive</span>'})
+        </div>
+      `;
       viewport.innerHTML = previewBanner + renderer.renderCardBody(card, design);
+    } else if (viewport && !isAlreadyRendered && renderer && typeof renderer.renderCardBody === 'function') {
+      viewport.innerHTML = renderer.renderCardBody(card, design);
     }
 
     attachCardActions(card);
@@ -471,7 +505,7 @@
    * Legacy Template Hydration: Design 1 (Mint Haven)
    */
   function hydrateLegacyDesign1(card, isPreview) {
-    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null);
+    applyCustomAppearance(card.customSettings ? card.customSettings.appearance : null, 'mint-haven');
 
     const name = card.fullName || card.full_name || card.name || '';
     const role = card.designation || card.role || '';

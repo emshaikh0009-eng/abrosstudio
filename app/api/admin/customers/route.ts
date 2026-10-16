@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { invalidateCustomerCache } from "@/utils/card-cache";
 
 function sanitizeText(val: any, maxLength = 255): string {
   if (typeof val !== "string") return "";
@@ -287,6 +288,10 @@ export async function POST(request: Request) {
     }
 
     const data = insertRes.data;
+
+    if (data && data.profile_slug) {
+      invalidateCustomerCache(data.profile_slug);
+    }
 
     return NextResponse.json(
       {

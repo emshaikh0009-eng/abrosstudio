@@ -2863,4 +2863,1070 @@ body.theme-noir-gold {
   }
 }
 
+/* ==============================================================================
+   DESIGN 18 — ATG STUDY ABROAD (Education Consultancy & Test Prep)
+   Reference: ATG Study Abroad _ Digital Identity Cardz.pdf
+   ============================================================================== */
+.theme-atg-study-abroad {
+  background-color: #faf9f5 !important;
+  color: #111827;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.theme-atg-study-abroad .viewport-wrapper {
+  max-width: 414px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0 32px;
+  background-color: #ffffff;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.06);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.theme-atg-study-abroad .atg-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Header & Banner */
+.theme-atg-study-abroad .atg-header {
+  position: relative;
+  background: #0f1412;
+  margin-bottom: 54px;
+}
+
+.theme-atg-study-abroad .atg-banner-bg {
+  height: 140px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 120%, #1a221d 0%, #0c100e 100%);
+}
+
+.theme-atg-study-abroad .atg-flight-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.theme-atg-study-abroad .atg-avatar-slot {
+  position: absolute;
+  bottom: -46px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.theme-atg-study-abroad .atg-logo-circle {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: 4px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.theme-atg-study-abroad .atg-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.theme-atg-study-abroad .atg-emblem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+}
+
+.theme-atg-study-abroad .atg-emblem-text-top {
+  font-size: 8px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.theme-atg-study-abroad .atg-emblem-text-mid {
+  font-size: 7.5px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+}
+
+.theme-atg-study-abroad .atg-emblem-text-sub {
+  font-size: 5px;
+  font-style: italic;
+  color: #658210;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+/* Identity Section */
+.theme-atg-study-abroad .atg-identity {
+  text-align: center;
+  padding: 0 20px 16px;
+}
+
+.theme-atg-study-abroad .atg-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.theme-atg-study-abroad .atg-role {
+  font-size: 13.5px;
+  color: #4b5563;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.theme-atg-study-abroad .atg-tagline {
+  font-size: 13.5px;
+  font-style: italic;
+  color: #658210;
+  font-weight: 500;
+}
+
+/* Metrics Bar */
+.theme-atg-study-abroad .atg-metrics-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 14px 12px;
+  margin: 0 20px 18px;
+}
+
+.theme-atg-study-abroad .atg-metric-col {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.theme-atg-study-abroad .atg-metric-col.has-divider::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background: #e5e7eb;
+}
+
+.theme-atg-study-abroad .atg-metric-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.theme-atg-study-abroad .atg-metric-lbl {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+/* Action Buttons */
+.theme-atg-study-abroad .atg-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px 24px;
+}
+
+.theme-atg-study-abroad .atg-btn-lime {
+  background: #82be00;
+  color: #0c1503;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: block;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(130, 190, 0, 0.25);
+  transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.theme-atg-study-abroad .atg-btn-lime:hover {
+  filter: brightness(1.05);
+}
+
+.theme-atg-study-abroad .atg-btn-black {
+  background: #111827;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: block;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.theme-atg-study-abroad .atg-btn-black:hover {
+  background: #1f2937;
+}
+
+.theme-atg-study-abroad .atg-btn-pair {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-atg-study-abroad .atg-btn-white {
+  flex: 1;
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+  padding: 11px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-atg-study-abroad .atg-btn-white:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Sections Common */
+.theme-atg-study-abroad .atg-section {
+  padding: 0 20px 24px;
+}
+
+.theme-atg-study-abroad .atg-accent-bar {
+  width: 28px;
+  height: 3px;
+  background: #82be00;
+  border-radius: 2px;
+  margin-bottom: 8px;
+}
+
+.theme-atg-study-abroad .atg-section-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 14px;
+}
+
+/* Destinations */
+.theme-atg-study-abroad .atg-destinations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.theme-atg-study-abroad .atg-dest-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #f3f4f6;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.15s ease;
+}
+
+.theme-atg-study-abroad .atg-dest-row:hover {
+  border-color: #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.theme-atg-study-abroad .atg-dest-badge {
+  width: 38px;
+  height: 38px;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.theme-atg-study-abroad .atg-dest-info {
+  flex: 1;
+}
+
+.theme-atg-study-abroad .atg-dest-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.theme-atg-study-abroad .atg-dest-sub {
+  font-size: 11.5px;
+  color: #6b7280;
+}
+
+.theme-atg-study-abroad .atg-chevron {
+  font-size: 18px;
+  color: #9ca3af;
+  font-weight: 300;
+}
+
+/* Coaching Box & Test Prep */
+.theme-atg-study-abroad .atg-coaching-box {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.theme-atg-study-abroad .atg-coaching-lbl {
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.theme-atg-study-abroad .atg-course-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theme-atg-study-abroad .atg-course-tag {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.theme-atg-study-abroad .atg-batches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.theme-atg-study-abroad .atg-batch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f9fafb;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 12.5px;
+  transition: background 0.15s ease;
+}
+
+.theme-atg-study-abroad .atg-batch-row:hover {
+  background: #f3f4f6;
+}
+
+.theme-atg-study-abroad .atg-batch-title {
+  font-weight: 600;
+  color: #111827;
+}
+
+.theme-atg-study-abroad .atg-batch-sub {
+  color: #6b7280;
+  font-size: 11.5px;
+}
+
+/* Free Guides */
+.theme-atg-study-abroad .atg-guides-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.theme-atg-study-abroad .atg-guide-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.theme-atg-study-abroad .atg-guide-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.theme-atg-study-abroad .atg-doc-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(130, 190, 0, 0.12);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.theme-atg-study-abroad .atg-guide-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.theme-atg-study-abroad .atg-guide-sub {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.theme-atg-study-abroad .atg-guide-btn {
+  background: transparent;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.theme-atg-study-abroad .atg-guide-btn:hover {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+/* About Box */
+.theme-atg-study-abroad .atg-about-box {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.theme-atg-study-abroad .atg-about-box p {
+  margin: 0;
+}
+
+/* Contact Rows */
+.theme-atg-study-abroad .atg-contact-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.theme-atg-study-abroad .atg-contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.theme-atg-study-abroad .atg-contact-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-atg-study-abroad .atg-contact-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #658210;
+  flex-shrink: 0;
+}
+
+.theme-atg-study-abroad .atg-contact-label {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.theme-atg-study-abroad .atg-contact-val {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.theme-atg-study-abroad .atg-contact-action {
+  font-size: 12px;
+  color: #658210;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 4px 8px;
+}
+
+/* Social Icon Row */
+.theme-atg-study-abroad .atg-social-icon-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.theme-atg-study-abroad .atg-social-square {
+  width: 44px;
+  height: 44px;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.theme-atg-study-abroad .atg-social-square:hover {
+  transform: translateY(-2px);
+  background: #1f2937;
+}
+
+.theme-atg-study-abroad .atg-bottom-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.theme-atg-study-abroad .atg-bottom-actions button {
+  flex: 1;
+}
+
+.theme-atg-study-abroad .atg-footer {
+  text-align: center;
+  padding: 20px 20px 8px;
+  font-size: 11.5px;
+  color: #9ca3af;
+}
+
+.theme-atg-study-abroad .atg-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ==============================================================================
+   DESIGN 19 — SPICE ROUTE RESTAURANT (Family Dining, Gujarati & North Indian)
+   Reference: Spice Route _ Digital Identity Card.pdf
+   ============================================================================== */
+.theme-spice-route {
+  background-color: #eae5db !important;
+  color: #2b1d14;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.theme-spice-route .viewport-wrapper {
+  max-width: 414px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0 32px;
+  background-color: #f7f4ed;
+  box-shadow: 0 0 40px rgba(43, 29, 20, 0.08);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.theme-spice-route .spice-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Espresso Header */
+.theme-spice-route .spice-header {
+  background: #251812;
+  color: #fdfbf7;
+  padding: 32px 20px 24px;
+  text-align: center;
+  position: relative;
+}
+
+.theme-spice-route .spice-overline {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #c98863;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.theme-spice-route .spice-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.theme-spice-route .spice-subtitle {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #d1c4b9;
+  max-width: 290px;
+  margin: 0 auto 16px;
+  font-weight: 400;
+}
+
+.theme-spice-route .spice-badges-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theme-spice-route .spice-badge-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fdfbf7;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.theme-spice-route .spice-badge-dot {
+  color: #48bb78;
+  font-size: 8px;
+}
+
+.theme-spice-route .spice-header-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #b54a26;
+}
+
+/* 2x2 Actions Grid */
+.theme-spice-route .spice-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 20px 20px 24px;
+}
+
+.theme-spice-route .spice-btn-terracotta {
+  background: #b54a26;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+  padding: 13px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.theme-spice-route .spice-btn-terracotta:hover {
+  background: #9c3c1c;
+}
+
+.theme-spice-route .spice-btn-white {
+  background: #ffffff;
+  color: #251812;
+  border: 1px solid #ded5c7;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+  padding: 13px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-spice-route .spice-btn-white:hover {
+  background: #fbf9f4;
+  border-color: #c9bfb0;
+}
+
+.theme-spice-route .spice-btn-black {
+  background: #251812;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+  padding: 13px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.theme-spice-route .spice-btn-black:hover {
+  background: #37261d;
+}
+
+/* Sections */
+.theme-spice-route .spice-section {
+  padding: 0 20px 26px;
+}
+
+.theme-spice-route .spice-section-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #251812;
+  margin: 0 0 14px;
+}
+
+/* Chef's Signatures Menu */
+.theme-spice-route .spice-menu-box {
+  background: #fdfbf7;
+  border: 1px solid #ded5c7;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.theme-spice-route .spice-menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  gap: 12px;
+}
+
+.theme-spice-route .spice-menu-row.has-divider {
+  border-bottom: 1px solid #ece5d8;
+}
+
+.theme-spice-route .spice-menu-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.theme-spice-route .spice-diet-icon {
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid #2e7d32;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 3px;
+  border-radius: 2px;
+}
+
+.theme-spice-route .spice-diet-icon.veg {
+  border-color: #2e7d32;
+}
+
+.theme-spice-route .spice-diet-icon.veg .spice-diet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2e7d32;
+  display: block;
+}
+
+.theme-spice-route .spice-diet-icon.non-veg {
+  border-color: #b71c1c;
+}
+
+.theme-spice-route .spice-diet-icon.non-veg .spice-diet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b71c1c;
+  display: block;
+}
+
+.theme-spice-route .spice-menu-text {
+  flex: 1;
+}
+
+.theme-spice-route .spice-menu-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #251812;
+  line-height: 1.3;
+}
+
+.theme-spice-route .spice-menu-desc {
+  font-size: 11.5px;
+  color: #786b60;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.theme-spice-route .spice-menu-price {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #251812;
+}
+
+/* Dining Options Chips */
+.theme-spice-route .spice-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.theme-spice-route .spice-option-chip {
+  background: #ffffff;
+  border: 1px solid #ded5c7;
+  color: #251812;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 6px;
+}
+
+/* Opening Hours */
+.theme-spice-route .spice-hours-box {
+  background: #fdfbf7;
+  border: 1px solid #ded5c7;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.theme-spice-route .spice-hours-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 16px;
+  font-size: 13px;
+}
+
+.theme-spice-route .spice-hours-row.has-divider {
+  border-bottom: 1px solid #ece5d8;
+}
+
+.theme-spice-route .spice-hours-lbl {
+  font-weight: 500;
+  color: #251812;
+}
+
+.theme-spice-route .spice-hours-val {
+  color: #786b60;
+}
+
+.theme-spice-route .spice-hours-notice {
+  font-size: 12px;
+  color: #8c7d71;
+  font-style: italic;
+  margin: 10px 0 0;
+}
+
+/* Guest Reviews */
+.theme-spice-route .spice-reviews-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scroll-snap-type: x mandatory;
+}
+
+.theme-spice-route .spice-review-card {
+  min-width: 250px;
+  max-width: 270px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  background: #fdfbf7;
+  border: 1px solid #ded5c7;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.theme-spice-route .spice-review-quote {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.5;
+  color: #251812;
+  margin: 0 0 10px;
+}
+
+.theme-spice-route .spice-review-author {
+  font-size: 11px;
+  color: #8c7d71;
+  font-weight: 600;
+}
+
+/* Contact Box */
+.theme-spice-route .spice-contact-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.theme-spice-route .spice-contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ded5c7;
+}
+
+.theme-spice-route .spice-contact-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-spice-route .spice-contact-icon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #716558;
+}
+
+.theme-spice-route .spice-contact-lbl {
+  font-size: 11px;
+  color: #8c7d71;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.theme-spice-route .spice-contact-val {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #251812;
+}
+
+.theme-spice-route .spice-contact-action {
+  font-size: 12px;
+  color: #8c7d71;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 4px 8px;
+}
+
+.theme-spice-route .spice-btn-save-contact {
+  width: 100%;
+  background: #ffffff;
+  color: #251812;
+  border: 1px solid #ded5c7;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: all 0.15s ease;
+}
+
+.theme-spice-route .spice-btn-save-contact:hover {
+  background: #fbf9f4;
+}
+
+.theme-spice-route .spice-social-icon-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.theme-spice-route .spice-social-square {
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  color: #251812;
+  border: 1px solid #ded5c7;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.theme-spice-route .spice-social-square:hover {
+  transform: translateY(-2px);
+  background: #fbf9f4;
+}
+
+.theme-spice-route .spice-bottom-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.theme-spice-route .spice-bottom-actions button {
+  flex: 1;
+}
+
+.theme-spice-route .spice-footer {
+  text-align: center;
+  padding: 20px 20px 8px;
+  font-size: 11.5px;
+  color: #8c7d71;
+}
+
+.theme-spice-route .spice-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
 

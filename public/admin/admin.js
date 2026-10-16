@@ -1095,6 +1095,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // 8b. ATG Study Abroad customization
+    const isAtg = customer.design === 'ATG Study Abroad' || 
+                  customer.designId === 'atg-study-abroad' || 
+                  (customer.customSettings?.industry?.type === 'study-abroad');
+    const atgCard = document.getElementById('atgStudyAbroadCard');
+    if (atgCard) {
+      if (isAtg) {
+        atgCard.style.display = 'block';
+        if (typeof populateAtgForm === 'function') {
+          populateAtgForm(customer);
+        }
+      } else {
+        atgCard.style.display = 'none';
+      }
+    }
+
+    // 8c. Spice Route Restaurant customization
+    const isSpice = customer.design === 'Spice Route' || 
+                    customer.designId === 'spice-route' || 
+                    (customer.customSettings?.industry?.type === 'restaurant');
+    const spiceCard = document.getElementById('spiceRouteCard');
+    if (spiceCard) {
+      if (isSpice) {
+        spiceCard.style.display = 'block';
+        if (typeof populateSpiceRouteForm === 'function') {
+          populateSpiceRouteForm(customer);
+        }
+      } else {
+        spiceCard.style.display = 'none';
+      }
+    }
+
     // 9. Open the Form Tab
     navigateToTab('add-customer');
     showAdminToast(`Editing ${customer.name} (Existing Record)`);
@@ -1119,6 +1151,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (raftconCard) raftconCard.style.display = 'none';
     if (typeof resetRaftconForm === 'function') {
       resetRaftconForm();
+    }
+
+    // Reset ATG Study Abroad Customization
+    const atgCard = document.getElementById('atgStudyAbroadCard');
+    if (atgCard) atgCard.style.display = 'none';
+    if (typeof resetAtgForm === 'function') {
+      resetAtgForm();
+    }
+
+    // Reset Spice Route Restaurant Customization
+    const spiceCard = document.getElementById('spiceRouteCard');
+    if (spiceCard) spiceCard.style.display = 'none';
+    if (typeof resetSpiceRouteForm === 'function') {
+      resetSpiceRouteForm();
     }
 
     // Clear fields
@@ -1365,6 +1411,34 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Toggle ATG Study Abroad Customization Card
+    const isAtg = (resolved.id === 'atg-study-abroad' || resolved.name === 'ATG Study Abroad');
+    const atgCard = document.getElementById('atgStudyAbroadCard');
+    if (atgCard) {
+      if (isAtg) {
+        atgCard.style.display = 'block';
+        if (typeof isAtgInitialized === 'function' && !isAtgInitialized()) {
+          populateAtgForm(null);
+        }
+      } else {
+        atgCard.style.display = 'none';
+      }
+    }
+
+    // Toggle Spice Route Restaurant Customization Card
+    const isSpice = (resolved.id === 'spice-route' || resolved.name === 'Spice Route');
+    const spiceCard = document.getElementById('spiceRouteCard');
+    if (spiceCard) {
+      if (isSpice) {
+        spiceCard.style.display = 'block';
+        if (typeof isSpiceInitialized === 'function' && !isSpiceInitialized()) {
+          populateSpiceRouteForm(null);
+        }
+      } else {
+        spiceCard.style.display = 'none';
+      }
+    }
+
     // Update inspect links if customer exists
     if (currentEditingCustomerId) {
       const c = customers.find(item => String(item.id) === String(currentEditingCustomerId));
@@ -1446,6 +1520,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (design.id === 'raftcon-luxury' && typeof collectRaftconIndustryData === 'function') {
         const coll = collectRaftconIndustryData();
+        if (coll && coll.data) industryData = coll.data;
+      }
+      if (design.id === 'atg-study-abroad' && typeof collectAtgIndustryData === 'function') {
+        const coll = collectAtgIndustryData();
+        if (coll && coll.data) industryData = coll.data;
+      }
+      if (design.id === 'spice-route' && typeof collectSpiceRouteIndustryData === 'function') {
+        const coll = collectSpiceRouteIndustryData();
         if (coll && coll.data) industryData = coll.data;
       }
     } else {
@@ -1721,13 +1803,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const existing = currentEditingCustomerId ? customers.find(c => String(c.id) === String(currentEditingCustomerId)) : null;
       const slug = (existing && existing.profileSlug) ? existing.profileSlug : (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
 
-      const isRaftconDesign = (selectedDesign === 'Raftcon Luxury') || 
+      const isRaftconDesign = (selectedDesign === 'Raftcon Luxury' || selectedDesign === 'raftcon-luxury') || 
         (existing && (existing.design === 'Raftcon Luxury' || existing.designId === 'raftcon-luxury')) ||
         (document.getElementById('raftconProjectCard') && document.getElementById('raftconProjectCard').style.display !== 'none');
+
+      const isAtgDesign = (selectedDesign === 'ATG Study Abroad' || selectedDesign === 'atg-study-abroad') || 
+        (existing && (existing.design === 'ATG Study Abroad' || existing.designId === 'atg-study-abroad')) ||
+        (document.getElementById('atgStudyAbroadCard') && document.getElementById('atgStudyAbroadCard').style.display !== 'none');
+
+      const isSpiceRouteDesign = (selectedDesign === 'Spice Route' || selectedDesign === 'spice-route') || 
+        (existing && (existing.design === 'Spice Route' || existing.designId === 'spice-route')) ||
+        (document.getElementById('spiceRouteCard') && document.getElementById('spiceRouteCard').style.display !== 'none');
 
       let industryPayload = null;
       if (isRaftconDesign && typeof collectRaftconIndustryData === 'function') {
         industryPayload = collectRaftconIndustryData();
+      } else if (isAtgDesign && typeof collectAtgIndustryData === 'function') {
+        industryPayload = collectAtgIndustryData();
+      } else if (isSpiceRouteDesign && typeof collectSpiceRouteIndustryData === 'function') {
+        industryPayload = collectSpiceRouteIndustryData();
       } else if (existing && existing.customSettings && existing.customSettings.industry) {
         industryPayload = existing.customSettings.industry;
       }
@@ -2759,6 +2853,599 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
   }
+
+  // -------------------------------------------------------------
+  // ATG Study Abroad Customization Controller
+  // -------------------------------------------------------------
+  const DEFAULT_ATG_INDUSTRY = {
+    tagline: 'On a mission, with a vision',
+    aboutTitle: 'About ATG Study Abroad',
+    aboutText: 'Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa.',
+    metrics: [
+      { value: '4,000+', label: 'Students guided' },
+      { value: '5+', label: 'Study destinations' },
+      { value: '5+', label: 'Test prep courses' }
+    ],
+    ctaPrimary: { text: 'Find out which country suits you', url: '' },
+    ctaWhatsApp: { text: 'Chat on WhatsApp for instant guidance', url: '' },
+    destinationsTitle: 'Popular study destinations',
+    destinations: [
+      { code: 'CA', title: 'Study in Canada', sub: 'Courses, eligibility and intakes', url: '' },
+      { code: 'UK', title: 'Study in the UK', sub: 'Top universities and scholarships', url: '' },
+      { code: 'AU', title: 'Study in Australia', sub: 'Eligibility, courses and universities', url: '' },
+      { code: 'EU', title: 'Study in Europe', sub: 'Low-tuition and English programs', url: '' },
+      { code: 'AE', title: 'Study in Dubai', sub: 'Programs and admissions', url: '' }
+    ],
+    testPrepTitle: 'Test preparation',
+    coachingHeading: 'Book a coaching class for',
+    coachingCourses: ['IELTS', 'PTE', 'CELPIP', 'TOEFL', 'GRE'],
+    coachingCta: { text: 'Book coaching class', url: '' },
+    testPrepBatches: [
+      { title: 'Basic English class', sub: 'Join the next batch', url: '' },
+      { title: 'Study + Work', sub: 'Russia, Singapore, Mauritius, Canada', url: '' }
+    ],
+    freeGuidesTitle: 'Free guides',
+    freeGuides: [
+      { title: '7 things to get right before you apply abroad', sub: 'Free guide', buttonText: 'Download', url: '' },
+      { title: 'CELPIP Writing Masterbook', sub: 'Task strategies', buttonText: 'Download', url: '' }
+    ],
+    sectionVisibility: { stats: true, destinations: true, testPrep: true, guides: true, about: true, contact: true }
+  };
+
+  let currentAtgDestinations = [];
+  let currentAtgBatches = [];
+  let currentAtgGuides = [];
+
+  function isAtgInitialized() {
+    return currentAtgDestinations.length > 0 || (document.getElementById('atgTagline')?.value.trim() !== '');
+  }
+
+  function triggerLivePreviewUpdate() {
+    if (adminCardPreviewModal && adminCardPreviewModal.style.display !== 'none' && modalActiveDesign) {
+      openCardPreviewModal(modalActiveDesign, { mode: 'customer' });
+    }
+  }
+
+  function renderAtgDestinations() {
+    const container = document.getElementById('atgDestinationsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentAtgDestinations.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display: grid; grid-template-columns: 56px 1fr 1fr 1fr auto; gap: 6px; align-items: center; background: #f8fafc; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-light);';
+      row.innerHTML = `
+        <input type="text" class="form-input form-input-sm dest-code" value="${escapeHtml(item.code || '')}" placeholder="CA" style="text-align:center;font-weight:700;">
+        <input type="text" class="form-input form-input-sm dest-title" value="${escapeHtml(item.title || '')}" placeholder="Study in Canada">
+        <input type="text" class="form-input form-input-sm dest-sub" value="${escapeHtml(item.sub || '')}" placeholder="Intakes & eligibility">
+        <input type="text" class="form-input form-input-sm dest-url" value="${escapeHtml(item.url || '')}" placeholder="Custom URL or empty">
+        <button type="button" class="btn btn-white btn-xs btn-del-dest" style="color:#ef4444;" title="Remove Destination">&times;</button>
+      `;
+
+      row.querySelector('.dest-code').addEventListener('input', (e) => { currentAtgDestinations[idx].code = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.dest-title').addEventListener('input', (e) => { currentAtgDestinations[idx].title = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.dest-sub').addEventListener('input', (e) => { currentAtgDestinations[idx].sub = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.dest-url').addEventListener('input', (e) => { currentAtgDestinations[idx].url = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.btn-del-dest').addEventListener('click', () => {
+        currentAtgDestinations.splice(idx, 1);
+        renderAtgDestinations();
+        triggerLivePreviewUpdate();
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  function renderAtgBatches() {
+    const container = document.getElementById('atgBatchesContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentAtgBatches.forEach((b, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 6px; align-items: center; background: #f8fafc; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-light);';
+      row.innerHTML = `
+        <input type="text" class="form-input form-input-sm batch-title" value="${escapeHtml(b.title || '')}" placeholder="Batch title">
+        <input type="text" class="form-input form-input-sm batch-sub" value="${escapeHtml(b.sub || '')}" placeholder="Subtitle / schedule">
+        <input type="text" class="form-input form-input-sm batch-url" value="${escapeHtml(b.url || '')}" placeholder="Inquiry URL (optional)">
+        <button type="button" class="btn btn-white btn-xs btn-del-batch" style="color:#ef4444;" title="Remove Batch">&times;</button>
+      `;
+
+      row.querySelector('.batch-title').addEventListener('input', (e) => { currentAtgBatches[idx].title = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.batch-sub').addEventListener('input', (e) => { currentAtgBatches[idx].sub = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.batch-url').addEventListener('input', (e) => { currentAtgBatches[idx].url = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.btn-del-batch').addEventListener('click', () => {
+        currentAtgBatches.splice(idx, 1);
+        renderAtgBatches();
+        triggerLivePreviewUpdate();
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  function renderAtgGuides() {
+    const container = document.getElementById('atgGuidesContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentAtgGuides.forEach((g, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 90px 1fr auto; gap: 6px; align-items: center; background: #f8fafc; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-light);';
+      row.innerHTML = `
+        <input type="text" class="form-input form-input-sm guide-title" value="${escapeHtml(g.title || '')}" placeholder="Guide title">
+        <input type="text" class="form-input form-input-sm guide-sub" value="${escapeHtml(g.sub || '')}" placeholder="Subtitle (Free guide)">
+        <input type="text" class="form-input form-input-sm guide-btn" value="${escapeHtml(g.buttonText || 'Download')}" placeholder="Download">
+        <input type="text" class="form-input form-input-sm guide-url" value="${escapeHtml(g.url || '')}" placeholder="File / Chat URL">
+        <button type="button" class="btn btn-white btn-xs btn-del-guide" style="color:#ef4444;" title="Remove Guide">&times;</button>
+      `;
+
+      row.querySelector('.guide-title').addEventListener('input', (e) => { currentAtgGuides[idx].title = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.guide-sub').addEventListener('input', (e) => { currentAtgGuides[idx].sub = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.guide-btn').addEventListener('input', (e) => { currentAtgGuides[idx].buttonText = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.guide-url').addEventListener('input', (e) => { currentAtgGuides[idx].url = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.btn-del-guide').addEventListener('click', () => {
+        currentAtgGuides.splice(idx, 1);
+        renderAtgGuides();
+        triggerLivePreviewUpdate();
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  function populateAtgForm(customer) {
+    const custom = customer?.customSettings || customer?.custom_settings || {};
+    const indData = (custom.industry && custom.industry.data && typeof custom.industry.data === 'object') ? custom.industry.data : {};
+
+    const elTagline = document.getElementById('atgTagline');
+    if (elTagline) elTagline.value = indData.tagline || (customer ? '' : DEFAULT_ATG_INDUSTRY.tagline);
+
+    const elAboutTitle = document.getElementById('atgAboutTitle');
+    if (elAboutTitle) elAboutTitle.value = indData.aboutTitle || (customer ? '' : DEFAULT_ATG_INDUSTRY.aboutTitle);
+
+    const elAboutText = document.getElementById('atgAboutText');
+    if (elAboutText) elAboutText.value = indData.aboutText || customer?.description || (customer ? '' : DEFAULT_ATG_INDUSTRY.aboutText);
+
+    // Metrics
+    const metrics = Array.isArray(indData.metrics) && indData.metrics.length > 0 ? indData.metrics : (customer ? [] : DEFAULT_ATG_INDUSTRY.metrics);
+    const m1 = metrics[0] || {};
+    const m2 = metrics[1] || {};
+    const m3 = metrics[2] || {};
+    if (document.getElementById('atgMetric1Val')) document.getElementById('atgMetric1Val').value = m1.value || '';
+    if (document.getElementById('atgMetric1Lbl')) document.getElementById('atgMetric1Lbl').value = m1.label || '';
+    if (document.getElementById('atgMetric2Val')) document.getElementById('atgMetric2Val').value = m2.value || '';
+    if (document.getElementById('atgMetric2Lbl')) document.getElementById('atgMetric2Lbl').value = m2.label || '';
+    if (document.getElementById('atgMetric3Val')) document.getElementById('atgMetric3Val').value = m3.value || '';
+    if (document.getElementById('atgMetric3Lbl')) document.getElementById('atgMetric3Lbl').value = m3.label || '';
+
+    // CTAs
+    const ctaPrim = indData.ctaPrimary || (customer ? {} : DEFAULT_ATG_INDUSTRY.ctaPrimary);
+    const ctaWA = indData.ctaWhatsApp || (customer ? {} : DEFAULT_ATG_INDUSTRY.ctaWhatsApp);
+    if (document.getElementById('atgCtaPrimaryText')) document.getElementById('atgCtaPrimaryText').value = ctaPrim.text || '';
+    if (document.getElementById('atgCtaPrimaryUrl')) document.getElementById('atgCtaPrimaryUrl').value = ctaPrim.url || '';
+    if (document.getElementById('atgCtaWhatsAppText')) document.getElementById('atgCtaWhatsAppText').value = ctaWA.text || '';
+    if (document.getElementById('atgCtaWhatsAppUrl')) document.getElementById('atgCtaWhatsAppUrl').value = ctaWA.url || '';
+
+    // Destinations
+    const elDestTitle = document.getElementById('atgDestinationsTitle');
+    if (elDestTitle) elDestTitle.value = indData.destinationsTitle || (customer ? '' : DEFAULT_ATG_INDUSTRY.destinationsTitle);
+    const rawDest = Array.isArray(indData.destinations) && indData.destinations.length > 0 ? indData.destinations : (customer ? [] : DEFAULT_ATG_INDUSTRY.destinations);
+    currentAtgDestinations = JSON.parse(JSON.stringify(rawDest));
+    renderAtgDestinations();
+
+    // Test Prep
+    if (document.getElementById('atgTestPrepTitle')) document.getElementById('atgTestPrepTitle').value = indData.testPrepTitle || (customer ? '' : DEFAULT_ATG_INDUSTRY.testPrepTitle);
+    if (document.getElementById('atgCoachingHeading')) document.getElementById('atgCoachingHeading').value = indData.coachingHeading || (customer ? '' : DEFAULT_ATG_INDUSTRY.coachingHeading);
+    const courses = Array.isArray(indData.coachingCourses) ? indData.coachingCourses.join(', ') : (customer ? '' : DEFAULT_ATG_INDUSTRY.coachingCourses.join(', '));
+    if (document.getElementById('atgCoachingCourses')) document.getElementById('atgCoachingCourses').value = courses;
+
+    const coachCta = indData.coachingCta || (customer ? {} : DEFAULT_ATG_INDUSTRY.coachingCta);
+    if (document.getElementById('atgCoachingCtaText')) document.getElementById('atgCoachingCtaText').value = coachCta.text || '';
+    if (document.getElementById('atgCoachingCtaUrl')) document.getElementById('atgCoachingCtaUrl').value = coachCta.url || '';
+
+    const rawBatches = Array.isArray(indData.testPrepBatches) && indData.testPrepBatches.length > 0 ? indData.testPrepBatches : (customer ? [] : DEFAULT_ATG_INDUSTRY.testPrepBatches);
+    currentAtgBatches = JSON.parse(JSON.stringify(rawBatches));
+    renderAtgBatches();
+
+    // Free Guides
+    if (document.getElementById('atgFreeGuidesTitle')) document.getElementById('atgFreeGuidesTitle').value = indData.freeGuidesTitle || (customer ? '' : DEFAULT_ATG_INDUSTRY.freeGuidesTitle);
+    const rawGuides = Array.isArray(indData.freeGuides) && indData.freeGuides.length > 0 ? indData.freeGuides : (customer ? [] : DEFAULT_ATG_INDUSTRY.freeGuides);
+    currentAtgGuides = JSON.parse(JSON.stringify(rawGuides));
+    renderAtgGuides();
+
+    // Section Visibility
+    const vis = indData.sectionVisibility || {};
+    if (document.getElementById('atgVisStats')) document.getElementById('atgVisStats').checked = vis.stats !== false;
+    if (document.getElementById('atgVisDestinations')) document.getElementById('atgVisDestinations').checked = vis.destinations !== false;
+    if (document.getElementById('atgVisTestPrep')) document.getElementById('atgVisTestPrep').checked = vis.testPrep !== false;
+    if (document.getElementById('atgVisGuides')) document.getElementById('atgVisGuides').checked = vis.guides !== false;
+    if (document.getElementById('atgVisAbout')) document.getElementById('atgVisAbout').checked = vis.about !== false;
+    if (document.getElementById('atgVisContact')) document.getElementById('atgVisContact').checked = vis.contact !== false;
+  }
+
+  function resetAtgForm() {
+    const ids = [
+      'atgTagline', 'atgAboutTitle', 'atgAboutText',
+      'atgMetric1Val', 'atgMetric1Lbl', 'atgMetric2Val', 'atgMetric2Lbl', 'atgMetric3Val', 'atgMetric3Lbl',
+      'atgCtaPrimaryText', 'atgCtaPrimaryUrl', 'atgCtaWhatsAppText', 'atgCtaWhatsAppUrl',
+      'atgDestinationsTitle', 'atgTestPrepTitle', 'atgCoachingHeading', 'atgCoachingCourses',
+      'atgCoachingCtaText', 'atgCoachingCtaUrl', 'atgFreeGuidesTitle'
+    ];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    currentAtgDestinations = [];
+    currentAtgBatches = [];
+    currentAtgGuides = [];
+    renderAtgDestinations();
+    renderAtgBatches();
+    renderAtgGuides();
+  }
+
+  function collectAtgIndustryData() {
+    const rawCourses = document.getElementById('atgCoachingCourses')?.value || '';
+    const coachingCourses = rawCourses.split(',').map(s => s.trim()).filter(Boolean);
+
+    const metrics = [
+      {
+        value: document.getElementById('atgMetric1Val')?.value.trim() || '',
+        label: document.getElementById('atgMetric1Lbl')?.value.trim() || ''
+      },
+      {
+        value: document.getElementById('atgMetric2Val')?.value.trim() || '',
+        label: document.getElementById('atgMetric2Lbl')?.value.trim() || ''
+      },
+      {
+        value: document.getElementById('atgMetric3Val')?.value.trim() || '',
+        label: document.getElementById('atgMetric3Lbl')?.value.trim() || ''
+      }
+    ].filter(m => m.value || m.label);
+
+    return {
+      type: 'study-abroad',
+      data: {
+        tagline: document.getElementById('atgTagline')?.value.trim() || '',
+        aboutTitle: document.getElementById('atgAboutTitle')?.value.trim() || '',
+        aboutText: document.getElementById('atgAboutText')?.value.trim() || '',
+        metrics,
+        ctaPrimary: {
+          text: document.getElementById('atgCtaPrimaryText')?.value.trim() || '',
+          url: document.getElementById('atgCtaPrimaryUrl')?.value.trim() || ''
+        },
+        ctaWhatsApp: {
+          text: document.getElementById('atgCtaWhatsAppText')?.value.trim() || '',
+          url: document.getElementById('atgCtaWhatsAppUrl')?.value.trim() || ''
+        },
+        destinationsTitle: document.getElementById('atgDestinationsTitle')?.value.trim() || '',
+        destinations: currentAtgDestinations.filter(d => d.title || d.code),
+        testPrepTitle: document.getElementById('atgTestPrepTitle')?.value.trim() || '',
+        coachingHeading: document.getElementById('atgCoachingHeading')?.value.trim() || '',
+        coachingCourses: coachingCourses.length > 0 ? coachingCourses : ['IELTS', 'PTE', 'CELPIP', 'TOEFL', 'GRE'],
+        coachingCta: {
+          text: document.getElementById('atgCoachingCtaText')?.value.trim() || '',
+          url: document.getElementById('atgCoachingCtaUrl')?.value.trim() || ''
+        },
+        testPrepBatches: currentAtgBatches.filter(b => b.title || b.sub),
+        freeGuidesTitle: document.getElementById('atgFreeGuidesTitle')?.value.trim() || '',
+        freeGuides: currentAtgGuides.filter(g => g.title),
+        sectionVisibility: {
+          stats: document.getElementById('atgVisStats')?.checked !== false,
+          destinations: document.getElementById('atgVisDestinations')?.checked !== false,
+          testPrep: document.getElementById('atgVisTestPrep')?.checked !== false,
+          guides: document.getElementById('atgVisGuides')?.checked !== false,
+          about: document.getElementById('atgVisAbout')?.checked !== false,
+          contact: document.getElementById('atgVisContact')?.checked !== false,
+        }
+      }
+    };
+  }
+
+  // Hook ATG Add Buttons
+  document.getElementById('btnAddAtgDestination')?.addEventListener('click', () => {
+    currentAtgDestinations.push({ code: 'GL', title: 'New Destination', sub: 'Programs and intakes', url: '' });
+    renderAtgDestinations();
+    triggerLivePreviewUpdate();
+  });
+
+  document.getElementById('btnAddAtgBatch')?.addEventListener('click', () => {
+    currentAtgBatches.push({ title: 'New Coaching Batch', sub: 'Join upcoming session', url: '' });
+    renderAtgBatches();
+    triggerLivePreviewUpdate();
+  });
+
+  document.getElementById('btnAddAtgGuide')?.addEventListener('click', () => {
+    currentAtgGuides.push({ title: 'Mastering the Visa Interview', sub: 'Free checklist', buttonText: 'Download', url: '' });
+    renderAtgGuides();
+    triggerLivePreviewUpdate();
+  });
+
+  // Attach live input updates for ATG
+  document.getElementById('atgStudyAbroadCard')?.addEventListener('input', triggerLivePreviewUpdate);
+  document.getElementById('atgStudyAbroadCard')?.addEventListener('change', triggerLivePreviewUpdate);
+
+  // -------------------------------------------------------------
+  // Spice Route Restaurant Customization Controller
+  // -------------------------------------------------------------
+  const DEFAULT_SPICE_INDUSTRY = {
+    overline: '— Family restaurant —',
+    restaurantName: 'Spice Route',
+    tagline: 'Slow-cooked Gujarati and North Indian food, made fresh every day.',
+    badges: ['Open till 11 pm', '★ 4.5', 'Family seating'],
+    quickActions: [
+      { label: 'View menu', url: '#menu' },
+      { label: 'Book a table', url: '' },
+      { label: 'Order on WhatsApp', url: '' },
+      { label: 'Directions', url: '' }
+    ],
+    menuTitle: "Chef's signatures",
+    menuItems: [
+      { name: 'Paneer Lababdar', desc: 'Creamy tomato gravy, house butter', price: '₹320', isVeg: true },
+      { name: 'Dal Tadka Special', desc: 'Smoked and finished with ghee', price: '₹220', isVeg: true },
+      { name: 'Chicken Dum Biryani', desc: 'Slow-cooked, served with raita', price: '₹360', isVeg: false },
+      { name: 'Kesar Phirni', desc: 'Saffron, set in clay', price: '₹140', isVeg: true }
+    ],
+    diningOptionsTitle: 'Dining options',
+    diningOptions: ['Dine-in', 'Takeaway', 'Home delivery', 'Family seating', 'Private events', 'Parking'],
+    hoursTitle: 'Opening hours',
+    hoursList: [
+      { label: 'Lunch', time: '12 pm to 3 pm' },
+      { label: 'Dinner', time: '7 pm to 11 pm' },
+      { label: 'Saturday and Sunday', time: '12 pm to 11:30 pm' }
+    ],
+    hoursNotice: 'Tables for six or more: please book a day ahead.',
+    reviewsTitle: 'Guest reviews',
+    reviews: [
+      { quote: 'Food tastes like home. The dal tadka is the best in the city.', author: 'Guest Name' },
+      { quote: 'Warm service and delicious family dining experience.', author: 'Guest Name' }
+    ],
+    sectionVisibility: { quickActions: true, menu: true, diningOptions: true, hours: true, reviews: true, contact: true }
+  };
+
+  let currentSpiceMenuItems = [];
+  let currentSpiceHours = [];
+  let currentSpiceReviews = [];
+
+  function isSpiceInitialized() {
+    return currentSpiceMenuItems.length > 0 || (document.getElementById('spiceRestaurantName')?.value.trim() !== '');
+  }
+
+  function renderSpiceMenuItems() {
+    const container = document.getElementById('spiceMenuContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentSpiceMenuItems.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display: grid; grid-template-columns: 80px 1.2fr 1.2fr 90px auto; gap: 6px; align-items: center; background: #fdfbf7; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-light);';
+      const isVeg = item.isVeg !== false && !item.nonVeg;
+
+      row.innerHTML = `
+        <select class="form-input form-input-sm menu-diet" style="padding:4px;font-size:11px;">
+          <option value="veg" ${isVeg ? 'selected' : ''}>🟢 Veg</option>
+          <option value="non-veg" ${!isVeg ? 'selected' : ''}>🔴 Non-Veg</option>
+        </select>
+        <input type="text" class="form-input form-input-sm menu-name" value="${escapeHtml(item.name || '')}" placeholder="Dish name">
+        <input type="text" class="form-input form-input-sm menu-desc" value="${escapeHtml(item.desc || '')}" placeholder="Description / gravy">
+        <input type="text" class="form-input form-input-sm menu-price" value="${escapeHtml(item.price || '')}" placeholder="₹320">
+        <button type="button" class="btn btn-white btn-xs btn-del-menu" style="color:#ef4444;" title="Remove Item">&times;</button>
+      `;
+
+      row.querySelector('.menu-diet').addEventListener('change', (e) => {
+        currentSpiceMenuItems[idx].isVeg = (e.target.value === 'veg');
+        triggerLivePreviewUpdate();
+      });
+      row.querySelector('.menu-name').addEventListener('input', (e) => { currentSpiceMenuItems[idx].name = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.menu-desc').addEventListener('input', (e) => { currentSpiceMenuItems[idx].desc = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.menu-price').addEventListener('input', (e) => { currentSpiceMenuItems[idx].price = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.btn-del-menu').addEventListener('click', () => {
+        currentSpiceMenuItems.splice(idx, 1);
+        renderSpiceMenuItems();
+        triggerLivePreviewUpdate();
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  function renderSpiceHours() {
+    const container = document.getElementById('spiceHoursContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentSpiceHours.forEach((h, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; align-items: center; background: #fdfbf7; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-light);';
+      row.innerHTML = `
+        <input type="text" class="form-input form-input-sm hour-label" value="${escapeHtml(h.label || '')}" placeholder="e.g. Lunch">
+        <input type="text" class="form-input form-input-sm hour-time" value="${escapeHtml(h.time || '')}" placeholder="12 pm to 3 pm">
+        <button type="button" class="btn btn-white btn-xs btn-del-hour" style="color:#ef4444;" title="Remove Hour">&times;</button>
+      `;
+
+      row.querySelector('.hour-label').addEventListener('input', (e) => { currentSpiceHours[idx].label = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.hour-time').addEventListener('input', (e) => { currentSpiceHours[idx].time = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.btn-del-hour').addEventListener('click', () => {
+        currentSpiceHours.splice(idx, 1);
+        renderSpiceHours();
+        triggerLivePreviewUpdate();
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  function renderSpiceReviews() {
+    const container = document.getElementById('spiceReviewsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentSpiceReviews.forEach((r, idx) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display: grid; grid-template-columns: 1.8fr 1fr auto; gap: 6px; align-items: center; background: #fdfbf7; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-light);';
+      row.innerHTML = `
+        <input type="text" class="form-input form-input-sm rev-quote" value="${escapeHtml(r.quote || '')}" placeholder="Food tastes like home...">
+        <input type="text" class="form-input form-input-sm rev-author" value="${escapeHtml(r.author || '')}" placeholder="Guest Name">
+        <button type="button" class="btn btn-white btn-xs btn-del-rev" style="color:#ef4444;" title="Remove Review">&times;</button>
+      `;
+
+      row.querySelector('.rev-quote').addEventListener('input', (e) => { currentSpiceReviews[idx].quote = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.rev-author').addEventListener('input', (e) => { currentSpiceReviews[idx].author = e.target.value; triggerLivePreviewUpdate(); });
+      row.querySelector('.btn-del-rev').addEventListener('click', () => {
+        currentSpiceReviews.splice(idx, 1);
+        renderSpiceReviews();
+        triggerLivePreviewUpdate();
+      });
+
+      container.appendChild(row);
+    });
+  }
+
+  function populateSpiceRouteForm(customer) {
+    const custom = customer?.customSettings || customer?.custom_settings || {};
+    const indData = (custom.industry && custom.industry.data && typeof custom.industry.data === 'object') ? custom.industry.data : {};
+
+    if (document.getElementById('spiceOverline')) document.getElementById('spiceOverline').value = indData.overline || (customer ? '' : DEFAULT_SPICE_INDUSTRY.overline);
+    if (document.getElementById('spiceRestaurantName')) document.getElementById('spiceRestaurantName').value = indData.restaurantName || customer?.company || customer?.name || (customer ? '' : DEFAULT_SPICE_INDUSTRY.restaurantName);
+    if (document.getElementById('spiceTagline')) document.getElementById('spiceTagline').value = indData.tagline || customer?.description || (customer ? '' : DEFAULT_SPICE_INDUSTRY.tagline);
+
+    const badges = Array.isArray(indData.badges) ? indData.badges.join(', ') : (customer ? '' : DEFAULT_SPICE_INDUSTRY.badges.join(', '));
+    if (document.getElementById('spiceBadges')) document.getElementById('spiceBadges').value = badges;
+
+    // 2x2 Actions
+    const acts = Array.isArray(indData.quickActions) && indData.quickActions.length > 0 ? indData.quickActions : (customer ? [] : DEFAULT_SPICE_INDUSTRY.quickActions);
+    const a1 = acts[0] || {};
+    const a2 = acts[1] || {};
+    const a3 = acts[2] || {};
+    const a4 = acts[3] || {};
+    if (document.getElementById('spiceAction1Label')) document.getElementById('spiceAction1Label').value = a1.label || '';
+    if (document.getElementById('spiceAction1Url')) document.getElementById('spiceAction1Url').value = a1.url || '';
+    if (document.getElementById('spiceAction2Label')) document.getElementById('spiceAction2Label').value = a2.label || '';
+    if (document.getElementById('spiceAction2Url')) document.getElementById('spiceAction2Url').value = a2.url || '';
+    if (document.getElementById('spiceAction3Label')) document.getElementById('spiceAction3Label').value = a3.label || '';
+    if (document.getElementById('spiceAction3Url')) document.getElementById('spiceAction3Url').value = a3.url || '';
+    if (document.getElementById('spiceAction4Label')) document.getElementById('spiceAction4Label').value = a4.label || '';
+    if (document.getElementById('spiceAction4Url')) document.getElementById('spiceAction4Url').value = a4.url || '';
+
+    // Menu
+    if (document.getElementById('spiceMenuTitle')) document.getElementById('spiceMenuTitle').value = indData.menuTitle || (customer ? '' : DEFAULT_SPICE_INDUSTRY.menuTitle);
+    const rawMenu = Array.isArray(indData.menuItems) && indData.menuItems.length > 0 ? indData.menuItems : (customer ? [] : DEFAULT_SPICE_INDUSTRY.menuItems);
+    currentSpiceMenuItems = JSON.parse(JSON.stringify(rawMenu));
+    renderSpiceMenuItems();
+
+    // Dining options
+    if (document.getElementById('spiceDiningOptionsTitle')) document.getElementById('spiceDiningOptionsTitle').value = indData.diningOptionsTitle || (customer ? '' : DEFAULT_SPICE_INDUSTRY.diningOptionsTitle);
+    const opts = Array.isArray(indData.diningOptions) ? indData.diningOptions.join(', ') : (customer ? '' : DEFAULT_SPICE_INDUSTRY.diningOptions.join(', '));
+    if (document.getElementById('spiceDiningOptions')) document.getElementById('spiceDiningOptions').value = opts;
+
+    // Hours
+    if (document.getElementById('spiceHoursTitle')) document.getElementById('spiceHoursTitle').value = indData.hoursTitle || (customer ? '' : DEFAULT_SPICE_INDUSTRY.hoursTitle);
+    const rawHours = Array.isArray(indData.hoursList) && indData.hoursList.length > 0 ? indData.hoursList : (customer ? [] : DEFAULT_SPICE_INDUSTRY.hoursList);
+    currentSpiceHours = JSON.parse(JSON.stringify(rawHours));
+    renderSpiceHours();
+    if (document.getElementById('spiceHoursNotice')) document.getElementById('spiceHoursNotice').value = indData.hoursNotice || (customer ? '' : DEFAULT_SPICE_INDUSTRY.hoursNotice);
+
+    // Reviews
+    if (document.getElementById('spiceReviewsTitle')) document.getElementById('spiceReviewsTitle').value = indData.reviewsTitle || (customer ? '' : DEFAULT_SPICE_INDUSTRY.reviewsTitle);
+    const rawReviews = Array.isArray(indData.reviews) && indData.reviews.length > 0 ? indData.reviews : (customer ? [] : DEFAULT_SPICE_INDUSTRY.reviews);
+    currentSpiceReviews = JSON.parse(JSON.stringify(rawReviews));
+    renderSpiceReviews();
+
+    // Visibility
+    const vis = indData.sectionVisibility || {};
+    if (document.getElementById('spiceVisQuickActions')) document.getElementById('spiceVisQuickActions').checked = vis.quickActions !== false;
+    if (document.getElementById('spiceVisMenu')) document.getElementById('spiceVisMenu').checked = vis.menu !== false;
+    if (document.getElementById('spiceVisDiningOptions')) document.getElementById('spiceVisDiningOptions').checked = vis.diningOptions !== false;
+    if (document.getElementById('spiceVisHours')) document.getElementById('spiceVisHours').checked = vis.hours !== false;
+    if (document.getElementById('spiceVisReviews')) document.getElementById('spiceVisReviews').checked = vis.reviews !== false;
+    if (document.getElementById('spiceVisContact')) document.getElementById('spiceVisContact').checked = vis.contact !== false;
+  }
+
+  function resetSpiceRouteForm() {
+    const ids = [
+      'spiceOverline', 'spiceRestaurantName', 'spiceTagline', 'spiceBadges',
+      'spiceAction1Label', 'spiceAction1Url', 'spiceAction2Label', 'spiceAction2Url',
+      'spiceAction3Label', 'spiceAction3Url', 'spiceAction4Label', 'spiceAction4Url',
+      'spiceMenuTitle', 'spiceDiningOptionsTitle', 'spiceDiningOptions',
+      'spiceHoursTitle', 'spiceHoursNotice', 'spiceReviewsTitle'
+    ];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    currentSpiceMenuItems = [];
+    currentSpiceHours = [];
+    currentSpiceReviews = [];
+    renderSpiceMenuItems();
+    renderSpiceHours();
+    renderSpiceReviews();
+  }
+
+  function collectSpiceRouteIndustryData() {
+    const rawBadges = document.getElementById('spiceBadges')?.value || '';
+    const badges = rawBadges.split(',').map(s => s.trim()).filter(Boolean);
+
+    const rawOptions = document.getElementById('spiceDiningOptions')?.value || '';
+    const diningOptions = rawOptions.split(',').map(s => s.trim()).filter(Boolean);
+
+    const quickActions = [
+      { label: document.getElementById('spiceAction1Label')?.value.trim() || '', url: document.getElementById('spiceAction1Url')?.value.trim() || '' },
+      { label: document.getElementById('spiceAction2Label')?.value.trim() || '', url: document.getElementById('spiceAction2Url')?.value.trim() || '' },
+      { label: document.getElementById('spiceAction3Label')?.value.trim() || '', url: document.getElementById('spiceAction3Url')?.value.trim() || '' },
+      { label: document.getElementById('spiceAction4Label')?.value.trim() || '', url: document.getElementById('spiceAction4Url')?.value.trim() || '' },
+    ].filter(a => a.label);
+
+    return {
+      type: 'restaurant',
+      data: {
+        overline: document.getElementById('spiceOverline')?.value.trim() || '',
+        restaurantName: document.getElementById('spiceRestaurantName')?.value.trim() || '',
+        tagline: document.getElementById('spiceTagline')?.value.trim() || '',
+        badges: badges.length > 0 ? badges : ['Open till 11 pm', '★ 4.5', 'Family seating'],
+        quickActions,
+        menuTitle: document.getElementById('spiceMenuTitle')?.value.trim() || '',
+        menuItems: currentSpiceMenuItems.filter(m => m.name),
+        diningOptionsTitle: document.getElementById('spiceDiningOptionsTitle')?.value.trim() || '',
+        diningOptions: diningOptions.length > 0 ? diningOptions : ['Dine-in', 'Takeaway', 'Home delivery', 'Family seating', 'Private events', 'Parking'],
+        hoursTitle: document.getElementById('spiceHoursTitle')?.value.trim() || '',
+        hoursList: currentSpiceHours.filter(h => h.label || h.time),
+        hoursNotice: document.getElementById('spiceHoursNotice')?.value.trim() || '',
+        reviewsTitle: document.getElementById('spiceReviewsTitle')?.value.trim() || '',
+        reviews: currentSpiceReviews.filter(r => r.quote),
+        sectionVisibility: {
+          quickActions: document.getElementById('spiceVisQuickActions')?.checked !== false,
+          menu: document.getElementById('spiceVisMenu')?.checked !== false,
+          diningOptions: document.getElementById('spiceVisDiningOptions')?.checked !== false,
+          hours: document.getElementById('spiceVisHours')?.checked !== false,
+          reviews: document.getElementById('spiceVisReviews')?.checked !== false,
+          contact: document.getElementById('spiceVisContact')?.checked !== false,
+        }
+      }
+    };
+  }
+
+  // Hook Spice Route Add Buttons
+  document.getElementById('btnAddSpiceMenuItem')?.addEventListener('click', () => {
+    currentSpiceMenuItems.push({ name: 'New Chef Special', desc: 'Fresh local herbs & spices', price: '₹280', isVeg: true });
+    renderSpiceMenuItems();
+    triggerLivePreviewUpdate();
+  });
+
+  document.getElementById('btnAddSpiceHour')?.addEventListener('click', () => {
+    currentSpiceHours.push({ label: 'Special Hours', time: '12 pm to 10 pm' });
+    renderSpiceHours();
+    triggerLivePreviewUpdate();
+  });
+
+  document.getElementById('btnAddSpiceReview')?.addEventListener('click', () => {
+    currentSpiceReviews.push({ quote: 'Authentic flavours and wonderful hospitality.', author: 'Happy Guest' });
+    renderSpiceReviews();
+    triggerLivePreviewUpdate();
+  });
+
+  // Attach live input updates for Spice Route
+  document.getElementById('spiceRouteCard')?.addEventListener('input', triggerLivePreviewUpdate);
+  document.getElementById('spiceRouteCard')?.addEventListener('change', triggerLivePreviewUpdate);
 
   // Global Header Search
   document.getElementById('headerSearchInput')?.addEventListener('keydown', (e) => {

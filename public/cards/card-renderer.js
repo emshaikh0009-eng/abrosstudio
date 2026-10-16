@@ -541,6 +541,604 @@
     return html;
   }
 
+  function renderAtgStudyAbroadBody(card) {
+    const custom = card.customSettings || card.custom_settings || {};
+    const ind = (custom.industry && custom.industry.data && typeof custom.industry.data === 'object') ? custom.industry.data : {};
+    const visibility = ind.sectionVisibility || {};
+
+    const name = hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : 'Aamir Shaikh';
+    const role = hasText(card.designation || card.role) ? (card.designation || card.role).trim() : 'Founder, ATG Study Abroad';
+    const tagline = hasText(ind.tagline) ? ind.tagline.trim() : 'On a mission, with a vision';
+    const bio = hasText(ind.aboutText) ? ind.aboutText.trim() : (hasText(card.description || card.bio) ? (card.description || card.bio).trim() : 'Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa.');
+    const phone = hasText(card.phone || card.mobile_number) ? (card.phone || card.mobile_number).trim() : '+91 98989 79548';
+    const whatsapp = hasText(card.whatsapp || card.whatsapp_number) ? (card.whatsapp || card.whatsapp_number).trim() : '919898979548';
+    const email = hasText(card.email) ? card.email.trim() : 'info@atgstudyabroad.com';
+    const instagram = hasText(card.socialInstagram || card.social_instagram) ? (card.socialInstagram || card.social_instagram).trim() : '@atgstudyabroad';
+    const avatarUrl = hasText(card.avatarUrl || card.avatar_url || card.profile_image_url) ? (card.avatarUrl || card.avatar_url || card.profile_image_url).trim() : '';
+
+    const phoneDest = phone ? `tel:${cleanPhone(phone)}` : '';
+    const waDigits = whatsapp ? cleanDigits(whatsapp) : '919898979548';
+    const waDest = `https://wa.me/${waDigits}`;
+    const emailDest = email ? `mailto:${email}` : '';
+    const instaDest = instagram ? (instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace(/^@/, '')}`) : '';
+
+    // Metrics
+    const defaultMetrics = [
+      { value: '4,000+', label: 'Students guided' },
+      { value: '5+', label: 'Study destinations' },
+      { value: '5+', label: 'Test prep courses' }
+    ];
+    const metrics = (Array.isArray(ind.metrics) && ind.metrics.length > 0) ? ind.metrics : defaultMetrics;
+
+    // CTAs
+    const ctaPrimaryText = ind.ctaPrimary?.text || 'Find out which country suits you';
+    const ctaPrimaryUrl = ind.ctaPrimary?.url || `https://wa.me/${waDigits}?text=Hi%2C%20I%20want%20to%20find%20out%20which%20country%20suits%20me%20for%20study%20abroad`;
+    const ctaWhatsAppText = ind.ctaWhatsApp?.text || 'Chat on WhatsApp for instant guidance';
+    const ctaWhatsAppUrl = ind.ctaWhatsApp?.url || waDest;
+
+    // Destinations
+    const defaultDestinations = [
+      { code: 'CA', title: 'Study in Canada', sub: 'Courses, eligibility and intakes', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Canada` },
+      { code: 'UK', title: 'Study in the UK', sub: 'Top universities and scholarships', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20the%20UK` },
+      { code: 'AU', title: 'Study in Australia', sub: 'Eligibility, courses and universities', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Australia` },
+      { code: 'EU', title: 'Study in Europe', sub: 'Low-tuition and English programs', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Europe` },
+      { code: 'AE', title: 'Study in Dubai', sub: 'Programs and admissions', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Dubai` }
+    ];
+    const destinationsTitle = ind.destinationsTitle || 'Popular study destinations';
+    const destinations = (Array.isArray(ind.destinations) && ind.destinations.length > 0) ? ind.destinations : defaultDestinations;
+
+    // Test Prep
+    const testPrepTitle = ind.testPrepTitle || 'Test preparation';
+    const coachingHeading = ind.coachingHeading || 'Book a coaching class for';
+    const coachingCourses = (Array.isArray(ind.coachingCourses) && ind.coachingCourses.length > 0) ? ind.coachingCourses : ['IELTS', 'PTE', 'CELPIP', 'TOEFL', 'GRE'];
+    const coachingCtaText = ind.coachingCta?.text || 'Book coaching class';
+    const coachingCtaUrl = ind.coachingCta?.url || `https://wa.me/${waDigits}?text=I%20would%20like%20to%20book%20a%20test%20prep%20coaching%20class`;
+
+    const defaultBatches = [
+      { title: 'Basic English class', sub: 'Join the next batch', url: `https://wa.me/${waDigits}?text=Inquiry%20for%20Basic%20English%20class` },
+      { title: 'Study + Work', sub: 'Russia, Singapore, Mauritius, Canada', url: `https://wa.me/${waDigits}?text=Inquiry%20for%20Study%20and%20Work%20programs` }
+    ];
+    const batches = (Array.isArray(ind.testPrepBatches) && ind.testPrepBatches.length > 0) ? ind.testPrepBatches : defaultBatches;
+
+    // Free Guides
+    const defaultGuides = [
+      { title: '7 things to get right before you apply abroad', sub: 'Free guide', buttonText: 'Download', url: `https://wa.me/${waDigits}?text=Please%20send%20me%20the%20Free%20Guide:%207%20things%20to%20get%20right%20before%20you%20apply%20abroad` },
+      { title: 'CELPIP Writing Masterbook', sub: 'Task strategies', buttonText: 'Download', url: `https://wa.me/${waDigits}?text=Please%20send%20me%20the%20CELPIP%20Writing%20Masterbook` }
+    ];
+    const freeGuidesTitle = ind.freeGuidesTitle || 'Free guides';
+    const freeGuides = (Array.isArray(ind.freeGuides) && ind.freeGuides.length > 0) ? ind.freeGuides : defaultGuides;
+
+    // About Section
+    const aboutTitle = ind.aboutTitle || 'About ATG Study Abroad';
+
+    // Contact
+    const contactTitle = ind.contactTitle || 'Get in touch';
+
+    let html = `
+      <div class="atg-card-wrapper">
+        <!-- Dark Top Banner with Flight Path Curve & Floating Logo -->
+        <header class="atg-header">
+          <div class="atg-banner-bg" aria-hidden="true">
+            <svg class="atg-flight-svg" viewBox="0 0 380 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="190" cy="230" r="150" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+              <circle cx="190" cy="230" r="110" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+              <ellipse cx="190" cy="230" rx="60" ry="150" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+              <path d="M 30 160 C 95 85, 230 45, 335 32" stroke="#82be00" stroke-width="2" stroke-dasharray="4 4" fill="none" opacity="0.95" />
+              <g transform="translate(332, 28) rotate(52)">
+                <path d="M12 2L15 9L22 10.5L16.5 15.5L18 22L12 18.5L6 22L7.5 15.5L2 10.5L9 9L12 2Z" fill="#82be00" />
+              </g>
+            </svg>
+          </div>
+
+          <div class="atg-avatar-slot">
+            <div class="atg-logo-circle">
+              ${avatarUrl ? `
+                <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(name)}" class="atg-logo-img" />
+              ` : `
+                <div class="atg-emblem">
+                  <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 65 C 22 35, 52 18, 80 22 C 65 32, 42 46, 32 75 C 27 79, 20 77, 18 65 Z" fill="#82be00" opacity="0.9" />
+                    <path d="M38 72 C 62 67, 78 44, 84 28" stroke="#82be00" stroke-width="3.5" stroke-linecap="round" fill="none" />
+                    <g transform="translate(76, 14) rotate(45) scale(0.95)">
+                      <path d="M10 2 L13 8 L19 9.5 L14.5 14 L16 20 L10 16.5 L4 20 L5.5 14 L1 9.5 L7 8 Z" fill="#82be00" />
+                    </g>
+                  </svg>
+                  <div class="atg-emblem-text-top">ACROSS</div>
+                  <div class="atg-emblem-text-mid">THE GLOBE</div>
+                  <div class="atg-emblem-text-sub">On a mission, with a vision</div>
+                </div>
+              `}
+            </div>
+          </div>
+        </header>
+
+        <!-- Profile Identity -->
+        <section class="atg-identity">
+          <h1 class="atg-name">${escapeHtml(name)}</h1>
+          ${role ? `<div class="atg-role">${escapeHtml(role)}</div>` : ''}
+          ${tagline ? `<div class="atg-tagline">${escapeHtml(tagline)}</div>` : ''}
+        </section>
+
+        <!-- Key Metrics Bar -->
+        ${visibility.stats !== false && metrics.length > 0 ? `
+          <section class="atg-metrics-bar">
+            ${metrics.map((m, idx) => `
+              <div class="atg-metric-col ${idx < metrics.length - 1 ? 'has-divider' : ''}">
+                <div class="atg-metric-val">${escapeHtml(m.value || '')}</div>
+                <div class="atg-metric-lbl">${escapeHtml(m.label || '')}</div>
+              </div>
+            `).join('')}
+          </section>
+        ` : ''}
+
+        <!-- Action Buttons -->
+        <section class="atg-actions">
+          ${ctaPrimaryText ? `
+            <a href="${escapeHtml(ctaPrimaryUrl)}" target="_blank" rel="noopener noreferrer" class="atg-btn-lime">
+              <span>${escapeHtml(ctaPrimaryText)}</span>
+            </a>
+          ` : ''}
+          ${ctaWhatsAppText ? `
+            <a href="${escapeHtml(ctaWhatsAppUrl)}" target="_blank" rel="noopener noreferrer" class="atg-btn-black">
+              <span>${escapeHtml(ctaWhatsAppText)}</span>
+            </a>
+          ` : ''}
+          <div class="atg-btn-pair">
+            <a href="${phoneDest || '#'}" class="atg-btn-white">
+              <span>Call</span>
+            </a>
+            <button type="button" class="atg-btn-white" id="saveContactBtn">
+              <span>Save contact</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Popular Study Destinations -->
+        ${visibility.destinations !== false && destinations.length > 0 ? `
+          <section class="atg-section">
+            <div class="atg-accent-bar"></div>
+            <h2 class="atg-section-heading">${escapeHtml(destinationsTitle)}</h2>
+            <div class="atg-destinations-list">
+              ${destinations.map(d => `
+                <a href="${escapeHtml(d.url || waDest)}" target="_blank" rel="noopener noreferrer" class="atg-dest-row">
+                  <div class="atg-dest-badge">${escapeHtml(d.code || 'GL')}</div>
+                  <div class="atg-dest-info">
+                    <div class="atg-dest-title">${escapeHtml(d.title || '')}</div>
+                    <div class="atg-dest-sub">${escapeHtml(d.sub || '')}</div>
+                  </div>
+                  <span class="atg-chevron" aria-hidden="true">&rsaquo;</span>
+                </a>
+              `).join('')}
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Test Preparation -->
+        ${visibility.testPrep !== false ? `
+          <section class="atg-section">
+            <div class="atg-accent-bar"></div>
+            <h2 class="atg-section-heading">${escapeHtml(testPrepTitle)}</h2>
+            
+            <div class="atg-coaching-box">
+              <div class="atg-coaching-lbl">${escapeHtml(coachingHeading)}</div>
+              <div class="atg-course-tags">
+                ${coachingCourses.map(c => `
+                  <span class="atg-course-tag">${escapeHtml(c)}</span>
+                `).join('')}
+              </div>
+              <a href="${escapeHtml(coachingCtaUrl)}" target="_blank" rel="noopener noreferrer" class="atg-btn-lime" style="margin-top: 14px;">
+                <span>${escapeHtml(coachingCtaText)}</span>
+              </a>
+            </div>
+
+            <div class="atg-batches-list" style="margin-top: 10px;">
+              ${batches.map(b => `
+                <a href="${escapeHtml(b.url || waDest)}" target="_blank" rel="noopener noreferrer" class="atg-batch-row">
+                  <span class="atg-batch-title">${escapeHtml(b.title || '')}</span>
+                  <span class="atg-batch-sub">${escapeHtml(b.sub || '')}</span>
+                </a>
+              `).join('')}
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Free Guides -->
+        ${visibility.guides !== false && freeGuides.length > 0 ? `
+          <section class="atg-section">
+            <div class="atg-accent-bar"></div>
+            <h2 class="atg-section-heading">${escapeHtml(freeGuidesTitle)}</h2>
+            <div class="atg-guides-list">
+              ${freeGuides.map(g => `
+                <div class="atg-guide-card">
+                  <div class="atg-guide-left">
+                    <div class="atg-doc-icon" aria-hidden="true">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#658210" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="atg-guide-title">${escapeHtml(g.title || '')}</div>
+                      <div class="atg-guide-sub">${escapeHtml(g.sub || 'Free guide')}</div>
+                    </div>
+                  </div>
+                  <a href="${escapeHtml(g.url || waDest)}" target="_blank" rel="noopener noreferrer" class="atg-guide-btn">
+                    <span>${escapeHtml(g.buttonText || 'Download')}</span>
+                  </a>
+                </div>
+              `).join('')}
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- About ATG Study Abroad -->
+        ${visibility.about !== false && bio ? `
+          <section class="atg-section">
+            <div class="atg-accent-bar"></div>
+            <h2 class="atg-section-heading">${escapeHtml(aboutTitle)}</h2>
+            <div class="atg-about-box">
+              <p>${escapeHtml(bio)}</p>
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Get in touch -->
+        ${visibility.contact !== false ? `
+          <section class="atg-section">
+            <div class="atg-accent-bar"></div>
+            <h2 class="atg-section-heading">${escapeHtml(contactTitle)}</h2>
+            <div class="atg-contact-rows">
+              ${phone ? `
+                <div class="atg-contact-row">
+                  <div class="atg-contact-left">
+                    <div class="atg-contact-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#658210" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                    <div>
+                      <div class="atg-contact-label">Call</div>
+                      <div class="atg-contact-val">${escapeHtml(phone)}</div>
+                    </div>
+                  </div>
+                  <a href="${phoneDest}" class="atg-contact-action">Call</a>
+                </div>
+              ` : ''}
+
+              ${whatsapp ? `
+                <div class="atg-contact-row">
+                  <div class="atg-contact-left">
+                    <div class="atg-contact-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#658210" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    </div>
+                    <div>
+                      <div class="atg-contact-label">WhatsApp</div>
+                      <div class="atg-contact-val">Chat on WhatsApp</div>
+                    </div>
+                  </div>
+                  <a href="${waDest}" target="_blank" rel="noopener noreferrer" class="atg-contact-action">Chat</a>
+                </div>
+              ` : ''}
+
+              ${email ? `
+                <div class="atg-contact-row">
+                  <div class="atg-contact-left">
+                    <div class="atg-contact-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#658210" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                    </div>
+                    <div>
+                      <div class="atg-contact-label">Email</div>
+                      <div class="atg-contact-val">${escapeHtml(email)}</div>
+                    </div>
+                  </div>
+                  <a href="${emailDest}" class="atg-contact-action">Write</a>
+                </div>
+              ` : ''}
+
+              ${instagram ? `
+                <div class="atg-contact-row">
+                  <div class="atg-contact-left">
+                    <div class="atg-contact-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#658210" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </div>
+                    <div>
+                      <div class="atg-contact-label">Instagram</div>
+                      <div class="atg-contact-val">${escapeHtml(instagram)}</div>
+                    </div>
+                  </div>
+                  <a href="${instaDest}" target="_blank" rel="noopener noreferrer" class="atg-contact-action">Follow</a>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Social Icon Row (4 square black buttons) -->
+            <div class="atg-social-icon-row">
+              ${instagram ? `<a href="${instaDest}" target="_blank" rel="noopener noreferrer" class="atg-social-square" aria-label="Instagram">${getLinkIconSvg('instagram', 18)}</a>` : ''}
+              ${whatsapp ? `<a href="${waDest}" target="_blank" rel="noopener noreferrer" class="atg-social-square" aria-label="WhatsApp">${getLinkIconSvg('whatsapp', 18)}</a>` : ''}
+              <a href="${escapeHtml(card.website || 'https://facebook.com')}" target="_blank" rel="noopener noreferrer" class="atg-social-square" aria-label="Facebook">${getLinkIconSvg('facebook', 18)}</a>
+              ${email ? `<a href="${emailDest}" class="atg-social-square" aria-label="Email">${getLinkIconSvg('email', 18)}</a>` : ''}
+            </div>
+
+            <!-- Bottom Action Pair: Share card + Share QR -->
+            <div class="atg-bottom-actions">
+              <button type="button" class="atg-btn-white" id="shareCardBtn">Share card</button>
+              <button type="button" class="atg-btn-lime" id="showQrBtn">Share QR</button>
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Brand Watermark Footer -->
+        <footer class="atg-footer">
+          <a href="https://ambrosstudio.com" target="_blank" rel="noopener noreferrer">
+            Ambros Studio &bull; Digital Identity
+          </a>
+        </footer>
+      </div>
+    `;
+
+    return html;
+  }
+
+  function renderSpiceRouteBody(card) {
+    const custom = card.customSettings || card.custom_settings || {};
+    const ind = (custom.industry && custom.industry.data && typeof custom.industry.data === 'object') ? custom.industry.data : {};
+    const visibility = ind.sectionVisibility || {};
+
+    const overline = hasText(ind.overline) ? ind.overline.trim() : '— Family restaurant —';
+    const restaurantName = hasText(ind.restaurantName) ? ind.restaurantName.trim() : (hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : 'Spice Route');
+    const tagline = hasText(ind.tagline) ? ind.tagline.trim() : (hasText(card.description || card.bio) ? (card.description || card.bio).trim() : 'Slow-cooked Gujarati and North Indian food, made fresh every day.');
+    const phone = hasText(card.phone || card.mobile_number) ? (card.phone || card.mobile_number).trim() : '+91 98765 43210';
+    const whatsapp = hasText(card.whatsapp || card.whatsapp_number) ? (card.whatsapp || card.whatsapp_number).trim() : '919876543210';
+    const email = hasText(card.email) ? card.email.trim() : 'hello@spiceroute.com';
+    const instagram = hasText(card.socialInstagram || card.social_instagram) ? (card.socialInstagram || card.social_instagram).trim() : '@spiceroute';
+
+    const phoneDest = phone ? `tel:${cleanPhone(phone)}` : '';
+    const waDigits = whatsapp ? cleanDigits(whatsapp) : '919876543210';
+    const waDest = `https://wa.me/${waDigits}`;
+    const emailDest = email ? `mailto:${email}` : '';
+    const instaDest = instagram ? (instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace(/^@/, '')}`) : '';
+
+    // Badges
+    const badges = (Array.isArray(ind.badges) && ind.badges.length > 0) ? ind.badges : ['Open till 11 pm', '★ 4.5', 'Family seating'];
+
+    // Quick Action Buttons
+    const defaultActions = [
+      { label: 'View menu', type: 'menu', url: '#menu' },
+      { label: 'Book a table', type: 'book', url: `https://wa.me/${waDigits}?text=I%20would%20like%20to%20book%20a%20table%20at%20Spice%20Route` },
+      { label: 'Order on WhatsApp', type: 'whatsapp', url: `https://wa.me/${waDigits}?text=Hi%2C%20I%20want%20to%20place%20a%20food%20order` },
+      { label: 'Directions', type: 'directions', url: `https://maps.google.com/?q=Spice+Route+Restaurant` }
+    ];
+    const quickActions = (Array.isArray(ind.quickActions) && ind.quickActions.length > 0) ? ind.quickActions : defaultActions;
+
+    // Chef's signatures
+    const defaultMenu = [
+      { name: 'Paneer Lababdar', desc: 'Creamy tomato gravy, house butter', price: '₹320', isVeg: true },
+      { name: 'Dal Tadka Special', desc: 'Smoked and finished with ghee', price: '₹220', isVeg: true },
+      { name: 'Chicken Dum Biryani', desc: 'Slow-cooked, served with raita', price: '₹360', isVeg: false },
+      { name: 'Kesar Phirni', desc: 'Saffron, set in clay', price: '₹140', isVeg: true }
+    ];
+    const menuTitle = ind.menuTitle || "Chef's signatures";
+    const menuItems = (Array.isArray(ind.menuItems) && ind.menuItems.length > 0) ? ind.menuItems : defaultMenu;
+
+    // Dining options
+    const diningOptionsTitle = ind.diningOptionsTitle || 'Dining options';
+    const diningOptions = (Array.isArray(ind.diningOptions) && ind.diningOptions.length > 0) ? ind.diningOptions : ['Dine-in', 'Takeaway', 'Home delivery', 'Family seating', 'Private events', 'Parking'];
+
+    // Opening hours
+    const hoursTitle = ind.hoursTitle || 'Opening hours';
+    const defaultHours = [
+      { label: 'Lunch', time: '12 pm to 3 pm' },
+      { label: 'Dinner', time: '7 pm to 11 pm' },
+      { label: 'Saturday and Sunday', time: '12 pm to 11:30 pm' }
+    ];
+    const hoursList = (Array.isArray(ind.hoursList) && ind.hoursList.length > 0) ? ind.hoursList : defaultHours;
+    const hoursNotice = ind.hoursNotice || 'Tables for six or more: please book a day ahead.';
+
+    // Guest reviews
+    const reviewsTitle = ind.reviewsTitle || 'Guest reviews';
+    const defaultReviews = [
+      { quote: 'Food tastes like home. The dal tadka is the best in the city.', author: 'Guest Name' },
+      { quote: 'Warm service and delicious family dining experience.', author: 'Guest Name' }
+    ];
+    const reviews = (Array.isArray(ind.reviews) && ind.reviews.length > 0) ? ind.reviews : defaultReviews;
+
+    // Contact section
+    const contactTitle = ind.contactTitle || 'Get in touch';
+
+    let html = `
+      <div class="spice-card-wrapper">
+        <!-- Dark Espresso Header with Terracotta Border -->
+        <header class="spice-header">
+          <div class="spice-overline">${escapeHtml(overline)}</div>
+          <h1 class="spice-title">${escapeHtml(restaurantName)}</h1>
+          <p class="spice-subtitle">${escapeHtml(tagline)}</p>
+
+          <div class="spice-badges-row">
+            ${badges.map(b => {
+              const isDot = b.includes('Open') || b.includes('●') || b.includes('•');
+              const cleanBadge = b.replace(/^[•●]\s*/, '');
+              return `
+                <span class="spice-badge-pill">
+                  ${isDot ? `<span class="spice-badge-dot">●</span> ` : ''}${escapeHtml(cleanBadge)}
+                </span>
+              `;
+            }).join('')}
+          </div>
+          <div class="spice-header-line"></div>
+        </header>
+
+        <!-- 2x2 Quick Actions Grid -->
+        ${visibility.quickActions !== false && quickActions.length > 0 ? `
+          <section class="spice-actions-grid">
+            ${quickActions.map((act, idx) => {
+              const isTerracotta = idx === 0;
+              const isBlack = idx === 2;
+              const btnClass = isTerracotta ? 'spice-btn-terracotta' : (isBlack ? 'spice-btn-black' : 'spice-btn-white');
+              return `
+                <a href="${escapeHtml(act.url || '#')}" ${act.url && act.url.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="${btnClass}">
+                  <span>${escapeHtml(act.label || '')}</span>
+                </a>
+              `;
+            }).join('')}
+          </section>
+        ` : ''}
+
+        <!-- Chef's Signatures Menu -->
+        ${visibility.menu !== false && menuItems.length > 0 ? `
+          <section class="spice-section" id="menu">
+            <h2 class="spice-section-heading">${escapeHtml(menuTitle)}</h2>
+            <div class="spice-menu-box">
+              ${menuItems.map((item, idx) => {
+                const isVeg = item.isVeg !== false && item.veg !== false && !item.nonVeg;
+                return `
+                  <div class="spice-menu-row ${idx < menuItems.length - 1 ? 'has-divider' : ''}">
+                    <div class="spice-menu-left">
+                      <span class="spice-diet-icon ${isVeg ? 'veg' : 'non-veg'}" title="${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}">
+                        <span class="spice-diet-dot"></span>
+                      </span>
+                      <div class="spice-menu-text">
+                        <div class="spice-menu-name">${escapeHtml(item.name || '')}</div>
+                        ${item.desc ? `<div class="spice-menu-desc">${escapeHtml(item.desc)}</div>` : ''}
+                      </div>
+                    </div>
+                    <div class="spice-menu-price">${escapeHtml(item.price || '')}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Dining Options -->
+        ${visibility.diningOptions !== false && diningOptions.length > 0 ? `
+          <section class="spice-section">
+            <h2 class="spice-section-heading">${escapeHtml(diningOptionsTitle)}</h2>
+            <div class="spice-chips-row">
+              ${diningOptions.map(opt => `
+                <span class="spice-option-chip">${escapeHtml(opt)}</span>
+              `).join('')}
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Opening Hours -->
+        ${visibility.hours !== false && hoursList.length > 0 ? `
+          <section class="spice-section">
+            <h2 class="spice-section-heading">${escapeHtml(hoursTitle)}</h2>
+            <div class="spice-hours-box">
+              ${hoursList.map((h, idx) => `
+                <div class="spice-hours-row ${idx < hoursList.length - 1 ? 'has-divider' : ''}">
+                  <span class="spice-hours-lbl">${escapeHtml(h.label || '')}</span>
+                  <span class="spice-hours-val">${escapeHtml(h.time || '')}</span>
+                </div>
+              `).join('')}
+            </div>
+            ${hoursNotice ? `<p class="spice-hours-notice">${escapeHtml(hoursNotice)}</p>` : ''}
+          </section>
+        ` : ''}
+
+        <!-- Guest Reviews -->
+        ${visibility.reviews !== false && reviews.length > 0 ? `
+          <section class="spice-section">
+            <h2 class="spice-section-heading">${escapeHtml(reviewsTitle)}</h2>
+            <div class="spice-reviews-scroll">
+              ${reviews.map(r => `
+                <div class="spice-review-card">
+                  <blockquote class="spice-review-quote">&ldquo;${escapeHtml(r.quote || '')}&rdquo;</blockquote>
+                  <div class="spice-review-author">${escapeHtml(r.author || 'Guest Name')}</div>
+                </div>
+              `).join('')}
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Get in touch -->
+        ${visibility.contact !== false ? `
+          <section class="spice-section">
+            <h2 class="spice-section-heading">${escapeHtml(contactTitle)}</h2>
+            <div class="spice-contact-box">
+              ${phone ? `
+                <div class="spice-contact-row">
+                  <div class="spice-contact-left">
+                    <div class="spice-contact-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#716558" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                    <div>
+                      <div class="spice-contact-lbl">Call</div>
+                      <div class="spice-contact-val">${escapeHtml(phone)}</div>
+                    </div>
+                  </div>
+                  <a href="${phoneDest}" class="spice-contact-action">Call</a>
+                </div>
+              ` : ''}
+
+              ${instagram ? `
+                <div class="spice-contact-row">
+                  <div class="spice-contact-left">
+                    <div class="spice-contact-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#716558" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </div>
+                    <div>
+                      <div class="spice-contact-lbl">Instagram</div>
+                      <div class="spice-contact-val">${escapeHtml(instagram)}</div>
+                    </div>
+                  </div>
+                  <a href="${instaDest}" target="_blank" rel="noopener noreferrer" class="spice-contact-action">Follow</a>
+                </div>
+              ` : ''}
+
+              ${email ? `
+                <div class="spice-contact-row">
+                  <div class="spice-contact-left">
+                    <div class="spice-contact-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#716558" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                    </div>
+                    <div>
+                      <div class="spice-contact-lbl">Email</div>
+                      <div class="spice-contact-val">${escapeHtml(email)}</div>
+                    </div>
+                  </div>
+                  <a href="${emailDest}" class="spice-contact-action">Write</a>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Save contact button -->
+            <button type="button" class="spice-btn-save-contact" id="saveContactBtn">
+              <span>Save contact</span>
+            </button>
+
+            <!-- Social Icon Row (4 square white buttons with dark border) -->
+            <div class="spice-social-icon-row">
+              <a href="${escapeHtml(card.socialLinkedIn || 'https://linkedin.com')}" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="LinkedIn">
+                <span style="font-weight:700;font-size:14px;font-family:sans-serif;">in</span>
+              </a>
+              ${instagram ? `<a href="${instaDest}" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="Instagram">${getLinkIconSvg('instagram', 18)}</a>` : ''}
+              <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="X">${getLinkIconSvg('twitter', 17)}</a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="YouTube">${getLinkIconSvg('youtube', 18)}</a>
+            </div>
+
+            <!-- Bottom Action Pair: Share card + Share QR -->
+            <div class="spice-bottom-actions">
+              <button type="button" class="spice-btn-white" id="shareCardBtn">Share card</button>
+              <button type="button" class="spice-btn-terracotta" id="showQrBtn">Share QR</button>
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Brand Watermark Footer -->
+        <footer class="spice-footer">
+          <a href="https://ambrosstudio.com" target="_blank" rel="noopener noreferrer">
+            Ambros Studio &bull; Digital Identity
+          </a>
+        </footer>
+      </div>
+    `;
+
+    return html;
+  }
+
   function renderNoirGoldBody(card) {
     const name = hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : '';
     const role = hasText(card.designation || card.role) ? (card.designation || card.role).trim() : '';
@@ -842,6 +1440,12 @@
     }
     if (design.id === 'raftcon-luxury') {
       return renderRaftconLuxuryBody(card);
+    }
+    if (design.id === 'atg-study-abroad') {
+      return renderAtgStudyAbroadBody(card);
+    }
+    if (design.id === 'spice-route') {
+      return renderSpiceRouteBody(card);
     }
 
     const name = hasText(card.fullName || card.full_name) ? (card.fullName || card.full_name).trim() : '';
@@ -1569,7 +2173,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   ${fontQuery}
-  <link rel="stylesheet" href="/cards/card-themes.css">
+  <link rel="stylesheet" href="/cards/card-themes.css?v=2.1">
   <style id="__THEME_OVERRIDES__">
     :root {
       ${primaryColor ? `--card-primary: ${primaryColor};` : ''}
@@ -1578,9 +2182,6 @@
       ${fontFamily ? `--card-font: '${fontFamily}', system-ui, sans-serif;` : ''}
     }
   </style>
-  <script src="/cards/qrcode.js"></script>
-  <script src="/cards/design-registry.js"></script>
-  <script src="/cards/card-renderer.js"></script>
   <script id="__INITIAL_CARD_DATA__">
     window.__INITIAL_CARD__ = ${JSON.stringify(card)};
   </script>
@@ -1624,7 +2225,12 @@
     <span id="cardToastMessage"></span>
   </div>
 
-  <script src="/cards/card-loader.js"></script>
+  <script src="/cards/design-registry.js?v=2.1" defer></script>
+  ${options.isPreview ? `
+    <script src="/cards/card-renderer.js?v=2.1" defer></script>
+  ` : ''}
+  <script src="/cards/qrcode.js?v=2.1" defer></script>
+  <script src="/cards/card-loader.js?v=2.1" defer></script>
 </body>
 </html>`;
   }
