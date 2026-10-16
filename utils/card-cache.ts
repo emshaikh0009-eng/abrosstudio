@@ -55,7 +55,13 @@ export function invalidateCustomerCache(slug?: string | null): void {
 
   const normalized = slug.toLowerCase().trim();
   for (const key of Array.from(PROFILE_CACHE.keys())) {
-    if (key.startsWith(`${normalized}:`) || (normalized === "ambros" && key.startsWith("ambros-studio:")) || (normalized === "ambros-studio" && key.startsWith("ambros:"))) {
+    if (
+      key.startsWith(`${normalized}:`) ||
+      (normalized === "ambros" && key.startsWith("ambros-studio:")) ||
+      (normalized === "ambros-studio" && key.startsWith("ambros:")) ||
+      ((normalized === "aamirshaikh" || normalized === "atgstudyabroad" || normalized === "atg-study-abroad") &&
+        (key.startsWith("aamirshaikh:") || key.startsWith("atgstudyabroad:") || key.startsWith("atg-study-abroad:")))
+    ) {
       PROFILE_CACHE.delete(key);
     }
   }

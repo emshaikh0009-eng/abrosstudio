@@ -68,8 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
           industry: raw.industry || null
         };
       })(),
-      publicUrl: `/c/${slug}`,
-      profileLink: `https://ambrosstudio.com/c/${slug}`,
+      publicUrl: (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad' || c.company_name === 'ATG Study Abroad')
+        ? 'https://aamirshaikh.ambrosstudio.com'
+        : (slug === 'tabrezqureshi' ? '/tabrezqureshi' : `/c/${slug}`),
+      profileLink: (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad' || c.company_name === 'ATG Study Abroad')
+        ? 'https://aamirshaikh.ambrosstudio.com'
+        : (slug === 'tabrezqureshi' ? 'https://ambrosstudio.com/tabrezqureshi' : `https://ambrosstudio.com/c/${slug}`),
       profileSlug: slug,
       createdDate: formattedDate,
       cardUrl: `/cards/preview.html?design=${encodeURIComponent(resolvedDesign.id)}&slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}`
@@ -337,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </td>
         <td>
           <div class="table-actions">
-            <a href="/c/${encodeURIComponent(slug)}" target="_blank" class="btn btn-white btn-sm btn-action-compact" title="Open customer public card in new tab">View</a>
+            <a href="${c.publicUrl || ('/c/' + encodeURIComponent(slug))}" target="_blank" class="btn btn-white btn-sm btn-action-compact" title="Open customer public card in new tab">View</a>
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-edit-customer" data-id="${c.id}" title="Edit customer profile">Edit</button>
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Copy canonical public card link">Link</button>
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Share digital card">Share</button>
@@ -402,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${escapeHtml(c.createdDate)}</td>
         <td>
           <div class="table-actions">
-            <a href="/c/${encodeURIComponent(slug)}" target="_blank" class="icon-action-btn" title="View Customer Public Card" aria-label="View ${escapeHtml(c.name)} profile">
+            <a href="${c.publicUrl || ('/c/' + encodeURIComponent(slug))}" target="_blank" class="icon-action-btn" title="View Customer Public Card" aria-label="View ${escapeHtml(c.name)} profile">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </a>
             <button type="button" class="icon-action-btn btn-edit-customer" data-id="${c.id}" title="Edit Customer" aria-label="Edit ${escapeHtml(c.name)}">
@@ -428,6 +432,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getCanonicalCustomerCardUrl(slug) {
     if (!slug) return '';
+    if (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad') {
+      return 'https://aamirshaikh.ambrosstudio.com';
+    }
+    if (slug === 'tabrezqureshi') {
+      return `${window.location.origin}/tabrezqureshi`;
+    }
     const origin = window.location.origin;
     return `${origin}/c/${encodeURIComponent(slug)}`;
   }
@@ -828,9 +838,12 @@ document.addEventListener('DOMContentLoaded', () => {
       ? window.location.origin
       : 'https://ambrosstudio.com';
 
-    const publicUrl = canonicalSlug
-      ? `${origin}/c/${encodeURIComponent(canonicalSlug)}`
-      : `${origin}/c/your-slug`;
+    const isAamir = canonicalSlug === 'aamirshaikh' || canonicalSlug === 'atgstudyabroad' || canonicalSlug === 'atg-study-abroad';
+    const publicUrl = isAamir
+      ? 'https://aamirshaikh.ambrosstudio.com'
+      : (canonicalSlug === 'tabrezqureshi'
+        ? `${origin}/tabrezqureshi`
+        : (canonicalSlug ? `${origin}/c/${encodeURIComponent(canonicalSlug)}` : `${origin}/c/your-slug`));
 
     const custProfileLink = document.getElementById('custProfileLink');
     if (custProfileLink) {
@@ -839,7 +852,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openCardBtn = document.getElementById('btnAdminOpenCard');
     if (openCardBtn) {
-      openCardBtn.href = canonicalSlug ? `/c/${encodeURIComponent(canonicalSlug)}` : '#';
+      openCardBtn.href = isAamir
+        ? 'https://aamirshaikh.ambrosstudio.com'
+        : (canonicalSlug === 'tabrezqureshi' ? '/tabrezqureshi' : (canonicalSlug ? `/c/${encodeURIComponent(canonicalSlug)}` : '#'));
       if (!canonicalSlug) {
         openCardBtn.style.pointerEvents = 'none';
         openCardBtn.style.opacity = '0.5';

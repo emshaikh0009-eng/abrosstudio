@@ -151,15 +151,33 @@ export async function GET(
       p_slug: sanitizedSlug,
     });
 
-    // 2. Safe alias fallback for Ambros Studio brand card (ambros <-> ambros-studio)
-    if ((!data || data.length === 0) && (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio")) {
-      const aliasSlug = sanitizedSlug === "ambros" ? "ambros-studio" : "ambros";
-      const fallbackRes = await supabase.rpc("get_public_card", {
-        p_slug: aliasSlug,
-      });
-      if (fallbackRes.data && fallbackRes.data.length > 0) {
-        data = fallbackRes.data;
-        error = null;
+    // 2. Safe alias fallbacks (ambros <-> ambros-studio, atgstudyabroad <-> aamirshaikh)
+    if (!data || data.length === 0) {
+      if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {
+        const aliasSlug = sanitizedSlug === "ambros" ? "ambros-studio" : "ambros";
+        const fallbackRes = await supabase.rpc("get_public_card", {
+          p_slug: aliasSlug,
+        });
+        if (fallbackRes.data && fallbackRes.data.length > 0) {
+          data = fallbackRes.data;
+          error = null;
+        }
+      } else if (sanitizedSlug === "atgstudyabroad" || sanitizedSlug === "atg-study-abroad") {
+        const fallbackRes = await supabase.rpc("get_public_card", {
+          p_slug: "aamirshaikh",
+        });
+        if (fallbackRes.data && fallbackRes.data.length > 0) {
+          data = fallbackRes.data;
+          error = null;
+        }
+      } else if (sanitizedSlug === "aamirshaikh") {
+        const fallbackRes = await supabase.rpc("get_public_card", {
+          p_slug: "atgstudyabroad",
+        });
+        if (fallbackRes.data && fallbackRes.data.length > 0) {
+          data = fallbackRes.data;
+          error = null;
+        }
       }
     }
 

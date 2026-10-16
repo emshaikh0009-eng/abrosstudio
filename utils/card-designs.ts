@@ -1489,7 +1489,7 @@ export const CANONICAL_DEMO_PROFILES: Record<string, any> = {
     socialInstagram: "https://instagram.com/atgstudyabroad",
     socialLinkedIn: "https://linkedin.com/company/atgstudyabroad",
     cardDesign: "atg-study-abroad",
-    profileSlug: "atgstudyabroad",
+    profileSlug: "aamirshaikh",
     avatarUrl: "",
     is_active: true,
     customSettings: {

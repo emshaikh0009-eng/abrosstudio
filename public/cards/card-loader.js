@@ -143,6 +143,9 @@
     if (slug === 'tabrezqureshi' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/tabrezqureshi'))) {
       return `${origin}/tabrezqureshi`;
     }
+    if (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad' || (typeof window !== 'undefined' && window.location.hostname === 'aamirshaikh.ambrosstudio.com')) {
+      return 'https://aamirshaikh.ambrosstudio.com';
+    }
     return slug ? `${origin}/c/${encodeURIComponent(slug)}` : window.location.href;
   }
 
