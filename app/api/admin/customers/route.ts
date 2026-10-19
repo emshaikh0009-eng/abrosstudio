@@ -180,7 +180,17 @@ export async function POST(request: Request) {
     const cardDesign = resolveCardDesign(body.design || body.card_design).name;
 
     // Format profile slug cleanly from profileSlug, profile_slug, or profileLink
-    let rawProfile = sanitizeText(body.profileSlug || body.profile_slug || body.profileLink, 100);
+    let rawProfile = "";
+    if (body.profileSlug || body.profile_slug) {
+      rawProfile = sanitizeText(body.profileSlug || body.profile_slug, 100);
+    } else if (body.profileLink) {
+      try {
+        const u = new URL(body.profileLink.startsWith("http") ? body.profileLink : `https://${body.profileLink}`);
+        rawProfile = u.pathname.split("/").filter(Boolean).pop() || "";
+      } catch {
+        rawProfile = sanitizeText(body.profileLink, 100);
+      }
+    }
     if (rawProfile.includes("/c/")) {
       rawProfile = rawProfile.split("/c/").pop() || "";
     }

@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  const PDF_URL = '/assets/brochures/raftcon-construction-brochure.pdf';
+  const PDF_URL = '/assets/brochures/raftcon-construction-brochure.pdf?v=20261019';
   const TOTAL_EXPECTED_PAGES = 18;
 
   // DOM Elements

@@ -221,7 +221,7 @@ export async function GET(
     const sanitizedSlug = typeof slug === "string" ? slug.trim().toLowerCase().slice(0, 100) : "";
 
     // If requesting the Raftcon brochure
-    if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction" || sanitizedSlug === "tabrezqureshi") {
+    if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction" || sanitizedSlug === "raftconconstruction" || sanitizedSlug === "tabrezqureshi") {
       const now = Date.now();
       const html = renderRaftconBrochureHtml(now);
       return new Response(html, {

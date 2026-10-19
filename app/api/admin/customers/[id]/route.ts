@@ -198,7 +198,17 @@ export async function PATCH(
 
 
     if (body.profileSlug !== undefined || body.profile_slug !== undefined || body.profileLink !== undefined) {
-      let rawProfile = sanitizeText(body.profileSlug || body.profile_slug || body.profileLink, 100);
+      let rawProfile = "";
+      if (body.profileSlug || body.profile_slug) {
+        rawProfile = sanitizeText(body.profileSlug || body.profile_slug, 100);
+      } else if (body.profileLink) {
+        try {
+          const u = new URL(body.profileLink.startsWith("http") ? body.profileLink : `https://${body.profileLink}`);
+          rawProfile = u.pathname.split("/").filter(Boolean).pop() || "";
+        } catch {
+          rawProfile = sanitizeText(body.profileLink, 100);
+        }
+      }
       if (rawProfile.includes("/c/")) {
         rawProfile = rawProfile.split("/c/").pop() || "";
       }

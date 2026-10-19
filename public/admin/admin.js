@@ -16,6 +16,40 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentFrontImageUrl = '';
   let currentBackImageUrl = '';
 
+  function generateCustomerProfileUrl(slug, company) {
+    const canonicalSlug = (slug || '').trim().toLowerCase();
+    if (!canonicalSlug) return '';
+
+    // 1. Authoritative preservation for Aamir Shaikh / ATG Study Abroad
+    if (canonicalSlug === 'aamirshaikh' || canonicalSlug === 'atgstudyabroad' || canonicalSlug === 'atg-study-abroad') {
+      return 'https://aamirshaikh.ambrosstudio.com';
+    }
+
+    // 2. Authoritative Raftcon Construction / Tabrez Qureshi
+    if (canonicalSlug === 'tabrezqureshi' || canonicalSlug === 'raftcon' || canonicalSlug === 'raftcon-construction' || canonicalSlug === 'raftconconstruction') {
+      return 'https://raftconconstruction.ambrosstudio.com/tabrezqureshi';
+    }
+
+    // 3. Dynamic Business Subdomain generation: https://[businessSubdomain].ambrosstudio.com/[profileSlug]
+    const cleanCompany = (company || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .trim();
+
+    const reserved = ['www', 'admin', 'api', 'app', 'mail', 'email', 'ambros', 'ambrosstudio'];
+
+    if (cleanCompany && !reserved.includes(cleanCompany)) {
+      return `https://${cleanCompany}.ambrosstudio.com/${canonicalSlug}`;
+    }
+
+    // 4. Default canonical customer URL on apex domain
+    const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null' && !window.location.origin.includes('localhost'))
+      ? window.location.origin
+      : 'https://ambrosstudio.com';
+
+    return `${origin}/c/${encodeURIComponent(canonicalSlug)}`;
+  }
+
   function mapDbCustomerToUi(c) {
     const name = c.full_name || '';
     const nameParts = name.split(' ').filter(Boolean);
@@ -37,6 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formattedDate = 'Recent';
       }
     }
+
+    const publicUrl = generateCustomerProfileUrl(slug, c.company_name);
 
     return {
       id: c.id,
@@ -68,12 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
           industry: raw.industry || null
         };
       })(),
-      publicUrl: (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad' || c.company_name === 'ATG Study Abroad')
-        ? 'https://aamirshaikh.ambrosstudio.com'
-        : (slug === 'tabrezqureshi' ? '/tabrezqureshi' : `/c/${slug}`),
-      profileLink: (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad' || c.company_name === 'ATG Study Abroad')
-        ? 'https://aamirshaikh.ambrosstudio.com'
-        : (slug === 'tabrezqureshi' ? 'https://ambrosstudio.com/tabrezqureshi' : `https://ambrosstudio.com/c/${slug}`),
+      publicUrl: publicUrl,
+      profileLink: publicUrl,
       profileSlug: slug,
       createdDate: formattedDate,
       cardUrl: `/cards/preview.html?design=${encodeURIComponent(resolvedDesign.id)}&slug=${encodeURIComponent(slug)}&id=${encodeURIComponent(c.id)}`
@@ -343,8 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="table-actions">
             <a href="${c.publicUrl || ('/c/' + encodeURIComponent(slug))}" target="_blank" class="btn btn-white btn-sm btn-action-compact" title="Open customer public card in new tab">View</a>
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-edit-customer" data-id="${c.id}" title="Edit customer profile">Edit</button>
-            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Copy canonical public card link">Link</button>
-            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Share digital card">Share</button>
+            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" data-company="${escapeHtml(c.company || '')}" title="Copy canonical public card link">Link</button>
+            <button type="button" class="btn btn-white btn-sm btn-action-compact btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" data-company="${escapeHtml(c.company || '')}" title="Share digital card">Share</button>
             <button type="button" class="btn btn-white btn-sm btn-action-compact btn-delete-customer" data-id="${c.id}" data-name="${escapeHtml(c.name)}" data-slug="${escapeHtml(slug)}" title="Delete customer" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.25);">Delete</button>
           </div>
         </td>
@@ -412,10 +444,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <button type="button" class="icon-action-btn btn-edit-customer" data-id="${c.id}" title="Edit Customer" aria-label="Edit ${escapeHtml(c.name)}">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             </button>
-            <button type="button" class="icon-action-btn btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Copy Canonical Link" aria-label="Copy ${escapeHtml(c.name)} card link">
+            <button type="button" class="icon-action-btn btn-copy-card-link" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" data-company="${escapeHtml(c.company || '')}" title="Copy Canonical Link" aria-label="Copy ${escapeHtml(c.name)} card link">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
             </button>
-            <button type="button" class="icon-action-btn btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" title="Share Digital Card" aria-label="Share ${escapeHtml(c.name)} card">
+            <button type="button" class="icon-action-btn btn-share-card" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(c.name)}" data-company="${escapeHtml(c.company || '')}" title="Share Digital Card" aria-label="Share ${escapeHtml(c.name)} card">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
             </button>
             <button type="button" class="icon-action-btn btn-delete-customer" data-id="${c.id}" data-name="${escapeHtml(c.name)}" data-slug="${escapeHtml(slug)}" title="Delete Customer" aria-label="Delete ${escapeHtml(c.name)}" style="color: #ef4444;">
@@ -430,20 +462,13 @@ document.addEventListener('DOMContentLoaded', () => {
     attachTableEventListeners();
   }
 
-  function getCanonicalCustomerCardUrl(slug) {
+  function getCanonicalCustomerCardUrl(slug, company) {
     if (!slug) return '';
-    if (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad') {
-      return 'https://aamirshaikh.ambrosstudio.com';
-    }
-    if (slug === 'tabrezqureshi') {
-      return `${window.location.origin}/tabrezqureshi`;
-    }
-    const origin = window.location.origin;
-    return `${origin}/c/${encodeURIComponent(slug)}`;
+    return generateCustomerProfileUrl(slug, company);
   }
 
-  async function copyCustomerCardUrl(slug, name) {
-    const url = getCanonicalCustomerCardUrl(slug);
+  async function copyCustomerCardUrl(slug, name, company) {
+    const url = getCanonicalCustomerCardUrl(slug, company);
     if (!url) {
       showAdminToast('No profile slug available for this customer.');
       return;
@@ -466,8 +491,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function shareCustomerCard(slug, name) {
-    const url = getCanonicalCustomerCardUrl(slug);
+  async function shareCustomerCard(slug, name, company) {
+    const url = getCanonicalCustomerCardUrl(slug, company);
     if (!url) {
       showAdminToast('No profile slug available for this customer.');
       return;
@@ -486,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (err && err.name === 'AbortError') return;
       }
     }
-    await copyCustomerCardUrl(slug, name);
+    await copyCustomerCardUrl(slug, name, company);
   }
 
   function attachTableEventListeners() {
@@ -507,7 +532,8 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const slug = this.getAttribute('data-slug');
         const name = this.getAttribute('data-name');
-        copyCustomerCardUrl(slug, name);
+        const company = this.getAttribute('data-company') || '';
+        copyCustomerCardUrl(slug, name, company);
       };
     });
 
@@ -517,7 +543,8 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const slug = this.getAttribute('data-slug');
         const name = this.getAttribute('data-name');
-        shareCustomerCard(slug, name);
+        const company = this.getAttribute('data-company') || '';
+        shareCustomerCard(slug, name, company);
       };
     });
 
@@ -832,18 +859,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return canvas;
   }
 
-  function updateClientDelivery(slug, name) {
+  function updateClientDelivery(slug, name, company) {
     const canonicalSlug = (slug || '').trim().toLowerCase();
-    const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
-      ? window.location.origin
-      : 'https://ambrosstudio.com';
-
-    const isAamir = canonicalSlug === 'aamirshaikh' || canonicalSlug === 'atgstudyabroad' || canonicalSlug === 'atg-study-abroad';
-    const publicUrl = isAamir
-      ? 'https://aamirshaikh.ambrosstudio.com'
-      : (canonicalSlug === 'tabrezqureshi'
-        ? `${origin}/tabrezqureshi`
-        : (canonicalSlug ? `${origin}/c/${encodeURIComponent(canonicalSlug)}` : `${origin}/c/your-slug`));
+    const publicUrl = canonicalSlug
+      ? generateCustomerProfileUrl(canonicalSlug, company)
+      : 'https://ambrosstudio.com/c/your-slug';
 
     const custProfileLink = document.getElementById('custProfileLink');
     if (custProfileLink) {
@@ -852,9 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openCardBtn = document.getElementById('btnAdminOpenCard');
     if (openCardBtn) {
-      openCardBtn.href = isAamir
-        ? 'https://aamirshaikh.ambrosstudio.com'
-        : (canonicalSlug === 'tabrezqureshi' ? '/tabrezqureshi' : (canonicalSlug ? `/c/${encodeURIComponent(canonicalSlug)}` : '#'));
+      openCardBtn.href = canonicalSlug ? publicUrl : '#';
       if (!canonicalSlug) {
         openCardBtn.style.pointerEvents = 'none';
         openCardBtn.style.opacity = '0.5';
@@ -872,14 +890,14 @@ document.addEventListener('DOMContentLoaded', () => {
       badge.style.borderColor = canonicalSlug ? '#a7f3d0' : '#e2e8f0';
     }
 
-    // Dynamic QR generation
+    // Dynamic QR generation encoding publicUrl
     const qrBox = document.getElementById('adminQrBox');
     if (qrBox && typeof qrcode !== 'undefined') {
       try {
         const qr = qrcode(0, 'M');
         qr.addData(publicUrl);
         qr.make();
-        currentDeliveryQr = { qr, slug: canonicalSlug || 'client-card' };
+        currentDeliveryQr = { qr, slug: canonicalSlug || 'client-card', url: publicUrl };
         qrBox.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 1 });
       } catch (err) {
         console.error('Error generating admin delivery QR:', err);
@@ -1035,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setDesignSelection(customer.design);
 
     // 5. Client Delivery section update (URL, QR, Actions)
-    updateClientDelivery(customer.profileSlug, customer.name);
+    updateClientDelivery(customer.profileSlug, customer.name, customer.company);
 
     // Update design template inspection link to preview this customer directly
     const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
@@ -1777,16 +1795,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Profile link and Client Delivery live update on Full Name typing (only in Create mode)
+  // Profile link and Client Delivery live update on Full Name & Company typing
+  function handleFormInputDeliveryUpdate() {
+    const nameVal = custFullName ? custFullName.value.trim() : '';
+    const compVal = custCompany ? custCompany.value.trim() : '';
+    if (!currentEditingCustomerId) {
+      const slug = nameVal ? nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+      updateClientDelivery(slug, nameVal, compVal);
+    } else {
+      const existingCustomer = customers.find(c => String(c.id) === String(currentEditingCustomerId));
+      const slug = (existingCustomer && existingCustomer.profileSlug)
+        ? existingCustomer.profileSlug
+        : (nameVal ? nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '');
+      updateClientDelivery(slug, nameVal, compVal);
+    }
+  }
+
   if (custFullName) {
-    custFullName.addEventListener('input', () => {
-      // In create mode, dynamically update link and QR from name
-      if (!currentEditingCustomerId) {
-        const val = custFullName.value.trim();
-        const slug = val ? val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
-        updateClientDelivery(slug, val);
-      }
-    });
+    custFullName.addEventListener('input', handleFormInputDeliveryUpdate);
+  }
+  if (custCompany) {
+    custCompany.addEventListener('input', handleFormInputDeliveryUpdate);
   }
 
   // Form Submit Handler (Connected to Live Database via POST / PATCH)
@@ -1854,7 +1883,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socialInstagram: instagram,
         socialLinkedIn: linkedIn,
         design: selectedDesign,
-        profileLink: `https://ambrosstudio.com/c/${slug}`,
+        profileLink: generateCustomerProfileUrl(slug, company),
         profileSlug: slug,
         avatar_url: currentUploadedAvatar,
         custom_settings: {
@@ -2548,7 +2577,7 @@ document.addEventListener('DOMContentLoaded', () => {
     safety: "Safety is everyone's responsibility. Our goal is zero incidents and injuries, for our team and the public.",
     mission: "A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build.",
     footerQuote: "Lets make success stories together",
-    brochureUrl: "/c/raftcon/brochure"
+    brochureUrl: "/brochure"
   };
 
   let currentRaftconContacts = [];

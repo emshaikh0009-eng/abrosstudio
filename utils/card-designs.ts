@@ -1411,7 +1411,7 @@ export const CANONICAL_DEMO_PROFILES: Record<string, any> = {
     phone: "+91 99675 22999",
     whatsapp: "919967522999",
     email: "raftconconstruction@gmail.com",
-    website: "https://ambrosstudio.com/c/raftcon/brochure",
+    website: "https://raftconconstruction.ambrosstudio.com/brochure",
     address: "Surat, Gujarat, India",
     cardDesign: "raftcon-luxury",
     profileSlug: "tabrezqureshi",
@@ -1465,7 +1465,7 @@ export const CANONICAL_DEMO_PROFILES: Record<string, any> = {
           safety: "Safety is everyone's responsibility. Our goal is zero incidents and injuries, for our team and the public.",
           mission: "A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build.",
           footerQuote: "Lets make success stories together",
-          brochureUrl: "/c/raftcon/brochure"
+          brochureUrl: "/brochure"
         }
       },
       links: [

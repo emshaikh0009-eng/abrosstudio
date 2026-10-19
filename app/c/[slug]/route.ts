@@ -151,9 +151,17 @@ export async function GET(
       p_slug: sanitizedSlug,
     });
 
-    // 2. Safe alias fallbacks (ambros <-> ambros-studio, atgstudyabroad <-> aamirshaikh)
+    // 2. Safe alias fallbacks (ambros <-> ambros-studio, atgstudyabroad <-> aamirshaikh, raftcon -> tabrezqureshi)
     if (!data || data.length === 0) {
-      if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {
+      if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction" || sanitizedSlug === "raftconconstruction") {
+        const fallbackRes = await supabase.rpc("get_public_card", {
+          p_slug: "tabrezqureshi",
+        });
+        if (fallbackRes.data && fallbackRes.data.length > 0) {
+          data = fallbackRes.data;
+          error = null;
+        }
+      } else if (sanitizedSlug === "ambros" || sanitizedSlug === "ambros-studio") {
         const aliasSlug = sanitizedSlug === "ambros" ? "ambros-studio" : "ambros";
         const fallbackRes = await supabase.rpc("get_public_card", {
           p_slug: aliasSlug,
@@ -182,7 +190,7 @@ export async function GET(
     }
 
     if (error || !data || !Array.isArray(data) || data.length === 0) {
-      if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction" || sanitizedSlug === "tabrezqureshi") {
+      if (sanitizedSlug === "raftcon" || sanitizedSlug === "raftcon-construction" || sanitizedSlug === "raftconconstruction" || sanitizedSlug === "tabrezqureshi") {
         const activeDesignId = designParam
           ? resolveCardDesign(designParam).id
           : resolveCardDesign(AUTHORITATIVE_RAFTCON_CUSTOMER.cardDesign).id;

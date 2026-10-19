@@ -7,6 +7,28 @@ const PUBLIC_PROFILE_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-whil
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    requestUrl.host ||
+    "";
+
+  // Defense-in-depth: if reached on apex domain, permanently redirect (308) to business subdomain
+  const cleanHost = host.split(":")[0].toLowerCase();
+  const isApex =
+    cleanHost === "ambrosstudio.com" ||
+    cleanHost === "www.ambrosstudio.com" ||
+    cleanHost === "ambrosstudio.space" ||
+    cleanHost === "www.ambrosstudio.space";
+
+  if (isApex) {
+    const targetUrl = new URL(
+      `/tabrezqureshi${requestUrl.search}`,
+      "https://raftconconstruction.ambrosstudio.com"
+    );
+    return Response.redirect(targetUrl.toString(), 308);
+  }
+
   const designParam = requestUrl.searchParams.get("design");
 
   // 0. High-speed in-memory cache lookup (<1ms response time)

@@ -101,6 +101,23 @@ function getCanonicalRootUrl(request: NextRequest): string {
   return "https://ambrosstudio.com";
 }
 
+function getSubdomainRedirectUrl(request: NextRequest, targetSubdomain: string, targetPath: string): URL {
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    request.nextUrl.host;
+
+  const search = request.nextUrl.search || "";
+
+  if (host && host.includes("localhost")) {
+    const port = host.split(":")[1];
+    const portSuffix = port ? `:${port}` : ":3000";
+    return new URL(`http://${targetSubdomain}.localhost${portSuffix}${targetPath}${search}`);
+  }
+
+  return new URL(`https://${targetSubdomain}.ambrosstudio.com${targetPath}${search}`);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const host =
@@ -120,7 +137,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Customer Subdomain Routing (e.g. tabrezqureshi.ambrosstudio.com)
+  // 2. Customer Subdomain Routing (e.g. raftconconstruction.ambrosstudio.com or aamirshaikh.ambrosstudio.com)
   if (subdomain) {
     // 2a. Guard Admin & Auth: prevent arbitrary subdomains from exposing admin pages or private data
     if (pathname === "/admin" || pathname.startsWith("/admin/")) {
@@ -142,37 +159,114 @@ export async function middleware(request: NextRequest) {
       );
     }
 
-    // 2b. Brochure viewer on subdomain: /brochure -> /c/[subdomain]/brochure
-    if (pathname === "/brochure" || pathname === "/brochure/") {
-      return NextResponse.rewrite(
-        new URL(`/c/${subdomain}/brochure${request.nextUrl.search}`, request.url)
-      );
-    }
-
-    // 2c. Allow direct /c/ routes on subdomain (e.g. /c/raftcon/brochure or /c/[slug])
+    // 2b. Allow direct /c/ routes on subdomain (e.g. /c/raftcon/brochure or /c/[slug])
     if (pathname.startsWith("/c/")) {
       return NextResponse.next();
     }
 
-    // 2d. Allow public card API requests on subdomain: /api/cards/[slug]
+    // 2c. Allow public card API requests on subdomain: /api/cards/[slug]
     if (pathname.startsWith("/api/cards")) {
       return NextResponse.next();
     }
 
-    // 2e. Customer Profile Subdomain root and slug paths:
-    // Route "/" or "/[subdomain]" or other profile subpaths to /c/[subdomain]
+    // 2d. Brochure viewer on subdomain:
+    // /brochure or /brochure/ or /tabrezqureshi/brochure
+    if (pathname === "/brochure" || pathname === "/brochure/") {
+      const brochureSlug = (subdomain === "raftconconstruction" || subdomain === "raftcon") ? "raftcon" : subdomain;
+      return NextResponse.rewrite(
+        new URL(`/c/${brochureSlug}/brochure${request.nextUrl.search}`, request.url)
+      );
+    }
+
+    if (pathname.endsWith("/brochure") || pathname.endsWith("/brochure/")) {
+      const parts = pathname.split("/").filter(Boolean);
+      const rawSlug = parts[0] === "c" ? (parts[1] || subdomain) : (parts[0] || subdomain);
+      const canonicalBrochureSlug = (rawSlug === "tabrezqureshi" || rawSlug === "raftconconstruction" || rawSlug === "raftcon") ? "raftcon" : rawSlug;
+      return NextResponse.rewrite(
+        new URL(`/c/${canonicalBrochureSlug}/brochure${request.nextUrl.search}`, request.url)
+      );
+    }
+
+    // 2e. Business Subdomain root ("/") or slug paths:
+    // For Raftcon Construction:
+    if (subdomain === "raftconconstruction" || subdomain === "raftcon") {
+      // If root "/", redirect cleanly to /tabrezqureshi
+      if (pathname === "/" || pathname === "") {
+        return NextResponse.redirect(
+          new URL(`/tabrezqureshi${request.nextUrl.search}`, request.url),
+          307
+        );
+      }
+      // If /tabrezqureshi or /tabrezqureshi/
+      if (pathname === "/tabrezqureshi" || pathname === "/tabrezqureshi/") {
+        return NextResponse.rewrite(
+          new URL(`/c/tabrezqureshi${request.nextUrl.search}`, request.url)
+        );
+      }
+    }
+
+    // Generic business or personal subdomain handling:
+    // If root "/", rewrite to /c/[subdomain] (e.g. aamirshaikh.ambrosstudio.com/ -> /c/aamirshaikh)
+    if (pathname === "/" || pathname === "") {
+      return NextResponse.rewrite(
+        new URL(`/c/${subdomain}${request.nextUrl.search}`, request.url)
+      );
+    }
+
+    // If a specific profile slug was requested on the business subdomain:
+    // e.g. https://[business].ambrosstudio.com/[slug] -> rewrite to /c/[slug]
+    const cleanPathSlug = pathname.replace(/^\/+|\/+$/g, "");
+    if (cleanPathSlug && !cleanPathSlug.includes("/")) {
+      return NextResponse.rewrite(
+        new URL(`/c/${cleanPathSlug}${request.nextUrl.search}`, request.url)
+      );
+    }
+
     return NextResponse.rewrite(
       new URL(`/c/${subdomain}${request.nextUrl.search}`, request.url)
     );
   }
 
   // 3. Apex / Canonical Domain Routing (ambrosstudio.com, www.ambrosstudio.com, localhost)
-  // 3a. Never intercept public customer endpoints, cards, or tabrezqureshi on apex
+  // 3a. CRITICAL: Permanent Redirect (308) for Raftcon Construction / Tabrez Qureshi
+  // Any visit to the old URL (or aliases) on apex domain MUST redirect to the new subdomain URL:
+  // https://raftconconstruction.ambrosstudio.com/tabrezqureshi
+  if (
+    pathname === "/tabrezqureshi" ||
+    pathname === "/tabrezqureshi/" ||
+    pathname === "/c/raftcon" ||
+    pathname === "/c/raftcon/" ||
+    pathname === "/c/raftcon-construction" ||
+    pathname === "/c/raftcon-construction/" ||
+    pathname === "/c/raftconconstruction" ||
+    pathname === "/c/raftconconstruction/" ||
+    pathname === "/c/tabrezqureshi" ||
+    pathname === "/c/tabrezqureshi/"
+  ) {
+    return NextResponse.redirect(
+      getSubdomainRedirectUrl(request, "raftconconstruction", "/tabrezqureshi"),
+      308
+    );
+  }
+
+  // Brochure redirects on apex domain to subdomain brochure viewer
+  if (
+    pathname === "/c/raftcon/brochure" ||
+    pathname === "/c/raftcon/brochure/" ||
+    pathname === "/tabrezqureshi/brochure" ||
+    pathname === "/tabrezqureshi/brochure/"
+  ) {
+    return NextResponse.redirect(
+      getSubdomainRedirectUrl(request, "raftconconstruction", "/brochure"),
+      308
+    );
+  }
+
+  // 3b. Pass through admin, cards, assets, public cards, and other customer endpoints on apex
   if (
     pathname.startsWith("/admin") ||
     pathname.startsWith("/cards") ||
     pathname.startsWith("/c/") ||
-    pathname.startsWith("/tabrezqureshi") ||
     pathname.startsWith("/api/cards") ||
     pathname.startsWith("/assets")
   ) {

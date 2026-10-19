@@ -140,8 +140,8 @@
     const origin = (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null')
       ? window.location.origin
       : 'https://ambrosstudio.com';
-    if (slug === 'tabrezqureshi' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/tabrezqureshi'))) {
-      return `${origin}/tabrezqureshi`;
+    if (slug === 'tabrezqureshi' || slug === 'raftcon' || slug === 'raftcon-construction' || (typeof window !== 'undefined' && (window.location.pathname.startsWith('/tabrezqureshi') || window.location.hostname.includes('raftcon')))) {
+      return 'https://raftconconstruction.ambrosstudio.com/tabrezqureshi';
     }
     if (slug === 'aamirshaikh' || slug === 'atgstudyabroad' || slug === 'atg-study-abroad' || (typeof window !== 'undefined' && window.location.hostname === 'aamirshaikh.ambrosstudio.com')) {
       return 'https://aamirshaikh.ambrosstudio.com';
