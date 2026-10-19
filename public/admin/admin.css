@@ -2843,3 +2843,260 @@ input:checked + .switch-slider::before {
   align-items: center;
   gap: 8px;
 }
+
+/* =============================================================================
+   DYNAMIC DESIGN-SPECIFIC EDITOR & DRAG-AND-DROP UPLOADER STYLES
+   ============================================================================= */
+
+/* Universal Dropzone Box */
+.dropzone-wrapper {
+  margin-top: 6px;
+  width: 100%;
+}
+
+.dropzone-box {
+  width: 100%;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: var(--radius-md, 10px);
+  background: #f8fafc;
+  padding: 16px;
+  transition: all 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.dropzone-box:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.dropzone-box.drag-over {
+  border-color: #10b981;
+  background: #ecfdf5;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.dropzone-box.has-file {
+  border-style: solid;
+  border-color: #e2e8f0;
+  background: #ffffff;
+  padding: 12px 14px;
+}
+
+/* Empty Dropzone State */
+.dropzone-empty {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.dropzone-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.dropzone-box:hover .dropzone-icon {
+  transform: translateY(-2px);
+  color: #0f172a;
+}
+
+.dropzone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropzone-prompt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-headline, #0f172a);
+}
+
+.dropzone-browse-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.dropzone-hint {
+  font-size: 11.5px;
+  color: var(--text-muted, #64748b);
+}
+
+/* Dropzone Progress State */
+.dropzone-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.dropzone-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid #e2e8f0;
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: dzSpin 0.7s linear infinite;
+}
+
+@keyframes dzSpin {
+  to { transform: rotate(360deg); }
+}
+
+.dropzone-progress-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-headline, #0f172a);
+}
+
+.dropzone-progress-bar {
+  width: 100%;
+  max-width: 280px;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.dropzone-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  transition: width 0.15s ease;
+}
+
+/* Uploaded Preview State */
+.dropzone-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dropzone-preview-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dropzone-thumb-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dropzone-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdf-badge-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.dropzone-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dropzone-filename {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-headline, #0f172a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropzone-file-status {
+  font-size: 11px;
+  color: #059669;
+  font-weight: 600;
+}
+
+.dropzone-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Dynamic Editor Card Enhancements */
+.dynamic-design-card {
+  animation: fadeInSec 0.25s ease-out;
+}
+
+@keyframes fadeInSec {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Live Card Preview Box */
+.admin-preview-frame-wrap {
+  width: 100%;
+  margin: 10px auto 0;
+  display: flex;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-preview-frame-wrap.mobile-mode {
+  width: 320px;
+  height: 560px;
+  border: 8px solid #0f172a;
+  border-radius: 36px;
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.25);
+  background: #000000;
+  overflow: hidden;
+  position: relative;
+}
+
+.admin-preview-frame-wrap.desktop-mode {
+  width: 100%;
+  height: 580px;
+  border: 1px solid var(--border-light, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.admin-preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  display: block;
+}
+

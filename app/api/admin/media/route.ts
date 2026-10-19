@@ -4,14 +4,18 @@ import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-const MAX_BYTES = 2 * 1024 * 1024; // 2MB
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"]);
+const ALLOWED_DOCUMENT_TYPES = new Set(["application/pdf"]);
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
+const MAX_DOCUMENT_BYTES = 25 * 1024 * 1024; // 25MB (brochures, menus)
 const STORAGE_BUCKET = "customer-media";
 
 function extensionForType(type: string): string {
   if (type === "image/png") return "png";
   if (type === "image/webp") return "webp";
   if (type === "image/gif") return "gif";
+  if (type === "image/svg+xml") return "svg";
+  if (type === "application/pdf") return "pdf";
   return "jpg";
 }
 
@@ -31,22 +35,28 @@ export async function POST(request: Request) {
 
     const form = await request.formData();
     const file = form.get("file");
-    const kindRaw = typeof form.get("kind") === "string" ? String(form.get("kind")) : "image";
-    const kind = ["avatar", "front", "back"].includes(kindRaw) ? kindRaw : "image";
+    const kindRaw = typeof form.get("kind") === "string" ? String(form.get("kind")).trim() : "image";
+    const allowedKinds = new Set(["avatar", "logo", "menu", "brochure", "listing", "gallery", "document", "image", "front", "back"]);
+    const kind = allowedKinds.has(kindRaw) ? kindRaw : "image";
 
     if (!(file instanceof File)) {
-      return NextResponse.json({ error: "An image file is required." }, { status: 400 });
+      return NextResponse.json({ error: "A valid file is required." }, { status: 400 });
     }
 
-    if (!ALLOWED_TYPES.has(file.type)) {
+    const isImage = ALLOWED_IMAGE_TYPES.has(file.type);
+    const isDocument = ALLOWED_DOCUMENT_TYPES.has(file.type);
+
+    if (!isImage && !isDocument) {
       return NextResponse.json(
-        { error: "Unsupported file type. Use JPG, PNG, WEBP, or GIF." },
+        { error: "Unsupported file type. Use JPG, PNG, WEBP, SVG, or PDF." },
         { status: 400 }
       );
     }
 
-    if (file.size > MAX_BYTES) {
-      return NextResponse.json({ error: "Image exceeds the 2MB limit." }, { status: 400 });
+    const maxLimit = isDocument ? MAX_DOCUMENT_BYTES : MAX_IMAGE_BYTES;
+    if (file.size > maxLimit) {
+      const limitMb = Math.round(maxLimit / (1024 * 1024));
+      return NextResponse.json({ error: `File exceeds the ${limitMb}MB limit.` }, { status: 400 });
     }
 
     const ext = extensionForType(file.type);

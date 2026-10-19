@@ -1112,6 +1112,12 @@ document.addEventListener('DOMContentLoaded', () => {
     currentBackImageUrl = cardImages.backUrl || '';
     if (typeof updateCardImagePreviews === 'function') updateCardImagePreviews();
 
+    // Dynamic Design-Specific Editor & Live Preview Initialization
+    if (window.DYNAMIC_CARD_EDITOR && typeof window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor === 'function') {
+      window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor(customer.designId || customer.design, customer);
+      window.DYNAMIC_CARD_EDITOR.triggerLivePreviewUpdate();
+    }
+
     // 8. Raftcon Luxury project customization
     const isRaftcon = customer.design === 'Raftcon Luxury' || 
                       customer.designId === 'raftcon-luxury' || 
@@ -1480,6 +1486,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPreviewChosenDesign.href = `/cards/preview.html?design=${encodeURIComponent(resolved.id)}&slug=${encodeURIComponent(c.profileSlug || '')}&id=${encodeURIComponent(c.id)}`;
       }
     }
+
+    // Dynamic Design-Specific Editor & Live Preview Update
+    const activeCust = currentEditingCustomerId ? customers.find(item => String(item.id) === String(currentEditingCustomerId)) : null;
+    if (window.DYNAMIC_CARD_EDITOR && typeof window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor === 'function') {
+      window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor(resolved.id, activeCust);
+      window.DYNAMIC_CARD_EDITOR.triggerLivePreviewUpdate();
+    }
   }
 
   // -------------------------------------------------------------
@@ -1818,6 +1831,29 @@ document.addEventListener('DOMContentLoaded', () => {
     custCompany.addEventListener('input', handleFormInputDeliveryUpdate);
   }
 
+  // Live Card Preview Synchronization Helper
+  function triggerAdminLivePreview() {
+    if (window.DYNAMIC_CARD_EDITOR && typeof window.DYNAMIC_CARD_EDITOR.triggerLivePreviewUpdate === 'function') {
+      window.DYNAMIC_CARD_EDITOR.triggerLivePreviewUpdate();
+    }
+  }
+
+  // Attach live preview updates to all core fields
+  [
+    custFullName, custDesignation, custCompany, custDescription,
+    custPhone, custWhatsApp, custEmail, custWebsite, custAddress,
+    custInstagram, custLinkedIn, custPrimaryColor, custBgColor, custTextColor, custFontFamily
+  ].forEach(el => {
+    if (el) {
+      el.addEventListener('input', triggerAdminLivePreview);
+      el.addEventListener('change', triggerAdminLivePreview);
+    }
+  });
+
+  if (custPrimaryColorPicker) custPrimaryColorPicker.addEventListener('input', triggerAdminLivePreview);
+  if (custBgColorPicker) custBgColorPicker.addEventListener('input', triggerAdminLivePreview);
+  if (custTextColorPicker) custTextColorPicker.addEventListener('input', triggerAdminLivePreview);
+
   // Form Submit Handler (Connected to Live Database via POST / PATCH)
   let isSubmittingCustomer = false;
 
@@ -1860,7 +1896,16 @@ document.addEventListener('DOMContentLoaded', () => {
         (document.getElementById('spiceRouteCard') && document.getElementById('spiceRouteCard').style.display !== 'none');
 
       let industryPayload = null;
-      if (isRaftconDesign && typeof collectRaftconIndustryData === 'function') {
+      if (window.DYNAMIC_CARD_EDITOR && typeof window.DYNAMIC_CARD_EDITOR.collectDesignSpecificData === 'function') {
+        const dynData = window.DYNAMIC_CARD_EDITOR.collectDesignSpecificData();
+        const registry = window.CARD_DESIGN_REGISTRY;
+        const resolved = registry ? registry.resolveCardDesign(selectedDesign) : { id: 'mint-haven', name: 'Mint Haven' };
+        const indType = resolved.industryModule || (existing && existing.customSettings && existing.customSettings.industry && existing.customSettings.industry.type) || 'general';
+        industryPayload = {
+          type: indType,
+          data: dynData
+        };
+      } else if (isRaftconDesign && typeof collectRaftconIndustryData === 'function') {
         industryPayload = collectRaftconIndustryData();
       } else if (isAtgDesign && typeof collectAtgIndustryData === 'function') {
         industryPayload = collectAtgIndustryData();
@@ -3904,6 +3949,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Digital Card Design System Gallery & Showroom
   renderDesignGallery('all');
   renderShowroom('all');
+
+  // Initialize Dynamic Design-Specific Editor & Live Preview Engine
+  if (window.DYNAMIC_CARD_EDITOR) {
+    if (typeof window.DYNAMIC_CARD_EDITOR.initLivePreview === 'function') {
+      window.DYNAMIC_CARD_EDITOR.initLivePreview();
+    }
+    if (typeof window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor === 'function') {
+      window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor('mint-haven', null);
+    }
+  }
 
   // Run initial session check
   checkAdminSession();

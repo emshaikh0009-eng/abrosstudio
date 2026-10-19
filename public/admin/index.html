@@ -710,6 +710,9 @@
 
               </div>
 
+              <!-- Dynamic Design-Specific Customization Container -->
+              <div id="dynamicDesignSpecificContainer"></div>
+
               <!-- 5. Raftcon Construction & Projects Customization Card (Shown for Raftcon Luxury) -->
               <div class="form-card" id="raftconProjectCard" style="display: none;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
@@ -1251,6 +1254,28 @@
                 </div>
               </div>
 
+              <!-- Live Interactive Card Preview Card -->
+              <div class="form-card" id="adminLivePreviewCard">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                  <div>
+                    <h2 class="form-section-title" style="margin: 0;">Live Card Preview</h2>
+                    <p class="form-section-sub" style="margin: 0;">Real-time interactive rendering of the selected design.</p>
+                  </div>
+                  <div class="preview-mode-toggle" style="display: flex; gap: 4px; background: #f1f5f9; padding: 3px; border-radius: 8px; border: 1px solid var(--border-light);">
+                    <button type="button" class="btn-preview-mode active" id="btnPreviewMobile" title="Mobile Phone View" style="padding: 4px 8px; font-size: 11px; font-weight: 600; border-radius: 6px; border: none; background: #ffffff; cursor: pointer;">
+                      📱 Mobile
+                    </button>
+                    <button type="button" class="btn-preview-mode" id="btnPreviewDesktop" title="Desktop / Tablet View" style="padding: 4px 8px; font-size: 11px; font-weight: 600; border-radius: 6px; border: none; background: transparent; cursor: pointer;">
+                      💻 Desktop
+                    </button>
+                  </div>
+                </div>
+
+                <div class="admin-preview-frame-wrap mobile-mode" id="adminPreviewFrameWrap">
+                  <iframe id="adminPreviewIframe" class="admin-preview-iframe" title="Interactive Card Preview"></iframe>
+                </div>
+              </div>
+
               <!-- Client Delivery Card -->
               <div class="form-card" id="clientDeliveryCard">
                 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
@@ -1605,6 +1630,8 @@
   <script src="/cards/design-registry.js"></script>
   <script src="/cards/card-renderer.js"></script>
   <script src="/admin/qrcode.js"></script>
+  <script src="/admin/design-editor-configs.js"></script>
+  <script src="/admin/dynamic-editor.js"></script>
   <script src="/admin/admin.js"></script>
 
 </body>
