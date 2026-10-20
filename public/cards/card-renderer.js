@@ -2240,6 +2240,7 @@
     renderCardHtml: renderCompleteCardHtml,
     renderCompleteCardHtml: renderCompleteCardHtml,
     resolveCustomerLinks: resolveCustomerLinks,
-    getInitials: getInitials
+    getInitials: getInitials,
+    escapeHtml: escapeHtml
   };
 });

@@ -11,6 +11,40 @@
 (function(global) {
   'use strict';
 
+  // HTML & Attribute Escaping Helpers
+  var escapeHtml = (global && typeof global.escapeHtml === 'function')
+    ? global.escapeHtml
+    : (global && global.CARD_RENDERER && typeof global.CARD_RENDERER.escapeHtml === 'function')
+      ? global.CARD_RENDERER.escapeHtml
+      : function(str) {
+          if (str === null || str === undefined) return '';
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        };
+
+  var escapeAttr = (global && typeof global.escapeAttr === 'function')
+    ? global.escapeAttr
+    : function(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      };
+
+  if (global && typeof global.escapeHtml !== 'function') {
+    global.escapeHtml = escapeHtml;
+  }
+  if (global && typeof global.escapeAttr !== 'function') {
+    global.escapeAttr = escapeAttr;
+  }
+
   // State
   var currentActiveDesignId = null;
   var currentFormCustomerData = null;
@@ -1055,7 +1089,9 @@
     collectDesignSpecificData: collectDesignSpecificData,
     collectCurrentFormCardPayload: collectCurrentFormCardPayload,
     uploadMediaFile: uploadMediaFile,
-    createDropzone: createDropzone
+    createDropzone: createDropzone,
+    escapeHtml: escapeHtml,
+    escapeAttr: escapeAttr
   };
 
   global.DYNAMIC_CARD_EDITOR = API;
