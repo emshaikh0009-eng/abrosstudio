@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentUploadedAvatar = null;
   let currentFrontImageUrl = '';
   let currentBackImageUrl = '';
+  let currentCustomLinks = [];
+  let editingLinkIndex = -1;
 
   function generateCustomerProfileUrl(slug, company) {
     const canonicalSlug = (slug || '').trim().toLowerCase();
@@ -196,6 +198,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const custProfileLink = document.getElementById('custProfileLink');
   const avatarUploadCircle = document.getElementById('avatarUploadCircle');
   const cardSelectOptions = document.querySelectorAll('.card-select-option');
+
+  // Card Customization & Dynamic Link Manager Elements
+  const custPrimaryColor = document.getElementById('custPrimaryColor');
+  const custPrimaryColorPicker = document.getElementById('custPrimaryColorPicker');
+  const custBgColor = document.getElementById('custBgColor');
+  const custBgColorPicker = document.getElementById('custBgColorPicker');
+  const custTextColor = document.getElementById('custTextColor');
+  const custTextColorPicker = document.getElementById('custTextColorPicker');
+  const custFontFamily = document.getElementById('custFontFamily');
+  const btnResetCustomization = document.getElementById('btnResetCustomization');
+
+  const custAvatarSyncPreview = document.getElementById('custAvatarSyncPreview');
+  const custAvatarSyncStatus = document.getElementById('custAvatarSyncStatus');
+  const btnSyncChangeAvatar = document.getElementById('btnSyncChangeAvatar');
+
+  const customLinksContainer = document.getElementById('customLinksContainer');
+  const customLinksEmptyState = document.getElementById('customLinksEmptyState');
+  const btnOpenAddLinkModal = document.getElementById('btnOpenAddLinkModal');
+  const btnImportContactLinks = document.getElementById('btnImportContactLinks');
+
+  const linkEditorModal = document.getElementById('linkEditorModal');
+  const linkEditorTitle = document.getElementById('linkEditorTitle');
+  const linkEditorForm = document.getElementById('linkEditorForm');
+  const linkTypeSelect = document.getElementById('linkTypeSelect');
+  const linkLabelInput = document.getElementById('linkLabelInput');
+  const linkValueInput = document.getElementById('linkValueInput');
+  const linkValueLabel = document.getElementById('linkValueLabel');
+  const linkEnabledInput = document.getElementById('linkEnabledInput');
+  const btnCloseLinkModal = document.getElementById('btnCloseLinkModal');
+  const btnCancelLinkModal = document.getElementById('btnCancelLinkModal');
+  const btnSaveLinkModal = document.getElementById('btnSaveLinkModal');
+  const saveLinkModalText = document.getElementById('saveLinkModalText');
 
   // Tables
   const customersTableBody = document.getElementById('customersTableBody');
@@ -1839,20 +1873,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Attach live preview updates to all core fields
-  [
-    custFullName, custDesignation, custCompany, custDescription,
-    custPhone, custWhatsApp, custEmail, custWebsite, custAddress,
-    custInstagram, custLinkedIn, custPrimaryColor, custBgColor, custTextColor, custFontFamily
-  ].forEach(el => {
-    if (el) {
-      el.addEventListener('input', triggerAdminLivePreview);
-      el.addEventListener('change', triggerAdminLivePreview);
-    }
-  });
+  try {
+    [
+      custFullName, custDesignation, custCompany, custDescription,
+      custPhone, custWhatsApp, custEmail, custWebsite, custAddress,
+      custInstagram, custLinkedIn, custPrimaryColor, custBgColor, custTextColor, custFontFamily
+    ].forEach(el => {
+      if (el) {
+        el.addEventListener('input', triggerAdminLivePreview);
+        el.addEventListener('change', triggerAdminLivePreview);
+      }
+    });
 
-  if (custPrimaryColorPicker) custPrimaryColorPicker.addEventListener('input', triggerAdminLivePreview);
-  if (custBgColorPicker) custBgColorPicker.addEventListener('input', triggerAdminLivePreview);
-  if (custTextColorPicker) custTextColorPicker.addEventListener('input', triggerAdminLivePreview);
+    if (custPrimaryColorPicker) custPrimaryColorPicker.addEventListener('input', triggerAdminLivePreview);
+    if (custBgColorPicker) custBgColorPicker.addEventListener('input', triggerAdminLivePreview);
+    if (custTextColorPicker) custTextColorPicker.addEventListener('input', triggerAdminLivePreview);
+  } catch (err) {
+    console.warn('Could not attach all live preview listeners:', err);
+  }
 
   // Form Submit Handler (Connected to Live Database via POST / PATCH)
   let isSubmittingCustomer = false;
@@ -2066,39 +2104,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // =============================================================
   // Phase 2: Card Customization & Dynamic Link Manager Controller
   // =============================================================
-  const custPrimaryColor = document.getElementById('custPrimaryColor');
-  const custPrimaryColorPicker = document.getElementById('custPrimaryColorPicker');
-  const custBgColor = document.getElementById('custBgColor');
-  const custBgColorPicker = document.getElementById('custBgColorPicker');
-  const custTextColor = document.getElementById('custTextColor');
-  const custTextColorPicker = document.getElementById('custTextColorPicker');
-  const custFontFamily = document.getElementById('custFontFamily');
-  const btnResetCustomization = document.getElementById('btnResetCustomization');
-
-  const custAvatarSyncPreview = document.getElementById('custAvatarSyncPreview');
-  const custAvatarSyncStatus = document.getElementById('custAvatarSyncStatus');
-  const btnSyncChangeAvatar = document.getElementById('btnSyncChangeAvatar');
-
-  const customLinksContainer = document.getElementById('customLinksContainer');
-  const customLinksEmptyState = document.getElementById('customLinksEmptyState');
-  const btnOpenAddLinkModal = document.getElementById('btnOpenAddLinkModal');
-  const btnImportContactLinks = document.getElementById('btnImportContactLinks');
-
-  const linkEditorModal = document.getElementById('linkEditorModal');
-  const linkEditorTitle = document.getElementById('linkEditorTitle');
-  const linkEditorForm = document.getElementById('linkEditorForm');
-  const linkTypeSelect = document.getElementById('linkTypeSelect');
-  const linkLabelInput = document.getElementById('linkLabelInput');
-  const linkValueInput = document.getElementById('linkValueInput');
-  const linkValueLabel = document.getElementById('linkValueLabel');
-  const linkEnabledInput = document.getElementById('linkEnabledInput');
-  const btnCloseLinkModal = document.getElementById('btnCloseLinkModal');
-  const btnCancelLinkModal = document.getElementById('btnCancelLinkModal');
-  const btnSaveLinkModal = document.getElementById('btnSaveLinkModal');
-  const saveLinkModalText = document.getElementById('saveLinkModalText');
-
-  let currentCustomLinks = [];
-  let editingLinkIndex = -1;
 
   const LINK_TYPE_METADATA = {
     whatsapp: { name: 'WhatsApp', badgeClass: 'whatsapp', iconLetter: 'WA', defaultLabel: 'Chat on WhatsApp', placeholder: '+91 98250 41872' },
