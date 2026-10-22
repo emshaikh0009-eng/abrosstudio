@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "node scripts/verify-all-19-designs.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

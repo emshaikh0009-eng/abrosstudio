@@ -101,15 +101,36 @@
       case 'linkedin':
       case 'youtube':
       case 'twitter':
+      case 'x':
       case 'telegram':
+      case 'github':
       case 'custom':
       default: {
-        let target = val;
+        let target = val.trim();
         if (!/^https?:\/\//i.test(target)) {
-          if (type === 'instagram' && !val.includes('/')) target = `https://instagram.com/${val.replace(/^@/, '')}`;
-          else if (type === 'twitter' && !val.includes('/')) target = `https://twitter.com/${val.replace(/^@/, '')}`;
-          else if (type === 'telegram' && !val.includes('/')) target = `https://t.me/${val.replace(/^@/, '')}`;
-          else target = `https://${val}`;
+          if (type === 'instagram') {
+            if (/^instagram\.com/i.test(target)) target = `https://${target}`;
+            else target = `https://www.instagram.com/${target.replace(/^@/, '').replace(/^\/+/, '')}`;
+          } else if (type === 'facebook') {
+            if (/^(?:facebook|fb)\.com/i.test(target)) target = `https://${target}`;
+            else target = `https://www.facebook.com/${target.replace(/^@/, '').replace(/^\/+/, '')}`;
+          } else if (type === 'linkedin') {
+            if (/^linkedin\.com/i.test(target)) target = `https://${target}`;
+            else if (/^(?:in|company|school)\//i.test(target)) target = `https://www.linkedin.com/${target}`;
+            else target = `https://www.linkedin.com/in/${target.replace(/^@/, '').replace(/^\/+/, '')}`;
+          } else if (type === 'twitter' || type === 'x') {
+            if (/^(?:twitter|x)\.com/i.test(target)) target = `https://${target}`;
+            else target = `https://x.com/${target.replace(/^@/, '').replace(/^\/+/, '')}`;
+          } else if (type === 'youtube') {
+            if (/^(?:youtube\.com|youtu\.be)/i.test(target)) target = `https://${target}`;
+            else if (target.startsWith('@')) target = `https://www.youtube.com/${target}`;
+            else target = `https://${target}`;
+          } else if (type === 'telegram') {
+            if (/^(?:t\.me|telegram\.me)/i.test(target)) target = `https://${target}`;
+            else target = `https://t.me/${target.replace(/^@/, '').replace(/^\/+/, '')}`;
+          } else {
+            target = `https://${target}`;
+          }
         }
         try {
           const parsed = new URL(target);
@@ -124,6 +145,15 @@
     }
   }
 
+  function normalizeDestinationKey(type, url) {
+    if (!url) return '';
+    let clean = url.trim().toLowerCase();
+    clean = clean.replace(/^https?:\/\//i, '').replace(/^mailto:/i, '').replace(/^tel:/i, '');
+    clean = clean.replace(/^www\./i, '');
+    clean = clean.replace(/\/+$/, '');
+    return `${type}:${clean}`;
+  }
+
   function getDefaultLabel(type) {
     const map = {
       whatsapp: 'WhatsApp',
@@ -136,6 +166,7 @@
       youtube: 'YouTube',
       twitter: 'X / Twitter',
       telegram: 'Telegram',
+      github: 'GitHub',
       maps: 'Directions / Office',
       custom: 'Link'
     };
@@ -152,7 +183,11 @@
       const match = val.match(/instagram\.com\/([^/?#]+)/i);
       return match ? `@${match[1]}` : (val.startsWith('@') ? val : `@${val}`);
     }
-    if (type === 'twitter') {
+    if (type === 'facebook') {
+      const match = val.match(/(?:facebook|fb)\.com\/([^/?#]+)/i);
+      return match ? match[1] : val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+    }
+    if (type === 'twitter' || type === 'x') {
       const match = val.match(/(?:twitter|x)\.com\/([^/?#]+)/i);
       return match ? `@${match[1]}` : (val.startsWith('@') ? val : `@${val}`);
     }
@@ -168,6 +203,10 @@
     if (type === 'youtube') {
       const match = val.match(/youtube\.com\/(@[^/?#]+)/i);
       return match ? match[1] : 'YouTube Channel';
+    }
+    if (type === 'github') {
+      const match = val.match(/github\.com\/([^/?#]+)/i);
+      return match ? match[1] : val.replace(/^https?:\/\//i, '').replace(/\/$/, '');
     }
     if (type === 'maps') {
       return val.startsWith('http') ? 'View on Google Maps' : val;
@@ -194,9 +233,12 @@
       case 'youtube':
         return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>`;
       case 'twitter':
+      case 'x':
         return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>`;
       case 'telegram':
         return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+      case 'github':
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>`;
       case 'maps':
       case 'directions':
         return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
@@ -212,62 +254,92 @@
     }
   }
 
-  const SOCIAL_TYPES = new Set(['instagram', 'facebook', 'linkedin', 'youtube', 'twitter']);
+  const SOCIAL_TYPES = new Set([
+    'website',
+    'instagram',
+    'facebook',
+    'linkedin',
+    'youtube',
+    'twitter',
+    'x',
+    'telegram',
+    'github',
+    'tiktok',
+    'threads',
+    'pinterest'
+  ]);
 
-  /**
-   * Resolves links from customer customSettings OR legacy direct fields.
-   */
   function hasText(val) {
     return typeof val === 'string' && val.trim().length > 0;
   }
 
   /**
-   * Resolves links from customer customSettings OR legacy direct fields.
+   * Resolves links from customer customSettings AND dedicated direct fields with deduplication.
    */
   function resolveCustomerLinks(card) {
-    const custom = card.customSettings || card.custom_settings;
-    if (custom && Array.isArray(custom.links) && custom.links.length > 0) {
-      return custom.links
-        .filter(l => l && l.enabled !== false && hasText(l.value) && ALLOWED_LINK_TYPES.includes((l.type || '').toLowerCase()))
-        .map((l, idx) => ({
-          type: (l.type || '').toLowerCase(),
-          label: hasText(l.label) ? l.label.trim() : getDefaultLabel((l.type || '').toLowerCase()),
-          value: (l.value || '').trim(),
-          order: typeof l.order === 'number' ? l.order : idx,
-        }))
-        .filter(l => formatLinkDestination(l.type, l.value) !== null)
-        .sort((a, b) => a.order - b.order);
-    }
+    const result = [];
+    const seenKeys = new Set();
 
-    const list = [];
+    const addLinkIfValid = (type, label, rawVal, order, isCustom = false) => {
+      if (!hasText(rawVal)) return;
+      const val = rawVal.trim();
+      const dest = formatLinkDestination(type, val);
+      if (!dest) return;
+      const key = normalizeDestinationKey(type, dest);
+      if (key && seenKeys.has(key)) return;
+      if (key) seenKeys.add(key);
+
+      result.push({
+        type: type.toLowerCase(),
+        label: hasText(label) ? label.trim() : getDefaultLabel(type),
+        value: val,
+        order: typeof order === 'number' ? order : result.length,
+        isCustom,
+      });
+    };
+
+    // 1. Dedicated core fields
     const phoneVal = card.phone || card.mobile_number;
     if (hasText(phoneVal)) {
-      list.push({ type: 'phone', label: 'Phone', value: phoneVal.trim(), order: 0 });
+      addLinkIfValid('phone', 'Phone', phoneVal, 0);
     }
     const waVal = card.whatsapp || card.whatsapp_number;
     if (hasText(waVal)) {
-      list.push({ type: 'whatsapp', label: 'WhatsApp', value: waVal.trim(), order: 1 });
+      addLinkIfValid('whatsapp', 'WhatsApp', waVal, 1);
     }
     if (hasText(card.email)) {
-      list.push({ type: 'email', label: 'Email', value: card.email.trim(), order: 2 });
+      addLinkIfValid('email', 'Email', card.email, 2);
     }
     if (hasText(card.website)) {
-      list.push({ type: 'website', label: 'Website', value: card.website.trim(), order: 3 });
+      addLinkIfValid('website', 'Website', card.website, 3);
     }
     const igVal = card.socialInstagram || card.instagram_url;
     if (hasText(igVal)) {
-      list.push({ type: 'instagram', label: 'Instagram', value: igVal.trim(), order: 4 });
+      addLinkIfValid('instagram', 'Instagram', igVal, 4);
     }
     const liVal = card.socialLinkedIn || card.linkedin_url;
     if (hasText(liVal)) {
-      list.push({ type: 'linkedin', label: 'LinkedIn', value: liVal.trim(), order: 5 });
+      addLinkIfValid('linkedin', 'LinkedIn', liVal, 5);
     }
     const addrVal = card.address || card.business_address;
     if (hasText(addrVal)) {
-      list.push({ type: 'maps', label: 'Directions', value: addrVal.trim(), order: 6 });
+      addLinkIfValid('maps', 'Directions', addrVal, 6);
     }
 
-    return list;
+    // 2. Custom links from customSettings.links
+    const custom = card.customSettings || card.custom_settings;
+    if (custom && Array.isArray(custom.links)) {
+      custom.links.forEach((l, idx) => {
+        if (!l || l.enabled === false || !hasText(l.value)) return;
+        const type = (l.type || 'custom').toLowerCase();
+        const defaultOrder = 10 + idx;
+        const order = typeof l.order === 'number' ? l.order : defaultOrder;
+        const label = hasText(l.label) ? l.label : getDefaultLabel(type);
+        addLinkIfValid(type, label, l.value, order, true);
+      });
+    }
+
+    return result.sort((a, b) => a.order - b.order);
   }
 
   function renderRaftconLuxuryBody(card) {
@@ -518,6 +590,24 @@
       html += `<div class="raftcon-bottom-quote">${escapeHtml(footerQuote)}</div>`;
     }
 
+    // Raftcon Digital Presence & Social Links
+    const allRaftconLinks = resolveCustomerLinks(card);
+    const raftconSocialLinks = allRaftconLinks.filter(l => SOCIAL_TYPES.has(l.type) || l.isCustom);
+    if (raftconSocialLinks.length > 0) {
+      html += `
+        <div class="raftcon-reveal" style="margin-top: 20px; text-align: center;">
+          <div class="raftcon-section-eyebrow" style="margin-bottom: 12px;">C O N N E C T</div>
+          <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+            ${raftconSocialLinks.map(l => {
+              const dest = formatLinkDestination(l.type, l.value);
+              if (!dest) return '';
+              return `<a href="${dest}" target="_blank" rel="noopener noreferrer" style="width: 44px; height: 44px; border-radius: 50%; background: #262523; border: 1px solid rgba(255, 224, 181, 0.25); display: inline-flex; align-items: center; justify-content: center; color: #ffe0b5; text-decoration: none; transition: transform 0.2s;" aria-label="${escapeHtml(l.label)}">${getLinkIconSvg(l.type, 18)}</a>`;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     html += `
         <div style="display: flex; justify-content: center; gap: 10px; margin-top: 24px;">
           <button type="button" class="cta-btn cta-btn-secondary" id="showQrBtn" style="min-width: 130px; font-size: 12.5px; background: #18191e; color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.1);" aria-label="Show QR Code">
@@ -546,19 +636,20 @@
     const ind = (custom.industry && custom.industry.data && typeof custom.industry.data === 'object') ? custom.industry.data : {};
     const visibility = ind.sectionVisibility || {};
 
-    const name = hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : 'Aamir Shaikh';
-    const role = hasText(card.designation || card.role) ? (card.designation || card.role).trim() : 'Founder, ATG Study Abroad';
-    const tagline = hasText(ind.tagline) ? ind.tagline.trim() : 'On a mission, with a vision';
-    const bio = hasText(ind.aboutText) ? ind.aboutText.trim() : (hasText(card.description || card.bio) ? (card.description || card.bio).trim() : 'Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa.');
-    const phone = hasText(card.phone || card.mobile_number) ? (card.phone || card.mobile_number).trim() : '+91 98989 79548';
-    const whatsapp = hasText(card.whatsapp || card.whatsapp_number) ? (card.whatsapp || card.whatsapp_number).trim() : '919898979548';
-    const email = hasText(card.email) ? card.email.trim() : 'info@atgstudyabroad.com';
-    const instagram = hasText(card.socialInstagram || card.social_instagram) ? (card.socialInstagram || card.social_instagram).trim() : '@atgstudyabroad';
+    const isAtgDemo = (card.profileSlug || card.profile_slug) === 'atgstudyabroad' || (card.profileSlug || card.profile_slug) === 'aamirshaikh';
+    const name = hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : (isAtgDemo ? 'Aamir Shaikh' : '');
+    const role = hasText(card.designation || card.role) ? (card.designation || card.role).trim() : (isAtgDemo ? 'Founder, ATG Study Abroad' : '');
+    const tagline = hasText(ind.tagline) ? ind.tagline.trim() : (isAtgDemo ? 'On a mission, with a vision' : '');
+    const bio = hasText(ind.aboutText) ? ind.aboutText.trim() : (hasText(card.description || card.bio) ? (card.description || card.bio).trim() : (isAtgDemo ? 'Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa.' : ''));
+    const phone = hasText(card.phone || card.mobile_number) ? (card.phone || card.mobile_number).trim() : (isAtgDemo ? '+91 98989 79548' : '');
+    const whatsapp = hasText(card.whatsapp || card.whatsapp_number) ? (card.whatsapp || card.whatsapp_number).trim() : (isAtgDemo ? '919898979548' : '');
+    const email = hasText(card.email) ? card.email.trim() : (isAtgDemo ? 'info@atgstudyabroad.com' : '');
+    const instagram = hasText(card.socialInstagram || card.social_instagram) ? (card.socialInstagram || card.social_instagram).trim() : (isAtgDemo ? '@atgstudyabroad' : '');
     const avatarUrl = hasText(card.avatarUrl || card.avatar_url || card.profile_image_url) ? (card.avatarUrl || card.avatar_url || card.profile_image_url).trim() : '';
 
     const phoneDest = phone ? `tel:${cleanPhone(phone)}` : '';
-    const waDigits = whatsapp ? cleanDigits(whatsapp) : '919898979548';
-    const waDest = `https://wa.me/${waDigits}`;
+    const waDigits = whatsapp ? cleanDigits(whatsapp) : (isAtgDemo ? '919898979548' : '');
+    const waDest = waDigits ? `https://wa.me/${waDigits}` : '';
     const emailDest = email ? `mailto:${email}` : '';
     const instaDest = instagram ? (instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace(/^@/, '')}`) : '';
 
@@ -571,40 +662,40 @@
     const metrics = (Array.isArray(ind.metrics) && ind.metrics.length > 0) ? ind.metrics : defaultMetrics;
 
     // CTAs
-    const ctaPrimaryText = ind.ctaPrimary?.text || 'Find out which country suits you';
-    const ctaPrimaryUrl = ind.ctaPrimary?.url || `https://wa.me/${waDigits}?text=Hi%2C%20I%20want%20to%20find%20out%20which%20country%20suits%20me%20for%20study%20abroad`;
-    const ctaWhatsAppText = ind.ctaWhatsApp?.text || 'Chat on WhatsApp for instant guidance';
+    const ctaPrimaryText = ind.ctaPrimary?.text || (isAtgDemo ? 'Find out which country suits you' : '');
+    const ctaPrimaryUrl = ind.ctaPrimary?.url || (waDigits ? `https://wa.me/${waDigits}?text=Hi%2C%20I%20want%20to%20find%20out%20which%20country%20suits%20me%20for%20study%20abroad` : '');
+    const ctaWhatsAppText = ind.ctaWhatsApp?.text || (isAtgDemo ? 'Chat on WhatsApp for instant guidance' : '');
     const ctaWhatsAppUrl = ind.ctaWhatsApp?.url || waDest;
 
     // Destinations
-    const defaultDestinations = [
+    const defaultDestinations = isAtgDemo ? [
       { code: 'CA', title: 'Study in Canada', sub: 'Courses, eligibility and intakes', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Canada` },
       { code: 'UK', title: 'Study in the UK', sub: 'Top universities and scholarships', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20the%20UK` },
       { code: 'AU', title: 'Study in Australia', sub: 'Eligibility, courses and universities', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Australia` },
       { code: 'EU', title: 'Study in Europe', sub: 'Low-tuition and English programs', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Europe` },
       { code: 'AE', title: 'Study in Dubai', sub: 'Programs and admissions', url: `https://wa.me/${waDigits}?text=Tell%20me%20about%20Study%20in%20Dubai` }
-    ];
+    ] : [];
     const destinationsTitle = ind.destinationsTitle || 'Popular study destinations';
     const destinations = (Array.isArray(ind.destinations) && ind.destinations.length > 0) ? ind.destinations : defaultDestinations;
 
     // Test Prep
     const testPrepTitle = ind.testPrepTitle || 'Test preparation';
     const coachingHeading = ind.coachingHeading || 'Book a coaching class for';
-    const coachingCourses = (Array.isArray(ind.coachingCourses) && ind.coachingCourses.length > 0) ? ind.coachingCourses : ['IELTS', 'PTE', 'CELPIP', 'TOEFL', 'GRE'];
-    const coachingCtaText = ind.coachingCta?.text || 'Book coaching class';
-    const coachingCtaUrl = ind.coachingCta?.url || `https://wa.me/${waDigits}?text=I%20would%20like%20to%20book%20a%20test%20prep%20coaching%20class`;
+    const coachingCourses = (Array.isArray(ind.coachingCourses) && ind.coachingCourses.length > 0) ? ind.coachingCourses : (isAtgDemo ? ['IELTS', 'PTE', 'CELPIP', 'TOEFL', 'GRE'] : []);
+    const coachingCtaText = ind.coachingCta?.text || (isAtgDemo ? 'Book coaching class' : '');
+    const coachingCtaUrl = ind.coachingCta?.url || (waDigits ? `https://wa.me/${waDigits}?text=I%20would%20like%20to%20book%20a%20test%20prep%20coaching%20class` : '');
 
-    const defaultBatches = [
+    const defaultBatches = isAtgDemo ? [
       { title: 'Basic English class', sub: 'Join the next batch', url: `https://wa.me/${waDigits}?text=Inquiry%20for%20Basic%20English%20class` },
       { title: 'Study + Work', sub: 'Russia, Singapore, Mauritius, Canada', url: `https://wa.me/${waDigits}?text=Inquiry%20for%20Study%20and%20Work%20programs` }
-    ];
+    ] : [];
     const batches = (Array.isArray(ind.testPrepBatches) && ind.testPrepBatches.length > 0) ? ind.testPrepBatches : defaultBatches;
 
     // Free Guides
-    const defaultGuides = [
+    const defaultGuides = isAtgDemo ? [
       { title: '7 things to get right before you apply abroad', sub: 'Free guide', buttonText: 'Download', url: `https://wa.me/${waDigits}?text=Please%20send%20me%20the%20Free%20Guide:%207%20things%20to%20get%20right%20before%20you%20apply%20abroad` },
       { title: 'CELPIP Writing Masterbook', sub: 'Task strategies', buttonText: 'Download', url: `https://wa.me/${waDigits}?text=Please%20send%20me%20the%20CELPIP%20Writing%20Masterbook` }
-    ];
+    ] : [];
     const freeGuidesTitle = ind.freeGuidesTitle || 'Free guides';
     const freeGuides = (Array.isArray(ind.freeGuides) && ind.freeGuides.length > 0) ? ind.freeGuides : defaultGuides;
 
@@ -673,20 +764,22 @@
 
         <!-- Action Buttons -->
         <section class="atg-actions">
-          ${ctaPrimaryText ? `
+          ${ctaPrimaryText && ctaPrimaryUrl ? `
             <a href="${escapeHtml(ctaPrimaryUrl)}" target="_blank" rel="noopener noreferrer" class="atg-btn-lime">
               <span>${escapeHtml(ctaPrimaryText)}</span>
             </a>
           ` : ''}
-          ${ctaWhatsAppText ? `
+          ${ctaWhatsAppText && ctaWhatsAppUrl ? `
             <a href="${escapeHtml(ctaWhatsAppUrl)}" target="_blank" rel="noopener noreferrer" class="atg-btn-black">
               <span>${escapeHtml(ctaWhatsAppText)}</span>
             </a>
           ` : ''}
           <div class="atg-btn-pair">
-            <a href="${phoneDest || '#'}" class="atg-btn-white">
-              <span>Call</span>
-            </a>
+            ${phoneDest ? `
+              <a href="${phoneDest}" class="atg-btn-white">
+                <span>Call</span>
+              </a>
+            ` : ''}
             <button type="button" class="atg-btn-white" id="saveContactBtn">
               <span>Save contact</span>
             </button>
@@ -699,8 +792,10 @@
             <div class="atg-accent-bar"></div>
             <h2 class="atg-section-heading">${escapeHtml(destinationsTitle)}</h2>
             <div class="atg-destinations-list">
-              ${destinations.map(d => `
-                <a href="${escapeHtml(d.url || waDest)}" target="_blank" rel="noopener noreferrer" class="atg-dest-row">
+              ${destinations.map(d => {
+                const dUrl = d.url || waDest || '#';
+                return `
+                <a href="${escapeHtml(dUrl)}" ${dUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="atg-dest-row">
                   <div class="atg-dest-badge">${escapeHtml(d.code || 'GL')}</div>
                   <div class="atg-dest-info">
                     <div class="atg-dest-title">${escapeHtml(d.title || '')}</div>
@@ -708,37 +803,47 @@
                   </div>
                   <span class="atg-chevron" aria-hidden="true">&rsaquo;</span>
                 </a>
-              `).join('')}
+              `;
+              }).join('')}
             </div>
           </section>
         ` : ''}
 
         <!-- Test Preparation -->
-        ${visibility.testPrep !== false ? `
+        ${visibility.testPrep !== false && (coachingCourses.length > 0 || batches.length > 0) ? `
           <section class="atg-section">
             <div class="atg-accent-bar"></div>
             <h2 class="atg-section-heading">${escapeHtml(testPrepTitle)}</h2>
             
-            <div class="atg-coaching-box">
-              <div class="atg-coaching-lbl">${escapeHtml(coachingHeading)}</div>
-              <div class="atg-course-tags">
-                ${coachingCourses.map(c => `
-                  <span class="atg-course-tag">${escapeHtml(c)}</span>
-                `).join('')}
+            ${coachingCourses.length > 0 ? `
+              <div class="atg-coaching-box">
+                <div class="atg-coaching-lbl">${escapeHtml(coachingHeading)}</div>
+                <div class="atg-course-tags">
+                  ${coachingCourses.map(c => `
+                    <span class="atg-course-tag">${escapeHtml(c)}</span>
+                  `).join('')}
+                </div>
+                ${coachingCtaText && coachingCtaUrl ? `
+                  <a href="${escapeHtml(coachingCtaUrl)}" target="_blank" rel="noopener noreferrer" class="atg-btn-lime" style="margin-top: 14px;">
+                    <span>${escapeHtml(coachingCtaText)}</span>
+                  </a>
+                ` : ''}
               </div>
-              <a href="${escapeHtml(coachingCtaUrl)}" target="_blank" rel="noopener noreferrer" class="atg-btn-lime" style="margin-top: 14px;">
-                <span>${escapeHtml(coachingCtaText)}</span>
-              </a>
-            </div>
+            ` : ''}
 
-            <div class="atg-batches-list" style="margin-top: 10px;">
-              ${batches.map(b => `
-                <a href="${escapeHtml(b.url || waDest)}" target="_blank" rel="noopener noreferrer" class="atg-batch-row">
-                  <span class="atg-batch-title">${escapeHtml(b.title || '')}</span>
-                  <span class="atg-batch-sub">${escapeHtml(b.sub || '')}</span>
-                </a>
-              `).join('')}
-            </div>
+            ${batches.length > 0 ? `
+              <div class="atg-batches-list" style="margin-top: 10px;">
+                ${batches.map(b => {
+                  const bUrl = b.url || waDest || '#';
+                  return `
+                  <a href="${escapeHtml(bUrl)}" ${bUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="atg-batch-row">
+                    <span class="atg-batch-title">${escapeHtml(b.title || '')}</span>
+                    <span class="atg-batch-sub">${escapeHtml(b.sub || '')}</span>
+                  </a>
+                `;
+                }).join('')}
+              </div>
+            ` : ''}
           </section>
         ` : ''}
 
@@ -748,7 +853,9 @@
             <div class="atg-accent-bar"></div>
             <h2 class="atg-section-heading">${escapeHtml(freeGuidesTitle)}</h2>
             <div class="atg-guides-list">
-              ${freeGuides.map(g => `
+              ${freeGuides.map(g => {
+                const gUrl = g.url || waDest || '#';
+                return `
                 <div class="atg-guide-card">
                   <div class="atg-guide-left">
                     <div class="atg-doc-icon" aria-hidden="true">
@@ -765,11 +872,12 @@
                       <div class="atg-guide-sub">${escapeHtml(g.sub || 'Free guide')}</div>
                     </div>
                   </div>
-                  <a href="${escapeHtml(g.url || waDest)}" target="_blank" rel="noopener noreferrer" class="atg-guide-btn">
+                  <a href="${escapeHtml(gUrl)}" ${gUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="atg-guide-btn">
                     <span>${escapeHtml(g.buttonText || 'Download')}</span>
                   </a>
                 </div>
-              `).join('')}
+              `;
+              }).join('')}
             </div>
           </section>
         ` : ''}
@@ -852,13 +960,22 @@
               ` : ''}
             </div>
 
-            <!-- Social Icon Row (4 square black buttons) -->
-            <div class="atg-social-icon-row">
-              ${instagram ? `<a href="${instaDest}" target="_blank" rel="noopener noreferrer" class="atg-social-square" aria-label="Instagram">${getLinkIconSvg('instagram', 18)}</a>` : ''}
-              ${whatsapp ? `<a href="${waDest}" target="_blank" rel="noopener noreferrer" class="atg-social-square" aria-label="WhatsApp">${getLinkIconSvg('whatsapp', 18)}</a>` : ''}
-              <a href="${escapeHtml(card.website || 'https://facebook.com')}" target="_blank" rel="noopener noreferrer" class="atg-social-square" aria-label="Facebook">${getLinkIconSvg('facebook', 18)}</a>
-              ${email ? `<a href="${emailDest}" class="atg-social-square" aria-label="Email">${getLinkIconSvg('email', 18)}</a>` : ''}
-            </div>
+            <!-- Social & Digital Presence Icon Row -->
+            ${(() => {
+              const allLinks = resolveCustomerLinks(card);
+              const iconLinks = allLinks.filter(l => ['website', 'instagram', 'facebook', 'linkedin', 'whatsapp', 'email', 'youtube', 'twitter', 'x'].includes(l.type) || l.isCustom);
+              if (iconLinks.length === 0) return '';
+              return `
+                <div class="atg-social-icon-row" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                  ${iconLinks.map(l => {
+                    const dest = formatLinkDestination(l.type, l.value);
+                    if (!dest) return '';
+                    const isExt = l.type !== 'phone' && l.type !== 'email';
+                    return `<a href="${dest}" ${isExt ? 'target="_blank" rel="noopener noreferrer"' : ''} class="atg-social-square" aria-label="${escapeHtml(l.label)}">${getLinkIconSvg(l.type, 18)}</a>`;
+                  }).join('')}
+                </div>
+              `;
+            })()}
 
             <!-- Bottom Action Pair: Share card + Share QR -->
             <div class="atg-bottom-actions">
@@ -885,17 +1002,18 @@
     const ind = (custom.industry && custom.industry.data && typeof custom.industry.data === 'object') ? custom.industry.data : {};
     const visibility = ind.sectionVisibility || {};
 
-    const overline = hasText(ind.overline) ? ind.overline.trim() : '— Family restaurant —';
-    const restaurantName = hasText(ind.restaurantName) ? ind.restaurantName.trim() : (hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : 'Spice Route');
-    const tagline = hasText(ind.tagline) ? ind.tagline.trim() : (hasText(card.description || card.bio) ? (card.description || card.bio).trim() : 'Slow-cooked Gujarati and North Indian food, made fresh every day.');
-    const phone = hasText(card.phone || card.mobile_number) ? (card.phone || card.mobile_number).trim() : '+91 98765 43210';
-    const whatsapp = hasText(card.whatsapp || card.whatsapp_number) ? (card.whatsapp || card.whatsapp_number).trim() : '919876543210';
-    const email = hasText(card.email) ? card.email.trim() : 'hello@spiceroute.com';
-    const instagram = hasText(card.socialInstagram || card.social_instagram) ? (card.socialInstagram || card.social_instagram).trim() : '@spiceroute';
+    const isSpiceDemo = (card.profileSlug || card.profile_slug) === 'spiceroute';
+    const overline = hasText(ind.overline) ? ind.overline.trim() : (isSpiceDemo ? '— Family restaurant —' : '');
+    const restaurantName = hasText(ind.restaurantName) ? ind.restaurantName.trim() : (hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : (isSpiceDemo ? 'Spice Route' : ''));
+    const tagline = hasText(ind.tagline) ? ind.tagline.trim() : (hasText(card.description || card.bio) ? (card.description || card.bio).trim() : (isSpiceDemo ? 'Slow-cooked Gujarati and North Indian food, made fresh every day.' : ''));
+    const phone = hasText(card.phone || card.mobile_number) ? (card.phone || card.mobile_number).trim() : (isSpiceDemo ? '+91 98765 43210' : '');
+    const whatsapp = hasText(card.whatsapp || card.whatsapp_number) ? (card.whatsapp || card.whatsapp_number).trim() : (isSpiceDemo ? '919876543210' : '');
+    const email = hasText(card.email) ? card.email.trim() : (isSpiceDemo ? 'hello@spiceroute.com' : '');
+    const instagram = hasText(card.socialInstagram || card.social_instagram) ? (card.socialInstagram || card.social_instagram).trim() : (isSpiceDemo ? '@spiceroute' : '');
 
     const phoneDest = phone ? `tel:${cleanPhone(phone)}` : '';
-    const waDigits = whatsapp ? cleanDigits(whatsapp) : '919876543210';
-    const waDest = `https://wa.me/${waDigits}`;
+    const waDigits = whatsapp ? cleanDigits(whatsapp) : (isSpiceDemo ? '919876543210' : '');
+    const waDest = waDigits ? `https://wa.me/${waDigits}` : '';
     const emailDest = email ? `mailto:${email}` : '';
     const instaDest = instagram ? (instagram.startsWith('http') ? instagram : `https://instagram.com/${instagram.replace(/^@/, '')}`) : '';
 
@@ -903,21 +1021,21 @@
     const badges = (Array.isArray(ind.badges) && ind.badges.length > 0) ? ind.badges : ['Open till 11 pm', '★ 4.5', 'Family seating'];
 
     // Quick Action Buttons
-    const defaultActions = [
+    const defaultActions = isSpiceDemo ? [
       { label: 'View menu', type: 'menu', url: '#menu' },
       { label: 'Book a table', type: 'book', url: `https://wa.me/${waDigits}?text=I%20would%20like%20to%20book%20a%20table%20at%20Spice%20Route` },
       { label: 'Order on WhatsApp', type: 'whatsapp', url: `https://wa.me/${waDigits}?text=Hi%2C%20I%20want%20to%20place%20a%20food%20order` },
       { label: 'Directions', type: 'directions', url: `https://maps.google.com/?q=Spice+Route+Restaurant` }
-    ];
+    ] : [];
     const quickActions = (Array.isArray(ind.quickActions) && ind.quickActions.length > 0) ? ind.quickActions : defaultActions;
 
     // Chef's signatures
-    const defaultMenu = [
+    const defaultMenu = isSpiceDemo ? [
       { name: 'Paneer Lababdar', desc: 'Creamy tomato gravy, house butter', price: '₹320', isVeg: true },
       { name: 'Dal Tadka Special', desc: 'Smoked and finished with ghee', price: '₹220', isVeg: true },
       { name: 'Chicken Dum Biryani', desc: 'Slow-cooked, served with raita', price: '₹360', isVeg: false },
       { name: 'Kesar Phirni', desc: 'Saffron, set in clay', price: '₹140', isVeg: true }
-    ];
+    ] : [];
     const menuTitle = ind.menuTitle || "Chef's signatures";
     const menuItems = (Array.isArray(ind.menuItems) && ind.menuItems.length > 0) ? ind.menuItems : defaultMenu;
 
@@ -1109,15 +1227,21 @@
               <span>Save contact</span>
             </button>
 
-            <!-- Social Icon Row (4 square white buttons with dark border) -->
-            <div class="spice-social-icon-row">
-              <a href="${escapeHtml(card.socialLinkedIn || 'https://linkedin.com')}" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="LinkedIn">
-                <span style="font-weight:700;font-size:14px;font-family:sans-serif;">in</span>
-              </a>
-              ${instagram ? `<a href="${instaDest}" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="Instagram">${getLinkIconSvg('instagram', 18)}</a>` : ''}
-              <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="X">${getLinkIconSvg('twitter', 17)}</a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="YouTube">${getLinkIconSvg('youtube', 18)}</a>
-            </div>
+            <!-- Social & Digital Presence Icon Row -->
+            ${(() => {
+              const allLinks = resolveCustomerLinks(card);
+              const iconLinks = allLinks.filter(l => ['website', 'instagram', 'facebook', 'linkedin', 'youtube', 'twitter', 'x'].includes(l.type) || l.isCustom);
+              if (iconLinks.length === 0) return '';
+              return `
+                <div class="spice-social-icon-row" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                  ${iconLinks.map(l => {
+                    const dest = formatLinkDestination(l.type, l.value);
+                    if (!dest) return '';
+                    return `<a href="${dest}" target="_blank" rel="noopener noreferrer" class="spice-social-square" aria-label="${escapeHtml(l.label)}">${getLinkIconSvg(l.type, 18)}</a>`;
+                  }).join('')}
+                </div>
+              `;
+            })()}
 
             <!-- Bottom Action Pair: Share card + Share QR -->
             <div class="spice-bottom-actions">
@@ -1216,65 +1340,33 @@
       `;
     }
 
-    // 6. Get in touch Section (only if valid contact rows exist)
+    // 6. Get in touch Section (using unified resolved links)
+    const links = resolveCustomerLinks(card);
+    const contactLinks = links.filter(l => !SOCIAL_TYPES.has(l.type));
+    const socialLinks = links.filter(l => SOCIAL_TYPES.has(l.type));
+
     const contactRows = [];
+    contactLinks.forEach(l => {
+      const dest = formatLinkDestination(l.type, l.value);
+      if (!dest) return;
+      const label = escapeHtml(l.label);
+      const display = escapeHtml(getDisplayValue(l.type, l.value, l.label));
+      const isExt = l.type !== 'phone' && l.type !== 'email';
 
-    if (email) {
+      let actionWord = 'Open';
+      if (l.type === 'phone') actionWord = 'Call';
+      else if (l.type === 'whatsapp') actionWord = 'Chat';
+      else if (l.type === 'email') actionWord = 'Write';
+      else if (l.type === 'website') actionWord = 'Visit';
+      else if (l.type === 'maps' || l.type === 'directions') actionWord = 'Navigate';
+
       contactRows.push(`
-        <a class="row" href="mailto:${escapeHtml(email)}">
-          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-          <span><small>Email</small>${escapeHtml(email)}</span><span class="go">Write</span>
+        <a class="row" href="${dest}" ${isExt ? 'target="_blank" rel="noopener noreferrer"' : ''}>
+          ${getLinkIconSvg(l.type, 18)}
+          <span><small>${label}</small>${display}</span><span class="go">${actionWord}</span>
         </a>
       `);
-    }
-
-    if (phone) {
-      contactRows.push(`
-        <a class="row" href="tel:${cleanPhone(phone)}">
-          <svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
-          <span><small>Call</small>${escapeHtml(phone)}</span><span class="go">Call</span>
-        </a>
-      `);
-    }
-
-    if (whatsapp) {
-      contactRows.push(`
-        <a class="row" href="https://wa.me/${cleanDigits(whatsapp)}" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/></svg>
-          <span><small>WhatsApp</small>Chat on WhatsApp</span><span class="go">Chat</span>
-        </a>
-      `);
-    }
-
-    if (website) {
-      const webDest = formatLinkDestination('website', website);
-      if (webDest) {
-        contactRows.push(`
-          <a class="row" href="${webDest}" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
-            <span><small>Website</small>${escapeHtml(cleanDisplayUrl(website))}</span><span class="go">Visit</span>
-          </a>
-        `);
-      }
-    }
-
-    if (Array.isArray(custom.links)) {
-      custom.links.forEach(l => {
-        if (!l || l.enabled === false || !hasText(l.value)) return;
-        const type = (l.type || '').toLowerCase();
-        if (['email', 'phone', 'whatsapp', 'website', 'instagram', 'linkedin', 'twitter', 'youtube', 'facebook', 'github'].includes(type)) return;
-        const dest = formatLinkDestination(type, l.value);
-        if (!dest) return;
-        const label = hasText(l.label) ? l.label.trim() : 'Link';
-        const display = getDisplayValue(type, l.value, label);
-        contactRows.push(`
-          <a class="row" href="${dest}" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
-            <span><small>${escapeHtml(label)}</small>${escapeHtml(display)}</span><span class="go">Open</span>
-          </a>
-        `);
-      });
-    }
+    });
 
     if (contactRows.length > 0) {
       html += `
@@ -1348,67 +1440,15 @@
 
     // 10. Social Links (only if valid social links exist)
     const socialItems = [];
-
-    const addSocial = (dest, label, svgPath) => {
+    socialLinks.forEach(l => {
+      const dest = formatLinkDestination(l.type, l.value);
       if (!dest) return;
       socialItems.push(`
-        <a href="${dest}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(label)}">
-          <svg viewBox="0 0 24 24"><path d="${svgPath}"/></svg>
+        <a href="${dest}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(l.label)}">
+          ${getLinkIconSvg(l.type, 18)}
         </a>
       `);
-    };
-
-    const linkedinVal = card.socialLinkedIn || card.social_linkedin;
-    if (hasText(linkedinVal)) {
-      addSocial(
-        formatLinkDestination('linkedin', linkedinVal),
-        'LinkedIn',
-        'M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4v11H3zM9.5 9.5h3.8v1.6c.6-1 1.9-1.9 3.8-1.9 3.6 0 4.4 2.300 4.400 5.400v5.900h-4v-5.300c0-1.300 0-2.900-1.800-2.900s-2.200 1.400-2.200 2.800v5.400h-4z'
-      );
-    }
-
-    const instagramVal = card.socialInstagram || card.social_instagram;
-    if (hasText(instagramVal)) {
-      addSocial(
-        formatLinkDestination('instagram', instagramVal),
-        'Instagram',
-        'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm5 3.500a4.500 4.500 0 1 1 0 9 4.500 4.500 0 0 1 0-9zm0 2a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5zm5.200-3.200a1.100 1.100 0 1 1 0 2.200 1.100 1.100 0 0 1 0-2.200z'
-      );
-    }
-
-    const twitterVal = card.socialTwitter || card.social_twitter || card.socialX || card.social_x;
-    if (hasText(twitterVal)) {
-      addSocial(
-        formatLinkDestination('twitter', twitterVal),
-        'X',
-        'M17.800 3h3.200l-7 8 8.200 10.500h-6.400l-5-6.500-5.700 6.500H1.900l7.500-8.600L1.500 3h6.600l4.500 5.900zm-1.100 16.600h1.800L7 4.800H5.100z'
-      );
-    }
-
-    const youtubeVal = card.socialYoutube || card.social_youtube;
-    if (hasText(youtubeVal)) {
-      addSocial(
-        formatLinkDestination('youtube', youtubeVal),
-        'YouTube',
-        'M22 8.200a3 3 0 0 0-2.100-2.100C18 5.600 12 5.600 12 5.600s-6 0-7.900.5A3 3 0 0 0 2 8.200C1.500 10.100 1.500 12 1.500 12s0 1.900.5 3.800a3 3 0 0 0 2.100 2.100c1.900.5 7.900.5 7.900.5s6 0 7.900-.5a3 3 0 0 0 2.100-2.100c.5-1.900.5-3.800.5-3.800s0-1.900-.5-3.800zM10 15V9l5.200 3z'
-      );
-    }
-
-    if (Array.isArray(custom.links)) {
-      custom.links.forEach(l => {
-        if (!l || l.enabled === false || !hasText(l.value)) return;
-        const type = (l.type || '').toLowerCase();
-        if (type === 'linkedin' && !linkedinVal) {
-          addSocial(formatLinkDestination('linkedin', l.value), 'LinkedIn', 'M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4v11H3zM9.5 9.5h3.8v1.6c.6-1 1.9-1.9 3.8-1.9 3.6 0 4.4 2.300 4.400 5.400v5.900h-4v-5.300c0-1.300 0-2.900-1.800-2.900s-2.200 1.400-2.200 2.800v5.400h-4z');
-        } else if (type === 'instagram' && !instagramVal) {
-          addSocial(formatLinkDestination('instagram', l.value), 'Instagram', 'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm5 3.500a4.500 4.500 0 1 1 0 9 4.500 4.500 0 0 1 0-9zm0 2a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5zm5.200-3.200a1.100 1.100 0 1 1 0 2.200 1.100 1.100 0 0 1 0-2.200z');
-        } else if ((type === 'twitter' || type === 'x') && !twitterVal) {
-          addSocial(formatLinkDestination('twitter', l.value), 'X', 'M17.800 3h3.200l-7 8 8.200 10.500h-6.400l-5-6.500-5.700 6.500H1.900l7.500-8.600L1.500 3h6.600l4.500 5.900zm-1.100 16.600h1.800L7 4.800H5.100z');
-        } else if (type === 'youtube' && !youtubeVal) {
-          addSocial(formatLinkDestination('youtube', l.value), 'YouTube', 'M22 8.200a3 3 0 0 0-2.100-2.100C18 5.600 12 5.600 12 5.600s-6 0-7.900.5A3 3 0 0 0 2 8.200C1.500 10.100 1.500 12 1.500 12s0 1.900.5 3.800a3 3 0 0 0 2.100 2.100c1.900.5 7.900.5 7.900.5s6 0 7.900-.5a3 3 0 0 0 2.100-2.100c.5-1.900.5-3.800.5-3.800s0-1.900-.5-3.800zM10 15V9l5.200 3z');
-        }
-      });
-    }
+    });
 
     if (socialItems.length > 0) {
       html += `

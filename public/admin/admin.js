@@ -183,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const formMainSub = document.getElementById('formMainSub');
   const formBreadcrumbCurrent = document.getElementById('formBreadcrumbCurrent');
   const saveCustomerBtn = document.getElementById('saveCustomerBtn');
+  const saveCustomerBtnText = document.getElementById('saveCustomerBtnText');
   const cancelBtn = document.getElementById('cancelAddCustomer');
   const custFullName = document.getElementById('custFullName');
   const custDesignation = document.getElementById('custDesignation');
@@ -190,14 +191,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const custDescription = document.getElementById('custDescription');
   const custPhone = document.getElementById('custPhone');
   const custWhatsApp = document.getElementById('custWhatsApp');
+  const custSameWhatsApp = document.getElementById('custSameWhatsApp');
+  const custWhatsAppGroup = document.getElementById('custWhatsAppGroup');
   const custEmail = document.getElementById('custEmail');
   const custWebsite = document.getElementById('custWebsite');
   const custAddress = document.getElementById('custAddress');
   const custInstagram = document.getElementById('custInstagram');
   const custLinkedIn = document.getElementById('custLinkedIn');
+  const custFacebook = document.getElementById('custFacebook');
+  const custProfileSlug = document.getElementById('custProfileSlug');
+  const slugValidationBadge = document.getElementById('slugValidationBadge');
+  const custDesignSelect = document.getElementById('custDesignSelect');
+  const designSpecificBadge = document.getElementById('designSpecificBadge');
   const custProfileLink = document.getElementById('custProfileLink');
   const avatarUploadCircle = document.getElementById('avatarUploadCircle');
+  const btnRemovePhoto = document.getElementById('btnRemovePhoto');
   const cardSelectOptions = document.querySelectorAll('.card-select-option');
+
+  let isSlugManuallyEdited = false;
+
+  function slugify(text) {
+    return String(text || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
 
   // Card Customization & Dynamic Link Manager Elements
   const custPrimaryColor = document.getElementById('custPrimaryColor');
@@ -1063,34 +1081,68 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Update Header Title, Breadcrumbs & Button Text
     if (pageTitle) pageTitle.textContent = 'Edit Customer';
     if (formBreadcrumbCurrent) formBreadcrumbCurrent.textContent = 'Edit customer';
-    if (formMainTitle) formMainTitle.textContent = `Edit Profile: ${customer.name}`;
-    if (formMainSub) formMainSub.textContent = `Updating existing record (ID: ${customer.id}) in place.`;
+    if (formMainTitle) formMainTitle.textContent = `Edit Customer: ${customer.name}`;
+    if (formMainSub) formMainSub.textContent = `Updating customer profile in place.`;
 
-    if (saveCustomerBtn) {
+    if (saveCustomerBtnText) {
+      saveCustomerBtnText.textContent = 'Update Customer';
+    } else if (saveCustomerBtn) {
       saveCustomerBtn.innerHTML = `<span>Update Customer</span>`;
     }
 
-    // 3. Pre-fill all form fields with existing information
-    if (custFullName) custFullName.value = customer.name;
-    if (custDesignation) custDesignation.value = customer.role;
-    if (custCompany) custCompany.value = customer.company;
-    if (custDescription) custDescription.value = customer.description;
-    if (custPhone) custPhone.value = customer.phone;
-    if (custWhatsApp) custWhatsApp.value = customer.whatsapp;
-    if (custEmail) custEmail.value = customer.email;
-    if (custWebsite) custWebsite.value = customer.website;
-    if (custAddress) custAddress.value = customer.address;
-    if (custInstagram) custInstagram.value = customer.socialInstagram;
-    if (custLinkedIn) custLinkedIn.value = customer.socialLinkedIn;
+    // 3. Pre-fill basic information
+    if (custFullName) custFullName.value = customer.name || '';
+    if (custDesignation) custDesignation.value = customer.role || '';
+    if (custCompany) custCompany.value = customer.company || '';
+    if (custDescription) custDescription.value = customer.description || '';
 
-    // 4. Set Digital Card Selection
-    selectedDesign = customer.design;
+    // 4. Pre-fill Contact Details (Smart WhatsApp)
+    const phoneVal = (customer.phone || '').trim();
+    const waVal = (customer.whatsapp || '').trim();
+    if (custPhone) custPhone.value = phoneVal;
+
+    if (waVal && waVal !== phoneVal) {
+      if (custSameWhatsApp) custSameWhatsApp.checked = false;
+      if (custWhatsAppGroup) custWhatsAppGroup.style.display = 'block';
+      if (custWhatsApp) custWhatsApp.value = waVal;
+    } else {
+      if (custSameWhatsApp) custSameWhatsApp.checked = true;
+      if (custWhatsAppGroup) custWhatsAppGroup.style.display = 'none';
+      if (custWhatsApp) custWhatsApp.value = phoneVal || waVal;
+    }
+
+    if (custEmail) custEmail.value = customer.email || '';
+    if (custWebsite) custWebsite.value = customer.website || '';
+    if (custAddress) custAddress.value = customer.address || '';
+
+    // 5. Digital Presence
+    if (custInstagram) custInstagram.value = customer.socialInstagram || '';
+    if (custLinkedIn) custLinkedIn.value = customer.socialLinkedIn || '';
+
+    const customSettings = customer.customSettings || {};
+    const rawLinks = Array.isArray(customSettings.links) ? customSettings.links : [];
+    const fbLink = rawLinks.find(l => l && (l.type === 'facebook' || (l.label && l.label.toLowerCase() === 'facebook')));
+    if (custFacebook) {
+      custFacebook.value = fbLink ? fbLink.value : '';
+    }
+
+    // 6. Profile URL Slug
+    if (custProfileSlug) {
+      custProfileSlug.value = customer.profileSlug || slugify(customer.name);
+    }
+    isSlugManuallyEdited = true;
+
+    // 7. Design Selection Dropdown
+    selectedDesign = customer.design || 'Mint Haven';
+    if (custDesignSelect) {
+      custDesignSelect.value = customer.design;
+    }
     setDesignSelection(customer.design);
 
-    // 5. Client Delivery section update (URL, QR, Actions)
+    // 8. Client Delivery section update (URL, QR, Actions)
     updateClientDelivery(customer.profileSlug, customer.name, customer.company);
 
-    // Update design template inspection link to preview this customer directly
+    // Update inspect links if customer exists
     const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
     const previewChosenDesignText = document.getElementById('previewChosenDesignText');
     if (btnPreviewChosenDesign) {
@@ -1100,19 +1152,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 6. Avatar Preview
+    // 9. Photo Avatar Preview & Remove Action
     if (avatarUploadCircle) {
       if (customer.avatarUrl) {
         currentUploadedAvatar = customer.avatarUrl;
-        avatarUploadCircle.innerHTML = `<img src="${escapeHtml(customer.avatarUrl)}" style="width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box;background:#ffffff;border-radius:50%;" alt="Customer Avatar">`;
+        avatarUploadCircle.innerHTML = `<img src="${escapeHtml(customer.avatarUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Customer Avatar">`;
+        if (btnRemovePhoto) btnRemovePhoto.style.display = 'inline-flex';
       } else {
         currentUploadedAvatar = null;
-        avatarUploadCircle.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #92400e;">${customer.initials}</span>`;
+        avatarUploadCircle.innerHTML = `<span style="font-size: 20px; font-weight: 700; color: #92400e;">${escapeHtml(customer.initials)}</span>`;
+        if (btnRemovePhoto) btnRemovePhoto.style.display = 'none';
       }
     }
 
-    // 7. Card Customization: Appearance & Links
-    const customSettings = customer.customSettings || {};
+    // 10. Secondary Appearance & Custom Links
     const registry = window.CARD_DESIGN_REGISTRY;
     const resolvedD = registry ? registry.resolveCardDesign(customer.design) : null;
     const defaultPrimary = resolvedD?.theme?.primaryColor || '#10b981';
@@ -1137,7 +1190,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (custTextColorPicker) custTextColorPicker.value = app.textColor || defaultText;
     if (custFontFamily) custFontFamily.value = app.fontFamily || '';
 
-    currentCustomLinks = Array.isArray(customSettings.links) ? JSON.parse(JSON.stringify(customSettings.links)) : [];
+    // Filter out identical duplicates of core contacts while preserving distinct custom links
+    const dedicatedKeys = new Set();
+    const normalizeAdminLinkKey = (t, u) => {
+      if (!u) return '';
+      let c = String(u).trim().toLowerCase().replace(/^https?:\/\//i, '').replace(/^mailto:/i, '').replace(/^tel:/i, '').replace(/^www\./i, '').replace(/\/+$/, '');
+      return `${(t || '').toLowerCase()}:${c}`;
+    };
+    if (customer.phone) dedicatedKeys.add(normalizeAdminLinkKey('phone', customer.phone));
+    if (customer.whatsapp) dedicatedKeys.add(normalizeAdminLinkKey('whatsapp', customer.whatsapp));
+    if (customer.email) dedicatedKeys.add(normalizeAdminLinkKey('email', customer.email));
+    if (customer.website) dedicatedKeys.add(normalizeAdminLinkKey('website', customer.website));
+    if (customer.socialInstagram) dedicatedKeys.add(normalizeAdminLinkKey('instagram', customer.socialInstagram));
+    if (customer.socialLinkedIn) dedicatedKeys.add(normalizeAdminLinkKey('linkedin', customer.socialLinkedIn));
+    if (fbLink && fbLink.value) dedicatedKeys.add(normalizeAdminLinkKey('facebook', fbLink.value));
+
+    let fbExtracted = false;
+    currentCustomLinks = rawLinks.filter(l => {
+      if (!l || !l.value) return false;
+      const t = (l.type || 'custom').toLowerCase();
+      if (t === 'facebook' && !fbExtracted && fbLink && l.value === fbLink.value) {
+        fbExtracted = true;
+        return false;
+      }
+      const k = normalizeAdminLinkKey(t, l.value);
+      if (k && dedicatedKeys.has(k)) return false;
+      return true;
+    });
     if (typeof renderCustomLinks === 'function') renderCustomLinks();
     if (typeof updateAvatarSyncPreview === 'function') updateAvatarSyncPreview(customer.avatarUrl, customer.initials);
 
@@ -1147,101 +1226,35 @@ document.addEventListener('DOMContentLoaded', () => {
     currentBackImageUrl = cardImages.backUrl || '';
     if (typeof updateCardImagePreviews === 'function') updateCardImagePreviews();
 
-    // Dynamic Design-Specific Editor & Live Preview Initialization
+    // 11. Dynamic Design-Specific Editor & Live Preview Initialization
     if (window.DYNAMIC_CARD_EDITOR && typeof window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor === 'function') {
       window.DYNAMIC_CARD_EDITOR.renderDesignSpecificEditor(customer.designId || customer.design, customer);
       window.DYNAMIC_CARD_EDITOR.triggerLivePreviewUpdate();
     }
 
-    // 8. Raftcon Luxury project customization
-    const isRaftcon = customer.design === 'Raftcon Luxury' || 
-                      customer.designId === 'raftcon-luxury' || 
-                      (customer.customSettings?.industry?.type === 'raftcon-construction');
-    const raftconCard = document.getElementById('raftconProjectCard');
-    if (raftconCard) {
-      if (isRaftcon) {
-        raftconCard.style.display = 'block';
-        if (typeof populateRaftconForm === 'function') {
-          populateRaftconForm(customer);
-        }
-      } else {
-        raftconCard.style.display = 'none';
-      }
-    }
-
-    // 8b. ATG Study Abroad customization
-    const isAtg = customer.design === 'ATG Study Abroad' || 
-                  customer.designId === 'atg-study-abroad' || 
-                  (customer.customSettings?.industry?.type === 'study-abroad');
-    const atgCard = document.getElementById('atgStudyAbroadCard');
-    if (atgCard) {
-      if (isAtg) {
-        atgCard.style.display = 'block';
-        if (typeof populateAtgForm === 'function') {
-          populateAtgForm(customer);
-        }
-      } else {
-        atgCard.style.display = 'none';
-      }
-    }
-
-    // 8c. Spice Route Restaurant customization
-    const isSpice = customer.design === 'Spice Route' || 
-                    customer.designId === 'spice-route' || 
-                    (customer.customSettings?.industry?.type === 'restaurant');
-    const spiceCard = document.getElementById('spiceRouteCard');
-    if (spiceCard) {
-      if (isSpice) {
-        spiceCard.style.display = 'block';
-        if (typeof populateSpiceRouteForm === 'function') {
-          populateSpiceRouteForm(customer);
-        }
-      } else {
-        spiceCard.style.display = 'none';
-      }
-    }
-
-    // 9. Open the Form Tab
+    // 12. Open the Form Tab
     navigateToTab('add-customer');
-    showAdminToast(`Editing ${customer.name} (Existing Record)`);
+    showAdminToast(`Editing ${customer.name}`);
   }
 
   function resetAddCustomerForm() {
     currentEditingCustomerId = null;
+    isSlugManuallyEdited = false;
 
     if (pageTitle && document.getElementById('tab-add-customer').classList.contains('active')) {
       pageTitle.textContent = 'Add Customer';
     }
     if (formBreadcrumbCurrent) formBreadcrumbCurrent.textContent = 'New customer';
-    if (formMainTitle) formMainTitle.textContent = 'Personal information';
-    if (formMainSub) formMainSub.textContent = 'Who the digital card belongs to.';
+    if (formMainTitle) formMainTitle.textContent = 'Add Customer';
+    if (formMainSub) formMainSub.textContent = 'Create a digital business card profile.';
 
-    if (saveCustomerBtn) {
-      saveCustomerBtn.innerHTML = `<span>Save Customer</span>`;
+    if (saveCustomerBtnText) {
+      saveCustomerBtnText.textContent = 'Create Customer';
+    } else if (saveCustomerBtn) {
+      saveCustomerBtn.innerHTML = `<span>Create Customer</span>`;
     }
 
-    // Reset Raftcon Luxury Customization
-    const raftconCard = document.getElementById('raftconProjectCard');
-    if (raftconCard) raftconCard.style.display = 'none';
-    if (typeof resetRaftconForm === 'function') {
-      resetRaftconForm();
-    }
-
-    // Reset ATG Study Abroad Customization
-    const atgCard = document.getElementById('atgStudyAbroadCard');
-    if (atgCard) atgCard.style.display = 'none';
-    if (typeof resetAtgForm === 'function') {
-      resetAtgForm();
-    }
-
-    // Reset Spice Route Restaurant Customization
-    const spiceCard = document.getElementById('spiceRouteCard');
-    if (spiceCard) spiceCard.style.display = 'none';
-    if (typeof resetSpiceRouteForm === 'function') {
-      resetSpiceRouteForm();
-    }
-
-    // Clear fields
+    // Clear form inputs
     if (addCustomerForm) addCustomerForm.reset();
     if (custFullName) custFullName.value = '';
     if (custDesignation) custDesignation.value = '';
@@ -1249,13 +1262,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (custDescription) custDescription.value = '';
     if (custPhone) custPhone.value = '';
     if (custWhatsApp) custWhatsApp.value = '';
+    if (custSameWhatsApp) custSameWhatsApp.checked = true;
+    if (custWhatsAppGroup) custWhatsAppGroup.style.display = 'none';
     if (custEmail) custEmail.value = '';
     if (custWebsite) custWebsite.value = '';
     if (custAddress) custAddress.value = '';
     if (custInstagram) custInstagram.value = '';
     if (custLinkedIn) custLinkedIn.value = '';
+    if (custFacebook) custFacebook.value = '';
+    if (custProfileSlug) custProfileSlug.value = '';
 
-    // Reset Customization
+    // Reset Appearance
     if (custPrimaryColor) {
       custPrimaryColor.value = '';
       custPrimaryColor.placeholder = '#10b981';
@@ -1288,12 +1305,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const photoFileInputEl = document.getElementById('photoFileInput');
     if (photoFileInputEl) photoFileInputEl.value = '';
+    if (btnRemovePhoto) btnRemovePhoto.style.display = 'none';
 
     // Default design
     selectedDesign = "Mint Haven";
+    if (custDesignSelect) {
+      custDesignSelect.value = "Mint Haven";
+    }
     setDesignSelection("Mint Haven");
 
-    updateClientDelivery('', '');
+    updateClientDelivery('', '', '');
 
     const btnPreviewChosenDesign = document.getElementById('btnPreviewChosenDesign');
     const previewChosenDesignText = document.getElementById('previewChosenDesignText');
@@ -1302,10 +1323,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (previewChosenDesignText) {
         previewChosenDesignText.textContent = 'Inspect Design Templates Live';
       }
-    }
-
-    if (avatarUploadCircle) {
-      avatarUploadCircle.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>`;
     }
   }
 
@@ -1429,14 +1446,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const resolved = registry ? registry.resolveCardDesign(designName) : { id: 'mint-haven', name: 'Mint Haven' };
     selectedDesign = resolved.name;
 
+    if (custDesignSelect && custDesignSelect.value !== resolved.name) {
+      custDesignSelect.value = resolved.name;
+    }
     if (selectedDesignDisplayBadge) {
       selectedDesignDisplayBadge.textContent = resolved.name;
     }
     if (selectedDesignInput) {
       selectedDesignInput.value = resolved.name;
     }
+    if (designSpecificBadge) {
+      designSpecificBadge.textContent = resolved.name;
+    }
 
-    // Update gallery cards in form
+    // Update gallery cards in form if gallery cards exist
     const galleryCards = document.querySelectorAll('.admin-design-card');
     galleryCards.forEach(card => {
       const cId = card.getAttribute('data-design-id');
@@ -1468,48 +1491,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (custTextColor && !custTextColor.value.trim() && custTextColorPicker) {
         custTextColorPicker.value = resolved.theme.textColor || '#1e293b';
         custTextColor.placeholder = resolved.theme.textColor || '#1e293b';
-      }
-    }
-
-    // Toggle Raftcon Construction Project Customization Card
-    const isRaftcon = (resolved.id === 'raftcon-luxury' || resolved.name === 'Raftcon Luxury');
-    const raftconCard = document.getElementById('raftconProjectCard');
-    if (raftconCard) {
-      if (isRaftcon) {
-        raftconCard.style.display = 'block';
-        if (typeof isRaftconInitialized === 'function' && !isRaftconInitialized()) {
-          populateRaftconForm(null);
-        }
-      } else {
-        raftconCard.style.display = 'none';
-      }
-    }
-
-    // Toggle ATG Study Abroad Customization Card
-    const isAtg = (resolved.id === 'atg-study-abroad' || resolved.name === 'ATG Study Abroad');
-    const atgCard = document.getElementById('atgStudyAbroadCard');
-    if (atgCard) {
-      if (isAtg) {
-        atgCard.style.display = 'block';
-        if (typeof isAtgInitialized === 'function' && !isAtgInitialized()) {
-          populateAtgForm(null);
-        }
-      } else {
-        atgCard.style.display = 'none';
-      }
-    }
-
-    // Toggle Spice Route Restaurant Customization Card
-    const isSpice = (resolved.id === 'spice-route' || resolved.name === 'Spice Route');
-    const spiceCard = document.getElementById('spiceRouteCard');
-    if (spiceCard) {
-      if (isSpice) {
-        spiceCard.style.display = 'block';
-        if (typeof isSpiceInitialized === 'function' && !isSpiceInitialized()) {
-          populateSpiceRouteForm(null);
-        }
-      } else {
-        spiceCard.style.display = 'none';
       }
     }
 
@@ -1843,18 +1824,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Profile link and Client Delivery live update on Full Name & Company typing
+  // Profile link and Client Delivery live update on Full Name, Company, and Slug typing
   function handleFormInputDeliveryUpdate() {
     const nameVal = custFullName ? custFullName.value.trim() : '';
     const compVal = custCompany ? custCompany.value.trim() : '';
+
     if (!currentEditingCustomerId) {
-      const slug = nameVal ? nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+      if (!isSlugManuallyEdited && custProfileSlug) {
+        custProfileSlug.value = slugify(nameVal);
+      }
+      const slug = custProfileSlug && custProfileSlug.value.trim()
+        ? slugify(custProfileSlug.value)
+        : slugify(nameVal);
       updateClientDelivery(slug, nameVal, compVal);
     } else {
       const existingCustomer = customers.find(c => String(c.id) === String(currentEditingCustomerId));
-      const slug = (existingCustomer && existingCustomer.profileSlug)
-        ? existingCustomer.profileSlug
-        : (nameVal ? nameVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '');
+      const slug = custProfileSlug && custProfileSlug.value.trim()
+        ? slugify(custProfileSlug.value)
+        : ((existingCustomer && existingCustomer.profileSlug) ? existingCustomer.profileSlug : slugify(nameVal));
       updateClientDelivery(slug, nameVal, compVal);
     }
   }
@@ -1865,6 +1852,66 @@ document.addEventListener('DOMContentLoaded', () => {
   if (custCompany) {
     custCompany.addEventListener('input', handleFormInputDeliveryUpdate);
   }
+  if (custProfileSlug) {
+    custProfileSlug.addEventListener('input', () => {
+      isSlugManuallyEdited = true;
+      const raw = custProfileSlug.value;
+      const sanitized = raw.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      if (raw !== sanitized) {
+        custProfileSlug.value = sanitized;
+      }
+      handleFormInputDeliveryUpdate();
+    });
+  }
+
+  if (custDesignSelect) {
+    custDesignSelect.addEventListener('change', () => {
+      setDesignSelection(custDesignSelect.value);
+    });
+  }
+
+  if (custSameWhatsApp) {
+    custSameWhatsApp.addEventListener('change', () => {
+      if (custSameWhatsApp.checked) {
+        if (custWhatsAppGroup) custWhatsAppGroup.style.display = 'none';
+        if (custWhatsApp && custPhone) custWhatsApp.value = custPhone.value.trim();
+      } else {
+        if (custWhatsAppGroup) custWhatsAppGroup.style.display = 'block';
+        if (custWhatsApp) custWhatsApp.focus();
+      }
+      triggerAdminLivePreview();
+    });
+  }
+
+  if (custPhone) {
+    custPhone.addEventListener('input', () => {
+      if (custSameWhatsApp && custSameWhatsApp.checked && custWhatsApp) {
+        custWhatsApp.value = custPhone.value.trim();
+      }
+      triggerAdminLivePreview();
+    });
+  }
+
+  if (btnRemovePhoto) {
+    btnRemovePhoto.addEventListener('click', (e) => {
+      e.preventDefault();
+      currentUploadedAvatar = null;
+      const photoFileInputEl = document.getElementById('photoFileInput');
+      if (photoFileInputEl) photoFileInputEl.value = '';
+      if (avatarUploadCircle) {
+        avatarUploadCircle.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>`;
+      }
+      btnRemovePhoto.style.display = 'none';
+      if (custAvatarSyncPreview) {
+        custAvatarSyncPreview.innerHTML = `<span style="font-size: 14px; font-weight: 700; color: #92400e;">AS</span>`;
+      }
+      if (custAvatarSyncStatus) {
+        custAvatarSyncStatus.textContent = 'No photo uploaded';
+      }
+      triggerAdminLivePreview();
+      showAdminToast('Profile photo removed');
+    });
+  }
 
   // Live Card Preview Synchronization Helper
   function triggerAdminLivePreview() {
@@ -1873,12 +1920,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Attach live preview updates to all core fields
+  // Attach live preview updates to all core form fields
   try {
     [
       custFullName, custDesignation, custCompany, custDescription,
       custPhone, custWhatsApp, custEmail, custWebsite, custAddress,
-      custInstagram, custLinkedIn, custPrimaryColor, custBgColor, custTextColor, custFontFamily
+      custInstagram, custLinkedIn, custFacebook,
+      custPrimaryColor, custBgColor, custTextColor, custFontFamily
     ].forEach(el => {
       if (el) {
         el.addEventListener('input', triggerAdminLivePreview);
@@ -1902,56 +1950,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (isSubmittingCustomer) return;
 
-      const name = custFullName.value.trim();
+      const name = custFullName ? custFullName.value.trim() : '';
       if (!name) {
         showAdminToast('Please enter customer full name.');
+        if (custFullName) custFullName.focus();
         return;
       }
 
-      const role = custDesignation.value.trim();
-      const company = custCompany.value.trim();
-      const description = custDescription.value.trim();
-      const phone = custPhone.value.trim();
-      const whatsapp = custWhatsApp.value.trim();
-      const email = custEmail.value.trim();
-      const website = custWebsite.value.trim();
-      const address = custAddress.value.trim();
-      const instagram = custInstagram.value.trim();
-      const linkedIn = custLinkedIn.value.trim();
+      const role = custDesignation ? custDesignation.value.trim() : '';
+      const company = custCompany ? custCompany.value.trim() : '';
+      const description = custDescription ? custDescription.value.trim() : '';
+      const phone = custPhone ? custPhone.value.trim() : '';
 
-      const existing = currentEditingCustomerId ? customers.find(c => String(c.id) === String(currentEditingCustomerId)) : null;
-      const slug = (existing && existing.profileSlug) ? existing.profileSlug : (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
+      // Smart WhatsApp handling
+      let whatsapp = '';
+      if (custSameWhatsApp && custSameWhatsApp.checked) {
+        whatsapp = phone;
+      } else {
+        whatsapp = custWhatsApp ? custWhatsApp.value.trim() : '';
+        if (!whatsapp && phone) whatsapp = phone;
+      }
 
-      const isRaftconDesign = (selectedDesign === 'Raftcon Luxury' || selectedDesign === 'raftcon-luxury') || 
-        (existing && (existing.design === 'Raftcon Luxury' || existing.designId === 'raftcon-luxury')) ||
-        (document.getElementById('raftconProjectCard') && document.getElementById('raftconProjectCard').style.display !== 'none');
+      const email = custEmail ? custEmail.value.trim() : '';
+      const website = custWebsite ? custWebsite.value.trim() : '';
+      const address = custAddress ? custAddress.value.trim() : '';
+      const instagram = custInstagram ? custInstagram.value.trim() : '';
+      const linkedIn = custLinkedIn ? custLinkedIn.value.trim() : '';
+      const facebook = custFacebook ? custFacebook.value.trim() : '';
 
-      const isAtgDesign = (selectedDesign === 'ATG Study Abroad' || selectedDesign === 'atg-study-abroad') || 
-        (existing && (existing.design === 'ATG Study Abroad' || existing.designId === 'atg-study-abroad')) ||
-        (document.getElementById('atgStudyAbroadCard') && document.getElementById('atgStudyAbroadCard').style.display !== 'none');
+      // Profile Slug resolution
+      let slug = custProfileSlug ? slugify(custProfileSlug.value) : '';
+      if (!slug) {
+        slug = slugify(name);
+      }
+      if (!slug) {
+        slug = 'customer-' + Date.now();
+      }
 
-      const isSpiceRouteDesign = (selectedDesign === 'Spice Route' || selectedDesign === 'spice-route') || 
-        (existing && (existing.design === 'Spice Route' || existing.designId === 'spice-route')) ||
-        (document.getElementById('spiceRouteCard') && document.getElementById('spiceRouteCard').style.display !== 'none');
+      // Design selection
+      const activeDesign = (custDesignSelect && custDesignSelect.value) ? custDesignSelect.value : selectedDesign;
+
+      // Compile custom links, avoiding duplicates of dedicated fields
+      const dedicatedKeys = new Set();
+      const normalizeAdminLinkKey = (t, u) => {
+        if (!u) return '';
+        let c = String(u).trim().toLowerCase().replace(/^https?:\/\//i, '').replace(/^mailto:/i, '').replace(/^tel:/i, '').replace(/^www\./i, '').replace(/\/+$/, '');
+        return `${(t || '').toLowerCase()}:${c}`;
+      };
+      if (phone) dedicatedKeys.add(normalizeAdminLinkKey('phone', phone));
+      if (whatsapp) dedicatedKeys.add(normalizeAdminLinkKey('whatsapp', whatsapp));
+      if (email) dedicatedKeys.add(normalizeAdminLinkKey('email', email));
+      if (website) dedicatedKeys.add(normalizeAdminLinkKey('website', website));
+      if (instagram) dedicatedKeys.add(normalizeAdminLinkKey('instagram', instagram));
+      if (linkedIn) dedicatedKeys.add(normalizeAdminLinkKey('linkedin', linkedIn));
+      if (facebook) dedicatedKeys.add(normalizeAdminLinkKey('facebook', facebook));
+
+      const compiledLinks = [];
+      if (facebook) {
+        compiledLinks.push({
+          id: 'link_facebook',
+          type: 'facebook',
+          label: 'Facebook',
+          value: facebook,
+          enabled: true,
+          order: 0
+        });
+      }
+
+      if (Array.isArray(currentCustomLinks)) {
+        currentCustomLinks.forEach((item, idx) => {
+          if (item && item.value && item.value.trim()) {
+            const t = (item.type || 'custom').toLowerCase();
+            const k = normalizeAdminLinkKey(t, item.value);
+            if (k && dedicatedKeys.has(k)) return; // avoid duplicate of dedicated field
+            compiledLinks.push({
+              id: item.id || `link_${Date.now()}_${idx}`,
+              type: item.type,
+              label: item.label,
+              value: item.value,
+              enabled: item.enabled !== false,
+              order: compiledLinks.length,
+            });
+          }
+        });
+      }
 
       let industryPayload = null;
       if (window.DYNAMIC_CARD_EDITOR && typeof window.DYNAMIC_CARD_EDITOR.collectDesignSpecificData === 'function') {
         const dynData = window.DYNAMIC_CARD_EDITOR.collectDesignSpecificData();
         const registry = window.CARD_DESIGN_REGISTRY;
-        const resolved = registry ? registry.resolveCardDesign(selectedDesign) : { id: 'mint-haven', name: 'Mint Haven' };
-        const indType = resolved.industryModule || (existing && existing.customSettings && existing.customSettings.industry && existing.customSettings.industry.type) || 'general';
+        const resolved = registry ? registry.resolveCardDesign(activeDesign) : { id: 'mint-haven', name: 'Mint Haven' };
+        const indType = resolved.industryModule || 'general';
         industryPayload = {
           type: indType,
           data: dynData
         };
-      } else if (isRaftconDesign && typeof collectRaftconIndustryData === 'function') {
-        industryPayload = collectRaftconIndustryData();
-      } else if (isAtgDesign && typeof collectAtgIndustryData === 'function') {
-        industryPayload = collectAtgIndustryData();
-      } else if (isSpiceRouteDesign && typeof collectSpiceRouteIndustryData === 'function') {
-        industryPayload = collectSpiceRouteIndustryData();
-      } else if (existing && existing.customSettings && existing.customSettings.industry) {
-        industryPayload = existing.customSettings.industry;
       }
 
       const payload = {
@@ -1966,7 +2059,7 @@ document.addEventListener('DOMContentLoaded', () => {
         address,
         socialInstagram: instagram,
         socialLinkedIn: linkedIn,
-        design: selectedDesign,
+        design: activeDesign,
         profileLink: generateCustomerProfileUrl(slug, company),
         profileSlug: slug,
         avatar_url: currentUploadedAvatar,
@@ -1978,16 +2071,7 @@ document.addEventListener('DOMContentLoaded', () => {
             textColor: custTextColor ? custTextColor.value.trim() : '',
             fontFamily: custFontFamily ? custFontFamily.value : '',
           },
-          links: Array.isArray(currentCustomLinks)
-            ? currentCustomLinks.map((item, idx) => ({
-                id: item.id || `link_${Date.now()}_${idx}`,
-                type: item.type,
-                label: item.label,
-                value: item.value,
-                enabled: item.enabled !== false,
-                order: idx,
-              }))
-            : [],
+          links: compiledLinks,
           cardImages: {
             frontUrl: currentFrontImageUrl || '',
             backUrl: currentBackImageUrl || '',
@@ -1998,7 +2082,9 @@ document.addEventListener('DOMContentLoaded', () => {
       isSubmittingCustomer = true;
       if (saveCustomerBtn) {
         saveCustomerBtn.disabled = true;
-        saveCustomerBtn.innerHTML = `<span>${currentEditingCustomerId ? 'Updating...' : 'Saving...'}</span>`;
+      }
+      if (saveCustomerBtnText) {
+        saveCustomerBtnText.textContent = currentEditingCustomerId ? 'Updating...' : 'Saving...';
       }
 
       try {
@@ -2052,7 +2138,9 @@ document.addEventListener('DOMContentLoaded', () => {
         isSubmittingCustomer = false;
         if (saveCustomerBtn) {
           saveCustomerBtn.disabled = false;
-          saveCustomerBtn.innerHTML = `<span>${currentEditingCustomerId ? 'Update Customer' : 'Save Customer'}</span>`;
+        }
+        if (saveCustomerBtnText) {
+          saveCustomerBtnText.textContent = currentEditingCustomerId ? 'Update Customer' : 'Create Customer';
         }
       }
     });
@@ -2087,14 +2175,18 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = function(evt) {
           currentUploadedAvatar = evt.target.result;
           if (avatarUploadCircle) {
-            avatarUploadCircle.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box;background:#ffffff;border-radius:50%;" alt="Uploaded Avatar">`;
+            avatarUploadCircle.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Uploaded Avatar">`;
+          }
+          if (btnRemovePhoto) {
+            btnRemovePhoto.style.display = 'inline-flex';
           }
           if (custAvatarSyncPreview) {
-            custAvatarSyncPreview.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:contain;padding:4px;box-sizing:border-box;background:#ffffff;border-radius:50%;" alt="Uploaded Avatar">`;
+            custAvatarSyncPreview.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Uploaded Avatar">`;
           }
           if (custAvatarSyncStatus) {
             custAvatarSyncStatus.textContent = 'New Photo Ready to Save';
           }
+          triggerAdminLivePreview();
           showAdminToast('Profile photo ready to save');
         };
         reader.readAsDataURL(file);

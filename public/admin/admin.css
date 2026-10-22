@@ -3100,3 +3100,235 @@ input:checked + .switch-slider::before {
   display: block;
 }
 
+/* ==========================================================================
+   Simplified Add & Edit Customer Form Styling
+   ========================================================================== */
+
+/* Clean Required & Optional Labels */
+.required-indicator {
+  color: #ef4444;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.optional-tag {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+
+/* Slug Input Control with Domain Prefix */
+.slug-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--border-light, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  background: #ffffff;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.slug-input-wrapper:focus-within {
+  border-color: var(--gold, #d97706);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+}
+
+.slug-prefix {
+  background: #f8fafc;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  border-right: 1px solid var(--border-light, #e2e8f0);
+  user-select: none;
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+}
+
+.slug-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-headline, #0f172a);
+  background: transparent;
+  font-family: var(--font-mono, monospace);
+  min-width: 0;
+}
+
+.slug-input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* Dropdown Select Controls */
+.design-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.form-select {
+  width: 100%;
+  padding: 11px 14px;
+  padding-right: 38px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-headline, #0f172a);
+  background: #ffffff;
+  border: 1.5px solid var(--border-light, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.form-select:focus {
+  border-color: var(--gold, #d97706);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+}
+
+.form-select optgroup {
+  font-weight: 700;
+  color: #475569;
+  font-size: 12px;
+  background: #f8fafc;
+}
+
+.form-select option {
+  font-weight: 500;
+  color: #0f172a;
+  font-size: 13.5px;
+  background: #ffffff;
+  padding: 8px 6px;
+}
+
+/* Smart WhatsApp Toggle Label */
+.custom-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-body, #334155);
+}
+
+.custom-checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #0f172a;
+  cursor: pointer;
+  margin: 0;
+}
+
+.custom-checkbox-text {
+  line-height: 1.3;
+}
+
+/* Secondary Advanced Styling Accordions */
+.form-accordion {
+  margin-bottom: 16px;
+  border: 1px solid var(--border-light, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  background: #ffffff;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.form-accordion[open] {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.accordion-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #ffffff;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-summary:hover {
+  background: #f8fafc;
+}
+
+.accordion-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.accordion-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-headline, #0f172a);
+}
+
+.accordion-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.accordion-chevron {
+  color: #64748b;
+  transition: transform 0.2s ease;
+  display: inline-flex;
+}
+
+.form-accordion[open] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  padding: 16px 18px 20px;
+  border-top: 1px solid var(--border-subtle, #f1f5f9);
+}
+
+/* Sticky Live Preview on Desktop for Instant Feedback */
+@media (min-width: 1024px) {
+  #adminLivePreviewCard {
+    position: sticky;
+    top: 84px;
+    z-index: 10;
+  }
+}
+
+/* Responsive Mobile Refinements */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+  .slug-input-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .slug-prefix {
+    border-right: none;
+    border-bottom: 1px solid var(--border-light, #e2e8f0);
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}

@@ -697,22 +697,33 @@
 
     // 3. Populate or create the Dynamic Design-Specific Container
     var dynamicContainer = document.getElementById('dynamicDesignSpecificContainer');
+    var stdNotice = document.getElementById('designSpecificStandardNotice');
+    var badgeEl = document.getElementById('designSpecificBadge');
+    if (badgeEl) {
+      badgeEl.textContent = config.name;
+    }
+
     if (!dynamicContainer) {
       dynamicContainer = document.createElement('div');
       dynamicContainer.id = 'dynamicDesignSpecificContainer';
-      var formLeftCol = document.querySelector('.form-left-col');
-      if (formLeftCol) {
-        // Insert right after the Core Information Cards
-        var cardCustom = document.getElementById('cardCustomizationCard');
-        if (cardCustom && cardCustom.parentNode) {
-          cardCustom.parentNode.insertBefore(dynamicContainer, cardCustom.nextSibling);
-        } else {
-          formLeftCol.appendChild(dynamicContainer);
-        }
+      var designCard = document.getElementById('designSpecificCard');
+      if (designCard) {
+        designCard.appendChild(dynamicContainer);
       }
     }
 
     dynamicContainer.innerHTML = '';
+
+    // Handle designs without special industry sections
+    var hasSections = Array.isArray(config.sections) && config.sections.length > 0;
+    if (stdNotice) {
+      stdNotice.style.display = hasSections ? 'none' : 'block';
+    }
+
+    if (!hasSections) {
+      triggerLivePreviewUpdate();
+      return;
+    }
 
     // Extract current industry data
     var custom = (customer && customer.customSettings) || (customer && customer.custom_settings) || {};
@@ -721,10 +732,11 @@
     var indData = activeIndustryData;
 
     // 4. Render each tailored section
-    (config.sections || []).forEach(function(sec) {
+    config.sections.forEach(function(sec) {
       var secCard = document.createElement('div');
-      secCard.className = 'form-card dynamic-design-card';
+      secCard.className = 'dynamic-design-card';
       secCard.id = 'sec_' + sec.id;
+      secCard.style.cssText = 'background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 18px; margin-bottom: 14px;';
 
       secCard.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
@@ -977,13 +989,16 @@
     var compVal = (document.getElementById('custCompany')?.value || '').trim();
     var descVal = (document.getElementById('custDescription')?.value || '').trim();
     var phoneVal = (document.getElementById('custPhone')?.value || '').trim();
-    var waVal = (document.getElementById('custWhatsApp')?.value || document.getElementById('custWhatsapp')?.value || '').trim();
+    var sameWa = document.getElementById('custSameWhatsApp')?.checked !== false;
+    var waVal = sameWa ? phoneVal : (document.getElementById('custWhatsApp')?.value || phoneVal).trim();
     var emailVal = (document.getElementById('custEmail')?.value || '').trim();
     var webVal = (document.getElementById('custWebsite')?.value || '').trim();
     var addrVal = (document.getElementById('custAddress')?.value || '').trim();
     var instaVal = (document.getElementById('custInstagram')?.value || '').trim();
+    var fbVal = (document.getElementById('custFacebook')?.value || '').trim();
     var linkedInVal = (document.getElementById('custLinkedIn')?.value || '').trim();
-    var designName = document.getElementById('selectedDesignInput')?.value || currentActiveDesignId || 'Mint Haven';
+    var designName = document.getElementById('custDesignSelect')?.value || document.getElementById('selectedDesignInput')?.value || currentActiveDesignId || 'Mint Haven';
+    var slugVal = (document.getElementById('custProfileSlug')?.value || '').trim() || (currentFormCustomerData && currentFormCustomerData.profileSlug) || 'preview';
     var avatarUrl = global.currentUploadedAvatar || (currentFormCustomerData && currentFormCustomerData.avatarUrl) || '';
 
     // Collect dynamic industry data
@@ -993,6 +1008,18 @@
     var links = (global.currentCustomLinks && Array.isArray(global.currentCustomLinks)) 
       ? global.currentCustomLinks.slice() 
       : ((currentFormCustomerData && currentFormCustomerData.customSettings && currentFormCustomerData.customSettings.links) || []);
+
+    // Ensure Facebook link is added if specified in the direct input
+    if (fbVal && !links.some(function(l) { return l.type === 'facebook'; })) {
+      links = links.concat([{
+        id: 'link_facebook_preview',
+        type: 'facebook',
+        label: 'Facebook',
+        value: fbVal,
+        enabled: true,
+        order: links.length
+      }]);
+    }
 
     return {
       fullName: nameVal,
@@ -1007,7 +1034,7 @@
       socialInstagram: instaVal,
       socialLinkedIn: linkedInVal,
       cardDesign: designName,
-      profileSlug: (currentFormCustomerData && currentFormCustomerData.profileSlug) || 'preview',
+      profileSlug: slugVal,
       avatarUrl: avatarUrl,
       is_active: true,
       customSettings: {

@@ -522,6 +522,13 @@
     const instagram = card.socialInstagram || card.instagram_url || '';
     const linkedin = card.socialLinkedIn || card.linkedin_url || '';
 
+    let facebook = card.socialFacebook || card.social_facebook || card.facebook_url || '';
+    if (!facebook && (card.customSettings?.links || card.custom_settings?.links)) {
+      const links = card.customSettings?.links || card.custom_settings?.links || [];
+      const fbLink = links.find(l => l && (l.type === 'facebook' || (l.label && l.label.toLowerCase() === 'facebook')) && l.enabled !== false && l.value);
+      if (fbLink) facebook = fbLink.value;
+    }
+
     document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
 
     if (isPreview) {
@@ -621,7 +628,15 @@
       const li = sSection.querySelector('.social-card-linkedin') || sSection.querySelector('a[href*="linkedin.com"]');
       if (li) { if (linkedin) { li.href = normalizeUrl(linkedin); li.style.display = ''; hasSoc = true; } else li.style.display = 'none'; }
       const fb = sSection.querySelector('.social-card-facebook');
-      if (fb) fb.style.display = 'none';
+      if (fb) {
+        if (facebook) {
+          fb.href = normalizeUrl(facebook);
+          fb.style.display = '';
+          hasSoc = true;
+        } else {
+          fb.style.display = 'none';
+        }
+      }
       sSection.style.display = hasSoc ? '' : 'none';
     }
 
@@ -648,6 +663,13 @@
     const address = card.address || card.business_address || '';
     const instagram = card.socialInstagram || card.instagram_url || '';
     const linkedin = card.socialLinkedIn || card.linkedin_url || '';
+
+    let facebook = card.socialFacebook || card.social_facebook || card.facebook_url || '';
+    if (!facebook && (card.customSettings?.links || card.custom_settings?.links)) {
+      const links = card.customSettings?.links || card.custom_settings?.links || [];
+      const fbLink = links.find(l => l && (l.type === 'facebook' || (l.label && l.label.toLowerCase() === 'facebook')) && l.enabled !== false && l.value);
+      if (fbLink) facebook = fbLink.value;
+    }
 
     document.title = `${name} — ${role ? role + ' | ' : ''}${company || 'Ambros Studio'}`;
 
@@ -756,7 +778,15 @@
       const li = sSection.querySelector('.follow-item-linkedin') || sSection.querySelector('a[href*="linkedin.com"]');
       if (li) { if (linkedin) { li.href = normalizeUrl(linkedin); li.style.display = ''; hasSoc = true; } else li.style.display = 'none'; }
       const fb = sSection.querySelector('.follow-item-facebook');
-      if (fb) fb.style.display = 'none';
+      if (fb) {
+        if (facebook) {
+          fb.href = normalizeUrl(facebook);
+          fb.style.display = '';
+          hasSoc = true;
+        } else {
+          fb.style.display = 'none';
+        }
+      }
       sSection.style.display = hasSoc ? '' : 'none';
     }
 

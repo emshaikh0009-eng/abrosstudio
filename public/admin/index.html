@@ -413,6 +413,9 @@
         <!-- =============================================================
              SCREEN C: ADD / EDIT CUSTOMER (3 · Add Customer Form)
              ============================================================= -->
+        <!-- =============================================================
+             SCREEN C: ADD / EDIT CUSTOMER (Simplified, Logical & Professional)
+             ============================================================= -->
         <section class="tab-content" id="tab-add-customer" aria-label="Customer Profile Form">
           <!-- Dynamic Breadcrumb -->
           <div class="breadcrumb" id="customerFormBreadcrumb">
@@ -422,27 +425,32 @@
           </div>
 
           <!-- Two-Column Form Layout -->
-          <form id="addCustomerForm" class="form-grid-layout">
+          <form id="addCustomerForm" class="form-grid-layout" novalidate>
             
-            <!-- Left Column: Personal, Contact & Social Information -->
+            <!-- Left Column: Core Customer Form Sections -->
             <div class="form-left-col">
               
-              <!-- 1. Personal Information Card -->
-              <div class="form-card">
-                <h2 class="form-section-title" id="formMainTitle">Personal information</h2>
-                <p class="form-section-sub" id="formMainSub">Who the digital card belongs to.</p>
+              <!-- 1. Basic Information Card -->
+              <div class="form-card" id="secBasicInfo">
+                <div class="form-section-header">
+                  <div>
+                    <h2 class="form-section-title" id="formMainTitle">1. Basic Information</h2>
+                    <p class="form-section-sub" id="formMainSub">Core identity, digital card design, and unique profile URL.</p>
+                  </div>
+                </div>
 
                 <!-- Profile Photo Area -->
                 <div class="avatar-upload-area">
-                  <div class="avatar-upload-circle" id="avatarUploadCircle" title="Click to upload photo">
+                  <div class="avatar-upload-circle" id="avatarUploadCircle" title="Click to upload profile photo or logo">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
                   </div>
                   <div class="avatar-upload-info">
-                    <span class="avatar-upload-title">Profile photo</span>
-                    <span class="avatar-upload-sub">Upload a square image, at least 400 &times; 400 px.</span>
-                    <input type="file" id="photoFileInput" accept="image/*" style="display: none;">
-                    <div>
-                      <button type="button" class="btn btn-white btn-sm" id="choosePhotoBtn">Choose photo</button>
+                    <span class="avatar-upload-title">Profile Photo / Logo</span>
+                    <span class="avatar-upload-sub">Square image, min 400 &times; 400 px. Supports JPG, PNG, WEBP.</span>
+                    <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                    <div style="display: flex; gap: 8px; margin-top: 6px;">
+                      <button type="button" class="btn btn-white btn-sm" id="choosePhotoBtn">Choose Photo</button>
+                      <button type="button" class="btn btn-white btn-sm" id="btnRemovePhoto" style="display: none; color: #ef4444;">Remove</button>
                     </div>
                   </div>
                 </div>
@@ -450,111 +458,251 @@
                 <!-- Full Name & Designation -->
                 <div class="form-row-2col">
                   <div class="form-group">
-                    <label for="custFullName" class="form-label">Full name</label>
-                    <input type="text" id="custFullName" class="form-input" placeholder="e.g. Rahul Mehta" required>
+                    <label for="custFullName" class="form-label">
+                      Full Name <span class="required-indicator">*</span>
+                    </label>
+                    <input type="text" id="custFullName" class="form-input" placeholder="e.g. Rahul Mehta" required autocomplete="name">
                   </div>
                   <div class="form-group">
-                    <label for="custDesignation" class="form-label">Designation</label>
+                    <label for="custDesignation" class="form-label">
+                      Designation / Title <span class="optional-tag">(optional)</span>
+                    </label>
                     <input type="text" id="custDesignation" class="form-input" placeholder="e.g. Managing Director">
                   </div>
                 </div>
 
-                <!-- Company Name -->
-                <div class="form-group">
-                  <label for="custCompany" class="form-label">Company name</label>
-                  <input type="text" id="custCompany" class="form-input" placeholder="e.g. Mehta Textiles">
+                <!-- Company Name & Card Design Dropdown -->
+                <div class="form-row-2col">
+                  <div class="form-group">
+                    <label for="custCompany" class="form-label">
+                      Company / Business Name <span class="optional-tag">(optional)</span>
+                    </label>
+                    <input type="text" id="custCompany" class="form-input" placeholder="e.g. Mehta Textiles" autocomplete="organization">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="custDesignSelect" class="form-label">
+                      Digital Card Design <span class="required-indicator">*</span>
+                    </label>
+                    <div class="design-select-wrap">
+                      <select id="custDesignSelect" class="form-input form-select" required>
+                        <optgroup label="Personal Designs (6)">
+                          <option value="Mint Haven" selected>Mint Haven — Warm Pastel Organic (Design 1)</option>
+                          <option value="Evergreen">Evergreen — Crisp Corporate Green (Design 2)</option>
+                          <option value="Noir Gold">Noir Gold — Executive Metallic Dark (Design 3)</option>
+                          <option value="Emerald Ivory">Emerald Ivory — Refined Heritage (Design 4)</option>
+                          <option value="Neon Pulse">Neon Pulse — Cyber Tech Dark (Design 5)</option>
+                          <option value="Mono Studio">Mono Studio — Modern Minimalist (Design 6)</option>
+                        </optgroup>
+                        <optgroup label="Business Hubs (6)">
+                          <option value="Classic Navy">Classic Navy — Enterprise Corporate (Design 7)</option>
+                          <option value="Fresh Mint">Fresh Mint — Clean Contemporary Studio (Design 8)</option>
+                          <option value="Bold Pop">Bold Pop — High-Energy Agency (Design 9)</option>
+                          <option value="Bento Grid">Bento Grid — Modern Modular Showcase (Design 10)</option>
+                          <option value="Glass Aurora">Glass Aurora — Sleek Glassmorphism (Design 11)</option>
+                          <option value="Luxe Foil">Luxe Foil — Premium Metallic Finish (Design 12)</option>
+                        </optgroup>
+                        <optgroup label="Industry Specials (7)">
+                          <option value="Skyline">Skyline — Real Estate &amp; Architecture (Design 13)</option>
+                          <option value="Atelier">Atelier — Fashion &amp; Luxury Goods (Design 14)</option>
+                          <option value="Care Plus">Care Plus — Healthcare &amp; Medical (Design 15)</option>
+                          <option value="Roast &amp; Co.">Roast &amp; Co. — Artisan Cafe &amp; Roastery (Design 16)</option>
+                          <option value="Raftcon Luxury">Raftcon Luxury — Civil Engineering &amp; Infrastructure (Design 17)</option>
+                          <option value="ATG Study Abroad">ATG Study Abroad — Global Education Consultancy (Design 18)</option>
+                          <option value="Spice Route">Spice Route — Fine Dining &amp; Restaurant (Design 19)</option>
+                        </optgroup>
+                      </select>
+                    </div>
+                    <input type="hidden" id="selectedDesignInput" name="card_design" value="Mint Haven">
+                  </div>
                 </div>
 
-                <!-- Description -->
+                <!-- Profile URL Slug -->
                 <div class="form-group">
-                  <label for="custDescription" class="form-label">Description</label>
-                  <textarea id="custDescription" class="form-textarea" placeholder="Short introduction shown on the profile"></textarea>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <label for="custProfileSlug" class="form-label" style="margin-bottom: 0;">
+                      Profile URL Slug <span class="required-indicator">*</span>
+                    </label>
+                    <span class="slug-status-badge" id="slugValidationBadge" style="font-size: 11px; color: var(--text-muted);">Auto-generated</span>
+                  </div>
+                  <div class="slug-input-wrapper">
+                    <span class="slug-prefix">ambrosstudio.com/c/</span>
+                    <input
+                      type="text"
+                      id="custProfileSlug"
+                      class="form-input slug-input"
+                      placeholder="rahul-mehta"
+                      required
+                      autocomplete="off"
+                      spellcheck="false"
+                      maxlength="100"
+                    >
+                  </div>
+                  <p class="form-field-helper" style="font-size: 11.5px; color: var(--text-muted); margin-top: 5px;">
+                    Unique public address for this customer's digital card. Lowercase letters, numbers, and hyphens.
+                  </p>
+                </div>
+
+                <!-- Description / Bio -->
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="custDescription" class="form-label">
+                    About / Short Bio <span class="optional-tag">(optional)</span>
+                  </label>
+                  <textarea id="custDescription" class="form-textarea" placeholder="Short introduction shown on the digital business card" rows="2" style="min-height: 64px;"></textarea>
                 </div>
               </div>
 
-              <!-- 2. Contact Information Card -->
-              <div class="form-card">
-                <h2 class="form-section-title">Contact information</h2>
-                <p class="form-section-sub">How people reach this customer.</p>
+              <!-- 2. Contact Details Card -->
+              <div class="form-card" id="secContactDetails">
+                <div class="form-section-header">
+                  <h2 class="form-section-title">2. Contact Details</h2>
+                  <p class="form-section-sub">Direct communication channels for clients and prospects.</p>
+                </div>
 
-                <!-- Mobile & WhatsApp Numbers -->
+                <!-- Phone / Mobile & WhatsApp Toggle -->
                 <div class="form-row-2col">
                   <div class="form-group">
-                    <label for="custPhone" class="form-label">Mobile number</label>
+                    <label for="custPhone" class="form-label">
+                      Phone Number <span class="optional-tag">(optional)</span>
+                    </label>
                     <div class="phone-input-group">
                       <span class="phone-prefix">+91</span>
-                      <input type="tel" id="custPhone" class="phone-input" placeholder="98250 41872">
+                      <input type="tel" id="custPhone" class="phone-input" placeholder="98250 41872" autocomplete="tel">
+                    </div>
+                    <!-- Smart WhatsApp checkbox -->
+                    <div class="checkbox-field-wrap" style="margin-top: 8px;">
+                      <label class="custom-checkbox-label" for="custSameWhatsApp">
+                        <input type="checkbox" id="custSameWhatsApp" checked>
+                        <span class="custom-checkbox-text">WhatsApp number is the same as phone number</span>
+                      </label>
                     </div>
                   </div>
 
-                  <div class="form-group">
-                    <label for="custWhatsApp" class="form-label">WhatsApp number</label>
+                  <!-- Conditional Separate WhatsApp Number -->
+                  <div class="form-group" id="custWhatsAppGroup" style="display: none;">
+                    <label for="custWhatsApp" class="form-label">
+                      Separate WhatsApp Number <span class="optional-tag">(optional)</span>
+                    </label>
                     <div class="phone-input-group">
                       <span class="phone-prefix">+91</span>
-                      <input type="tel" id="custWhatsApp" class="phone-input" placeholder="98250 41872">
+                      <input type="tel" id="custWhatsApp" class="phone-input" placeholder="98250 41872" autocomplete="tel">
                     </div>
+                    <span class="form-field-helper" style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block;">Only enter if different from phone number.</span>
                   </div>
                 </div>
 
-                <!-- Email & Website -->
-                <div class="form-row-2col">
+                <!-- Email & Address -->
+                <div class="form-row-2col" style="margin-top: 4px;">
                   <div class="form-group">
-                    <label for="custEmail" class="form-label">Email address</label>
-                    <input type="email" id="custEmail" class="form-input" placeholder="e.g. rahul@mehtatextiles.com">
+                    <label for="custEmail" class="form-label">
+                      Email Address <span class="optional-tag">(optional)</span>
+                    </label>
+                    <input type="email" id="custEmail" class="form-input" placeholder="e.g. rahul@mehtatextiles.com" autocomplete="email">
                   </div>
 
                   <div class="form-group">
-                    <label for="custWebsite" class="form-label">Website</label>
+                    <label for="custAddress" class="form-label">
+                      Studio / Business Address <span class="optional-tag">(optional)</span>
+                    </label>
+                    <input type="text" id="custAddress" class="form-input" placeholder="e.g. Ring Road, Surat, Gujarat 395002">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Digital Presence Card -->
+              <div class="form-card" id="secDigitalPresence">
+                <div class="form-section-header">
+                  <h2 class="form-section-title">3. Digital Presence</h2>
+                  <p class="form-section-sub">Website and social links connected to interactive card buttons.</p>
+                </div>
+
+                <div class="form-row-2col">
+                  <div class="form-group">
+                    <label for="custWebsite" class="form-label">
+                      Website <span class="optional-tag">(optional)</span>
+                    </label>
                     <input type="text" id="custWebsite" class="form-input" placeholder="e.g. mehtatextiles.com">
                   </div>
-                </div>
 
-                <!-- Office / Studio Address -->
-                <div class="form-group">
-                  <label for="custAddress" class="form-label">Studio / Business address</label>
-                  <input type="text" id="custAddress" class="form-input" placeholder="e.g. Ring Road, Surat, Gujarat 395002">
+                  <div class="form-group">
+                    <label for="custInstagram" class="form-label">
+                      Instagram <span class="optional-tag">(optional)</span>
+                    </label>
+                    <input type="text" id="custInstagram" class="form-input" placeholder="e.g. instagram.com/rahulmehta">
+                  </div>
                 </div>
-              </div>
-
-              <!-- 3. Social Media Links Card -->
-              <div class="form-card">
-                <h2 class="form-section-title">Social media links</h2>
-                <p class="form-section-sub">Connect public social profiles.</p>
 
                 <div class="form-row-2col">
                   <div class="form-group">
-                    <label for="custInstagram" class="form-label">Instagram username or URL</label>
-                    <input type="text" id="custInstagram" class="form-input" placeholder="e.g. instagram.com/rahulmehta">
+                    <label for="custFacebook" class="form-label">
+                      Facebook <span class="optional-tag">(optional)</span>
+                    </label>
+                    <input type="text" id="custFacebook" class="form-input" placeholder="e.g. facebook.com/mehtatextiles">
                   </div>
 
                   <div class="form-group">
-                    <label for="custLinkedIn" class="form-label">LinkedIn profile URL</label>
+                    <label for="custLinkedIn" class="form-label">
+                      LinkedIn <span class="optional-tag">(optional)</span>
+                    </label>
                     <input type="text" id="custLinkedIn" class="form-input" placeholder="e.g. linkedin.com/in/rahulmehta">
                   </div>
                 </div>
+
+                <!-- Additional Custom Links (Unobtrusive) -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <div>
+                      <div class="customization-subheading" style="font-size: 13px; font-weight: 600; color: var(--text-headline);">Additional Links</div>
+                      <p style="font-size: 11.5px; color: var(--text-muted); margin: 0;">Optional extra buttons (YouTube, Calendly, Behance, Maps).</p>
+                    </div>
+                    <button type="button" class="btn btn-white btn-sm" id="btnOpenAddLinkModal">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      <span>+ Add Link</span>
+                    </button>
+                  </div>
+                  <div id="customLinksContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;"></div>
+                  <div id="customLinksEmptyState" style="text-align: center; padding: 14px 12px; background: #f8fafc; border: 1px dashed var(--border-light); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 12px; margin-top: 4px;">
+                    No additional custom links. Click <strong>+ Add Link</strong> if needed.
+                  </div>
+                </div>
               </div>
 
-              <!-- 4. Card Customization Section -->
-              <div class="form-card" id="cardCustomizationCard">
-                <div class="customization-section-title">
+              <!-- 4. Design-Specific Details Card -->
+              <div class="form-card" id="designSpecificCard">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
                   <div>
-                    <h2 class="form-section-title">Card Customization</h2>
-                    <p class="form-section-sub">Personalize appearance, brand colors, typography, and interactive links.</p>
+                    <h2 class="form-section-title" id="designSpecificTitle">4. Design-Specific Details</h2>
+                    <p class="form-section-sub" id="designSpecificSub" style="margin-bottom: 0;">Specialized features configured for this card design.</p>
                   </div>
-                  <button type="button" class="btn btn-white btn-sm" id="btnResetCustomization" title="Reset all customization to template defaults">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
-                    <span>Reset Defaults</span>
-                  </button>
+                  <span class="badge-design" id="designSpecificBadge" style="background: #f1f5f9; color: var(--text-headline); font-size: 11px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border-light); font-weight: 600;">Mint Haven</span>
                 </div>
 
-                <!-- A) Appearance Sub-section -->
-                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
-                    Appearance &amp; Typography
-                  </div>
-                  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Override template color schemes and typography. Leave blank to inherit template defaults.</p>
+                <!-- Dynamic Container populated by dynamic-editor.js -->
+                <div id="dynamicDesignSpecificContainer" style="margin-top: 14px;"></div>
 
+                <!-- Fallback notice for standard designs without custom sections -->
+                <div id="designSpecificStandardNotice" style="display: none; padding: 20px 16px; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); font-size: 12.5px; color: var(--text-muted); text-align: center; margin-top: 10px;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 4px; display: inline-block; color: #10b981;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <div>This design uses your basic and contact information with its curated layout. No additional industry-specific fields are required.</div>
+                </div>
+              </div>
+
+              <!-- 5. Advanced Styling Accordion (Optional, Collapsed by default) -->
+              <details class="form-card form-accordion" id="accordionAppearance">
+                <summary class="accordion-summary">
+                  <div class="accordion-summary-content">
+                    <span class="accordion-title">Custom Theme Colors &amp; Typography</span>
+                    <span class="accordion-desc">Optional overrides for accent colors and fonts (defaults to template palette).</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <button type="button" class="btn btn-white btn-xs" id="btnResetCustomization" title="Reset all customization to template defaults" onclick="event.stopPropagation();">
+                      <span>Reset Defaults</span>
+                    </button>
+                    <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </div>
+                </summary>
+
+                <div class="accordion-body" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
                   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 14px;">
                     <!-- Primary Color -->
                     <div class="custom-color-control">
@@ -585,9 +733,9 @@
                   </div>
 
                   <!-- Controlled Font Selector -->
-                  <div class="form-group" style="margin-bottom: 6px;">
-                    <label for="custFontFamily" class="form-label">Font Typography</label>
-                    <select id="custFontFamily" class="form-input" style="cursor: pointer;">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label for="custFontFamily" class="form-label">Typography Family</label>
+                    <select id="custFontFamily" class="form-input form-select" style="cursor: pointer;">
                       <option value="">Template Default</option>
                       <option value="Inter">Inter — Clean, Modern, Versatile</option>
                       <option value="Plus Jakarta Sans">Plus Jakarta Sans — Geometric, Friendly</option>
@@ -598,83 +746,35 @@
                     </select>
                   </div>
                 </div>
+              </details>
 
-                <!-- B) Profile Logo / Image Sub-section -->
-                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    Profile Logo &amp; Photo
+              <!-- 6. Physical NFC Card Artwork Accordion (Optional, Collapsed by default) -->
+              <details class="form-card form-accordion" id="accordionCardImages">
+                <summary class="accordion-summary">
+                  <div class="accordion-summary-content">
+                    <span class="accordion-title">Physical / NFC Card Artwork</span>
+                    <span class="accordion-desc">Optional front and back artwork images for physical card printing.</span>
                   </div>
-                  <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 12px 14px; margin-top: 8px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                      <div id="custAvatarSyncPreview" style="width: 40px; height: 40px; border-radius: 50%; background: #fef3c7; color: #92400e; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; overflow: hidden; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-                        AS
-                      </div>
-                      <div>
-                        <div style="font-size: 13px; font-weight: 600; color: var(--text-headline);" id="custAvatarSyncStatus">Synced with Customer Photo</div>
-                        <div style="font-size: 11.5px; color: var(--text-muted);">Saves directly to customer avatar_url</div>
-                      </div>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnSyncChangeAvatar">
-                      <span>Choose Photo</span>
-                    </button>
-                  </div>
-                </div>
+                  <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </summary>
 
-                <!-- C) Links / Social Contacts Sub-section -->
-                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                        Card Links &amp; Actions
-                      </div>
-                      <p style="font-size: 12px; color: var(--text-muted);">Reorder, enable/disable, or add custom interactive links.</p>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                      <button type="button" class="btn btn-white btn-sm" id="btnImportContactLinks" title="Generate link cards from filled contact fields above">
-                        <span>Import Contact Info</span>
-                      </button>
-                      <button type="button" class="btn btn-gold btn-sm" id="btnOpenAddLinkModal">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        <span>+ Add Link</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Container for rendered links -->
-                  <div id="customLinksContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                    <!-- Dynamically rendered custom links -->
-                  </div>
-                  <div id="customLinksEmptyState" style="text-align: center; padding: 24px 16px; background: #fafafa; border: 1px dashed var(--border-light); border-radius: var(--radius-md); color: var(--text-muted); font-size: 12.5px; margin-top: 8px;">
-                    No custom links added yet. Click <strong>+ Add Link</strong> or <strong>Import Contact Info</strong> to customize card buttons.
-                  </div>
-                </div>
-
-                <!-- D) Front & Back Card Images Sub-section -->
-                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    Front &amp; Back Card Images
-                  </div>
-                  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Optional digital card or physical NFC card artwork. Images persist with customer settings.</p>
-
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+                <div class="accordion-body" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
                     <!-- Front Image Control -->
                     <div class="card-image-upload-box" id="frontImageUploadBox">
                       <div class="card-image-upload-header">
-                        <span class="card-image-label">Front Side Image</span>
+                        <span class="card-image-label">Front Side Artwork</span>
                         <span class="card-image-badge" id="frontImageStatus">Not set</span>
                       </div>
                       <div class="card-image-preview-area" id="frontImagePreviewArea">
                         <div class="card-image-placeholder" id="frontImagePlaceholder">
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                          <span>Upload front side image (JPG, PNG, WEBP, max 2MB)</span>
+                          <span>Upload front side artwork</span>
                         </div>
                         <img id="frontImagePreviewImg" src="" alt="Front Card Preview" class="card-image-preview-img" style="display: none;">
                       </div>
                       <div class="card-image-actions">
-                        <input type="file" id="frontImageFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display: none;">
+                        <input type="file" id="frontImageFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
                         <button type="button" class="btn btn-white btn-sm" id="btnUploadFrontImage">
                           <span id="btnUploadFrontText">Upload Front</span>
                         </button>
@@ -687,18 +787,18 @@
                     <!-- Back Image Control -->
                     <div class="card-image-upload-box" id="backImageUploadBox">
                       <div class="card-image-upload-header">
-                        <span class="card-image-label">Back Side Image</span>
+                        <span class="card-image-label">Back Side Artwork</span>
                         <span class="card-image-badge" id="backImageStatus">Not set</span>
                       </div>
                       <div class="card-image-preview-area" id="backImagePreviewArea">
                         <div class="card-image-placeholder" id="backImagePlaceholder">
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                          <span>Upload back side image (JPG, PNG, WEBP, max 2MB)</span>
+                          <span>Upload back side artwork</span>
                         </div>
                         <img id="backImagePreviewImg" src="" alt="Back Card Preview" class="card-image-preview-img" style="display: none;">
                       </div>
                       <div class="card-image-actions">
-                        <input type="file" id="backImageFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display: none;">
+                        <input type="file" id="backImageFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
                         <button type="button" class="btn btn-white btn-sm" id="btnUploadBackImage">
                           <span id="btnUploadBackText">Upload Back</span>
                         </button>
@@ -709,559 +809,29 @@
                     </div>
                   </div>
                 </div>
-
-              </div>
-
-              <!-- Dynamic Design-Specific Customization Container -->
-              <div id="dynamicDesignSpecificContainer"></div>
-
-              <!-- 5. Raftcon Construction & Projects Customization Card (Shown for Raftcon Luxury) -->
-              <div class="form-card" id="raftconProjectCard" style="display: none;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
-                  <h2 class="form-section-title" style="margin: 0;">Raftcon Project &amp; Infrastructure Details</h2>
-                  <span class="badge-design" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">Raftcon Luxury</span>
-                </div>
-                <p class="form-section-sub">Public-facing brand tagline, multi-contact directory, metrics, services, and portfolio showcase.</p>
-
-                <!-- Tagline & Office Phones -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="form-group">
-                    <label for="raftconTagline" class="form-label">Company / Project Tagline</label>
-                    <input type="text" id="raftconTagline" class="form-input" placeholder="e.g. Crafting Quality, Constructing Futures">
-                  </div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="raftconOfficePhone" class="form-label">Office Phone (Display)</label>
-                      <input type="text" id="raftconOfficePhone" class="form-input" placeholder="(+91) 99675-22999">
-                    </div>
-                    <div class="form-group">
-                      <label for="raftconRawOfficePhone" class="form-label">Office Phone (Dial / Raw)</label>
-                      <input type="text" id="raftconRawOfficePhone" class="form-input" placeholder="+919967522999">
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Key Contacts (Repeatable list) -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">Key Contact Persons</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Partners / engineers displayed with dedicated call circles (e.g. Ghulamsarwar &amp; Tabrez Qureshi).</p>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnAddRaftconContact">
-                      <span>+ Add Contact</span>
-                    </button>
-                  </div>
-                  <div id="raftconContactsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Hero Metric & Engineering Metrics -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading">Hero &amp; Engineering Metrics</div>
-                  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Highlights displayed in the gold statistics grid.</p>
-                  <div class="form-row-2col" style="margin-bottom: 12px;">
-                    <div class="form-group">
-                      <label for="raftconHeroMetricValue" class="form-label">Hero Metric Value</label>
-                      <input type="text" id="raftconHeroMetricValue" class="form-input" placeholder="35+ Years">
-                    </div>
-                    <div class="form-group">
-                      <label for="raftconHeroMetricLabel" class="form-label">Hero Metric Label</label>
-                      <input type="text" id="raftconHeroMetricLabel" class="form-input" placeholder="Of experience">
-                    </div>
-                  </div>
-
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 12px; font-weight: 600; color: var(--text-headline);">Grid Metrics</span>
-                    <button type="button" class="btn btn-white btn-xs" id="btnAddRaftconMetric">
-                      <span>+ Add Metric</span>
-                    </button>
-                  </div>
-                  <div id="raftconMetricsContainer" style="display: flex; flex-direction: column; gap: 6px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Services & Scope of Work -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <div>
-                      <div class="customization-subheading">Services &amp; Specialisations</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Interactive services cloud shown on profile.</p>
-                    </div>
-                    <div style="display: flex; gap: 6px;">
-                      <input type="text" id="newRaftconServiceInput" class="form-input" placeholder="e.g. Turnkey projects" style="font-size: 12px; padding: 4px 8px; width: 170px;">
-                      <button type="button" class="btn btn-white btn-sm" id="btnAddRaftconService">
-                        <span>Add</span>
-                      </button>
-                    </div>
-                  </div>
-                  <div id="raftconServicesList" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; min-height: 36px; padding: 8px; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm);">
-                    <!-- Rendered chips -->
-                  </div>
-                  <div class="form-group" style="margin-top: 10px;">
-                    <label for="raftconServicesSummary" class="form-label">Services Scope / Summary</label>
-                    <textarea id="raftconServicesSummary" class="form-textarea" placeholder="One team for architectural and structural design, RCC, masonry, electrical, plumbing, flooring and interiors." style="min-height: 56px;"></textarea>
-                  </div>
-                </div>
-
-                <!-- Portfolio Projects -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">Showcase Projects</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Major landmark builds displayed in project cards.</p>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnAddRaftconProject">
-                      <span>+ Add Project</span>
-                    </button>
-                  </div>
-                  <div id="raftconProjectsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Safety, Mission, Footer Quote & Brochure Reference -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="form-group">
-                    <label for="raftconSafetyText" class="form-label">Safety First Policy</label>
-                    <textarea id="raftconSafetyText" class="form-textarea" placeholder="Safety is everyone's responsibility. Our goal is zero incidents and injuries, for our team and the public." style="min-height: 50px;"></textarea>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="raftconMissionText" class="form-label">Our Mission Statement</label>
-                    <textarea id="raftconMissionText" class="form-textarea" placeholder="A skilled workforce, updated technology and streamlined processes, for quality and reliability on every build." style="min-height: 50px;"></textarea>
-                  </div>
-
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="raftconFooterQuote" class="form-label">Footer Tagline Quote</label>
-                      <input type="text" id="raftconFooterQuote" class="form-input" placeholder="Lets make success stories together">
-                    </div>
-                    <div class="form-group">
-                      <label for="raftconBrochureUrl" class="form-label">Official Brochure Viewer URL</label>
-                      <input type="text" id="raftconBrochureUrl" class="form-input" placeholder="/brochure">
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- 6. ATG Study Abroad Customization Card (Shown for ATG Study Abroad) -->
-              <div class="form-card" id="atgStudyAbroadCard" style="display: none;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
-                  <h2 class="form-section-title" style="margin: 0;">ATG Study Abroad Customization</h2>
-                  <span class="badge-design" style="background: #ecfccb; color: #3f6212; border: 1px solid #bef264;">Design 18 &bull; Study Abroad</span>
-                </div>
-                <p class="form-section-sub">Education consultancy branding, metrics, study destinations, test preparation, free guides, and contact channels.</p>
-
-                <!-- Tagline & About ATG -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Identity &amp; Story</div>
-                  <div class="form-group">
-                    <label for="atgTagline" class="form-label">Profile Tagline (Italicized)</label>
-                    <input type="text" id="atgTagline" class="form-input" placeholder="On a mission, with a vision">
-                  </div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="atgAboutTitle" class="form-label">About Section Heading</label>
-                      <input type="text" id="atgAboutTitle" class="form-input" placeholder="About ATG Study Abroad">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="atgAboutText" class="form-label">About ATG Description</label>
-                    <textarea id="atgAboutText" class="form-textarea" placeholder="Across The Globe helps students study abroad with admissions and visa support for the UK, Australia, Dubai, Canada and Europe. More than 4,000 students have been guided by the team, from choosing a course to landing the visa." style="min-height: 64px;"></textarea>
-                  </div>
-                </div>
-
-                <!-- Key Metrics (3 Stat Columns) -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Key Performance Metrics</div>
-                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                    <div>
-                      <label for="atgMetric1Val" class="form-label" style="font-size: 11px;">Metric 1 Number</label>
-                      <input type="text" id="atgMetric1Val" class="form-input" placeholder="4,000+">
-                      <label for="atgMetric1Lbl" class="form-label" style="font-size: 11px; margin-top: 4px;">Metric 1 Label</label>
-                      <input type="text" id="atgMetric1Lbl" class="form-input" placeholder="Students guided">
-                    </div>
-                    <div>
-                      <label for="atgMetric2Val" class="form-label" style="font-size: 11px;">Metric 2 Number</label>
-                      <input type="text" id="atgMetric2Val" class="form-input" placeholder="5+">
-                      <label for="atgMetric2Lbl" class="form-label" style="font-size: 11px; margin-top: 4px;">Metric 2 Label</label>
-                      <input type="text" id="atgMetric2Lbl" class="form-input" placeholder="Study destinations">
-                    </div>
-                    <div>
-                      <label for="atgMetric3Val" class="form-label" style="font-size: 11px;">Metric 3 Number</label>
-                      <input type="text" id="atgMetric3Val" class="form-input" placeholder="5+">
-                      <label for="atgMetric3Lbl" class="form-label" style="font-size: 11px; margin-top: 4px;">Metric 3 Label</label>
-                      <input type="text" id="atgMetric3Lbl" class="form-input" placeholder="Test prep courses">
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Action Buttons (Lime + Black) -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Primary Guidance CTAs</div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="atgCtaPrimaryText" class="form-label">Primary Lime CTA Text</label>
-                      <input type="text" id="atgCtaPrimaryText" class="form-input" placeholder="Find out which country suits you">
-                    </div>
-                    <div class="form-group">
-                      <label for="atgCtaPrimaryUrl" class="form-label">Primary Lime CTA URL (Optional)</label>
-                      <input type="text" id="atgCtaPrimaryUrl" class="form-input" placeholder="Leave empty for WhatsApp guidance link">
-                    </div>
-                  </div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="atgCtaWhatsAppText" class="form-label">WhatsApp Button Text</label>
-                      <input type="text" id="atgCtaWhatsAppText" class="form-input" placeholder="Chat on WhatsApp for instant guidance">
-                    </div>
-                    <div class="form-group">
-                      <label for="atgCtaWhatsAppUrl" class="form-label">WhatsApp Button URL (Optional)</label>
-                      <input type="text" id="atgCtaWhatsAppUrl" class="form-input" placeholder="Leave empty for customer WhatsApp link">
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Popular Study Destinations (Repeatable) -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">Study Destinations</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Country badges, programs, and direct inquiry actions.</p>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnAddAtgDestination">
-                      <span>+ Add Country</span>
-                    </button>
-                  </div>
-                  <div class="form-group">
-                    <label for="atgDestinationsTitle" class="form-label">Section Title</label>
-                    <input type="text" id="atgDestinationsTitle" class="form-input" placeholder="Popular study destinations">
-                  </div>
-                  <div id="atgDestinationsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Test Preparation & Coaching -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Test Preparation &amp; Batches</div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="atgTestPrepTitle" class="form-label">Section Title</label>
-                      <input type="text" id="atgTestPrepTitle" class="form-input" placeholder="Test preparation">
-                    </div>
-                    <div class="form-group">
-                      <label for="atgCoachingHeading" class="form-label">Coaching Heading</label>
-                      <input type="text" id="atgCoachingHeading" class="form-input" placeholder="Book a coaching class for">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="atgCoachingCourses" class="form-label">Course Tags (Comma separated)</label>
-                    <input type="text" id="atgCoachingCourses" class="form-input" placeholder="IELTS, PTE, CELPIP, TOEFL, GRE">
-                  </div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="atgCoachingCtaText" class="form-label">Coaching Button Text</label>
-                      <input type="text" id="atgCoachingCtaText" class="form-input" placeholder="Book coaching class">
-                    </div>
-                    <div class="form-group">
-                      <label for="atgCoachingCtaUrl" class="form-label">Coaching Button URL</label>
-                      <input type="text" id="atgCoachingCtaUrl" class="form-input" placeholder="Optional URL or auto WhatsApp link">
-                    </div>
-                  </div>
-
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin: 12px 0 6px;">
-                    <span style="font-size: 12.5px; font-weight: 600; color: var(--text-headline);">Upcoming Batches &amp; Programs</span>
-                    <button type="button" class="btn btn-white btn-xs" id="btnAddAtgBatch">+ Add Batch</button>
-                  </div>
-                  <div id="atgBatchesContainer" style="display: flex; flex-direction: column; gap: 6px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Free Guides -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">Free Guides &amp; Resources</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Downloadable lead magnets, masterbooks, and guides.</p>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnAddAtgGuide">
-                      <span>+ Add Guide</span>
-                    </button>
-                  </div>
-                  <div class="form-group">
-                    <label for="atgFreeGuidesTitle" class="form-label">Section Title</label>
-                    <input type="text" id="atgFreeGuidesTitle" class="form-input" placeholder="Free guides">
-                  </div>
-                  <div id="atgGuidesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Section Visibility Controls -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Section Visibility Toggles</div>
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12.5px;">
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="atgVisStats" checked> <span>Key Metrics Bar</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="atgVisDestinations" checked> <span>Popular Destinations</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="atgVisTestPrep" checked> <span>Test Preparation</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="atgVisGuides" checked> <span>Free Guides</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="atgVisAbout" checked> <span>About ATG</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="atgVisContact" checked> <span>Get in touch</span>
-                    </label>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- 7. Spice Route Restaurant Customization Card (Shown for Spice Route) -->
-              <div class="form-card" id="spiceRouteCard" style="display: none;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
-                  <h2 class="form-section-title" style="margin: 0;">Spice Route Restaurant Customization</h2>
-                  <span class="badge-design" style="background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa;">Design 19 &bull; Restaurant</span>
-                </div>
-                <p class="form-section-sub">Dining identity, header badges, chef's signature menu, veg/non-veg tags, dining options, hours, and guest reviews.</p>
-
-                <!-- Brand & Header -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Restaurant Branding</div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="spiceOverline" class="form-label">Header Overline</label>
-                      <input type="text" id="spiceOverline" class="form-input" placeholder="— Family restaurant —">
-                    </div>
-                    <div class="form-group">
-                      <label for="spiceRestaurantName" class="form-label">Restaurant Display Name</label>
-                      <input type="text" id="spiceRestaurantName" class="form-input" placeholder="Spice Route">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="spiceTagline" class="form-label">Tagline / Food Description</label>
-                    <input type="text" id="spiceTagline" class="form-input" placeholder="Slow-cooked Gujarati and North Indian food, made fresh every day.">
-                  </div>
-                  <div class="form-group">
-                    <label for="spiceBadges" class="form-label">Header Badges (Comma separated)</label>
-                    <input type="text" id="spiceBadges" class="form-input" placeholder="Open till 11 pm, ★ 4.5, Family seating">
-                  </div>
-                </div>
-
-                <!-- 2x2 Quick Action Buttons -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">2x2 Quick Actions</div>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>
-                      <label for="spiceAction1Label" class="form-label" style="font-size: 11px;">Action 1 (Terracotta) Label</label>
-                      <input type="text" id="spiceAction1Label" class="form-input" placeholder="View menu">
-                      <label for="spiceAction1Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 1 URL</label>
-                      <input type="text" id="spiceAction1Url" class="form-input" placeholder="#menu">
-                    </div>
-                    <div>
-                      <label for="spiceAction2Label" class="form-label" style="font-size: 11px;">Action 2 (White) Label</label>
-                      <input type="text" id="spiceAction2Label" class="form-input" placeholder="Book a table">
-                      <label for="spiceAction2Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 2 URL</label>
-                      <input type="text" id="spiceAction2Url" class="form-input" placeholder="WhatsApp or table booking link">
-                    </div>
-                    <div>
-                      <label for="spiceAction3Label" class="form-label" style="font-size: 11px;">Action 3 (Black) Label</label>
-                      <input type="text" id="spiceAction3Label" class="form-input" placeholder="Order on WhatsApp">
-                      <label for="spiceAction3Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 3 URL</label>
-                      <input type="text" id="spiceAction3Url" class="form-input" placeholder="WhatsApp ordering link">
-                    </div>
-                    <div>
-                      <label for="spiceAction4Label" class="form-label" style="font-size: 11px;">Action 4 (White) Label</label>
-                      <input type="text" id="spiceAction4Label" class="form-input" placeholder="Directions">
-                      <label for="spiceAction4Url" class="form-label" style="font-size: 11px; margin-top: 4px;">Action 4 URL</label>
-                      <input type="text" id="spiceAction4Url" class="form-input" placeholder="Google Maps link">
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Chef's Signatures Menu (Repeatable) -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">Chef's Signatures Menu</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Dishes, descriptions, prices, and veg / non-veg dietary dots.</p>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnAddSpiceMenuItem">
-                      <span>+ Add Dish</span>
-                    </button>
-                  </div>
-                  <div class="form-group">
-                    <label for="spiceMenuTitle" class="form-label">Menu Section Title</label>
-                    <input type="text" id="spiceMenuTitle" class="form-input" placeholder="Chef's signatures">
-                  </div>
-                  <div id="spiceMenuContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Dining Options (Chips) -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Dining Options</div>
-                  <div class="form-row-2col">
-                    <div class="form-group">
-                      <label for="spiceDiningOptionsTitle" class="form-label">Section Title</label>
-                      <input type="text" id="spiceDiningOptionsTitle" class="form-input" placeholder="Dining options">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="spiceDiningOptions" class="form-label">Options (Comma separated tags)</label>
-                    <input type="text" id="spiceDiningOptions" class="form-input" placeholder="Dine-in, Takeaway, Home delivery, Family seating, Private events, Parking">
-                  </div>
-                </div>
-
-                <!-- Opening Hours & Notice -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">Opening Hours &amp; Reservation Notice</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Operating shifts, timings, and advance booking policies.</p>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnAddSpiceHour">
-                      <span>+ Add Shift</span>
-                    </button>
-                  </div>
-                  <div class="form-group">
-                    <label for="spiceHoursTitle" class="form-label">Section Title</label>
-                    <input type="text" id="spiceHoursTitle" class="form-input" placeholder="Opening hours">
-                  </div>
-                  <div id="spiceHoursContainer" style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                  <div class="form-group" style="margin-top: 10px;">
-                    <label for="spiceHoursNotice" class="form-label">Advance Booking Notice</label>
-                    <input type="text" id="spiceHoursNotice" class="form-input" placeholder="Tables for six or more: please book a day ahead.">
-                  </div>
-                </div>
-
-                <!-- Guest Reviews (Repeatable) -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div>
-                      <div class="customization-subheading">Guest Reviews</div>
-                      <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Customer testimonials displayed in quotes carousel.</p>
-                    </div>
-                    <button type="button" class="btn btn-white btn-sm" id="btnAddSpiceReview">
-                      <span>+ Add Review</span>
-                    </button>
-                  </div>
-                  <div class="form-group">
-                    <label for="spiceReviewsTitle" class="form-label">Section Title</label>
-                    <input type="text" id="spiceReviewsTitle" class="form-input" placeholder="Guest reviews">
-                  </div>
-                  <div id="spiceReviewsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                    <!-- Rendered dynamically -->
-                  </div>
-                </div>
-
-                <!-- Section Visibility Controls -->
-                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-light);">
-                  <div class="customization-subheading" style="margin-bottom: 8px;">Section Visibility Toggles</div>
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12.5px;">
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="spiceVisQuickActions" checked> <span>Quick Actions (2x2)</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="spiceVisMenu" checked> <span>Chef's Signatures</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="spiceVisDiningOptions" checked> <span>Dining Options</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="spiceVisHours" checked> <span>Opening Hours</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="spiceVisReviews" checked> <span>Guest Reviews</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                      <input type="checkbox" id="spiceVisContact" checked> <span>Get in touch</span>
-                    </label>
-                  </div>
-                </div>
-
-              </div>
+              </details>
 
               <!-- Form Action Buttons -->
               <div class="form-actions-bar">
-                <button type="button" class="btn btn-white" id="cancelAddCustomer">Cancel</button>
+                <button type="button" class="btn btn-white" id="cancelAddCustomer">
+                  <span>Cancel</span>
+                </button>
                 <button type="submit" class="btn btn-gold" id="saveCustomerBtn">
-                  <span>Save Customer</span>
+                  <span id="saveCustomerBtnText">Create Customer</span>
                 </button>
               </div>
 
             </div>
 
-            <!-- Right Column: Digital Card Design, Profile Link & QR Code Preview -->
+            <!-- Right Column: Interactive Live Preview & Client Delivery -->
             <div class="form-right-col">
               
-              <!-- Digital Card Design System Gallery -->
-              <div class="form-card admin-design-system-card" id="adminDesignGalleryCard">
-                <div class="design-gallery-header">
-                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px;">
-                    <h2 class="form-section-title" style="margin: 0;">Digital Card Design</h2>
-                    <span class="badge-design-selected" id="selectedDesignDisplayBadge">Mint Haven</span>
-                  </div>
-                  <p class="form-section-sub">Choose how this customer's digital identity will look (19 curated designs from portfolio).</p>
-                </div>
-
-                <!-- Category Filter Tabs: All (19), Personal (6), Business (6), Industry (7) -->
-                <div class="design-category-tabs" role="tablist" aria-label="Design Categories">
-                  <button type="button" class="design-cat-btn active" data-category="all">
-                    <span>All</span> <span class="cat-count">19</span>
-                  </button>
-                  <button type="button" class="design-cat-btn" data-category="personal">
-                    <span>Personal</span> <span class="cat-count">6</span>
-                  </button>
-                  <button type="button" class="design-cat-btn" data-category="business">
-                    <span>Business</span> <span class="cat-count">6</span>
-                  </button>
-                  <button type="button" class="design-cat-btn" data-category="industry">
-                    <span>Industry</span> <span class="cat-count">7</span>
-                  </button>
-                </div>
-
-                <!-- Dynamic 19-Design Grid (populated by admin.js from CARD_DESIGN_REGISTRY) -->
-                <div class="admin-design-gallery-grid" id="adminDesignGalleryGrid" role="radiogroup" aria-label="Select card design">
-                  <!-- Generated dynamically from CARD_DESIGN_REGISTRY.ALL_DESIGNS -->
-                </div>
-
-                <!-- Hidden Input for Form Submission -->
-                <input type="hidden" id="selectedDesignInput" name="card_design" value="Mint Haven">
-
-                <!-- Quick Action Bar -->
-                <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
-                  <button type="button" class="btn btn-white btn-sm" id="btnPreviewCurrentCustomerDesign" style="flex: 1; justify-content: center;">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    <span>Preview Live with Customer Data</span>
-                  </button>
-                  <a href="/cards/index.html" target="_blank" class="btn btn-white btn-sm" id="btnPreviewChosenDesign" title="Open Full 19-Design Showcase" style="padding: 0 10px;">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
-                  </a>
-                </div>
-              </div>
-
-              <!-- Live Interactive Card Preview Card -->
+              <!-- 1. Live Interactive Card Preview Card (Prominently at the Top) -->
               <div class="form-card" id="adminLivePreviewCard">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                   <div>
-                    <h2 class="form-section-title" style="margin: 0;">Live Card Preview</h2>
-                    <p class="form-section-sub" style="margin: 0;">Real-time interactive rendering of the selected design.</p>
+                    <h2 class="form-section-title" style="margin: 0; font-size: 15px;">Live Card Preview</h2>
+                    <p class="form-section-sub" style="margin: 0;">Interactive real-time preview of the card.</p>
                   </div>
                   <div class="preview-mode-toggle" style="display: flex; gap: 4px; background: #f1f5f9; padding: 3px; border-radius: 8px; border: 1px solid var(--border-light);">
                     <button type="button" class="btn-preview-mode active" id="btnPreviewMobile" title="Mobile Phone View" style="padding: 4px 8px; font-size: 11px; font-weight: 600; border-radius: 6px; border: none; background: #ffffff; cursor: pointer;">
@@ -1278,12 +848,12 @@
                 </div>
               </div>
 
-              <!-- Client Delivery Card -->
+              <!-- 2. Client Delivery Card (Production URL & QR Code) -->
               <div class="form-card" id="clientDeliveryCard">
                 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
                   <div>
-                    <h2 class="form-section-title" style="margin-bottom: 2px;">Client Delivery</h2>
-                    <p class="form-section-sub">Production link &amp; scannable NFC / QR assets.</p>
+                    <h2 class="form-section-title" style="margin-bottom: 2px; font-size: 15px;">Client Delivery</h2>
+                    <p class="form-section-sub">Production link &amp; scannable QR / NFC asset.</p>
                   </div>
                   <span class="delivery-status-pill" id="deliverySlugBadge" style="font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; text-transform: uppercase; letter-spacing: 0.04em;">Ready</span>
                 </div>
@@ -1291,15 +861,15 @@
                 <!-- Dynamic QR Code Preview Row -->
                 <div class="qr-preview-row">
                   <div class="qr-box" id="adminQrBox" style="width: 76px; height: 76px; padding: 4px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
-                    <!-- Dynamic SVG will be rendered here -->
+                    <!-- Dynamic SVG rendered here -->
                   </div>
                   <div class="qr-text-meta" style="flex: 1;">
                     <span class="qr-label">Production QR</span>
-                    <span class="qr-sub" id="adminQrSub">Instant scan to open profile or encode metal NFC card.</span>
+                    <span class="qr-sub" id="adminQrSub">Scan to open digital card or encode NFC tag.</span>
                     <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
                       <button type="button" class="btn btn-white btn-xs" id="btnAdminDownloadQrPng" title="Download High-Res PNG">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        <span>Download QR (PNG)</span>
+                        <span>PNG</span>
                       </button>
                       <button type="button" class="btn btn-white btn-xs" id="btnAdminDownloadQrSvg" title="Download Vector SVG">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -1313,18 +883,18 @@
                 <div style="margin-top: 14px;">
                   <label class="form-label" style="font-size: 11.5px; margin-bottom: 4px; display: block; color: var(--text-muted); font-weight: 600;">Public Card URL</label>
                   <div class="profile-link-box" id="custProfileLink" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; padding: 9px 12px; background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); color: var(--text-headline); word-break: break-all;">
-                    https://ambrosstudio.com/c/rahul-mehta
+                    https://ambrosstudio.com/c/preview
                   </div>
                 </div>
 
-                <!-- Client Delivery Quick Actions (Copy Link, Open Card, Share) -->
+                <!-- Client Delivery Actions -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px;">
                   <button type="button" class="btn btn-white btn-sm" id="btnAdminCopyLink" title="Copy public card URL" style="justify-content: center; padding: 7px 6px; font-size: 12px;">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span id="btnAdminCopyLinkText">Copy Link</span>
                   </button>
 
-                  <a href="/c/rahul-mehta" target="_blank" class="btn btn-white btn-sm" id="btnAdminOpenCard" title="Open digital card in new tab" style="justify-content: center; padding: 7px 6px; font-size: 12px; text-decoration: none;">
+                  <a href="/c/preview" target="_blank" class="btn btn-white btn-sm" id="btnAdminOpenCard" title="Open digital card in new tab" style="justify-content: center; padding: 7px 6px; font-size: 12px; text-decoration: none;">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline></svg>
                     <span>Open Card</span>
                   </a>
@@ -1335,6 +905,47 @@
                   </button>
                 </div>
               </div>
+
+              <!-- 3. Visual Design Showcase Accordion (Optional / Compact) -->
+              <details class="form-card form-accordion" id="adminDesignGalleryCard">
+                <summary class="accordion-summary">
+                  <div class="accordion-summary-content">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span class="accordion-title">Visual Template Gallery</span>
+                      <span class="badge-design-selected" id="selectedDesignDisplayBadge" style="font-size: 11px;">Mint Haven</span>
+                    </div>
+                    <span class="accordion-desc">Browse all 19 curated visual cards by category.</span>
+                  </div>
+                  <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </summary>
+
+                <div class="accordion-body" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-light);">
+                  <!-- Category Filter Tabs: All (19), Personal (6), Business (6), Industry (7) -->
+                  <div class="design-category-tabs" role="tablist" aria-label="Design Categories">
+                    <button type="button" class="design-cat-btn active" data-category="all">
+                      <span>All</span> <span class="cat-count">19</span>
+                    </button>
+                    <button type="button" class="design-cat-btn" data-category="personal">
+                      <span>Personal</span> <span class="cat-count">6</span>
+                    </button>
+                    <button type="button" class="design-cat-btn" data-category="business">
+                      <span>Business</span> <span class="cat-count">6</span>
+                    </button>
+                    <button type="button" class="design-cat-btn" data-category="industry">
+                      <span>Industry</span> <span class="cat-count">7</span>
+                    </button>
+                  </div>
+
+                  <!-- Dynamic 19-Design Grid -->
+                  <div class="admin-design-gallery-grid" id="adminDesignGalleryGrid" role="radiogroup" aria-label="Select card design"></div>
+
+                  <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+                    <a href="/cards/index.html" target="_blank" class="btn btn-white btn-xs" id="btnPreviewChosenDesign" title="Open Full 19-Design Showcase">
+                      <span>Open Full Portfolio Showcase &rarr;</span>
+                    </a>
+                  </div>
+                </div>
+              </details>
 
             </div>
 

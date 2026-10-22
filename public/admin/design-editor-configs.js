@@ -31,18 +31,7 @@
         contacts: { phone: true, whatsapp: true, email: true, website: true, address: true },
         social: { instagram: true, linkedin: true }
       },
-      sections: [
-        {
-          id: 'mintAppearance',
-          title: 'Color Palette & Typography',
-          description: 'Customize the pastel aesthetic while maintaining organic elegance.',
-          fields: [
-            { key: 'primaryColor', label: 'Accent Color', type: 'color', default: '#10b981' },
-            { key: 'backgroundColor', label: 'Background Color', type: 'color', default: '#faf6ee' },
-            { key: 'textColor', label: 'Text Color', type: 'color', default: '#1e293b' }
-          ]
-        }
-      ]
+      sections: []
     },
 
     'evergreen': {
