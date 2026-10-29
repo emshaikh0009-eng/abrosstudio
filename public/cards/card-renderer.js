@@ -1298,28 +1298,60 @@
         --int-border: rgba(26, 22, 20, 0.12);
       }
       
-      body {
+      html.theme-interior-luxury,
+      body.theme-interior-luxury {
         background: #110e0c !important;
         font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
         color: var(--int-espresso);
-        margin: 0;
-        padding: 0;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
       }
       .theme-interior-luxury .viewport-wrapper {
         padding: 0 !important;
-        max-width: 100% !important;
+        max-width: 440px !important;
+        width: 100% !important;
+        margin: 0 auto !important;
         background: transparent !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        min-width: 0 !important;
+      }
+      @media (min-width: 640px) {
+        .theme-interior-luxury .viewport-wrapper {
+          padding: 24px 0 !important;
+        }
       }
       .int-shell {
+        width: 100%;
         max-width: 440px;
         margin: 0 auto;
         background: var(--int-bg);
-        box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-        overflow: hidden;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: visible;
         min-height: 100vh;
+        position: relative;
+        min-width: 0;
+      }
+      @media (max-width: 480px) {
+        .int-shell {
+          box-shadow: none;
+          border-radius: 0;
+          width: 100%;
+          max-width: 100%;
+        }
       }
       @media (min-width: 640px) {
-        .int-shell { margin: 24px auto; border-radius: 32px; }
+        .int-shell {
+          margin: 24px auto;
+          border-radius: 32px;
+          box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
       }
       .font-cormorant { font-family: 'Cormorant Garamond', Georgia, serif; }
       
@@ -1342,6 +1374,8 @@
         height: 82vh;
         max-height: 720px;
         overflow: hidden;
+        width: 100%;
+        box-sizing: border-box;
       }
       .int-hero img {
         width: 100%;
@@ -1365,6 +1399,7 @@
         align-items: center;
         color: var(--int-ivory);
         z-index: 2;
+        box-sizing: border-box;
         animation: intHeroFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
       }
       .int-hero-bottom {
@@ -1373,7 +1408,15 @@
         padding: 28px;
         color: var(--int-ivory);
         z-index: 2;
+        box-sizing: border-box;
         animation: intHeroSlideUp 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+      }
+      .int-hero-title {
+        font-size: clamp(38px, 10.5vw, 52px);
+        line-height: 0.95;
+        margin: 8px 0 16px;
+        overflow-wrap: break-word;
+        word-break: break-word;
       }
       
       /* 2. Scroll Reveal Base Classes (Trigger naturally on scroll) */
@@ -1396,6 +1439,8 @@
         background: var(--int-bg);
         padding: 32px 24px 20px;
         z-index: 3;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       /* 3. Statistics Grid & Staggered Reveal */
@@ -1407,11 +1452,14 @@
         padding: 18px 0;
         margin: 24px 0;
         text-align: center;
+        width: 100%;
+        box-sizing: border-box;
       }
       .int-stat-item {
         opacity: 0;
         transform: translateY(16px);
         transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        min-width: 0;
       }
       .is-revealed .int-stat-item:nth-child(1), .int-stat-item:nth-child(1).is-revealed { opacity: 1; transform: translateY(0); transition-delay: 0.05s; }
       .is-revealed .int-stat-item:nth-child(2), .int-stat-item:nth-child(2).is-revealed { opacity: 1; transform: translateY(0); transition-delay: 0.18s; }
@@ -1435,23 +1483,29 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
       }
       .int-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        padding: 13px 14px;
+        gap: 6px;
+        padding: 13px 8px;
         border-radius: 9999px;
-        font-size: 11px;
+        font-size: clamp(10px, 2.7vw, 11px);
         font-weight: 600;
-        letter-spacing: 0.18em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
         text-decoration: none;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         cursor: pointer;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
+        width: 100%;
+        box-sizing: border-box;
+        white-space: nowrap;
+        min-width: 0;
       }
       .int-btn:hover {
         transform: translateY(-2px);
@@ -1491,8 +1545,11 @@
       .int-cta-consultation {
         width: 100%;
         box-sizing: border-box;
-        padding: 16px;
+        padding: 16px 12px;
         margin-top: 28px;
+        font-size: clamp(11px, 2.8vw, 12px);
+        letter-spacing: 0.16em;
+        text-align: center;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .int-cta-consultation:hover {
@@ -1506,6 +1563,9 @@
       
       /* 6. Continuous Materials Marquee (Smooth 60fps GPU-accelerated) */
       .int-marquee-wrap {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
         overflow: hidden;
         white-space: nowrap;
         border-top: 1px solid var(--int-border);
@@ -1528,7 +1588,16 @@
       }
       
       /* Sections */
-      .int-section { padding: 48px 24px; }
+      .int-section {
+        padding: 40px 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      @media (min-width: 480px) {
+        .int-section {
+          padding: 48px 24px;
+        }
+      }
       .int-eyebrow { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--int-brass); margin-bottom: 12px; }
       .int-dark { background: var(--int-espresso); color: var(--int-ivory); }
       
@@ -1543,6 +1612,8 @@
         transform: translateY(20px);
         transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
         border-radius: 8px;
+        width: 100%;
+        box-sizing: border-box;
       }
       .is-revealed .int-service-row,
       .int-service-row.is-revealed {
@@ -1562,6 +1633,8 @@
         opacity: 0;
         transform: translateY(24px);
         transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+        width: 100%;
+        box-sizing: border-box;
       }
       .int-portfolio-card.is-revealed {
         opacity: 1;
@@ -1596,6 +1669,8 @@
         justify-content: space-between;
         align-items: baseline;
         margin-top: 10px;
+        gap: 8px;
+        flex-wrap: wrap;
       }
 
       /* 9. Staggered Process Items */
@@ -1605,6 +1680,16 @@
         opacity: 0;
         transform: translateY(18px);
         transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        box-sizing: border-box;
+      }
+      .int-process-dot {
+        position: absolute;
+        left: -26px;
+        top: 8px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--int-brass);
       }
       .is-revealed .int-process-item,
       .int-process-item.is-revealed {
@@ -1621,11 +1706,25 @@
       .int-contact-row {
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        gap: 12px;
         padding-bottom: 12px;
         border-bottom: 1px solid rgba(250,247,242,0.12);
         opacity: 0;
         transform: translateY(14px);
         transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .int-contact-row > span:first-child {
+        flex-shrink: 0;
+      }
+      .int-contact-row > :last-child {
+        text-align: right;
+        max-width: 65%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .is-revealed .int-contact-row,
       .int-contact-row.is-revealed {
@@ -1662,7 +1761,7 @@
       }
     </style>
 
-    <main class="int-shell">
+    <div class="int-shell">
       <!-- Hero Cover -->
       <header class="int-hero">
         <img src="${heroImg}" alt="${name}" />
@@ -1673,18 +1772,18 @@
         </div>
         <div class="int-hero-bottom">
           <p class="int-eyebrow" style="color: var(--int-brass);">Interior Architecture</p>
-          <h1 class="font-cormorant" style="font-size: 52px; line-height: 0.95; margin: 8px 0 16px;">${name}</h1>
+          <h1 class="font-cormorant int-hero-title">${name}</h1>
           <p style="font-size: 13px; line-height: 1.6; opacity: 0.85; max-width: 280px; margin: 0;">${escapeHtml(card.description || card.bio || "Spaces shaped by light, material and the quiet art of living well.")}</p>
         </div>
       </header>
 
       <!-- Profile Info & Quick Actions -->
       <div class="int-profile-card int-reveal">
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <div style="width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--int-brass); display: flex; align-items: center; justify-content: center; color: var(--int-brass); font-size: 20px;" class="font-cormorant">${initials}</div>
-          <div>
-            <h2 class="font-cormorant" style="font-size: 28px; margin: 0; line-height: 1;">${name}</h2>
-            <p style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--int-muted); margin: 4px 0 0;">${designation}</p>
+        <div style="display: flex; align-items: center; gap: 16px; min-width: 0;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--int-brass); display: flex; align-items: center; justify-content: center; color: var(--int-brass); font-size: 20px; flex-shrink: 0;" class="font-cormorant">${initials}</div>
+          <div style="flex: 1; min-width: 0;">
+            <h2 class="font-cormorant" style="font-size: clamp(22px, 6.5vw, 28px); margin: 0; line-height: 1.1; overflow-wrap: break-word; word-break: break-word;">${name}</h2>
+            <p style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--int-muted); margin: 4px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${designation}</p>
           </div>
         </div>
 
@@ -1781,25 +1880,25 @@
       <!-- Process -->
       <section class="int-section int-reveal" style="background: #f2ece4;">
         <p class="int-eyebrow">— The Process</p>
-        <ol class="int-process-list int-reveal" style="margin: 20px 0 0 10px; padding-left: 20px; border-left: 2px solid var(--int-brass); list-style: none;">
+        <ol class="int-process-list int-reveal" style="margin: 20px 0 0 10px; padding-left: 20px; border-left: 2px solid var(--int-brass); list-style: none; box-sizing: border-box;">
           <li class="int-process-item">
-            <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+            <span class="int-process-dot"></span>
             <span class="font-cormorant" style="font-size: 24px;">1. Consultation</span>
           </li>
           <li class="int-process-item">
-            <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+            <span class="int-process-dot"></span>
             <span class="font-cormorant" style="font-size: 24px;">2. Concept &amp; Mood</span>
           </li>
           <li class="int-process-item">
-            <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+            <span class="int-process-dot"></span>
             <span class="font-cormorant" style="font-size: 24px;">3. Design Development</span>
           </li>
           <li class="int-process-item">
-            <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+            <span class="int-process-dot"></span>
             <span class="font-cormorant" style="font-size: 24px;">4. Execution</span>
           </li>
           <li class="int-process-item">
-            <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+            <span class="int-process-dot"></span>
             <span class="font-cormorant" style="font-size: 24px;">5. The Handover</span>
           </li>
         </ol>
@@ -1847,7 +1946,7 @@
           &copy; ${name} &bull; Ambros Studio
         </p>
       </footer>
-    </main>
+    </div>
 
     <script>
       function downloadVCard() {

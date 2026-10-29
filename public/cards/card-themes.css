@@ -3932,26 +3932,34 @@ body.theme-noir-gold {
 /* =============================================================================
    DESIGN 20 (or 17) — INTERIOR LUXURY (Maison Aurelle Studio)
    ============================================================================= */
+html.theme-interior-luxury,
 body.theme-interior-luxury {
   background: #110e0c !important;
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
   color: #1a1614;
-  margin: 0;
-  padding: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
 }
 
 .theme-interior-luxury .viewport-wrapper {
-  max-width: 440px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0;
-  background: transparent;
-  box-sizing: border-box;
+  max-width: 440px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  min-width: 0 !important;
 }
 
 @media (min-width: 640px) {
   .theme-interior-luxury .viewport-wrapper {
-    padding: 24px 0;
+    padding: 24px 0 !important;
   }
 }
 
