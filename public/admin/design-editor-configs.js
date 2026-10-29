@@ -1228,6 +1228,24 @@
           ]
         }
       ]
+    },
+
+    'interior-luxury': {
+      id: 'interior-luxury',
+      name: 'Interior Luxury',
+      category: 'industry',
+      badge: 'Design 17',
+      headline: 'High-end interior architecture & styling profile with warm espresso, ivory and brushed brass palette, project showcase, and process timeline',
+      coreFields: {
+        fullName: { show: true, label: 'Studio name', placeholder: 'e.g. Maison Aurelle', required: true },
+        designation: { show: true, label: 'Studio designation', placeholder: 'e.g. Luxury Interior Architects' },
+        company: { show: true, label: 'Parent studio / firm', placeholder: 'e.g. Maison Aurelle Studio' },
+        description: { show: true, label: 'Studio philosophy / bio', placeholder: 'Spaces shaped by light, material and the quiet art of living well.' },
+        avatar: { show: true, label: 'Hero cover image', help: 'High-res architectural interior photo (e.g. /assets/interior/hero.jpg).' },
+        contacts: { phone: true, whatsapp: true, email: true, website: true, address: true },
+        social: { instagram: true, linkedin: false }
+      },
+      sections: []
     }
   };
 
@@ -1248,12 +1266,13 @@
     }
 
     // Common aliases
+    if (clean.includes('interior') || clean.includes('maison')) return CONFIGS['interior-luxury'];
     if (clean.includes('raftcon')) return CONFIGS['raftcon-luxury'];
     if (clean.includes('atg') || clean.includes('study')) return CONFIGS['atg-study-abroad'];
     if (clean.includes('spice')) return CONFIGS['spice-route'];
     if (clean.includes('roast')) return CONFIGS['roast-and-co'];
     if (clean.includes('skyline') || clean.includes('estate')) return CONFIGS['skyline'];
-    if (clean.includes('atelier') || clean.includes('interior')) return CONFIGS['atelier'];
+    if (clean.includes('atelier')) return CONFIGS['atelier'];
     if (clean.includes('care') || clean.includes('doctor') || clean.includes('medical')) return CONFIGS['care-plus'];
     if (clean.includes('bento')) return CONFIGS['bento-grid'];
     if (clean.includes('glass')) return CONFIGS['glass-aurora'];

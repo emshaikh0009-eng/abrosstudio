@@ -442,6 +442,56 @@
   }
 
   /**
+   * Premium Scroll-Triggered Reveal Animation for Interior Luxury Profile (Design 17)
+   * Uses IntersectionObserver for natural, single-fire scroll reveals.
+   * Respects prefers-reduced-motion for accessibility.
+   */
+  function initInteriorLuxuryScrollReveal() {
+    if (typeof window === 'undefined') return;
+
+    const revealElements = document.querySelectorAll(
+      '.int-reveal, .int-service-row, .int-portfolio-card, .int-process-item, .int-contact-row'
+    );
+    if (!revealElements.length) return;
+
+    // Respect user's accessibility preference
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      revealElements.forEach(function (el) {
+        el.classList.add('is-revealed');
+      });
+      return;
+    }
+
+    // Graceful fallback if IntersectionObserver is unsupported
+    if (!('IntersectionObserver' in window)) {
+      revealElements.forEach(function (el) {
+        el.classList.add('is-revealed');
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.08
+      }
+    );
+
+    revealElements.forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  /**
    * Universal Hydration for All 16 Designs
    */
   function hydrateUniversal(card, isPreview) {
@@ -498,6 +548,7 @@
 
     attachCardActions(card);
     initRaftconScrollReveal();
+    initInteriorLuxuryScrollReveal();
 
     document.documentElement.classList.remove('card-loading');
     const skeleton = document.getElementById('cardSkeleton');
@@ -928,6 +979,7 @@
     window.generateVCard = generateVCard;
     window.handleCardShare = handleCardShare;
     window.initRaftconScrollReveal = initRaftconScrollReveal;
+    window.initInteriorLuxuryScrollReveal = initInteriorLuxuryScrollReveal;
   }
 
   if (document.readyState === 'loading') {

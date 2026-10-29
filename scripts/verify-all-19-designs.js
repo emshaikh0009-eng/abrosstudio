@@ -24,7 +24,8 @@ const ALL_19_DESIGNS = [
   'roast-and-co',
   'raftcon-luxury',
   'atg-study-abroad',
-  'spice-route'
+  'spice-route',
+  'interior-luxury'
 ];
 
 let totalTests = 0;

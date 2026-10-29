@@ -3929,4 +3929,30 @@ body.theme-noir-gold {
   text-decoration: none;
 }
 
+/* =============================================================================
+   DESIGN 20 (or 17) — INTERIOR LUXURY (Maison Aurelle Studio)
+   ============================================================================= */
+body.theme-interior-luxury {
+  background: #110e0c !important;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  color: #1a1614;
+  margin: 0;
+  padding: 0;
+}
+
+.theme-interior-luxury .viewport-wrapper {
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .theme-interior-luxury .viewport-wrapper {
+    padding: 24px 0;
+  }
+}
+
 

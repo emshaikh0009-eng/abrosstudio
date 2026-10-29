@@ -2371,6 +2371,17 @@ input:checked + .switch-slider::before {
   background: #c29b62;
 }
 
+.thumb-interior-luxury {
+  background: #fbf9f5;
+  border: 1px solid rgba(26, 22, 20, 0.12);
+}
+.thumb-interior-luxury .thumb-elem-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #c29a67;
+}
+
 .design-card-meta {
   display: flex;
   flex-direction: column;

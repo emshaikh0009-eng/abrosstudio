@@ -607,6 +607,38 @@
         text: '#1f1915',
         style: 'wf-spice-route'
       }
+    },
+
+    'interior-luxury': {
+      id: 'interior-luxury',
+      name: 'Interior Luxury',
+      category: 'industry',
+      categoryLabel: 'Industry Specials',
+      badge: 'Design 17',
+      description: 'High-end interior architecture & styling profile with warm espresso, ivory and brushed brass palette, project showcase, and process timeline.',
+      theme: {
+        baseMode: 'light',
+        primaryColor: '#c29a67',
+        backgroundColor: '#fbf9f5',
+        textColor: '#1a1614',
+        accentColor: '#9b7647',
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+        fontUrl: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap'
+      },
+      layoutType: 'industry-special',
+      supportedSections: ['hero', 'stats', 'actions', 'marquee', 'philosophy', 'services', 'film', 'portfolio', 'process', 'materials', 'quote', 'faq', 'contact'],
+      ctaStyle: {
+        primaryText: 'Book Consultation',
+        primaryStyle: 'btn-luxury-brass',
+        secondaryText: 'Save Contact',
+        secondaryStyle: 'btn-luxury-outline'
+      },
+      wireframe: {
+        bg: '#fbf9f5',
+        accent: '#c29a67',
+        text: '#1a1614',
+        style: 'wf-interior-luxury'
+      }
     }
   };
 
@@ -624,6 +656,7 @@
       }
     }
 
+    if (clean === 'interior' || clean === 'interior-luxury' || clean === 'maison-aurelle' || clean === 'maisonaurelle') return CARD_DESIGNS['interior-luxury'];
     if (clean === 'raftcon' || clean === 'raftcon-luxury' || clean === 'raftcon-construction') return CARD_DESIGNS['raftcon-luxury'];
     if (clean === 'atg' || clean === 'atg-study-abroad' || clean === 'atgstudyabroad' || clean === 'atg-study' || clean === 'study-abroad') return CARD_DESIGNS['atg-study-abroad'];
     if (clean === 'spice-route' || clean === 'spiceroute' || clean === 'spice-route-restaurant' || clean === 'spicerouterestaurant' || clean === 'restaurant') return CARD_DESIGNS['spice-route'];
@@ -1539,12 +1572,42 @@
           { id: '3', type: 'email', label: 'Email', value: 'hello@spiceroute.com', enabled: true, order: 2 }
         ]
       }
+    },
+
+    'interior-luxury': {
+      fullName: "Maison Aurelle",
+      designation: "Luxury Interior Architects",
+      company: "Maison Aurelle Studio",
+      description: "Spaces shaped by light, material and the quiet art of living well. Bespoke residential interiors and turnkey execution.",
+      phone: "+910000000000",
+      whatsapp: "910000000000",
+      email: "hello@maisonaurelle.com",
+      website: "https://maisonaurelle.com",
+      address: "Mumbai, India",
+      socialInstagram: "maisonaurelle",
+      cardDesign: "interior-luxury",
+      profileSlug: "maisonaurelle",
+      avatarUrl: "/assets/interior/hero.jpg",
+      is_active: true,
+      customSettings: {
+        appearance: {
+          primaryColor: "#c29a67",
+          backgroundColor: "#fbf9f5",
+          textColor: "#1a1614"
+        },
+        links: [
+          { id: "1", type: "phone", label: "Call", value: "+910000000000", enabled: true, order: 0 },
+          { id: "2", type: "whatsapp", label: "WhatsApp", value: "910000000000", enabled: true, order: 1 },
+          { id: "3", type: "email", label: "Email", value: "hello@maisonaurelle.com", enabled: true, order: 2 }
+        ]
+      }
     }
   };
 
   var AUTHORITATIVE_RAFTCON_CUSTOMER = CANONICAL_DEMO_PROFILES['raftcon-luxury'];
   var AUTHORITATIVE_ATG_CUSTOMER = CANONICAL_DEMO_PROFILES['atg-study-abroad'];
   var AUTHORITATIVE_SPICE_ROUTE_CUSTOMER = CANONICAL_DEMO_PROFILES['spice-route'];
+  var AUTHORITATIVE_INTERIOR_CUSTOMER = CANONICAL_DEMO_PROFILES['interior-luxury'];
 
   function getDemoProfile(rawNameOrId) {
     var design = resolveCardDesign(rawNameOrId);
@@ -1563,6 +1626,7 @@
     AUTHORITATIVE_RAFTCON_CUSTOMER: AUTHORITATIVE_RAFTCON_CUSTOMER,
     AUTHORITATIVE_ATG_CUSTOMER: AUTHORITATIVE_ATG_CUSTOMER,
     AUTHORITATIVE_SPICE_ROUTE_CUSTOMER: AUTHORITATIVE_SPICE_ROUTE_CUSTOMER,
+    AUTHORITATIVE_INTERIOR_CUSTOMER: AUTHORITATIVE_INTERIOR_CUSTOMER,
     CANONICAL_DEMO_PROFILES: CANONICAL_DEMO_PROFILES,
     getDemoProfile: getDemoProfile
   };

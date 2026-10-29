@@ -1,5 +1,5 @@
 import { createAnonymousClient } from "@/utils/supabase/server";
-import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, AUTHORITATIVE_RAFTCON_CUSTOMER, AUTHORITATIVE_ATG_CUSTOMER, AUTHORITATIVE_SPICE_ROUTE_CUSTOMER, getDemoProfile } from "@/utils/card-designs";
+import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, AUTHORITATIVE_RAFTCON_CUSTOMER, AUTHORITATIVE_ATG_CUSTOMER, AUTHORITATIVE_SPICE_ROUTE_CUSTOMER, AUTHORITATIVE_INTERIOR_CUSTOMER, getDemoProfile } from "@/utils/card-designs";
 import { renderCardHtml, ResolvedCustomerCard } from "@/utils/card-renderer";
 import { getCachedProfileHtml, setCachedProfileHtml } from "@/utils/card-cache";
 
@@ -186,6 +186,14 @@ export async function GET(
           data = fallbackRes.data;
           error = null;
         }
+      } else if (sanitizedSlug === "maisonaurelle" || sanitizedSlug === "interior-luxury" || sanitizedSlug === "maison-aurelle") {
+        const fallbackRes = await supabase.rpc("get_public_card", {
+          p_slug: "maisonaurelle",
+        });
+        if (fallbackRes.data && fallbackRes.data.length > 0) {
+          data = fallbackRes.data;
+          error = null;
+        }
       }
     }
 
@@ -255,6 +263,26 @@ export async function GET(
           : resolveCardDesign(AUTHORITATIVE_SPICE_ROUTE_CUSTOMER.cardDesign).id;
         const html = renderCardHtml({
           ...AUTHORITATIVE_SPICE_ROUTE_CUSTOMER,
+          cardDesign: activeDesignId,
+          profileSlug: sanitizedSlug,
+        });
+        setCachedProfileHtml(sanitizedSlug, designParam, html, activeDesignId);
+        return new Response(html, {
+          status: 200,
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": PUBLIC_PROFILE_CACHE_CONTROL,
+            "X-Ambros-Cache": "MISS",
+          },
+        });
+      }
+
+      if (sanitizedSlug === "maisonaurelle" || sanitizedSlug === "interior-luxury" || sanitizedSlug === "maison-aurelle") {
+        const activeDesignId = designParam
+          ? resolveCardDesign(designParam).id
+          : "interior-luxury";
+        const html = renderCardHtml({
+          ...AUTHORITATIVE_INTERIOR_CUSTOMER,
           cardDesign: activeDesignId,
           profileSlug: sanitizedSlug,
         });

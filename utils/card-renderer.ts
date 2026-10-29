@@ -1308,6 +1308,653 @@ function renderSpiceRouteBody(card: ResolvedCustomerCard): string {
   return html;
 }
 
+function renderInteriorLuxuryBody(card: ResolvedCustomerCard): string {
+  const name = escapeHtml(card.fullName || (card as any).full_name || "Maison Aurelle");
+  const designation = escapeHtml(card.designation || (card as any).role || "Luxury Interior Architects");
+  const rawPhone = card.phone || (card as any).mobile_number || "";
+  const phone = escapeHtml(rawPhone);
+  const cleanPhone = phone.replace(/[^\d+]/g, "");
+  const rawWa = card.whatsapp || (card as any).whatsapp_number || "";
+  const wa = escapeHtml(rawWa ? rawWa.replace(/\D/g, "") : cleanPhone.replace(/^\+/, ""));
+  const email = escapeHtml(card.email || "");
+  const website = escapeHtml(card.website || "");
+  const city = escapeHtml(card.address || (card as any).business_address || "Mumbai, India");
+  const insta = escapeHtml(card.socialInstagram || (card as any).instagram_url || "");
+  const heroImg = escapeHtml(card.avatarUrl || (card as any).avatar_url || (card as any).profile_image_url || "/assets/interior/hero.jpg");
+  const initials = getInitials(card.fullName || (card as any).full_name || "Maison Aurelle");
+
+  const appearance = (card.customSettings && card.customSettings.appearance) ? card.customSettings.appearance : {};
+  const bg = appearance.backgroundColor || "#fbf9f5";
+  const primary = appearance.primaryColor || "#c29a67";
+  const text = appearance.textColor || "#1a1614";
+
+  return `
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+    
+    :root {
+      --int-bg: ${bg};
+      --int-espresso: ${text};
+      --int-brass: ${primary};
+      --int-ivory: #faf7f2;
+      --int-muted: #78716c;
+      --int-border: rgba(26, 22, 20, 0.12);
+    }
+    
+    body {
+      background: #110e0c !important;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+      color: var(--int-espresso);
+      margin: 0;
+      padding: 0;
+    }
+    .theme-interior-luxury .viewport-wrapper {
+      padding: 0 !important;
+      max-width: 100% !important;
+      background: transparent !important;
+    }
+    .int-shell {
+      max-width: 440px;
+      margin: 0 auto;
+      background: var(--int-bg);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      overflow: hidden;
+      min-height: 100vh;
+    }
+    @media (min-width: 640px) {
+      .int-shell { margin: 24px auto; border-radius: 32px; }
+    }
+    .font-cormorant { font-family: 'Cormorant Garamond', Georgia, serif; }
+    
+    /* 1. Hero Cover Keyframe Animations (Immediate on load) */
+    @keyframes intHeroZoom {
+      0% { opacity: 0.6; transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes intHeroFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes intHeroSlideUp {
+      0% { opacity: 0; transform: translateY(24px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .int-hero {
+      position: relative;
+      height: 82vh;
+      max-height: 720px;
+      overflow: hidden;
+    }
+    .int-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      animation: intHeroZoom 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+    }
+    .int-hero-veil {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(26,22,20,0.3) 0%, rgba(26,22,20,0.1) 40%, rgba(26,22,20,0.92) 100%);
+    }
+    .int-hero-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--int-ivory);
+      z-index: 2;
+      animation: intHeroFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    }
+    .int-hero-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 28px;
+      color: var(--int-ivory);
+      z-index: 2;
+      animation: intHeroSlideUp 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+    }
+    
+    /* 2. Scroll Reveal Base Classes (Trigger naturally on scroll) */
+    .int-reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .int-reveal.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Founder / Action Card */
+    .int-profile-card {
+      position: relative;
+      margin-top: -24px;
+      border-radius: 32px 32px 0 0;
+      background: var(--int-bg);
+      padding: 32px 24px 20px;
+      z-index: 3;
+    }
+
+    /* 3. Statistics Grid & Staggered Reveal */
+    .int-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--int-border);
+      border-bottom: 1px solid var(--int-border);
+      padding: 18px 0;
+      margin: 24px 0;
+      text-align: center;
+    }
+    .int-stat-item {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .is-revealed .int-stat-item:nth-child(1), .int-stat-item:nth-child(1).is-revealed { opacity: 1; transform: translateY(0); transition-delay: 0.05s; }
+    .is-revealed .int-stat-item:nth-child(2), .int-stat-item:nth-child(2).is-revealed { opacity: 1; transform: translateY(0); transition-delay: 0.18s; }
+    .is-revealed .int-stat-item:nth-child(3), .int-stat-item:nth-child(3).is-revealed { opacity: 1; transform: translateY(0); transition-delay: 0.30s; }
+    .int-stat-num { font-size: 26px; font-weight: 600; color: var(--int-brass); }
+    .int-stat-lbl { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--int-muted); margin-top: 4px; }
+    
+    /* 4. Text Sections with Elegant Staggered Upward Reveal */
+    .int-stagger > * {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .is-revealed.int-stagger > *:nth-child(1), .is-revealed .int-stagger > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.05s; }
+    .is-revealed.int-stagger > *:nth-child(2), .is-revealed .int-stagger > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.18s; }
+    .is-revealed.int-stagger > *:nth-child(3), .is-revealed .int-stagger > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.30s; }
+    .is-revealed.int-stagger > *:nth-child(4), .is-revealed .int-stagger > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.42s; }
+
+    /* 5. Contact Buttons with Micro-Interactions (Hover & Tap) */
+    .int-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .int-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .int-btn:hover {
+      transform: translateY(-2px);
+    }
+    .int-btn:active {
+      transform: scale(0.97) translateY(0);
+    }
+    .int-btn-primary {
+      background: var(--int-espresso);
+      color: var(--int-ivory);
+      border: none;
+    }
+    .int-btn-primary:hover {
+      background: #2a2320;
+      box-shadow: 0 6px 18px rgba(26,22,20,0.22);
+    }
+    .int-btn-brass {
+      background: var(--int-brass);
+      color: #fff;
+      border: none;
+    }
+    .int-btn-brass:hover {
+      background: #cfa873;
+      box-shadow: 0 6px 20px rgba(194,154,103,0.38);
+    }
+    .int-btn-outline {
+      background: transparent;
+      color: var(--int-espresso);
+      border: 1px solid var(--int-border);
+    }
+    .int-btn-outline:hover {
+      background: rgba(26,22,20,0.04);
+      border-color: var(--int-espresso);
+    }
+
+    /* Consultation CTA button */
+    .int-cta-consultation {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 16px;
+      margin-top: 28px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .int-cta-consultation:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(194,154,103,0.45);
+      background: #cfa873;
+    }
+    .int-cta-consultation:active {
+      transform: scale(0.98) translateY(0);
+    }
+    
+    /* 6. Continuous Materials Marquee (Smooth 60fps GPU-accelerated) */
+    .int-marquee-wrap {
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid var(--int-border);
+      border-bottom: 1px solid var(--int-border);
+      padding: 14px 0;
+      margin: 24px 0;
+    }
+    .int-marquee {
+      display: inline-block;
+      animation: int-scroll 28s linear infinite;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--int-muted);
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+    }
+    @keyframes int-scroll {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-50%, 0, 0); }
+    }
+    
+    /* Sections */
+    .int-section { padding: 48px 24px; }
+    .int-eyebrow { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--int-brass); margin-bottom: 12px; }
+    .int-dark { background: var(--int-espresso); color: var(--int-ivory); }
+    
+    /* 7. Staggered Services Rows */
+    .int-service-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(250,247,242,0.12);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+      border-radius: 8px;
+    }
+    .is-revealed .int-service-row,
+    .int-service-row.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .is-revealed .int-service-row:nth-child(1), .int-service-row:nth-child(1).is-revealed { transition-delay: 0.06s; }
+    .is-revealed .int-service-row:nth-child(2), .int-service-row:nth-child(2).is-revealed { transition-delay: 0.18s; }
+    .is-revealed .int-service-row:nth-child(3), .int-service-row:nth-child(3).is-revealed { transition-delay: 0.30s; }
+    .is-revealed .int-service-row:nth-child(4), .int-service-row:nth-child(4).is-revealed { transition-delay: 0.42s; }
+    .int-service-row:hover {
+      background: rgba(250,247,242,0.03);
+    }
+
+    /* 8. Portfolio Cards with Smooth Zoom & Scale Effect */
+    .int-portfolio-card {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .int-portfolio-card.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .int-portfolio-img-wrap {
+      width: 100%;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #201b18;
+    }
+    .int-portfolio-img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.06);
+      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    .int-portfolio-card.is-revealed .int-portfolio-img {
+      transform: scale(1);
+    }
+    .int-portfolio-card.is-revealed:hover .int-portfolio-img {
+      transform: scale(1.035);
+      transition-duration: 0.6s;
+    }
+    .int-portfolio-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 10px;
+    }
+
+    /* 9. Staggered Process Items */
+    .int-process-item {
+      position: relative;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .is-revealed .int-process-item,
+    .int-process-item.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .is-revealed .int-process-item:nth-child(1), .int-process-item:nth-child(1).is-revealed { transition-delay: 0.05s; }
+    .is-revealed .int-process-item:nth-child(2), .int-process-item:nth-child(2).is-revealed { transition-delay: 0.16s; }
+    .is-revealed .int-process-item:nth-child(3), .int-process-item:nth-child(3).is-revealed { transition-delay: 0.27s; }
+    .is-revealed .int-process-item:nth-child(4), .int-process-item:nth-child(4).is-revealed { transition-delay: 0.38s; }
+    .is-revealed .int-process-item:nth-child(5), .int-process-item:nth-child(5).is-revealed { transition-delay: 0.49s; }
+
+    /* 10. Contact Rows Staggered */
+    .int-contact-row {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(250,247,242,0.12);
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .is-revealed .int-contact-row,
+    .int-contact-row.is-revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .is-revealed .int-contact-row:nth-child(1), .int-contact-row:nth-child(1).is-revealed { transition-delay: 0.08s; }
+    .is-revealed .int-contact-row:nth-child(2), .int-contact-row:nth-child(2).is-revealed { transition-delay: 0.16s; }
+    .is-revealed .int-contact-row:nth-child(3), .int-contact-row:nth-child(3).is-revealed { transition-delay: 0.24s; }
+    .is-revealed .int-contact-row:nth-child(4), .int-contact-row:nth-child(4).is-revealed { transition-delay: 0.32s; }
+    .is-revealed .int-contact-row:nth-child(5), .int-contact-row:nth-child(5).is-revealed { transition-delay: 0.40s; }
+
+    /* 11. Accessibility: Respect User's Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .int-reveal,
+      .int-stagger > *,
+      .int-stat-item,
+      .int-service-row,
+      .int-portfolio-card,
+      .int-portfolio-img,
+      .int-process-item,
+      .int-contact-row,
+      .int-hero img,
+      .int-hero-top,
+      .int-hero-bottom {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        animation: none !important;
+      }
+      .int-marquee {
+        animation-duration: 60s !important;
+      }
+    }
+  </style>
+
+  <main class="int-shell">
+    <!-- Hero Cover -->
+    <header class="int-hero">
+      <img src="${heroImg}" alt="${name}" />
+      <div class="int-hero-veil"></div>
+      <div class="int-hero-top">
+        <span class="font-cormorant" style="font-size: 22px; letter-spacing: 0.25em;">M·A</span>
+        <span style="font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.8;">Est. 2014</span>
+      </div>
+      <div class="int-hero-bottom">
+        <p class="int-eyebrow" style="color: var(--int-brass);">Interior Architecture</p>
+        <h1 class="font-cormorant" style="font-size: 52px; line-height: 0.95; margin: 8px 0 16px;">${name}</h1>
+        <p style="font-size: 13px; line-height: 1.6; opacity: 0.85; max-width: 280px; margin: 0;">${escapeHtml(card.description || (card as any).bio || "Spaces shaped by light, material and the quiet art of living well.")}</p>
+      </div>
+    </header>
+
+    <!-- Profile Info & Quick Actions -->
+    <div class="int-profile-card int-reveal">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--int-brass); display: flex; align-items: center; justify-content: center; color: var(--int-brass); font-size: 20px;" class="font-cormorant">${initials}</div>
+        <div>
+          <h2 class="font-cormorant" style="font-size: 28px; margin: 0; line-height: 1;">${name}</h2>
+          <p style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--int-muted); margin: 4px 0 0;">${designation}</p>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="int-stats-grid int-reveal">
+        <div class="int-stat-item"><div class="int-stat-num font-cormorant">350+</div><div class="int-stat-lbl">Homes</div></div>
+        <div class="int-stat-item"><div class="int-stat-num font-cormorant">12</div><div class="int-stat-lbl">Years</div></div>
+        <div class="int-stat-item"><div class="int-stat-num font-cormorant">28</div><div class="int-stat-lbl">Awards</div></div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="int-btn-grid">
+        ${phone ? `<a href="tel:${cleanPhone}" class="int-btn int-btn-primary">Call</a>` : ""}
+        ${wa ? `<a href="https://wa.me/${wa}" target="_blank" rel="noopener noreferrer" class="int-btn int-btn-brass">WhatsApp</a>` : ""}
+        ${email ? `<a href="mailto:${email}" class="int-btn int-btn-outline">Email</a>` : ""}
+        <button type="button" onclick="downloadVCard()" class="int-btn int-btn-outline">Save Contact</button>
+      </div>
+    </div>
+
+    <!-- Scrolling Materials Marquee -->
+    <div class="int-marquee-wrap int-reveal">
+      <div class="int-marquee font-cormorant">
+        Travertine &bull; Walnut &bull; Brushed Brass &bull; Natural Linen &bull; Fluted Glass &bull; Italian Boucl&eacute; &bull; Calacatta Marble &bull;&nbsp;
+        Travertine &bull; Walnut &bull; Brushed Brass &bull; Natural Linen &bull; Fluted Glass &bull; Italian Boucl&eacute; &bull; Calacatta Marble &bull;&nbsp;
+      </div>
+    </div>
+
+    <!-- Philosophy -->
+    <section class="int-section int-reveal int-stagger" style="padding-top: 24px; padding-bottom: 24px;">
+      <p class="int-eyebrow">— Philosophy</p>
+      <p class="font-cormorant" style="font-size: 28px; line-height: 1.25; margin: 8px 0 0;">
+        We don't decorate rooms. We <em style="color: var(--int-brass);">compose</em> the feeling of coming home.
+      </p>
+    </section>
+
+    <!-- Services Section -->
+    <section class="int-section int-dark int-reveal">
+      <p class="int-eyebrow" style="color: var(--int-brass);">— Services</p>
+      <div class="int-services-list int-reveal" style="margin-top: 20px;">
+        <div class="int-service-row">
+          <span class="font-cormorant" style="color: var(--int-brass); font-size: 16px;">01</span>
+          <div style="flex: 1;"><h3 class="font-cormorant" style="font-size: 20px; margin: 0;">Residential Interiors</h3><p style="font-size: 12px; opacity: 0.6; margin: 4px 0 0;">Homes composed around how you live.</p></div>
+        </div>
+        <div class="int-service-row">
+          <span class="font-cormorant" style="color: var(--int-brass); font-size: 16px;">02</span>
+          <div style="flex: 1;"><h3 class="font-cormorant" style="font-size: 20px; margin: 0;">Turnkey Execution</h3><p style="font-size: 12px; opacity: 0.6; margin: 4px 0 0;">Concept to handover, one studio.</p></div>
+        </div>
+        <div class="int-service-row">
+          <span class="font-cormorant" style="color: var(--int-brass); font-size: 16px;">03</span>
+          <div style="flex: 1;"><h3 class="font-cormorant" style="font-size: 20px; margin: 0;">Styling & Curation</h3><p style="font-size: 12px; opacity: 0.6; margin: 4px 0 0;">Art, lighting and objects, edited.</p></div>
+        </div>
+        <div class="int-service-row" style="border-bottom: none;">
+          <span class="font-cormorant" style="color: var(--int-brass); font-size: 16px;">04</span>
+          <div style="flex: 1;"><h3 class="font-cormorant" style="font-size: 20px; margin: 0;">Villas & Penthouses</h3><p style="font-size: 12px; opacity: 0.6; margin: 4px 0 0;">Grand scale, quiet luxury.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Work / Portfolio -->
+    <section class="int-section int-reveal">
+      <p class="int-eyebrow">— Selected Work</p>
+      <h2 class="font-cormorant" style="font-size: 36px; margin: 4px 0 24px;">Portfolio</h2>
+      <div style="display: flex; flex-direction: column; gap: 32px;">
+        <div class="int-portfolio-card">
+          <div class="int-portfolio-img-wrap">
+            <img src="/assets/interior/kitchen.jpg" alt="The Walnut Kitchen" class="int-portfolio-img" />
+          </div>
+          <div class="int-portfolio-meta">
+            <span class="font-cormorant" style="font-size: 22px;">The Walnut Kitchen</span>
+            <span style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--int-muted);">Bandra &bull; 2025</span>
+          </div>
+        </div>
+        <div class="int-portfolio-card">
+          <div class="int-portfolio-img-wrap">
+            <img src="/assets/interior/bedroom.jpg" alt="Linen Suite" class="int-portfolio-img" />
+          </div>
+          <div class="int-portfolio-meta">
+            <span class="font-cormorant" style="font-size: 22px;">Linen Suite</span>
+            <span style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--int-muted);">Juhu &bull; 2025</span>
+          </div>
+        </div>
+        <div class="int-portfolio-card">
+          <div class="int-portfolio-img-wrap">
+            <img src="/assets/interior/dining.jpg" alt="Travertine Dining" class="int-portfolio-img" />
+          </div>
+          <div class="int-portfolio-meta">
+            <span class="font-cormorant" style="font-size: 22px;">Travertine Dining</span>
+            <span style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--int-muted);">Alibaug &bull; 2024</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="int-section int-reveal" style="background: #f2ece4;">
+      <p class="int-eyebrow">— The Process</p>
+      <ol class="int-process-list int-reveal" style="margin: 20px 0 0 10px; padding-left: 20px; border-left: 2px solid var(--int-brass); list-style: none;">
+        <li class="int-process-item">
+          <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+          <span class="font-cormorant" style="font-size: 24px;">1. Consultation</span>
+        </li>
+        <li class="int-process-item">
+          <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+          <span class="font-cormorant" style="font-size: 24px;">2. Concept &amp; Mood</span>
+        </li>
+        <li class="int-process-item">
+          <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+          <span class="font-cormorant" style="font-size: 24px;">3. Design Development</span>
+        </li>
+        <li class="int-process-item">
+          <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+          <span class="font-cormorant" style="font-size: 24px;">4. Execution</span>
+        </li>
+        <li class="int-process-item">
+          <span style="position: absolute; left: -26px; top: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--int-brass);"></span>
+          <span class="font-cormorant" style="font-size: 24px;">5. The Handover</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Client Testimonial -->
+    <section class="int-section int-reveal int-stagger" style="text-align: center;">
+      <p class="font-cormorant" style="font-size: 64px; color: var(--int-brass); margin: 0; line-height: 1;">&ldquo;</p>
+      <p class="font-cormorant" style="font-size: 26px; font-style: italic; line-height: 1.3; margin: 8px 0 16px;">
+        They understood our home before we could even describe it.
+      </p>
+      <p style="font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--int-muted); margin: 0;">&mdash; The Mehta Family, Juhu</p>
+    </section>
+
+    <!-- Footer & Direct Contact -->
+    <footer class="int-section int-dark int-reveal" style="padding-bottom: 36px;">
+      <div class="int-stagger">
+        <h2 class="font-cormorant" style="font-size: 36px; line-height: 1.1; margin: 0 0 28px;">
+          Let's create<br/><em style="color: var(--int-brass);">something timeless.</em>
+        </h2>
+      </div>
+      <div class="int-contact-list int-reveal" style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
+        ${city ? `<div class="int-contact-row"><span>Location</span><span style="color: var(--int-brass);">${city}</span></div>` : ""}
+        ${email ? `<div class="int-contact-row"><span>Email</span><a href="mailto:${email}" style="color: var(--int-brass); text-decoration: none;">${email}</a></div>` : ""}
+        ${insta ? `<div class="int-contact-row"><span>Instagram</span><a href="${insta.startsWith('http') ? insta : `https://instagram.com/${insta.replace(/^@/, '')}`}" target="_blank" rel="noopener noreferrer" style="color: var(--int-brass); text-decoration: none;">${insta.startsWith('http') ? cleanDisplayUrl(insta) : `@${insta.replace(/^@/, '')}`}</a></div>` : ""}
+        ${card.socialLinkedIn ? `<div class="int-contact-row"><span>LinkedIn</span><a href="${card.socialLinkedIn.startsWith('http') ? card.socialLinkedIn : `https://linkedin.com/in/${card.socialLinkedIn}`}" target="_blank" rel="noopener noreferrer" style="color: var(--int-brass); text-decoration: none;">LinkedIn</a></div>` : ""}
+        ${website ? `<div class="int-contact-row"><span>Website</span><a href="${website.startsWith('http') ? website : `https://${website}`}" target="_blank" rel="noopener noreferrer" style="color: var(--int-brass); text-decoration: none;">${cleanDisplayUrl(website)}</a></div>` : ""}
+        ${(() => {
+          const links = resolveCustomerLinks(card);
+          const additionalLinks = links.filter(l => !['phone', 'whatsapp', 'email', 'website', 'maps'].includes(l.type) && (!insta || !l.value.includes(insta)) && (!card.socialLinkedIn || !l.value.includes(card.socialLinkedIn)));
+          return additionalLinks.map(l => {
+            const dest = formatLinkDestination(l.type, l.value);
+            if (!dest) return "";
+            return `<div class="int-contact-row"><span>${escapeHtml(l.label || l.type)}</span><a href="${dest}" target="_blank" rel="noopener noreferrer" style="color: var(--int-brass); text-decoration: none;">${escapeHtml(cleanDisplayUrl(l.value))}</a></div>`;
+          }).join("");
+        })()}
+      </div>
+
+      ${wa ? `
+      <a href="https://wa.me/${wa}?text=Hi,%20I'd%20like%20to%20discuss%20my%20home%20interior." target="_blank" rel="noopener noreferrer" class="int-btn int-btn-brass int-cta-consultation">
+        Book a design consultation
+      </a>` : ""}
+      
+      <p style="text-align: center; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.4; margin: 32px 0 0;">
+        &copy; ${name} &bull; Ambros Studio
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    function downloadVCard() {
+      const vcard = "BEGIN:VCARD\\nVERSION:3.0\\nFN:${name.replace(/"/g, '\\"')}\\nORG:${name.replace(/"/g, '\\"')}\\nTITLE:${designation.replace(/"/g, '\\"')}\\nTEL:${cleanPhone}\\nEMAIL:${email}\\nURL:${website}\\nEND:VCARD";
+      const blob = new Blob([vcard], { type: "text/vcard" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "contact.vcf";
+      a.click();
+    }
+
+    function initInteriorLuxuryScrollReveal() {
+      if (!window || !document) return;
+
+      const revealElements = document.querySelectorAll(
+        '.int-reveal, .int-service-row, .int-portfolio-card, .int-process-item, .int-contact-row'
+      );
+      if (!revealElements.length) return;
+
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        revealElements.forEach(function (el) {
+          el.classList.add('is-revealed');
+        });
+        return;
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        revealElements.forEach(function (el) {
+          el.classList.add('is-revealed');
+        });
+        return;
+      }
+
+      const observer = new IntersectionObserver(
+        function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+              obs.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          root: null,
+          rootMargin: '0px 0px -40px 0px',
+          threshold: 0.08
+        }
+      );
+
+      revealElements.forEach(function (el) {
+        observer.observe(el);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initInteriorLuxuryScrollReveal);
+    } else {
+      initInteriorLuxuryScrollReveal();
+    }
+    window.initInteriorLuxuryScrollReveal = initInteriorLuxuryScrollReveal;
+  </script>
+  `;
+}
+
 function renderNoirGoldBody(card: ResolvedCustomerCard): string {
   const name = hasText(card.fullName) ? card.fullName!.trim() : "";
   const role = hasText(card.designation) ? card.designation!.trim() : "";
@@ -1520,6 +2167,9 @@ function renderNoirGoldBody(card: ResolvedCustomerCard): string {
 }
 
 export function renderCardBody(card: ResolvedCustomerCard, design: CardDesignDefinition): string {
+  if (design.id === "interior-luxury") {
+    return renderInteriorLuxuryBody(card);
+  }
   if (design.id === "noir-gold") {
     return renderNoirGoldBody(card);
   }
