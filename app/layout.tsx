@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ScrollObserver from '@/components/ScrollObserver';
+import { Analytics } from '@vercel/analytics/next';
 
 const sora = Sora({
   subsets: ['latin'],
@@ -130,6 +131,7 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
