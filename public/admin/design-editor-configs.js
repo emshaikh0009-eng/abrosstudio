@@ -1246,6 +1246,42 @@
         social: { instagram: true, linkedin: false }
       },
       sections: []
+    },
+
+    'mahadev-spa': {
+      id: 'mahadev-spa',
+      name: 'Mahadev Spa',
+      category: 'industry',
+      badge: 'Design 20',
+      headline: "Calm, women-only massage & spa profile with real-time status, treatment booking, and directions.",
+      coreFields: {
+        fullName: { show: true, label: 'Centre name', placeholder: 'e.g. Mahadev Spa Centre', required: true },
+        designation: { show: true, label: 'Subtitle / specialty', placeholder: "e.g. Women's Massage & Spa" },
+        company: { show: true, label: 'Business name', placeholder: 'e.g. Mahadev Spa Centre' },
+        description: { show: true, label: 'About / tagline', placeholder: 'A calm, women-only massage and spa centre in Sanawad, Madhya Pradesh.' },
+        avatar: { show: true, label: 'Hero cover image', help: 'Atmospheric hero image (e.g. /assets/mahadev/hero-bg.jpg).' },
+        contacts: { phone: true, whatsapp: true, email: false, website: true, address: true },
+        social: { instagram: false, linkedin: false }
+      },
+      sections: []
+    },
+
+    'ambros-flagship': {
+      id: 'ambros-flagship',
+      name: 'Ambros Flagship',
+      category: 'business',
+      badge: 'Flagship',
+      headline: 'Crafted with Purpose — mobile-first high-impact studio identity with 3D metal card, process timeline, and 3-step booking bottom sheet.',
+      coreFields: {
+        fullName: { show: true, label: 'Studio name', placeholder: 'e.g. Ambros Studio', required: true },
+        designation: { show: true, label: 'Team designation', placeholder: 'e.g. Creative & Digital Team' },
+        company: { show: true, label: 'Company name', placeholder: 'e.g. Ambros Studio' },
+        description: { show: true, label: 'Mission / headline', placeholder: 'Websites, Meta ads and digital identities for brands that want to be remembered.' },
+        avatar: { show: true, label: 'Banner logo', help: 'Studio banner / logo asset (e.g. /assets/ambros-crafted-hero.jpg).' },
+        contacts: { phone: true, whatsapp: true, email: true, website: true, address: true },
+        social: { instagram: true, linkedin: true }
+      },
+      sections: []
     }
   };
 
@@ -1266,6 +1302,8 @@
     }
 
     // Common aliases
+    if (clean.includes('mahadev')) return CONFIGS['mahadev-spa'];
+    if (clean.includes('flagship') || clean.includes('purpose') || clean.includes('crafted')) return CONFIGS['ambros-flagship'];
     if (clean.includes('interior') || clean.includes('maison')) return CONFIGS['interior-luxury'];
     if (clean.includes('raftcon')) return CONFIGS['raftcon-luxury'];
     if (clean.includes('atg') || clean.includes('study')) return CONFIGS['atg-study-abroad'];

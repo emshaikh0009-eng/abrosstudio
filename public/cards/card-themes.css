@@ -3964,3 +3964,44 @@ body.theme-interior-luxury {
 }
 
 
+
+
+/* ==============================================================================
+   DESIGN 20 - MAHADEV SPA CENTRE (Women's Massage & Spa)
+   ============================================================================== */
+.theme-mahadev-spa {
+  background-color: #1c261d;
+  color: #2f3a2f;
+  font-family: Inter, system-ui, sans-serif;
+}
+.theme-mahadev-spa .viewport-wrapper {
+  max-width: 480px !important;
+  width: 100% !important;
+  background: #f6efe6 !important;
+  margin: 0 auto !important;
+  padding: 0 0 calc(90px + env(safe-area-inset-bottom)) 0 !important;
+  box-shadow: 0 0 50px rgba(0,0,0,0.4) !important;
+  min-height: 100vh !important;
+  position: relative !important;
+  overflow-x: hidden !important;
+}
+
+/* ==============================================================================
+   FLAGSHIP DESIGN - AMBROS STUDIO (Crafted with Purpose)
+   ============================================================================== */
+.theme-ambros-flagship {
+  background-color: #0a0a0a;
+  color: #0a0a0a;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+.theme-ambros-flagship .viewport-wrapper {
+  max-width: 480px !important;
+  width: 100% !important;
+  background: #ffffff !important;
+  margin: 0 auto !important;
+  padding: 0 0 calc(84px + env(safe-area-inset-bottom, 0px)) 0 !important;
+  box-shadow: 0 0 50px rgba(0,0,0,0.5) !important;
+  min-height: 100vh !important;
+  position: relative !important;
+  overflow-x: hidden !important;
+}

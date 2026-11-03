@@ -1,5 +1,5 @@
 import { createAnonymousClient } from "@/utils/supabase/server";
-import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, AUTHORITATIVE_INTERIOR_CUSTOMER } from "@/utils/card-designs";
+import { resolveCardDesign, AUTHORITATIVE_AMBROS_CUSTOMER, AUTHORITATIVE_INTERIOR_CUSTOMER, AUTHORITATIVE_MAHADEV_CUSTOMER } from "@/utils/card-designs";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -58,6 +58,15 @@ export async function GET(
           },
         });
       }
+      if (sanitizedSlug === "mahadevspa" || sanitizedSlug === "mahadev-spa" || sanitizedSlug === "mahadev-spa-centre" || sanitizedSlug === "mahadev") {
+        return NextResponse.json({
+          success: true,
+          card: {
+            ...AUTHORITATIVE_MAHADEV_CUSTOMER,
+            cardDesign: resolveCardDesign(AUTHORITATIVE_MAHADEV_CUSTOMER.cardDesign).id,
+          },
+        });
+      }
       return NextResponse.json(
         { error: "Failed to retrieve digital business card." },
         { status: 500 }
@@ -81,6 +90,15 @@ export async function GET(
           card: {
             ...AUTHORITATIVE_INTERIOR_CUSTOMER,
             cardDesign: resolveCardDesign(AUTHORITATIVE_INTERIOR_CUSTOMER.cardDesign).id,
+          },
+        });
+      }
+      if (sanitizedSlug === "mahadevspa" || sanitizedSlug === "mahadev-spa" || sanitizedSlug === "mahadev-spa-centre" || sanitizedSlug === "mahadev") {
+        return NextResponse.json({
+          success: true,
+          card: {
+            ...AUTHORITATIVE_MAHADEV_CUSTOMER,
+            cardDesign: resolveCardDesign(AUTHORITATIVE_MAHADEV_CUSTOMER.cardDesign).id,
           },
         });
       }

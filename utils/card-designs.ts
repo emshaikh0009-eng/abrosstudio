@@ -697,6 +697,71 @@ export const CARD_DESIGNS: Record<string, CardDesignDefinition> = {
       text: '#1a1614',
       style: 'wf-interior-luxury'
     }
+  },
+
+  'mahadev-spa': {
+    id: 'mahadev-spa',
+    name: 'Mahadev Spa',
+    category: 'industry',
+    categoryLabel: 'Industry Specials',
+    badge: 'Design 20',
+    description: 'Calm, women-only massage & spa profile with real-time status, treatment booking, and directions.',
+    theme: {
+      baseMode: 'light',
+      primaryColor: '#3f5143',
+      backgroundColor: '#f6efe6',
+      textColor: '#2f3a2f',
+      accentColor: '#b9825f',
+      fontFamily: 'Cormorant Garamond',
+      fontUrl: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap'
+    },
+    layoutType: 'industry-special',
+    supportedSections: ['hero-badge', 'status-indicator', 'action-grid', 'marquee-ticker', 'promise-banner', 'services-list', 'gallery-grid', 'how-it-works', 'feature-trio', 'opening-hours', 'location-card', 'qr-share', 'floating-booking-bar', 'booking-bottom-sheet'],
+    industryModule: 'healthcare',
+    ctaStyle: {
+      primaryText: 'Book Appointment',
+      primaryStyle: 'rounded-pill-deep',
+      secondaryText: 'Call',
+      secondaryStyle: 'rounded-pill-outline'
+    },
+    wireframe: {
+      bg: '#f6efe6',
+      accent: '#3f5143',
+      text: '#2f3a2f',
+      style: 'wf-mahadev-spa'
+    }
+  },
+
+  'ambros-flagship': {
+    id: 'ambros-flagship',
+    name: 'Ambros Flagship',
+    category: 'business',
+    categoryLabel: 'Brand Showcase',
+    badge: 'Flagship',
+    description: 'Crafted with Purpose — mobile-first high-impact studio identity with 3D metal card, process timeline, and 3-step booking bottom sheet.',
+    theme: {
+      baseMode: 'light',
+      primaryColor: '#0c7c59',
+      backgroundColor: '#ffffff',
+      textColor: '#0a0a0a',
+      accentColor: '#19b583',
+      fontFamily: 'Sora',
+      fontUrl: 'https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap'
+    },
+    layoutType: 'business-hub',
+    supportedSections: ['hero-animated', 'action-grid', 'marquee-ticker', 'services-dark', 'metal-nfc-card', 'process-timeline', 'cta-lead', 'floating-dock', 'booking-modal', 'toast-notification'],
+    ctaStyle: {
+      primaryText: 'Book a Demo',
+      primaryStyle: 'rounded-dock',
+      secondaryText: 'Share',
+      secondaryStyle: 'rounded-dock-outline'
+    },
+    wireframe: {
+      bg: '#ffffff',
+      accent: '#0c7c59',
+      text: '#0a0a0a',
+      style: 'wf-ambros-flagship'
+    }
   }
 };
 
@@ -725,6 +790,12 @@ export function resolveCardDesign(rawNameOrId?: string | null): CardDesignDefini
   }
 
   // Legacy aliases & industry shortcuts
+  if (clean === 'mahadev' || clean === 'mahadev-spa' || clean === 'mahadevspa' || clean === 'mahadev-spa-centre' || clean.includes('mahadev')) {
+    return CARD_DESIGNS['mahadev-spa'];
+  }
+  if (clean === 'ambros-flagship' || clean === 'ambros-crafted' || clean === 'ambros-purpose' || clean === 'flagship' || clean === 'crafted-with-purpose') {
+    return CARD_DESIGNS['ambros-flagship'];
+  }
   if (clean === 'interior' || clean === 'interior-luxury' || clean === 'maison-aurelle' || clean === 'maisonaurelle') {
     return CARD_DESIGNS['interior-luxury'];
   }
@@ -771,9 +842,9 @@ export const AUTHORITATIVE_AMBROS_CUSTOMER = {
   address: "3rd Floor, VIP Gallaria, 214, near Zen Hospital, Althan, Surat, Gujarat 395017",
   socialInstagram: "https://www.instagram.com/ambros.studio",
   socialLinkedIn: "https://linkedin.com/company/ambrosstudio",
-  cardDesign: "mint-haven",
+  cardDesign: "ambros-flagship",
   profileSlug: "ambros-studio",
-  avatarUrl: "/assets/ambros-logo-light.png",
+  avatarUrl: "/assets/ambros-crafted-hero.jpg",
   is_active: true,
   customSettings: {
     appearance: {
@@ -1684,6 +1755,67 @@ export const CANONICAL_DEMO_PROFILES: Record<string, any> = {
         { id: "3", type: "email", label: "Email", value: "hello@maisonaurelle.com", enabled: true, order: 2 }
       ]
     }
+  },
+
+  'mahadev-spa': {
+    fullName: "Mahadev Spa Centre",
+    designation: "Women's Massage & Spa",
+    company: "Mahadev Spa Centre",
+    description: "A calm, women-only massage and spa centre in Sanawad, Madhya Pradesh. Book your appointment in one tap.",
+    phone: "+91 70005 27974",
+    whatsapp: "917000527974",
+    email: "",
+    website: "https://ambrosstudio.com/c/mahadev-spa",
+    address: "53G9+H7 Sanawad, Madhya Pradesh",
+    socialInstagram: "",
+    socialLinkedIn: "",
+    cardDesign: "mahadev-spa",
+    profileSlug: "mahadev-spa",
+    avatarUrl: "/assets/mahadev/hero-bg.jpg",
+    is_active: true,
+    customSettings: {
+      appearance: {
+        primaryColor: "#3f5143",
+        backgroundColor: "#f6efe6",
+        textColor: "#2f3a2f"
+      },
+      place: "53G9+H7 Sanawad, Madhya Pradesh",
+      hours: { 1: [9, 19], 2: [9, 19], 3: [9, 19], 4: [9, 19], 5: [9, 19], 6: [9, 19], 0: [10, 18] },
+      services: [
+        { name: "Full Body Massage", duration: "60 min", desc: "Slow, flowing strokes to ease the whole body.", price: "" },
+        { name: "Deep Tissue Massage", duration: "60 min", desc: "Firm, focused pressure for tight, tired muscles.", price: "" },
+        { name: "Head, Neck & Shoulder", duration: "30 min", desc: "Relief for desk-day stiffness and tension.", price: "" },
+        { name: "Foot Reflexology", duration: "30 min", desc: "Pressure-point care for tired feet and legs.", price: "" },
+        { name: "Aromatherapy Massage", duration: "60 min", desc: "Soothing oils and a gentle, calming scent.", price: "" },
+        { name: "Ayurvedic Oil Massage", duration: "60 min", desc: "A traditional warm-oil massage for deep rest.", price: "" }
+      ]
+    }
+  },
+
+  'ambros-flagship': {
+    fullName: "Ambros Studio",
+    designation: "Creative & Digital Team",
+    company: "Ambros Studio",
+    description: "Websites, Meta ads and digital identities for brands that want to be remembered.",
+    phone: "+91 91577 78915",
+    whatsapp: "919157778915",
+    email: "ambrosstudioltd@gmail.com",
+    website: "https://ambrosstudio.com",
+    address: "VIP Gallaria, Althan, Surat, Gujarat 395017",
+    socialInstagram: "https://www.instagram.com/ambros.studio",
+    socialLinkedIn: "https://linkedin.com/company/ambrosstudio",
+    cardDesign: "ambros-flagship",
+    profileSlug: "ambros-studio",
+    avatarUrl: "/assets/ambros-crafted-hero.jpg",
+    is_active: true,
+    customSettings: {
+      appearance: {
+        primaryColor: "#0c7c59",
+        backgroundColor: "#ffffff",
+        textColor: "#0a0a0a",
+        fontFamily: "Sora"
+      }
+    }
   }
 };
 
@@ -1694,6 +1826,7 @@ export const AUTHORITATIVE_RAFTCON_CUSTOMER = CANONICAL_DEMO_PROFILES['raftcon-l
 export const AUTHORITATIVE_ATG_CUSTOMER = CANONICAL_DEMO_PROFILES['atg-study-abroad'];
 export const AUTHORITATIVE_SPICE_ROUTE_CUSTOMER = CANONICAL_DEMO_PROFILES['spice-route'];
 export const AUTHORITATIVE_INTERIOR_CUSTOMER = CANONICAL_DEMO_PROFILES['interior-luxury'];
+export const AUTHORITATIVE_MAHADEV_CUSTOMER = CANONICAL_DEMO_PROFILES['mahadev-spa'];
 
 /**
  * Returns the coherent fictional demo profile for any design.

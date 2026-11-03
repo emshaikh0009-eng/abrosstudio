@@ -2011,6 +2011,650 @@
     `;
   }
 
+  
+function renderMahadevSpaBody(card, options = {}) {
+  const isPreview = options.isPreview;
+  const name = escapeHtml(card.fullName || "Mahadev Spa Centre");
+
+  return `
+  <style>
+:root{--bg:#f6efe6;--card:#fffaf3;--ink:#2f3a2f;--sage:#5c7160;--deep:#3f5143;--rose:#b9825f;--line:#e6dacb;--mut:#7b8174}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-height:1.1}
+em{font-style:italic;color:var(--rose)}
+.w{max-width:480px;margin:0 auto;padding:0 20px}
+.hero{position:relative;min-height:600px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:linear-gradient(180deg,#1c261d55 0,#1c261d33 35%,#1c261dee 100%),url('/assets/mahadev/hero-bg.jpg') 50% 25%/cover}
+.hero .in{max-width:480px;margin:0 auto;width:100%;padding:0 20px 30px}
+.badge{position:absolute;top:22px;left:20px;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:2.5px;text-transform:uppercase}
+.badge svg{width:46px;height:46px;background:#ffffff26;border-radius:50%;backdrop-filter:blur(8px);padding:3px}
+.women{display:inline-block;border:1px solid #ffffffaa;border-radius:99px;padding:5px 14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;backdrop-filter:blur(6px);background:#ffffff1c}
+h1{font-size:46px}
+.tag{margin:10px 0 16px;color:#f1ebe0;max-width:330px;font-size:16px}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#f1ebe0}
+.dot{width:8px;height:8px;border-radius:50%;background:#e0a33a}.open .dot{background:#5fe09b}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px;border-radius:99px;border:1px solid var(--deep);background:none;color:var(--deep);font:600 14.5px Inter,sans-serif;text-decoration:none;cursor:pointer}
+.btn.pri{background:var(--deep);color:#fff;font-size:16.5px;padding:17px;box-shadow:0 10px 26px #3f514340}
+.btn svg,.ic{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.acts{margin-top:-26px;position:relative}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.grid .btn{background:var(--card)}
+.mq{margin-top:34px;overflow:hidden;white-space:nowrap;border-block:1px solid var(--line);padding:13px 0;color:var(--sage);font:italic 600 19px 'Cormorant Garamond',serif}
+.mq span{display:inline-block;animation:m 28s linear infinite}@keyframes m{to{transform:translateX(-50%)}}
+section{margin-top:44px}
+.k{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:10px;font-weight:600}
+h2{font-size:34px}
+.big{font:600 28px/1.25 'Cormorant Garamond',serif}
+.svc{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);cursor:pointer;align-items:flex-start}
+.svc i{font:italic 600 22px 'Cormorant Garamond',serif;color:var(--rose);min-width:30px}
+.svc h3{font-size:22px}.svc p{color:var(--mut);font-size:13.5px}
+.svc .go{margin-left:auto;align-self:center;color:var(--sage);font-size:13px;white-space:nowrap}
+.gal{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.gal figure{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4}
+.gal figure:nth-child(1){grid-column:span 2;aspect-ratio:16/10}
+.gal img{width:100%;height:100%;object-fit:cover;display:block}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 14px 11px;color:#fff;font-size:13px;background:linear-gradient(transparent,#1c261dcc)}
+.steps{counter-reset:s;margin-top:14px}
+.steps li{list-style:none;counter-increment:s;display:flex;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+.steps li:before{content:counter(s);width:34px;height:34px;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;font:600 15px Inter;flex:none}
+.pts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;text-align:center}
+.pts div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 6px;font-size:12.5px}
+.pts svg{display:block;margin:0 auto 8px;color:var(--rose);width:26px;height:26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;margin-top:14px}
+.row{display:flex;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--line)}.row:last-child{border:0}
+.row b{font-weight:600}.row span{color:var(--mut)}.row.today{background:#5c716014}
+.loc{display:flex;gap:14px;padding:18px}.loc p{color:var(--mut);font-size:13.5px}
+.qr{text-align:center;padding:24px 18px}.qr #qr{display:inline-block;padding:10px;background:#fff;border-radius:14px;margin:12px 0 6px}
+.qr small{display:block;color:var(--mut)}
+.foot{text-align:center;color:var(--mut);font-size:12px;margin:34px 0 8px}.foot a{color:var(--rose);text-decoration:none}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:#f6efe6ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:5}
+.bar .in{max-width:480px;margin:auto;display:flex;gap:10px}.bar .btn{padding:14px}.bar .sq{width:54px;flex:none}
+.sheet{position:fixed;inset:0;background:#1c261d88;z-index:9;display:none;align-items:flex-end}.sheet.on{display:flex}
+.pane{background:var(--bg);border-radius:26px 26px 0 0;width:100%;max-width:480px;margin:auto;padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.pane h2{font-size:30px}label{display:block;font-size:12px;color:var(--mut);margin:14px 0 6px}
+input,select{width:100%;padding:13px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink);font:16px Inter,sans-serif}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slot{padding:10px 0;text-align:center;border:1px solid var(--line);border-radius:12px;font-size:13px;cursor:pointer;background:#fff}
+.slot.sel{background:var(--deep);color:#fff;border-color:var(--deep);font-weight:600}
+.x{float:right;background:none;border:0;color:var(--mut);font-size:30px;line-height:1;cursor:pointer}
+.note{font-size:12px;color:var(--mut);margin-top:10px;text-align:center}
+
+  @media (min-width: 600px) {
+    body.theme-mahadev-spa {
+      background: #1c261d !important;
+      display: flex !important;
+      justify-content: center !important;
+    }
+    .theme-mahadev-spa .viewport-wrapper {
+      box-shadow: 0 0 50px rgba(0,0,0,0.5) !important;
+    }
+  }
+  </style>
+
+  ${isPreview ? `
+    <div style="background: #0f172a; color: #f8fafc; font-size: 11.5px; font-weight: 700; text-align: center; padding: 8px 14px; border-radius: 8px; margin-bottom: 14px; border: 1px solid #334155; position: sticky; top: 0; z-index: 1000;">
+      ADMIN PREVIEW &bull; Mahadev Spa (${card.is_active !== false ? '<span style="color: #34d399;">Active</span>' : '<span style="color: #fbbf24;">Inactive</span>'})
+    </div>
+  ` : ""}
+
+<svg width="0" height="0" style="position:absolute"><defs><mask id="mn"><rect width="120" height="120" fill="#fff"/><circle cx="66" cy="27" r="11" fill="#000"/></mask>
+<path id="p" d="M60 96C47 82 47 62 60 46C73 62 73 82 60 96Z"/>
+<symbol id="logo" viewBox="0 0 120 120"><circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width=".6" opacity=".6"/>
+<circle cx="60" cy="29" r="11" fill="currentColor" mask="url(#mn)"/><circle cx="60" cy="44" r="2" fill="currentColor"/>
+<g fill="currentColor"><use href="#p" transform="rotate(-62 60 96)" opacity=".55"/><use href="#p" transform="rotate(62 60 96)" opacity=".55"/><use href="#p" transform="rotate(-32 60 96)" opacity=".8"/><use href="#p" transform="rotate(32 60 96)" opacity=".8"/><use href="#p"/></g>
+<path d="M34 98h52" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol></defs></svg>
+
+<header class="hero">
+<div class="badge"><svg style="color:#f0dcae"><use href="#logo"/></svg></div>
+<div class="in">
+<span class="women">Exclusively for Women</span>
+<h1>Mahadev<br>Spa Centre</h1>
+<p class="tag">Relax your body. Calm your mind. Feel renewed in a peaceful, women-only space.</p>
+<div class="status" id="status"><i class="dot"></i><span>Checking hours...</span></div>
+</div></header>
+
+<main class="w">
+<div class="acts"><button class="btn pri" onclick="openBook()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Book Appointment</button>
+<div class="grid">
+<a class="btn" id="call"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call Now</a>
+<a class="btn" id="wa"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.6A9 9 0 1 1 8 19.6z"/><path d="M9 9c0 3 3 6 6 6l1-2-2-1-1 .7a4 4 0 0 1-2-2L12 10l-1-2z"/></svg>WhatsApp</a>
+<a class="btn" id="dir" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Directions</a>
+<button class="btn" onclick="saveContact()"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0M19 3v4M17 5h4"/></svg>Save Contact</button>
+</div></div>
+</main>
+
+<div class="mq"><span id="mq"></span></div>
+
+<main class="w">
+<section><div class="k">— Our Promise</div><p class="big">A quiet corner where you can <em>breathe out,</em> be cared for, and walk back lighter.</p></section>
+
+<section><div class="k">— Treatments</div><h2>Our Services</h2><div id="svcs" style="margin-top:8px"></div></section>
+
+<section><div class="k">— The Space</div><h2>Calm, <em>by design</em></h2>
+<div class="gal">
+<figure><img src="/assets/mahadev/gallery-1.jpg" alt="Neck and shoulder massage" loading="lazy"><figcaption>Gentle, skilled hands</figcaption></figure>
+<figure><img src="/assets/mahadev/gallery-2.jpg" alt="Relaxing face massage" loading="lazy"><figcaption>Face &amp; head care</figcaption></figure>
+<figure><img src="/assets/mahadev/gallery-3.jpg" alt="Aroma bath with lemon and candles" loading="lazy"><figcaption>Aroma &amp; candlelight</figcaption></figure>
+<figure style="grid-column:span 2;aspect-ratio:16/10"><img src="/assets/mahadev/gallery-4.jpg" alt="Fresh rolled towels" loading="lazy"><figcaption>Fresh, clean, ready for you</figcaption></figure>
+</div></section>
+
+<section><div class="k">— How It Works</div><h2>Book in <em>four</em> steps</h2>
+<ol class="steps"><li>Choose your treatment</li><li>Pick a date and time</li><li>Confirm on WhatsApp</li><li>Arrive and relax</li></ol>
+<div class="pts">
+<div><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>Women only</div>
+<div><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Clean &amp; hygienic</div>
+<div><svg class="ic" viewBox="0 0 24 24"><path d="M5 11V8a4 4 0 0 1 14 0v3M4 11h16v9H4z"/></svg>Private rooms</div></div></section>
+
+<section><div class="k">— Visit Us</div><h2>Opening Hours</h2><div class="card" id="hrs"></div></section>
+
+<section><h2>Find Us</h2><div class="card loc">
+<svg class="ic" style="color:var(--rose);width:26px;height:26px;flex:none" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+<div><b>Mahadev Spa Centre</b><p>Sanawad, Madhya Pradesh<br>Plus Code: 53G9+H7</p></div></div>
+<a class="btn" id="dir2" target="_blank" rel="noopener" style="margin-top:10px">Open in Google Maps</a></section>
+
+<section><div class="card qr"><div class="k" style="margin:0">— Share</div><h2>Mahadev Spa Centre</h2><div id="qr"></div><small>Scan with phone camera to open profile</small>
+<div class="grid"><button class="btn" onclick="share()">Share</button><button class="btn" onclick="copyLink(this)">Copy Link</button></div></div></section>
+
+<p class="foot">© Mahadev Spa Centre &bull; Digital Profile by <a href="https://ambrosstudio.com">Ambros Studio</a></p>
+</main>
+
+<div class="bar"><div class="in"><button class="btn pri" onclick="openBook()">Book Appointment</button>
+<a class="btn sq" id="call2" aria-label="Call"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div></div>
+
+<div class="sheet" id="sheet" onclick="if(event.target===this)closeBook()"><div class="pane">
+<button class="x" onclick="closeBook()" aria-label="Close">&times;</button>
+<h2>Book Appointment</h2><p class="note" style="text-align:left;margin:2px 0 0">Women only. We confirm on WhatsApp.</p>
+<label>Your name</label><input id="nm" placeholder="Full name" autocomplete="name">
+<label>Treatment</label><select id="sv"></select>
+<label>Date</label><input id="dt" type="date" onchange="makeSlots()">
+<label>Preferred time</label><div class="slots" id="slots"></div>
+<button class="btn pri" style="margin-top:20px" onclick="sendBook()">Confirm on WhatsApp</button>
+<p class="note">No payment needed now. Pay at the centre.</p></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ====== DYNAMIC INITIALIZATION FROM CARD PAYLOAD ====== */
+var cardData = (typeof window !== 'undefined' && window.__INITIAL_CARD__) ? window.__INITIAL_CARD__ : {};
+var customData = cardData.customSettings || {};
+var C = {
+ name: cardData.fullName || "Mahadev Spa Centre",
+ phone: cardData.phone ? cardData.phone.replace(/[^0-9]/g, '') : "917000527974",
+ place: cardData.address || "53G9+H7 Sanawad, Madhya Pradesh",
+ hours: customData.hours || {1:[9,19],2:[9,19],3:[9,19],4:[9,19],5:[9,19],6:[9,19],0:[10,18]},
+ services: (Array.isArray(customData.services) && customData.services.length)
+   ? customData.services.map(function(s) { return Array.isArray(s) ? s : [s.name, s.duration, s.desc, s.price || '']; })
+   : [
+       ["Full Body Massage","60 min","Slow, flowing strokes to ease the whole body.",""],
+       ["Deep Tissue Massage","60 min","Firm, focused pressure for tight, tired muscles.",""],
+       ["Head, Neck & Shoulder","30 min","Relief for desk-day stiffness and tension.",""],
+       ["Foot Reflexology","30 min","Pressure-point care for tired feet and legs.",""],
+       ["Aromatherapy Massage","60 min","Soothing oils and a gentle, calming scent.",""],
+       ["Ayurvedic Oil Massage","60 min","A traditional warm-oil massage for deep rest.",""]
+     ]
+};
+/* ======================================================== */
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),h12=h=>(h%12||12)+(h<12?' AM':' PM');
+const D=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+$('call').href=$('call2').href='tel:+'+C.phone;
+$('wa').href='https://wa.me/'+C.phone+'?text='+encodeURIComponent('Hello '+C.name+', I would like to know more.');
+$('dir').href=$('dir2').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(C.place);
+\$('svcs').innerHTML=C.services.map(function(s,i){return '<div class="svc" onclick="openBook('+i+')"><i>'+pad(i+1)+'</i><div><h3>'+s[0]+'</h3><p>'+(s[3]?'<b>'+s[3]+'</b> &bull; ':'')+s[1]+(s[2]?' &bull; '+s[2]:'')+'</p></div><span class="go">Book &rarr;</span></div>';}).join('');
+const tx=C.services.map(s=>s[0]).join(' &bull; ')+' &bull; ';$('mq').innerHTML=tx+tx+tx+tx;
+const now=new Date(),td=now.getDay();
+\$('hrs').innerHTML=[1,2,3,4,5,6,0].map(function(d){return '<div class="row'+(d===td?' today':'')+'"><b>'+D[d]+'</b><span>'+h12(C.hours[d][0])+' - '+h12(C.hours[d][1])+'</span></div>';}).join('');
+(function(){const [o,c]=C.hours[td],h=now.getHours()+now.getMinutes()/60,on=h>=o&&h<c,e=$('status');
+ e.classList.toggle('open',on);e.querySelector('span').textContent=on?'Open now, closes '+h12(c):'Closed now'+(h<o?', opens '+h12(o):'')})();
+\$('sv').innerHTML=C.services.map(function(s,i){return '<option value="'+i+'">'+s[0]+' ('+s[1]+')</option>';}).join('');
+let slot='';
+function makeSlots(){slot='';const sl=$('slots');sl.innerHTML='';const d=new Date($('dt').value+'T12:00');const [o,c]=C.hours[isNaN(d)?td:d.getDay()];
+ for(let h=o;h<c;h++){const e=document.createElement('div');e.className='slot';e.textContent=h12(h);e.onclick=()=>{slot=e.textContent;[...sl.children].forEach(x=>x.classList.toggle('sel',x===e))};sl.appendChild(e)}}
+\$('dt').min=\$('dt').value=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());makeSlots();
+function openBook(i){if(typeof i==='number')$('sv').value=i;$('sheet').classList.add('on')}
+function closeBook(){$('sheet').classList.remove('on')}
+function sendBook(){
+ const n=$('nm').value.trim();if(!n){$('nm').focus();return}
+ if(!slot){alert('Please choose a time');return}
+ const d=new Date($('dt').value+'T12:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+ const m='Hello '+C.name+',\\nI would like to book an appointment.\\n\\nName: '+n+'\\nTreatment: '+C.services[\$('sv').value][0]+' ('+C.services[\$('sv').value][1]+')\\nDate: '+d+'\\nTime: '+slot+'\\n\\nPlease confirm availability.';
+ location.href='https://wa.me/'+C.phone+'?text='+encodeURIComponent(m)}
+function saveContact(){
+ const v='BEGIN:VCARD\\nVERSION:3.0\\nFN:'+C.name+'\\nORG:'+C.name+'\\nTEL;TYPE=CELL:+'+C.phone+'\\nADR:;;'+C.place+';;;;\\nNOTE:Women-only massage & spa centre in Sanawad\\nURL:'+location.href+'\\nEND:VCARD';
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([v],{type:'text/vcard'}));a.download='Mahadev-Spa-Centre.vcf';a.click()}
+function share(){const d={title:C.name,text:C.name+' - Women\'s Massage & Spa, Sanawad',url:location.href};
+ if(navigator.share)navigator.share(d).catch(()=>{});else copyLink()}
+function copyLink(b){navigator.clipboard&&navigator.clipboard.writeText(location.href);if(b){b.textContent='Copied!';setTimeout(()=>b.textContent='Copy Link',1500)}else alert('Link copied')}
+if(window.QRCode)new QRCode($('qr'),{text:location.href,width:150,height:150,colorDark:'#3f5143',colorLight:'#ffffff'});else $('qr').style.display='none';
+</script>
+  `;
+}
+
+function renderCompleteMahadevSpaHtml(card, options = {}) {
+  const name = escapeHtml(card.fullName || "Mahadev Spa Centre");
+  const desc = escapeHtml(card.description || "A calm, women-only massage and spa centre in Sanawad, Madhya Pradesh. Book your appointment in one tap.");
+
+  return `<!DOCTYPE html>
+<html lang="en" class="theme-mahadev-spa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6efe6">
+<title>${name} | Women's Massage &amp; Spa, Sanawad</title>
+<meta name="description" content="${desc}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script id="__INITIAL_CARD_DATA__">
+  window.__INITIAL_CARD__ = ${JSON.stringify(card)};
+</script>
+</head>
+<body class="theme-mahadev-spa">
+  <main class="viewport-wrapper" id="cardViewport">
+    ${renderMahadevSpaBody(card, options)}
+  </main>
+</body>
+</html>`;
+}
+
+function renderAmbrosFlagshipBody(card, options = {}) {
+  const isPreview = options.isPreview;
+  const name = escapeHtml(card.fullName || "Ambros Studio");
+
+  return `
+  <style>
+:root{
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);
+  --bg:#fff;--soft:#f3f3ef;--line:#e6e6e0;--ink:#0a0a0a;--muted:#6a6a64;
+  --green:#0c7c59;--lime:#19b583;--yellow:#f2b632;
+  --head:'Sora','Segoe UI',Helvetica,Arial,sans-serif;
+  --body:'Inter',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:480px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--head);margin:0;letter-spacing:-.025em}
+.lbl{font:600 11px var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:10px}
+.lbl::before{content:"";width:26px;height:2px;background:currentColor}
+.on-dark .lbl{color:var(--lime)}
+.h2{font:800 34px/1.02 var(--head);text-transform:uppercase;margin-top:16px}
+.h2 b{color:var(--green)}.on-dark .h2 b{color:var(--lime)}
+
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+
+/* buttons */
+.btn{position:relative;overflow:hidden;display:flex;justify-content:center;align-items:center;padding:15px 10px;border-radius:12px;font:600 13px var(--body);border:1.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;transition:transform .25s var(--ease),background .25s,color .25s,border-color .25s}
+.btn::after{content:"";position:absolute;top:0;left:-70%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);transition:left .7s var(--ease)}
+.btn:hover::after{left:130%}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--ink);color:#fff}
+.btn.pri:hover{background:var(--green);border-color:var(--green)}
+.btn.full{grid-column:1/-1}
+
+/* hero */
+.hero{padding:30px 0 70px;position:relative}
+.hero::before{content:"";position:absolute;right:-80px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(12,124,89,.16),transparent 70%);animation:drift 9s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(-40px,60px) scale(1.2)}}
+.top{position:relative;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;color:var(--muted)}
+.top i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:8px;animation:pulse 2.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(12,124,89,.55)}70%,100%{box-shadow:0 0 0 10px rgba(12,124,89,0)}}
+.logo{display:block;width:100%;margin:14px 0 0;mix-blend-mode:multiply;animation:wipe 1.3s .15s var(--ease) both}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.hero h1{margin-top:40px;font:800 clamp(40px,13vw,58px)/.98 var(--head);text-transform:uppercase}
+.ln{display:block;overflow:hidden;padding-bottom:.06em}
+.ln span{display:block;animation:rise .9s var(--ease) both}
+.ln:nth-child(1) span{animation-delay:.7s}.ln:nth-child(2) span{animation-delay:.85s}.ln:nth-child(3) span{animation-delay:1s}
+@keyframes rise{from{transform:translateY(110%)}}
+.ln.g span{color:var(--green)}
+.intro{margin:22px 0 28px;color:var(--muted);font-size:15.5px;max-width:340px;animation:fade .9s 1.2s both}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;animation:fade .9s 1.35s both}
+
+/* marquee */
+.tick{background:var(--green);color:#fff;transform:rotate(-2.2deg) scale(1.06);padding:14px 0;overflow:hidden;white-space:nowrap;position:relative;z-index:3;margin-top:-10px}
+.tick div{display:inline-block;animation:m 22s linear infinite;font:800 15px var(--head);letter-spacing:.14em;text-transform:uppercase}
+.tick span{margin:0 18px;opacity:.55}
+@keyframes m{to{transform:translateX(-50%)}}
+
+/* dark / green blocks */
+.blk{position:relative;padding:92px 0 96px;margin-top:-30px;clip-path:polygon(0 30px,100% 0,100% calc(100% - 30px),0 100%)}
+.on-dark{background:var(--ink);color:#fff}
+.on-green{background:var(--green);color:#fff}
+.on-green .lbl{color:#fff}
+.sv{display:block;position:relative;margin-top:12px;padding:24px 22px;background:#151515;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%);transition:background .35s,transform .35s var(--ease)}
+.sv:first-of-type{margin-top:28px}
+.sv:hover{background:var(--green);transform:translateX(6px)}
+.sv .n{font:800 40px/1 var(--head);color:transparent;-webkit-text-stroke:1.2px var(--lime);transition:.35s}
+.sv:hover .n{-webkit-text-stroke-color:#fff}
+.sv h3{font:700 19px/1.25 var(--head);margin-top:14px}
+.sv p{margin:6px 0 0;font-size:13.5px;color:#a3a39c;transition:color .35s}
+.sv:hover p{color:#e4f3ec}
+.sv .ar{position:absolute;right:20px;bottom:20px;color:var(--lime);font-size:20px;transition:.35s}
+.sv:hover .ar{color:#fff;transform:translate(4px,-4px)}
+
+/* work */
+.work{padding:64px 0 40px}
+.note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.scroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:24px 24px 10px;margin:0 -24px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.pc{flex:none;width:76%;scroll-snap-align:center;transition:transform .4s var(--ease)}
+.pc:hover{transform:translateY(-6px)}
+.art{height:240px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;clip-path:polygon(0 0,calc(100% - 34px) 0,100% 34px,100% 100%,0 100%);position:relative;overflow:hidden}
+.art::after{content:"";position:absolute;right:-30%;top:-10%;width:90%;height:140%;background:rgba(255,255,255,.07);transform:skewX(-18deg);transition:transform .6s var(--ease)}
+.pc:hover .art::after{transform:skewX(-18deg) translateX(-30px)}
+.art em{align-self:flex-start;font-style:normal;font:600 9.5px var(--body);letter-spacing:.16em;text-transform:uppercase;border:1px solid currentColor;border-radius:99px;padding:4px 10px}
+.art b{font:800 52px/.92 var(--head);text-transform:uppercase;letter-spacing:-.03em}
+.a1{background:var(--ink);color:#fff}.a1 b{color:var(--lime)}
+.a2{background:var(--green);color:#fff}
+.a3{background:var(--soft);color:var(--ink)}.a3 b{color:var(--green)}
+.a4{background:#1c1c1c;color:#fff}.a4 b{-webkit-text-stroke:1.2px #fff;color:transparent}
+.pc .m{padding:16px 2px 0}
+.pc h3{font:700 17px var(--head)}
+.pc .k{font-size:11.5px;font-weight:600;color:var(--green);margin:3px 0 6px}
+.pc p{margin:0;font-size:13.5px;color:var(--muted)}
+.hint{font-size:11px;letter-spacing:.2em;color:var(--muted);font-weight:600;margin-top:4px}
+
+/* nfc */
+.nfc p.l{color:#d3ece2;font-size:15px;margin:14px 0 0}
+.nfc .h2{color:#fff}
+.card{margin:34px 0 26px;aspect-ratio:1.62;border-radius:18px;background:#0a0a0a;color:#fff;padding:20px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 26px 50px rgba(0,0,0,.35);animation:float 5s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px) rotate(-2deg)}}
+.card::before{content:"";position:absolute;left:20px;right:20px;bottom:48px;height:2px;background:var(--lime)}
+.card::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);animation:sweep 4.5s 1s infinite}
+@keyframes sweep{to{left:130%}}
+.card .r{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.24em;font-weight:600;color:#bdbdb6}
+.card b{font:800 22px var(--head);letter-spacing:.08em;text-transform:uppercase}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two div{background:rgba(255,255,255,.12);border-radius:14px;padding:16px;font-size:12.5px;color:#d3ece2}
+.two b{display:block;color:#fff;font:700 14px var(--head);margin-bottom:4px}
+
+/* process */
+.proc{padding:70px 0 30px}
+.steps{position:relative;margin-top:30px;padding-left:4px}
+.track{position:absolute;left:23px;top:20px;bottom:30px;width:2px;background:var(--line)}
+.track i{display:block;width:100%;height:0;background:var(--green)}
+.st{position:relative;display:grid;grid-template-columns:48px 1fr;padding-bottom:30px}
+.st .d{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--line);display:grid;place-items:center;font:800 14px var(--head);transition:.4s var(--ease);position:relative;z-index:1}
+.st.in .d{border-color:var(--green);background:var(--green);color:#fff}
+.st h3{font:700 19px var(--head);margin-top:6px}
+.st p{margin:4px 0 0;font-size:14px;color:var(--muted)}
+
+/* cta */
+.cta h2{font:800 40px/1 var(--head);text-transform:uppercase}
+.cta h2 b{color:var(--lime)}
+.cta .btn{margin-top:28px;width:100%;padding:18px;background:var(--yellow);border-color:var(--yellow);color:var(--ink);font-size:14px}
+.cta .btn:hover{background:#fff;border-color:#fff}
+.info{margin-top:44px;border-top:1px solid rgba(255,255,255,.16)}
+.info a,.info div{display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.16);font-size:14px}
+.info span{font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#8d8d86;padding-top:3px;flex:none}
+.info b{font-weight:500;text-align:right}
+.info a:hover b{color:var(--lime)}
+.soc{display:flex;gap:10px;margin-top:24px}
+.soc a{padding:10px 16px;border:1px solid rgba(255,255,255,.25);border-radius:99px;font-size:12px;font-weight:600;transition:.25s}
+.soc a:hover{background:#fff;color:var(--ink)}
+.foot{margin-top:40px;font-size:11.5px;color:#8d8d86}
+
+/* dock */
+.dock{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(432px,calc(100% - 32px));z-index:20;display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:6px;padding:6px;border-radius:18px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 12px 34px rgba(0,0,0,.18)}
+.dock a,.dock button{display:grid;place-items:center;padding:12px 6px;border-radius:13px;font:600 12.5px var(--body);background:transparent;border:0;color:var(--ink);cursor:pointer;transition:transform .2s}
+.dock a:active,.dock button:active{transform:scale(.95)}
+.dock .go{background:var(--green);color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;background:var(--ink);color:#fff;padding:9px 16px;border-radius:99px;font-size:12px;font-weight:500;transition:.3s;pointer-events:none;z-index:30}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+/* booking modal */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(10,10,10,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center}
+.ov.open{opacity:1;pointer-events:auto}
+.sheet{width:100%;max-width:480px;max-height:92%;overflow:auto;background:#fff;border-radius:26px 26px 0 0;padding:12px 22px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .5s var(--ease)}
+.ov.open .sheet{transform:none}
+.grab{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 14px}
+.sh-top{display:flex;justify-content:space-between;align-items:center}
+.bars{display:flex;gap:6px;flex:1;margin-right:16px}
+.bars i{height:3px;flex:1;background:var(--line);border-radius:3px;transition:background .4s}
+.bars i.on{background:var(--green)}
+.x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:15px;cursor:pointer;color:var(--ink)}
+.stp[hidden]{display:none}
+.stp{animation:fade .5s var(--ease) both}
+.stp .kk{margin-top:20px;font:600 11px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--green)}
+.stp h3{font:800 26px/1.05 var(--head);text-transform:uppercase;margin:6px 0 4px}
+.stp .sub{font-size:13.5px;color:var(--muted);margin:0 0 20px}
+.fld{margin-bottom:16px}
+.fld label,.fld .q{display:block;font:600 12.5px var(--body);margin-bottom:7px}
+.fld label small,.fld .q small{color:var(--muted);font-weight:400}
+.fld input,.fld select,.fld textarea{width:100%;font:400 16px var(--body);padding:14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none;min-height:50px}
+.fld select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%230a0a0a' stroke-width='2'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+.fld textarea{resize:none;min-height:84px}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(12,124,89,.14)}
+.msg{display:none;color:#d32f2f;font-size:12px;margin-top:5px}
+.fld.err input,.fld.err select,.fld.err textarea,.fld.err .chip{border-color:#d32f2f}
+.fld.err .msg{display:block}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:11px 14px;border-radius:99px;border:1.5px solid var(--line);background:#fff;font:600 13px var(--body);cursor:pointer;transition:.2s;color:var(--ink)}
+.chip:active{transform:scale(.95)}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.nav2{display:flex;gap:10px;margin-top:8px}
+.nav2 .btn{flex:1;padding:16px}
+.nav2 .back{flex:0 0 34%}
+.btn.grn{background:var(--green);border-color:var(--green);color:#fff}
+.btn.grn:hover{background:var(--ink);border-color:var(--ink)}
+.sum{border:1px solid var(--line);border-radius:14px;margin-bottom:16px}
+.sum div{display:flex;justify-content:space-between;gap:14px;padding:12px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+.sum div:last-child{border:0}
+.sum span{color:var(--muted);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding-top:3px;flex:none}
+.sum b{font-weight:500;text-align:right}
+.alt{display:block;text-align:center;font-size:12.5px;color:var(--muted);margin-top:14px}
+.alt a{color:var(--green);font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}}
+
+  @media (min-width: 600px) {
+    body.theme-ambros-flagship {
+      background: #0a0a0a !important;
+      display: flex !important;
+      justify-content: center !important;
+    }
+    .theme-ambros-flagship .viewport-wrapper {
+      box-shadow: 0 0 50px rgba(0,0,0,0.5) !important;
+    }
+  }
+  </style>
+
+  ${isPreview ? `
+    <div style="background: #0f172a; color: #f8fafc; font-size: 11.5px; font-weight: 700; text-align: center; padding: 8px 14px; border-radius: 8px; margin-bottom: 14px; border: 1px solid #334155; position: sticky; top: 0; z-index: 1000;">
+      ADMIN PREVIEW &bull; Ambros Flagship (${card.is_active !== false ? '<span style="color: #34d399;">Active</span>' : '<span style="color: #fbbf24;">Inactive</span>'})
+    </div>
+  ` : ""}
+
+<header class="hero"><div class="wrap">
+  <img class="logo" alt="Ambros — Crafted with Purpose" src="/assets/ambros-crafted-hero.jpg">
+  <h1><span class="ln"><span>Built to</span></span><span class="ln g"><span>stand out</span></span><span class="ln"><span>online.</span></span></h1>
+  <p class="intro">Websites, Meta ads and digital identities for brands that want to be remembered.</p>
+  <div class="acts">
+    <a class="btn pri" href="tel:+919157778915">Call</a>
+    <a class="btn" href="https://wa.me/919157778915?text=Hi%20Ambros%20Studio!%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener">WhatsApp</a>
+    <a class="btn" href="mailto:ambrosstudioltd@gmail.com">Email</a>
+    <button class="btn" id="copy" type="button">Copy Link</button>
+  </div>
+</div></header>
+
+<div class="tick" aria-hidden="true"><div>
+  Websites<span>/</span>Meta Ads<span>/</span>Metal NFC Cards<span>/</span>Brand Identity<span>/</span>Local SEO<span>/</span>WhatsApp Funnels<span>/</span>
+  Websites<span>/</span>Meta Ads<span>/</span>Metal NFC Cards<span>/</span>Brand Identity<span>/</span>Local SEO<span>/</span>WhatsApp Funnels<span>/</span>
+</div></div>
+
+<section class="blk on-dark"><div class="wrap">
+  <div class="lbl rv">Services</div>
+  <h2 class="h2 rv">We don’t just build websites. We build <b>digital prestige.</b></h2>
+  <a class="sv rv" href="https://ambrosstudio.com/services#webDesign" target="_blank" rel="noopener"><div class="n">01</div><h3>Website Design &amp; Development</h3><p>Bespoke, ultra-fast sites that build authority and drive inquiries.</p><span class="ar">↗</span></a>
+  <a class="sv rv" href="https://ambrosstudio.com/services#leadGen" target="_blank" rel="noopener"><div class="n">02</div><h3>Meta Ads</h3><p>Instagram &amp; Facebook campaigns that bring local buyers to you.</p><span class="ar">↗</span></a>
+  <a class="sv rv" href="https://ambrosstudio.com/services#digitalCards" target="_blank" rel="noopener"><div class="n">03</div><h3>Digital &amp; Metal NFC Cards</h3><p>Engraved steel cards with a live profile, shared in one tap.</p><span class="ar">↗</span></a>
+  <a class="sv rv" href="https://ambrosstudio.com/services" target="_blank" rel="noopener"><div class="n">04</div><h3>Brand Identity &amp; Local SEO</h3><p>Distinct visual systems and stronger Google Maps visibility.</p><span class="ar">↗</span></a>
+</div></section>
+
+<section class="blk on-green nfc"><div class="wrap">
+  <div class="lbl rv">Smart Networking</div>
+  <h2 class="h2 rv">Metal card. Living profile.</h2>
+  <p class="l rv">Tap on any NFC phone or scan a QR. Your profile opens instantly, ready to save and share.</p>
+  <div class="card rv"><div class="r"><span>NFC</span><span>MATTE BLACK</span></div><b>Ambros Studio</b><div class="r"><span>STAINLESS STEEL</span><span>TAP ▸</span></div></div>
+  <div class="two rv"><div><b>Physical card</b>Tap an NFC phone and your profile opens.</div><div><b>Digital link</b>Open via link or QR on any browser.</div></div>
+</div></section>
+
+<section class="proc"><div class="wrap">
+  <div class="lbl rv">The Process</div>
+  <h2 class="h2 rv">Four phases to <b>prestige</b></h2>
+  <div class="steps" id="steps">
+    <div class="track"><i id="fill"></i></div>
+    <div class="st"><div class="d">1</div><div><h3>Discovery &amp; Strategy</h3><p>We study your business, clientele and the one action you want visitors to take.</p></div></div>
+    <div class="st"><div class="d">2</div><div><h3>Bespoke Design</h3><p>Custom layouts, intentional typography. Zero generic templates.</p></div></div>
+    <div class="st"><div class="d">3</div><div><h3>High-Performance Build</h3><p>Clean, responsive, fast code with WhatsApp integration.</p></div></div>
+    <div class="st"><div class="d">4</div><div><h3>Launch &amp; Scale</h3><p>Domain setup, Meta campaigns and delivery of your NFC cards.</p></div></div>
+  </div>
+</div></section>
+
+<section class="blk on-dark cta" style="margin-bottom:-30px"><div class="wrap">
+  <div class="lbl rv">Let’s talk</div>
+  <h2 class="rv" style="margin-top:16px">Let’s build <b>something timeless.</b></h2>
+  <button type="button" class="btn rv" data-open>Book a Demo →</button>
+  <div class="info rv">
+    <a href="tel:+919157778915"><span>Phone</span><b>+91 91577 78915</b></a>
+    <a href="mailto:ambrosstudioltd@gmail.com"><span>Email</span><b>ambrosstudioltd@gmail.com</b></a>
+    <a href="https://ambrosstudio.com" target="_blank" rel="noopener"><span>Web</span><b>ambrosstudio.com</b></a>
+    <div><span>Studio</span><b>VIP Gallaria, Althan,<br>Surat, Gujarat 395017</b></div>
+  </div>
+  <div class="soc rv">
+    <a href="https://www.instagram.com/ambros.studio" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://x.com/ambrosstudio" target="_blank" rel="noopener">X</a>
+    <a href="https://www.facebook.com/share/p/1HrAAE5Yjf/" target="_blank" rel="noopener">Facebook</a>
+  </div>
+  <div class="foot">© 2026 Ambros Studio · Crafted with Purpose</div>
+</div></section>
+
+<nav class="dock">
+  <a href="tel:+919157778915">Call</a>
+  <button type="button" class="go" data-open>Book a Demo</button>
+  <button type="button" id="copy2">Share</button>
+</nav>
+<div class="ov" id="modal" aria-hidden="true">
+ <div class="sheet" role="dialog" aria-modal="true" aria-label="Book a demo">
+  <div class="grab"></div>
+  <div class="sh-top"><div class="bars"><i></i><i></i><i></i></div><button class="x" type="button" id="close" aria-label="Close">✕</button></div>
+
+  <div class="stp" data-s="0">
+   <div class="kk">Step 1 of 3</div>
+   <h3>About you</h3>
+   <p class="sub">So we know who we’re speaking with.</p>
+   <div class="fld"><label for="f-name">Your name</label><input id="f-name" type="text" autocomplete="name" placeholder="e.g. Rahul Shah"><div class="msg">Please enter your name.</div></div>
+   <div class="fld"><label for="f-biz">Business name</label><input id="f-biz" type="text" autocomplete="organization" placeholder="e.g. Zaika Restaurant"><div class="msg">Please enter your business name.</div></div>
+   <div class="fld"><label for="f-cat">Business category</label><select id="f-cat"><option value="">Select a category</option><option>Restaurant &amp; Café</option><option>Salon &amp; Spa</option><option>Real Estate</option><option>Fitness &amp; Wellness</option><option>Clinic &amp; Healthcare</option><option>Retail &amp; E-commerce</option><option>Education &amp; Coaching</option><option>Professional Services</option><option>Other</option></select><div class="msg">Please select a category.</div></div>
+   <div class="nav2"><button class="btn grn" type="button" data-next="0">Continue →</button></div>
+  </div>
+
+  <div class="stp" data-s="1" hidden>
+   <div class="kk">Step 2 of 3</div>
+   <h3>Plan your demo</h3>
+   <p class="sub">Pick what you’d like to see and when.</p>
+   <div class="fld" data-k="service"><div class="q">Demo category</div><div class="chips"><button type="button" class="chip">Website</button><button type="button" class="chip">Meta Ads</button><button type="button" class="chip">NFC Cards</button><button type="button" class="chip">Branding &amp; SEO</button><button type="button" class="chip">Not sure yet</button></div><div class="msg">Please choose a category.</div></div>
+   <div class="fld"><label for="f-date">Preferred date</label><input id="f-date" type="date"><div class="msg">Please pick a date.</div></div>
+   <div class="fld" data-k="time"><div class="q">Preferred time</div><div class="chips"><button type="button" class="chip">10:00 AM</button><button type="button" class="chip">11:00 AM</button><button type="button" class="chip">12:00 PM</button><button type="button" class="chip">2:00 PM</button><button type="button" class="chip">3:00 PM</button><button type="button" class="chip">4:00 PM</button><button type="button" class="chip">5:00 PM</button><button type="button" class="chip">6:00 PM</button></div><div class="msg">Please choose a time.</div></div>
+   <div class="fld"><label for="f-note">Anything we should know? <small>(optional)</small></label><textarea id="f-note" placeholder="Goals, questions, current website link..."></textarea></div>
+   <div class="nav2"><button class="btn back" type="button" data-back>← Back</button><button class="btn grn" type="button" data-next="1">Review →</button></div>
+  </div>
+
+  <div class="stp" data-s="2" hidden>
+   <div class="kk">Step 3 of 3</div>
+   <h3>Confirm &amp; send</h3>
+   <p class="sub">Check your details, then send the request to us on WhatsApp.</p>
+   <div class="sum" id="sum"></div>
+   <a class="btn grn" id="wa" href="#" target="_blank" rel="noopener" style="width:100%;padding:17px">Send on WhatsApp →</a>
+   <div class="nav2" style="margin-top:10px"><button class="btn back" type="button" data-back style="flex:1">← Edit details</button></div>
+   <span class="alt">Prefer email? <a id="mail" href="#">Send by email</a></span>
+  </div>
+ </div>
+</div>
+<div class="toast" id="toast">Link copied</div>
+<script>
+(function(){
+  var t=document.getElementById('toast');
+  function show(m){t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},1800)}
+  function copy(){
+    try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(location.href).then(function(){show('Link copied')},function(){show('Copy from the address bar')});return}}catch(e){}
+    show('Copy from the address bar');
+  }
+  document.getElementById('copy').addEventListener('click',copy);
+  document.getElementById('copy2').addEventListener('click',copy);
+  var els=document.querySelectorAll('.rv,.st');
+  function chk(){els.forEach(function(el){if(el.getBoundingClientRect().top<innerHeight*.9)el.classList.add('in')})}
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
+    els.forEach(function(el){io.observe(el)});
+  }
+  chk();setTimeout(chk,300);
+  var s=document.getElementById('steps'),f=document.getElementById('fill');
+  function prog(){var r=s.getBoundingClientRect(),p=(innerHeight*.65-r.top)/(r.height-40);p=Math.max(0,Math.min(1,p));f.style.height=(p*100)+'%'}
+  addEventListener('scroll',prog,{passive:true});prog();
+  /* booking */
+  var m=document.getElementById('modal'),sh=m.querySelector('.sheet'),stp=[].slice.call(m.querySelectorAll('.stp')),bars=m.querySelectorAll('.bars i'),cur=0,V={service:'',time:''},NL='\n';
+  function $(id){return document.getElementById(id)}
+  var dt=new Date();dt.setMinutes(dt.getMinutes()-dt.getTimezoneOffset());$('f-date').min=dt.toISOString().slice(0,10);
+  function go(n){cur=n;stp.forEach(function(s,i){s.hidden=i!==n});bars.forEach(function(b,i){b.className=i<=n?'on':''});sh.scrollTop=0}
+  function openM(){m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';go(0);setTimeout(function(){try{$('f-name').focus({preventScroll:true})}catch(e){}},400)}
+  function closeM(){m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+  document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',openM)});
+  $('close').addEventListener('click',closeM);
+  m.addEventListener('click',function(e){if(e.target===m)closeM()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeM()});
+  m.querySelectorAll('.fld input,.fld select,.fld textarea').forEach(function(el){['input','change'].forEach(function(ev){el.addEventListener(ev,function(){el.closest('.fld').classList.remove('err')})})});
+  m.querySelectorAll('.fld[data-k] .chip').forEach(function(c){c.addEventListener('click',function(){var f=c.closest('.fld');f.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});c.classList.add('on');V[f.getAttribute('data-k')]=c.textContent;f.classList.remove('err')})});
+  function bad(el){el.classList.add('err');return false}
+  function chkTxt(id){var e=$(id);return e.value.trim()?true:bad(e.closest('.fld'))}
+  function chkK(k){return V[k]?true:bad(m.querySelector('.fld[data-k="'+k+'"]'))}
+  function pretty(v){var p=v.split('-');return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+  function esc(s){return s.replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
+  m.querySelectorAll('[data-back]').forEach(function(b){b.addEventListener('click',function(){go(Math.max(0,cur-1))})});
+  m.querySelector('[data-next="0"]').addEventListener('click',function(){var a=chkTxt('f-name'),b=chkTxt('f-biz'),c=chkTxt('f-cat');if(a&&b&&c)go(1)});
+  m.querySelector('[data-next="1"]').addEventListener('click',function(){
+    var a=chkK('service'),b=chkTxt('f-date'),c=chkK('time');if(!(a&&b&&c))return;
+    var d={n:$('f-name').value.trim(),b:$('f-biz').value.trim(),c:$('f-cat').value,s:V.service,d:pretty($('f-date').value),t:V.time,x:$('f-note').value.trim()};
+    var rows=[['Name',d.n],['Business',d.b],['Category',d.c],['Demo for',d.s],['Date',d.d],['Time',d.t]];if(d.x)rows.push(['Notes',d.x]);
+    $('sum').innerHTML=rows.map(function(r){return '<div><span>'+r[0]+'</span><b>'+esc(r[1])+'</b></div>'}).join('');
+    var msg='Hi Ambros Studio! I would like to book a demo.'+NL+NL+'Name: '+d.n+NL+'Business: '+d.b+NL+'Business category: '+d.c+NL+'Demo for: '+d.s+NL+'Preferred date: '+d.d+NL+'Preferred time: '+d.t+(d.x?NL+'Notes: '+d.x:'');
+    $('wa').href='https://wa.me/919157778915?text='+encodeURIComponent(msg);
+    $('mail').href='mailto:ambrosstudioltd@gmail.com?subject='+encodeURIComponent('Demo request - '+d.b)+'&body='+encodeURIComponent(msg);
+    go(2);
+  });
+})();
+</script>
+  `;
+}
+
+function renderCompleteAmbrosFlagshipHtml(card, options = {}) {
+  const name = escapeHtml(card.fullName || "Ambros Studio");
+  const desc = escapeHtml(card.description || "Websites, Meta ads and digital identities for brands that want to be remembered.");
+
+  return `<!DOCTYPE html>
+<html lang="en" class="theme-ambros-flagship">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${name} — Crafted with Purpose</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.className='js'</script>
+<script id="__INITIAL_CARD_DATA__">
+  window.__INITIAL_CARD__ = ${JSON.stringify(card)};
+</script>
+</head>
+<body class="theme-ambros-flagship">
+  <main class="viewport-wrapper" id="cardViewport">
+    ${renderAmbrosFlagshipBody(card, options)}
+  </main>
+</body>
+</html>`;
+}
+
+
   function renderNoirGoldBody(card) {
     const name = hasText(card.fullName || card.full_name || card.name) ? (card.fullName || card.full_name || card.name).trim() : '';
     const role = hasText(card.designation || card.role) ? (card.designation || card.role).trim() : '';
@@ -2931,6 +3575,13 @@
 
   function renderCompleteCardHtml(card, options = {}) {
     const registry = designRegistry || (typeof window !== 'undefined' ? window.CARD_DESIGN_REGISTRY : null);
+    const resolvedDesign = registry ? registry.resolveCardDesign(card.cardDesign || card.card_design) : null;
+    if (resolvedDesign && resolvedDesign.id === 'mahadev-spa') {
+      return renderCompleteMahadevSpaHtml(card, options);
+    }
+    if (resolvedDesign && resolvedDesign.id === 'ambros-flagship') {
+      return renderCompleteAmbrosFlagshipHtml(card, options);
+    }
     const design = registry ? registry.resolveCardDesign(card.cardDesign || card.card_design) : {
       id: 'mint-haven',
       name: 'Mint Haven',
@@ -3028,6 +3679,8 @@
 
   return {
     renderCardBody: renderCardBody,
+    renderCompleteMahadevSpaHtml: renderCompleteMahadevSpaHtml,
+    renderCompleteAmbrosFlagshipHtml: renderCompleteAmbrosFlagshipHtml,
     renderCardHtml: renderCompleteCardHtml,
     renderCompleteCardHtml: renderCompleteCardHtml,
     resolveCustomerLinks: resolveCustomerLinks,

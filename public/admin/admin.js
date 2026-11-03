@@ -1,10 +1,10 @@
 /**
- * Ambros Studio — Admin Panel Interactive Controller
- * Design Names:
- *   - Design 1: Mint Haven
- *   - Design 2: Evergreen
- * Complete In-Memory Customer State & In-Place Editing System
- */
+* Ambros Studio — Admin Panel Interactive Controller
+* Design Names:
+*   - Design 1: Mint Haven
+*   - Design 2: Evergreen
+* Complete In-Memory Customer State & In-Place Editing System
+*/
 
 document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
       status: isActive ? 'active' : 'inactive',
       is_active: isActive,
       avatarUrl: c.avatar_url || c.profile_image_url || c.photo_url || '',
-      customSettings: (function() {
+      customSettings: (function () {
         const raw = c.custom_settings || c.customSettings || {};
         return {
           appearance: raw.appearance || { primaryColor: '', backgroundColor: '', textColor: '', fontFamily: '' },
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------
   // Navigation & Tab Switching
   // -------------------------------------------------------------
-  window.navigateToTab = function(tabId) {
+  window.navigateToTab = function (tabId) {
     // If navigating away from add-customer via top/nav, reset to create mode
     if (tabId !== 'add-customer' && currentEditingCustomerId !== null) {
       resetAddCustomerForm();
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------
   // Toast Helper
   // -------------------------------------------------------------
-  window.showAdminToast = function(message) {
+  window.showAdminToast = function (message) {
     let toast = document.getElementById('adminToast');
     if (!toast) {
       toast = document.createElement('div');
@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function attachTableEventListeners() {
     // Edit Button Handlers
     document.querySelectorAll('.btn-edit-customer').forEach(btn => {
-      btn.onclick = function(e) {
+      btn.onclick = function (e) {
         e.preventDefault();
         const custId = this.getAttribute('data-id');
         if (custId) {
@@ -580,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Copy Public Link Handlers
     document.querySelectorAll('.btn-copy-card-link').forEach(btn => {
-      btn.onclick = function(e) {
+      btn.onclick = function (e) {
         e.preventDefault();
         const slug = this.getAttribute('data-slug');
         const name = this.getAttribute('data-name');
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Share Card Handlers
     document.querySelectorAll('.btn-share-card').forEach(btn => {
-      btn.onclick = function(e) {
+      btn.onclick = function (e) {
         e.preventDefault();
         const slug = this.getAttribute('data-slug');
         const name = this.getAttribute('data-name');
@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle Status Handlers (Connected to Live Database via PATCH)
     document.querySelectorAll('.customer-status-toggle').forEach(checkbox => {
-      checkbox.onchange = async function() {
+      checkbox.onchange = async function () {
         const custId = this.getAttribute('data-id');
         const customer = customers.find(c => String(c.id) === String(custId));
         if (!customer) return;
@@ -667,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete Customer Action Handlers
     document.querySelectorAll('.btn-delete-customer').forEach(btn => {
-      btn.onclick = function(e) {
+      btn.onclick = function (e) {
         e.preventDefault();
         const custId = this.getAttribute('data-id');
         const custName = this.getAttribute('data-name');
@@ -963,7 +963,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCopy = document.getElementById('btnAdminCopyLink');
     const btnCopyText = document.getElementById('btnAdminCopyLinkText');
     if (btnCopy) {
-      btnCopy.onclick = async function(e) {
+      btnCopy.onclick = async function (e) {
         e.preventDefault();
         const custProfileLink = document.getElementById('custProfileLink');
         const urlToCopy = custProfileLink ? custProfileLink.textContent.trim() : '';
@@ -992,7 +992,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Share button
     const btnShare = document.getElementById('btnAdminShareCard');
     if (btnShare) {
-      btnShare.onclick = async function(e) {
+      btnShare.onclick = async function (e) {
         e.preventDefault();
         const custProfileLink = document.getElementById('custProfileLink');
         const urlToShare = custProfileLink ? custProfileLink.textContent.trim() : '';
@@ -1015,14 +1015,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           await navigator.clipboard.writeText(urlToShare);
           showAdminToast('Client card link copied to clipboard');
-        } catch (_) {}
+        } catch (_) { }
       };
     }
 
     // Download QR PNG button
     const btnDownloadPng = document.getElementById('btnAdminDownloadQrPng');
     if (btnDownloadPng) {
-      btnDownloadPng.onclick = function(e) {
+      btnDownloadPng.onclick = function (e) {
         e.preventDefault();
         if (!currentDeliveryQr) return;
         try {
@@ -1043,7 +1043,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Download QR SVG button
     const btnDownloadSvg = document.getElementById('btnAdminDownloadQrSvg');
     if (btnDownloadSvg) {
-      btnDownloadSvg.onclick = function(e) {
+      btnDownloadSvg.onclick = function (e) {
         e.preventDefault();
         if (!currentDeliveryQr) return;
         try {
@@ -1531,8 +1531,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check if there is actual customer data in the editor
     const hasFormInput = Boolean(
-      rawName || rawRole || rawCompany || rawPhone || rawWhatsApp || rawEmail || 
-      rawWebsite || rawAddress || rawDesc || rawInstagram || rawLinkedIn || 
+      rawName || rawRole || rawCompany || rawPhone || rawWhatsApp || rawEmail ||
+      rawWebsite || rawAddress || rawDesc || rawInstagram || rawLinkedIn ||
       currentUploadedAvatar || currentFrontImageUrl || currentBackImageUrl ||
       (Array.isArray(currentCustomLinks) && currentCustomLinks.length > 0)
     );
@@ -2164,7 +2164,7 @@ document.addEventListener('DOMContentLoaded', () => {
       avatarUploadCircle.addEventListener('click', () => photoFileInput.click());
     }
 
-    photoFileInput.addEventListener('change', function() {
+    photoFileInput.addEventListener('change', function () {
       if (this.files && this.files[0]) {
         const file = this.files[0];
         if (file.size > 2 * 1024 * 1024) {
@@ -2172,7 +2172,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         const reader = new FileReader();
-        reader.onload = function(evt) {
+        reader.onload = function (evt) {
           currentUploadedAvatar = evt.target.result;
           if (avatarUploadCircle) {
             avatarUploadCircle.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Uploaded Avatar">`;
@@ -2409,7 +2409,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnUploadFrontImage && frontImageFileInput) {
     btnUploadFrontImage.addEventListener('click', () => frontImageFileInput.click());
-    frontImageFileInput.addEventListener('change', function() {
+    frontImageFileInput.addEventListener('change', function () {
       if (this.files && this.files[0]) {
         handleCardImageUpload(this.files[0], 'front');
       }
@@ -2426,7 +2426,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnUploadBackImage && backImageFileInput) {
     btnUploadBackImage.addEventListener('click', () => backImageFileInput.click());
-    backImageFileInput.addEventListener('change', function() {
+    backImageFileInput.addEventListener('change', function () {
       if (this.files && this.files[0]) {
         handleCardImageUpload(this.files[0], 'back');
       }
@@ -3920,7 +3920,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dashboardLayout) dashboardLayout.style.display = 'flex';
         if (loginScreen) loginScreen.style.display = 'none';
         updateAdminProfileHeader(data.user);
-        
+
         // Load live customer data from Supabase
         await loadCustomers();
       } else {
@@ -3990,7 +3990,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Success: reset form, switch to dashboard
           if (loginPasswordInput) loginPasswordInput.value = '';
           updateAdminProfileHeader(data.user);
-          
+
           if (loginScreen) loginScreen.style.display = 'none';
           if (dashboardLayout) dashboardLayout.style.display = 'flex';
 
