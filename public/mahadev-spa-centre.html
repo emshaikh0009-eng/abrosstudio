@@ -137,13 +137,35 @@ input,select{width:100%;padding:13px;border-radius:14px;border:1px solid var(--l
 
 <div class="sheet" id="sheet" onclick="if(event.target===this)closeBook()"><div class="pane">
 <button class="x" onclick="closeBook()" aria-label="Close">&times;</button>
-<h2>Book Appointment</h2><p class="note" style="text-align:left;margin:2px 0 0">Women only. We confirm on WhatsApp.</p>
-<label>Your name</label><input id="nm" placeholder="Full name" autocomplete="name">
-<label>Treatment</label><select id="sv"></select>
-<label>Date</label><input id="dt" type="date" onchange="makeSlots()">
-<label>Preferred time</label><div class="slots" id="slots"></div>
-<button class="btn pri" style="margin-top:20px" onclick="sendBook()">Confirm on WhatsApp</button>
-<p class="note">No payment needed now. Pay at the centre.</p></div></div>
+<h2>Book Appointment</h2>
+<p class="note" style="text-align:left;margin:2px 0 14px;color:var(--sage);font-weight:500">Women-only sanctuary &bull; We confirm via WhatsApp.</p>
+
+<div id="book-err" style="display:none;background:#fde8e8;color:#9b1c1c;padding:10px 14px;border-radius:12px;font-size:13px;margin-bottom:14px;border:1px solid #f8b4b4;line-height:1.4"></div>
+
+<label for="nm">Customer Name <span style="color:var(--rose)">*</span></label>
+<input id="nm" type="text" placeholder="Your full name" autocomplete="name" required>
+
+<label for="loc">Customer Location (City or Area) <span style="color:var(--rose)">*</span></label>
+<input id="loc" type="text" placeholder="e.g. Sanawad or nearby area" required>
+
+<label for="sv">Select Service / Treatment <span style="color:var(--rose)">*</span></label>
+<select id="sv" required></select>
+
+<label for="dt">Preferred Appointment Date <span style="color:var(--rose)">*</span></label>
+<input id="dt" type="date" onchange="makeSlots()" required>
+
+<label>Preferred Time Slot <span style="color:var(--rose)">*</span></label>
+<div class="slots" id="slots"></div>
+
+<label for="bk-phone">Phone Number <span style="font-size:11px;color:var(--mut)">(Optional)</span></label>
+<input id="bk-phone" type="tel" placeholder="e.g. 7000527974" autocomplete="tel">
+
+<label for="bk-msg">Additional Message or Special Requirements <span style="font-size:11px;color:var(--mut)">(Optional)</span></label>
+<textarea id="bk-msg" rows="2" placeholder="Any specific requirements, preferences, or health notes..."></textarea>
+
+<button class="btn pri" style="margin-top:20px;width:100%" onclick="sendBook()">Request on WhatsApp &rarr;</button>
+<p class="note" style="margin-top:10px;text-align:center">No payment needed now. The centre will confirm availability on WhatsApp.</p>
+</div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -181,14 +203,43 @@ $('dt').min=$('dt').value=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(n
 function openBook(i){if(typeof i==='number')$('sv').value=i;$('sheet').classList.add('on')}
 function closeBook(){$('sheet').classList.remove('on')}
 function sendBook(){
- const n=$('nm').value.trim();if(!n){$('nm').focus();return}
- if(!slot){alert('Please choose a time');return}
- const d=new Date($('dt').value+'T12:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
- const m=`Hello ${C.name},\nI would like to book an appointment.\n\nName: ${n}\nTreatment: ${C.services[$('sv').value][0]}\nDate: ${d}\nTime: ${slot}\n\nPlease confirm. Thank you.`;
- location.href='https://wa.me/'+C.phone+'?text='+encodeURIComponent(m)}
+ const err=$('book-err');
+ function showErr(msg,id){
+  if(err){err.textContent=msg;err.style.display='block';err.scrollIntoView({behavior:'smooth',block:'nearest'})}
+  else{alert(msg)}
+  if(id&&$(id))$(id).focus();
+ }
+ if(err)err.style.display='none';
+ const n=$('nm').value.trim();
+ if(!n){showErr('Please enter your full name.','nm');return}
+ const loc=$('loc')?$('loc').value.trim():'';
+ if(!loc){showErr('Please enter your location (city or area).','loc');return}
+ const svIdx=$('sv').value;
+ if(svIdx===''||!C.services[svIdx]){showErr('Please select a treatment/service.','sv');return}
+ const srv=C.services[svIdx];
+ const dtVal=$('dt').value;
+ if(!dtVal){showErr('Please choose a preferred appointment date.','dt');return}
+ if(!slot){showErr('Please choose a preferred time slot.');return}
+ const ph=$('bk-phone')?$('bk-phone').value.trim():'';
+ const msg=$('bk-msg')?$('bk-msg').value.trim():'';
+ const d=new Date(dtVal+'T12:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+ let text='Hello '+C.name+',\nI would like to request an appointment.\n\n*Booking Request Details:*\n• Customer Name: '+n+'\n• Location (City/Area): '+loc+'\n• Selected Service: '+srv[0]+' ('+srv[1]+(srv[3]?' • '+srv[3]:'') + ')\n• Preferred Date: '+d+'\n• Preferred Time: '+slot+'\n';
+ if(ph){text+='• Contact Phone: '+ph+'\n'}
+ if(msg){text+='• Special Requirements / Message: '+msg+'\n'}
+ text+='\nPlease let me know if this slot is available and kindly confirm the appointment. Thank you!';
+ const waUrl='https://wa.me/'+C.phone+'?text='+encodeURIComponent(text);
+ const win=window.open(waUrl,'_blank');
+ if(!win||win.closed||typeof win.closed==='undefined'){location.href=waUrl}
+}
 function saveContact(){
- const v=`BEGIN:VCARD\nVERSION:3.0\nFN:${C.name}\nORG:${C.name}\nTEL;TYPE=CELL:+${C.phone}\nADR:;;${C.place};;;;\nNOTE:Women-only massage and spa\nURL:${location.href}\nEND:VCARD`;
- const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([v],{type:'text/vcard'}));a.download='Mahadev-Spa-Centre.vcf';a.click()}
+ const v=['BEGIN:VCARD','VERSION:3.0','FN:'+C.name,'ORG:'+C.name,'TITLE:Women\'s Massage & Spa','TEL;TYPE=CELL,VOICE:+91'+C.rawPhone,'ADR;TYPE=WORK:;;'+C.place+';;;;','NOTE:Women-only massage and spa centre in Sanawad. Phone: +91 70005 27974','URL:'+location.href,'END:VCARD'].join('\r\n');
+ const blob=new Blob([v],{type:'text/vcard;charset=utf-8'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;a.download='Mahadev-Spa-Centre.vcf';
+ document.body.appendChild(a);
+ a.click();
+ setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url)},500)}
 function share(){const d={title:C.name,text:C.name+' - Women\'s Massage & Spa, Sanawad',url:location.href};
  if(navigator.share)navigator.share(d).catch(()=>{});else copyLink()}
 function copyLink(b){navigator.clipboard&&navigator.clipboard.writeText(location.href);if(b){b.textContent='Copied!';setTimeout(()=>b.textContent='Copy Link',1500)}else alert('Link copied')}
