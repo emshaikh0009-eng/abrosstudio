@@ -2198,83 +2198,196 @@ input,select{width:100%;padding:13px;border-radius:14px;border:1px solid var(--l
 /* ====== DYNAMIC INITIALIZATION FROM CARD PAYLOAD ====== */
 var cardData = (typeof window !== 'undefined' && window.__INITIAL_CARD__) ? window.__INITIAL_CARD__ : {};
 var customData = cardData.customSettings || {};
+var rawPhone = (cardData.whatsapp || cardData.phone || '7000527974').replace(/[^0-9]/g, '');
+if (rawPhone.length === 10) rawPhone = '91' + rawPhone;
 var C = {
- name: cardData.fullName || "Mahadev Spa Centre",
- phone: cardData.phone ? cardData.phone.replace(/[^0-9]/g, '') : "917000527974",
- place: cardData.address || "53G9+H7 Sanawad, Madhya Pradesh",
+ name: cardData.fullName || 'Mahadev Spa Centre',
+ phone: rawPhone,
+ place: cardData.address || '53G9+H7 Sanawad, Madhya Pradesh',
  hours: customData.hours || {1:[9,19],2:[9,19],3:[9,19],4:[9,19],5:[9,19],6:[9,19],0:[10,18]},
  services: (Array.isArray(customData.services) && customData.services.length)
    ? customData.services.map(function(s) { return Array.isArray(s) ? s : [s.name, s.duration, s.desc, s.price || '']; })
    : [
-       ["Full Body Massage","60 min","Slow, flowing strokes to ease the whole body.",""],
-       ["Deep Tissue Massage","60 min","Firm, focused pressure for tight, tired muscles.",""],
-       ["Head, Neck & Shoulder","30 min","Relief for desk-day stiffness and tension.",""],
-       ["Foot Reflexology","30 min","Pressure-point care for tired feet and legs.",""],
-       ["Aromatherapy Massage","60 min","Soothing oils and a gentle, calming scent.",""],
-       ["Ayurvedic Oil Massage","60 min","A traditional warm-oil massage for deep rest.",""]
+       ['Full Body Massage','60 min','Slow, flowing strokes to ease the whole body.',''],
+       ['Deep Tissue Massage','60 min','Firm, focused pressure for tight, tired muscles.',''],
+       ['Head, Neck & Shoulder','30 min','Relief for desk-day stiffness and tension.',''],
+       ['Foot Reflexology','30 min','Pressure-point care for tired feet and legs.',''],
+       ['Aromatherapy Massage','60 min','Soothing oils and a gentle, calming scent.',''],
+       ['Ayurvedic Oil Massage','60 min','A traditional warm-oil massage for deep rest.','']
      ]
 };
 /* ======================================================== */
-const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),h12=h=>(h%12||12)+(h<12?' AM':' PM');
-const D=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-$('call').href=$('call2').href='tel:+'+C.phone;
-$('wa').href='https://wa.me/'+C.phone+'?text='+encodeURIComponent('Hello '+C.name+', I would like to know more.');
-$('dir').href=$('dir2').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(C.place);
-\$('svcs').innerHTML=C.services.map(function(s,i){return '<div class="svc" onclick="openBook('+i+')"><i>'+pad(i+1)+'</i><div><h3>'+s[0]+'</h3><p>'+(s[3]?'<b>'+s[3]+'</b> &bull; ':'')+s[1]+(s[2]?' &bull; '+s[2]:'')+'</p></div><span class="go">Book &rarr;</span></div>';}).join('');
-const tx=C.services.map(s=>s[0]).join(' &bull; ')+' &bull; ';$('mq').innerHTML=tx+tx+tx+tx;
-const now=new Date(),td=now.getDay();
-\$('hrs').innerHTML=[1,2,3,4,5,6,0].map(function(d){return '<div class="row'+(d===td?' today':'')+'"><b>'+D[d]+'</b><span>'+h12(C.hours[d][0])+' - '+h12(C.hours[d][1])+'</span></div>';}).join('');
-(function(){const [o,c]=C.hours[td],h=now.getHours()+now.getMinutes()/60,on=h>=o&&h<c,e=$('status');
- e.classList.toggle('open',on);e.querySelector('span').textContent=on?'Open now, closes '+h12(c):'Closed now'+(h<o?', opens '+h12(o):'')})();
-\$('sv').innerHTML=C.services.map(function(s,i){return '<option value="'+i+'">'+s[0]+' ('+s[1]+')</option>';}).join('');
-let slot='';
-function makeSlots(){slot='';const sl=$('slots');sl.innerHTML='';const d=new Date($('dt').value+'T12:00');const [o,c]=C.hours[isNaN(d)?td:d.getDay()];
- for(let h=o;h<c;h++){const e=document.createElement('div');e.className='slot';e.textContent=h12(h);e.onclick=()=>{slot=e.textContent;[...sl.children].forEach(x=>x.classList.toggle('sel',x===e))};sl.appendChild(e)}}
-\$('dt').min=\$('dt').value=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());makeSlots();
-function openBook(i){if(typeof i==='number')$('sv').value=i;$('sheet').classList.add('on')}
-function closeBook(){$('sheet').classList.remove('on')}
-function sendBook(){
- const err=$('book-err');
- function showErr(msg,id){
-  if(err){err.textContent=msg;err.style.display='block';err.scrollIntoView({behavior:'smooth',block:'nearest'})}
-  else{alert(msg)}
-  if(id&&$(id))$(id).focus();
- }
- if(err)err.style.display='none';
- const n=$('nm').value.trim();
- if(!n){showErr('Please enter your full name.','nm');return}
- const loc=$('loc')?$('loc').value.trim():'';
- if(!loc){showErr('Please enter your location (city or area).','loc');return}
- const svIdx=$('sv').value;
- if(svIdx===''||!C.services[svIdx]){showErr('Please select a treatment/service.','sv');return}
- const srv=C.services[svIdx];
- const dtVal=$('dt').value;
- if(!dtVal){showErr('Please choose a preferred appointment date.','dt');return}
- if(!slot){showErr('Please choose a preferred time slot.');return}
- const ph=$('bk-phone')?$('bk-phone').value.trim():'';
- const msg=$('bk-msg')?$('bk-msg').value.trim():'';
- const d=new Date(dtVal+'T12:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
- let text='Hello '+C.name+',\nI would like to request an appointment.\n\n*Booking Request Details:*\n• Customer Name: '+n+'\n• Location (City/Area): '+loc+'\n• Selected Service: '+srv[0]+' ('+srv[1]+(srv[3]?' • '+srv[3]:'') + ')\n• Preferred Date: '+d+'\n• Preferred Time: '+slot+'\n';
- if(ph){text+='• Contact Phone: '+ph+'\n'}
- if(msg){text+='• Special Requirements / Message: '+msg+'\n'}
- text+='\nPlease let me know if this slot is available and kindly confirm the appointment. Thank you!';
- const waUrl='https://wa.me/'+C.phone+'?text='+encodeURIComponent(text);
- const win=window.open(waUrl,'_blank');
- if(!win||win.closed||typeof win.closed==='undefined'){location.href=waUrl}
+const $ = id => document.getElementById(id), pad = n => String(n).padStart(2, '0'), h12 = h => (h % 12 || 12) + (h < 12 ? ' AM' : ' PM');
+const D = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+if ($('call')) $('call').href = 'tel:+' + C.phone;
+if ($('call2')) $('call2').href = 'tel:+' + C.phone;
+if ($('wa')) $('wa').href = 'https://wa.me/' + C.phone + '?text=' + encodeURIComponent('Hello ' + C.name + ', I would like to know more.');
+if ($('dir')) $('dir').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(C.place);
+if ($('dir2')) $('dir2').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(C.place);
+if ($('svcs')) $('svcs').innerHTML = C.services.map(function(s, i) {
+  return '<div class="svc" onclick="openBook(' + i + ')"><i>' + pad(i + 1) + '</i><div><h3>' + s[0] + '</h3><p>' + (s[3] ? '<b>' + s[3] + '</b> &bull; ' : '') + s[1] + (s[2] ? ' &bull; ' + s[2] : '') + '</p></div><span class="go">Book &rarr;</span></div>';
+}).join('');
+if ($('mq')) {
+  const tx = C.services.map(s => s[0]).join(' &bull; ') + ' &bull; ';
+  $('mq').innerHTML = tx + tx + tx + tx;
 }
-function saveContact(){
- const v=['BEGIN:VCARD','VERSION:3.0','FN:'+C.name,'ORG:'+C.name,'TITLE:Women\'s Massage & Spa','TEL;TYPE=CELL,VOICE:+91'+C.rawPhone,'ADR;TYPE=WORK:;;'+C.place+';;;;','NOTE:Women-only massage and spa centre in Sanawad. Phone: +91 70005 27974','URL:'+location.href,'END:VCARD'].join('\r\n');
- const blob=new Blob([v],{type:'text/vcard;charset=utf-8'});
- const url=URL.createObjectURL(blob);
- const a=document.createElement('a');
- a.href=url;a.download='Mahadev-Spa-Centre.vcf';
- document.body.appendChild(a);
- a.click();
- setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url)},500)}
-function share(){const d={title:C.name,text:C.name+' - Women\'s Massage & Spa, Sanawad',url:location.href};
- if(navigator.share)navigator.share(d).catch(()=>{});else copyLink()}
-function copyLink(b){navigator.clipboard&&navigator.clipboard.writeText(location.href);if(b){b.textContent='Copied!';setTimeout(()=>b.textContent='Copy Link',1500)}else alert('Link copied')}
-if(window.QRCode)new QRCode($('qr'),{text:location.href,width:150,height:150,colorDark:'#3f5143',colorLight:'#ffffff'});else $('qr').style.display='none';
+const now = new Date(), td = now.getDay();
+if ($('hrs')) {
+  $('hrs').innerHTML = [1, 2, 3, 4, 5, 6, 0].map(function(d) {
+    return '<div class="row' + (d === td ? ' today' : '') + '"><b>' + D[d] + '</b><span>' + h12(C.hours[d][0]) + ' - ' + h12(C.hours[d][1]) + '</span></div>';
+  }).join('');
+}
+(function() {
+  const [o, c] = C.hours[td], h = now.getHours() + now.getMinutes() / 60, on = h >= o && h < c, e = $('status');
+  if (e) {
+    e.classList.toggle('open', on);
+    const sp = e.querySelector('span');
+    if (sp) sp.textContent = on ? 'Open now, closes ' + h12(c) : 'Closed now' + (h < o ? ', opens ' + h12(o) : '');
+  }
+})();
+if ($('sv')) {
+  $('sv').innerHTML = C.services.map(function(s, i) {
+    return '<option value="' + i + '">' + s[0] + ' (' + s[1] + ')</option>';
+  }).join('');
+}
+let slot = '';
+function makeSlots() {
+  slot = '';
+  const sl = $('slots');
+  if (!sl) return;
+  sl.innerHTML = '';
+  const dtInput = $('dt');
+  const d = new Date((dtInput ? dtInput.value : '') + 'T12:00');
+  const [o, c] = C.hours[isNaN(d) ? td : d.getDay()];
+  for (let h = o; h < c; h++) {
+    const e = document.createElement('div');
+    e.className = 'slot';
+    e.textContent = h12(h);
+    e.onclick = function() {
+      slot = e.textContent;
+      [...sl.children].forEach(function(x) { x.classList.toggle('sel', x === e); });
+    };
+    sl.appendChild(e);
+  }
+}
+if ($('dt')) {
+  $('dt').min = $('dt').value = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+  makeSlots();
+}
+function openBook(i) {
+  if (typeof i === 'number' && $('sv')) $('sv').value = i;
+  if ($('sheet')) $('sheet').classList.add('on');
+}
+function closeBook() {
+  if ($('sheet')) $('sheet').classList.remove('on');
+}
+function sendBook() {
+  const err = $('book-err');
+  function showErr(msg, id) {
+    if (err) {
+      err.textContent = msg;
+      err.style.display = 'block';
+      err.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      alert(msg);
+    }
+    if (id && $(id)) $(id).focus();
+  }
+  if (err) err.style.display = 'none';
+  const nameEl = $('nm');
+  const n = nameEl ? nameEl.value.trim() : '';
+  if (!n) { showErr('Please enter your full name.', 'nm'); return; }
+  const locEl = $('loc');
+  const loc = locEl ? locEl.value.trim() : '';
+  if (!loc) { showErr('Please enter your location (city or area).', 'loc'); return; }
+  const svEl = $('sv');
+  const svIdx = svEl ? svEl.value : '';
+  if (svIdx === '' || !C.services[svIdx]) { showErr('Please select a treatment/service.', 'sv'); return; }
+  const srv = C.services[svIdx];
+  const dtEl = $('dt');
+  const dtVal = dtEl ? dtEl.value : '';
+  if (!dtVal) { showErr('Please choose a preferred appointment date.', 'dt'); return; }
+  if (!slot) { showErr('Please choose a preferred time slot.'); return; }
+  const phEl = $('bk-phone');
+  const ph = phEl ? phEl.value.trim() : '';
+  const msgEl = $('bk-msg');
+  const msg = msgEl ? msgEl.value.trim() : '';
+  const d = new Date(dtVal + 'T12:00').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  
+  const lines = [
+    'Hello ' + C.name + ',',
+    'I would like to request an appointment.',
+    '',
+    '*Booking Request Details:*',
+    '• Customer Name: ' + n,
+    '• Location (City/Area): ' + loc,
+    '• Selected Service: ' + srv[0] + ' (' + srv[1] + (srv[3] ? ' • ' + srv[3] : '') + ')',
+    '• Preferred Date: ' + d,
+    '• Preferred Time: ' + slot
+  ];
+  if (ph) lines.push('• Contact Phone: ' + ph);
+  if (msg) lines.push('• Special Requirements / Message: ' + msg);
+  lines.push('');
+  lines.push('Please let me know if this slot is available and kindly confirm the appointment. Thank you!');
+  
+  const text = lines.join(String.fromCharCode(10));
+  const waUrl = 'https://wa.me/' + C.phone + '?text=' + encodeURIComponent(text);
+  const win = window.open(waUrl, '_blank');
+  if (!win || win.closed || typeof win.closed === 'undefined') {
+    location.href = waUrl;
+  }
+}
+function saveContact() {
+  const vLines = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'FN:' + C.name,
+    'ORG:' + C.name,
+    'TITLE:Women' + String.fromCharCode(39) + 's Massage & Spa',
+    'TEL;TYPE=CELL,VOICE:+' + C.phone,
+    'ADR;TYPE=WORK:;;' + C.place + ';;;;',
+    'NOTE:Women-only massage and spa centre in Sanawad. Phone: +91 70005 27974',
+    'URL:' + location.href,
+    'END:VCARD'
+  ];
+  const v = vLines.join(String.fromCharCode(13) + String.fromCharCode(10));
+  const blob = new Blob([v], { type: 'text/vcard;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Mahadev-Spa-Centre.vcf';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function() {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 500);
+}
+function share() {
+  const d = {
+    title: C.name,
+    text: C.name + ' - Women' + String.fromCharCode(39) + 's Massage & Spa, Sanawad',
+    url: location.href
+  };
+  if (navigator.share) navigator.share(d).catch(function() {});
+  else copyLink();
+}
+function copyLink(b) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(location.href);
+  }
+  if (b) {
+    b.textContent = 'Copied!';
+    setTimeout(function() { b.textContent = 'Copy Link'; }, 1500);
+  } else {
+    alert('Link copied');
+  }
+}
+if (window.QRCode && $('qr')) {
+  new QRCode($('qr'), { text: location.href, width: 150, height: 150, colorDark: '#3f5143', colorLight: '#ffffff' });
+} else if ($('qr')) {
+  $('qr').style.display = 'none';
+}
 </script>
   `;
 }
